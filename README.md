@@ -18,6 +18,8 @@ To address these challenges, the web application Spotivey was developed. It allo
 *Fig. 1: Individual music usage data can be linked directly with socio-demographic information from a questionnaire*
 
 # How to deploy and run Spotivey on your own server
+Spotivey operates on Python 3.9.
+
 ## First - create a Django Project
 First you need to create a Django project. 
 You can use the [tutorial](https://code.visualstudio.com/docs/python/tutorial-django) for this. 
