@@ -1,4 +1,7 @@
 
+# local credentials
+spotify/credentials.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -63,6 +66,7 @@ db.sqlite3
 db.sqlite3-journal
 manage.py
 spotivey/
+
 
 # Flask stuff:
 instance/
