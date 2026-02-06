@@ -7,16 +7,20 @@ export function createSettings(
       body: JSON.stringify(body),
     };
     fetch("/api/create-settings", requestOptions)
-      .then((response) => {
-        if (!response.ok) {
-      } else {
-        return response.json();
-      }
-    })
-    .then((data) => {
-      console.log('Data saved')
-      navigate('/user/settings', { state: { push: true } })
-    })
+      .then((response) => response.json().then(data => ({ ok: response.ok, status: response.status, data })))
+      .then(({ ok, status, data }) => {
+        if (!ok) {
+          //e.g., duplicate Survey ID
+          const errorMsg = data.msg || data.error || 'Failed to create settings';
+          alert(`Error: ${errorMsg}`);
+          throw new Error(errorMsg);  
+        }
+        console.log('Data saved')
+        navigate('/user/settings', { state: { push: true } })
+      })
+      .catch((error) => {
+        console.error('Error creating settings:', error); //just log
+      })
 }
 
 export default function updateSettings(

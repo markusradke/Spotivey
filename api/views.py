@@ -792,6 +792,12 @@ class CreateSettings(APIView):
         if not user.exists():
             return Response({'msg': 'Neu anmelden...'}, status=status.HTTP_404_NOT_FOUND)
         else:
+            if Settings.objects.filter(umfrageID=umfrageID).exists(): 
+                return Response({
+                    'msg': 'Survey ID already exists (possibly created by another user)', 
+                    'error': 'duplicate_survey_ID',
+                    'surveyID': umfrageID
+                }, status=status.HTTP_400_BAD_REQUEST)  
             settings = Settings(data=data, nameUmfrage=nameUmfrage, umfrageID=umfrageID,
                             umfrageURL=umfrageURL)
             settings.save()

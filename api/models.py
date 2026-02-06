@@ -36,7 +36,7 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie den 
 
     user = models.ManyToManyField(User, default='')
     nameUmfrage = models.TextField(default='')
-    umfrageID = models.TextField(max_length=50, default='')
+    umfrageID = models.TextField(max_length=50, default='', unique=True)
     umfrageURL = models.TextField(default='')
     data = models.JSONField(null=True)
     confirmTextSTEng = models.TextField(default=defaultConfirmTextEng)
