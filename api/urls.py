@@ -9,6 +9,7 @@ urlpatterns = [
     path('create-settings-user', CreateSettingsUser.as_view()),
     path('login-settings-user', LoginSettingsUser.as_view()),
     path('create-settings', CreateSettings.as_view()),
+    path('check-survey-id', CheckSurveyIDExists.as_view()),
     path('get-settingslist', getSettingsListView.as_view()),
     path('get-settingsfromid', getSettingsFromIDView.as_view()),
     path('get-resultlist', getResultListView.as_view()),

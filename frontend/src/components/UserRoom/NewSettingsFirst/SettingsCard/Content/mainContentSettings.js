@@ -4,7 +4,8 @@ import TextFieldMain from "./Components/TextFieldMain";
 
 export function mainContentSettings(
     surveyName, setSurveyName,
-    surveyID, setSurveyID
+    surveyID, setSurveyID, 
+    surveyIDError, surveyIDChecking
 ) {
 
   function renderTooltipName(){
@@ -32,7 +33,7 @@ export function mainContentSettings(
       <React.Fragment>
         <div className="main-content-card">
           {TextFieldMain('Name of Setting', 'Name Survey', setSurveyName, surveyName, true, false, renderTooltipName())}
-          {TextFieldMain('1st Survey ID', '1st Survey ID', setSurveyID, surveyID, true, false, renderTooltipID())}
+          {TextFieldMain('1st Survey ID', '1st Survey ID', setSurveyID, surveyID, true, false, renderTooltipID(), false, surveyIDError, surveyIDChecking)}
         </div>
       </React.Fragment>
     );

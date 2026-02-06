@@ -3,7 +3,8 @@ import { mainContentSettings } from "./Content/mainContentSettings";
 
 export function mainSettingsCard (
     surveyName, setSurveyName,
-    surveyID, setSurveyID
+    surveyID, setSurveyID,
+    surveyIDError, surveyIDChecking
 ){
     return(
         <React.Fragment>
@@ -25,7 +26,8 @@ export function mainSettingsCard (
                     </h3>
                     {mainContentSettings(
                         surveyName, setSurveyName,
-                        surveyID, setSurveyID
+                        surveyID, setSurveyID, 
+                        surveyIDError, surveyIDChecking
                     )}
                 </div>
             </div>

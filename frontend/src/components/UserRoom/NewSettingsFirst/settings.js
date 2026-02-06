@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Collapse} from '@mui/material';
+import {Collapse, Snackbar, Alert} from '@mui/material';
 import {IconButton} from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router";
@@ -54,6 +54,10 @@ export default function SettingsPage(props) {
   const [username, setUsername] = useState(null)
   const [umfrageName, setUmfrageName] = useState('')
   const [umfrageID, setUmfrageID] = useState('')
+  const [surveyIDError, setSurveyIDError] = useState('')
+  const [surveyIDChecking, setSurveyIDChecking] = useState(false)
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [snackbarMessage, setSnackbarMessage] = useState('')
   const [umfrageEndUrl, setUmfrageEndUrl] = useState('')
   const [secondSurveyServer, setSecondSurveyServer] = useState('')
   const [secondSurveyID, setSecondSurveyID] = useState('')
@@ -86,6 +90,34 @@ export default function SettingsPage(props) {
 
   const update = location.state?.update ? true : false
   
+  useEffect(() => {
+    if (update || !umfrageID || umfrageID.trim() === '') {
+      setSurveyIDError('')
+      return
+    }
+
+    const timeoutID = setTimeout(() => {
+      setSurveyIDChecking(true)
+
+      fetch(`/api/check-survey-id?surveyID=${encodeURIComponent(umfrageID)}`)
+        .then(response => response.json())
+        .then(data => {
+          setSurveyIDChecking(false)
+          if (data.exists) {
+            setSurveyIDError('This Survey ID already exists (possibly created by another user). Please use a different ID.')
+          } else {
+            setSurveyIDError('')
+          }
+        })
+        .catch(error => {
+          setSurveyIDChecking(false)
+          console.error('Error checking survey ID:', error)
+        })
+    }, 500)
+    return () => clearTimeout(timeoutID)
+  }, [umfrageID, update])
+
+
   useEffect(() => {
     if (update) {
       fetch("/api/get-settingsfromid" + "?surveyid=" + location.state?.surveyID)
@@ -158,6 +190,8 @@ export default function SettingsPage(props) {
     }
     setSettingsTextArray([umfrageName, umfrageID/* , umfrageEndUrl */])
   }, [umfrageName, umfrageID, secondSurveyID, secondSurveyLanguage, secondSurveyServer, secondSurveyCheck])
+
+
 
   useEffect(() => {
     let arr1 = [savedTracksChecked,currentUsersChecked, topItemsTracksChecked,topItemsArtistsChecked, followedArtistsChecked, 
@@ -365,7 +399,8 @@ export default function SettingsPage(props) {
                           <SwiperSlide>
                               {mainSettingsCard(
                                   umfrageName, setUmfrageName,
-                                  umfrageID, setUmfrageID
+                                  umfrageID, setUmfrageID, 
+                                  surveyIDError, surveyIDChecking
                               )}
                           </SwiperSlide>
                           <SwiperSlide>
@@ -424,6 +459,21 @@ export default function SettingsPage(props) {
       <React.Fragment>
         {renderSettingsPage()}
         {renderDialog()}
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration = {6000}
+          onClose={() => setSnackbarOpen(false)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
+        >
+          <Alert
+             onClose={()=> setSnackbarOpen(false)}
+             severity="error"
+             sx={{ width: '100%' }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </React.Fragment>
     )
 }
+

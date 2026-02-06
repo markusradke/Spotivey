@@ -804,6 +804,17 @@ class CreateSettings(APIView):
             settings.user.add(user.values()[0].get('id'))
 
             return Response({'msg': 'Settings created'}, status=status.HTTP_200_OK)
+        
+class CheckSurveyIDExists(APIView): 
+    # check if a survey ID already exists when creating new retrieval settings
+    lookup_url_kwarg = 'surveyID'
+
+    def get(self, request):
+        surveyID = request.GET.get(self.lookup_url_kwarg)
+        if surveyID is not None:
+            exists = Settings.objects.filter(umfrageID=surveyID).exists()
+            return Response({'exists': exists, 'surveyID': surveyID}, status=status.HTTP_200_OK)
+        return Response({'error': 'No survey ID provided'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetSettingsSecondSurvey(APIView):

@@ -2,7 +2,7 @@ import * as React from "react";
 import { TextField, Tooltip } from "@mui/material";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-export default function TextFieldMain(title, label, setStateVar, value, type, changeURLCheck, tooltipRender, multiline) {
+export default function TextFieldMain(title, label, setStateVar, value, type, changeURLCheck, tooltipRender, multiline, errorMsg, isChecking) {
     return(
         <React.Fragment>
           <div className={'textField-info-container'}>
@@ -32,6 +32,11 @@ export default function TextFieldMain(title, label, setStateVar, value, type, ch
             onChange={(e) => {setStateVar(e.target.value)}}
             value={value}
             disabled={changeURLCheck? true : false}
+            error={errorMsg ? true : false}
+            helperText={
+              isChecking ? 'Checking availability...' :
+              errorMsg ? errorMsg : ''
+            }
           />
         </React.Fragment>
       )
