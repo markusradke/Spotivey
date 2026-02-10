@@ -19,7 +19,7 @@ class SavedTracksSpotify(models.Model):
     surveyID = models.CharField(max_length=50, default='')
     savedTracksData = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
-    settings = models.ForeignKey(Settings, on_delete=models.CASCADE, null= True, blank=True)
+    settings = models.ForeignKey(Settings, on_delete=models.PROTECT, null= True, blank=True)
 
 class TopTracksSpotify(models.Model):
     code = models.CharField(max_length=50, default='')
@@ -27,7 +27,7 @@ class TopTracksSpotify(models.Model):
     surveyID = models.CharField(max_length=50, default='')
     topTracksData = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
-    settings = models.ForeignKey(Settings, on_delete=models.CASCADE, null= True, blank=True)
+    settings = models.ForeignKey(Settings, on_delete=models.PROTECT, null= True, blank=True)
 
 class TopArtistsSpotify(models.Model):
     code = models.CharField(max_length=50, default='')
@@ -35,7 +35,7 @@ class TopArtistsSpotify(models.Model):
     surveyID = models.CharField(max_length=50, default='')
     topArtistsData = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
-    settings = models.ForeignKey(Settings, on_delete=models.CASCADE, null= True, blank=True)
+    settings = models.ForeignKey(Settings, on_delete=models.PROTECT, null= True, blank=True)
 
 class UsersProfileSpotify(models.Model):
     code = models.CharField(max_length=50, default='')
@@ -43,7 +43,7 @@ class UsersProfileSpotify(models.Model):
     surveyID = models.CharField(max_length=50, default='')
     usersProfileData = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
-    settings = models.ForeignKey(Settings, on_delete=models.CASCADE, null= True, blank=True)
+    settings = models.ForeignKey(Settings, on_delete=models.PROTECT, null= True, blank=True)
 
 class FollowedArtistsSpotify(models.Model):
     code = models.CharField(max_length=50, default='')
@@ -51,7 +51,7 @@ class FollowedArtistsSpotify(models.Model):
     surveyID = models.CharField(max_length=50, default='')
     followedArtistsData = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
-    settings = models.ForeignKey(Settings, on_delete=models.CASCADE, null= True, blank=True)
+    settings = models.ForeignKey(Settings, on_delete=models.PROTECT, null= True, blank=True)
 
 class CurrentPlaylistsSpotify(models.Model):
     code = models.CharField(max_length=50, default='')
@@ -59,7 +59,7 @@ class CurrentPlaylistsSpotify(models.Model):
     surveyID = models.CharField(max_length=50, default='')
     currentPlaylistsData = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
-    settings = models.ForeignKey(Settings, on_delete=models.CASCADE, null= True, blank=True)
+    settings = models.ForeignKey(Settings, on_delete=models.PROTECT, null= True, blank=True)
 
 class RecentlyTracksSpotify(models.Model):
     code = models.CharField(max_length=50, default='')
@@ -67,7 +67,7 @@ class RecentlyTracksSpotify(models.Model):
     surveyID = models.CharField(max_length=50, default='')
     recentlyTracksData = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
-    settings = models.ForeignKey(Settings, on_delete=models.CASCADE, null= True, blank=True)
+    settings = models.ForeignKey(Settings, on_delete=models.PROTECT, null= True, blank=True)
 
 class SpotifyAudioFeatures(models.Model):
     surveyID = models.CharField(max_length=50, default='')

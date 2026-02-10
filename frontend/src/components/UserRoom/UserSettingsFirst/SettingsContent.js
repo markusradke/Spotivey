@@ -1,6 +1,6 @@
 import * as React from "react";
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import {Button} from '@mui/material';
+import {Button, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { columns } from './DataGridColumns.js';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
@@ -18,6 +18,10 @@ export default function SettingsContent(props) {
     const [selectedRowSettings, setSelectedRowSettings] = useState([])
 
     const [openTooltipCopy, setOpenTooltipCopy] = React.useState(false);
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [deleteDialogMessage, setDeleteDialogMessage] = useState('');
+    const [participantCount, setParticipantCount] = useState(0);
+
 
     const navigate = useNavigate()
 
@@ -66,13 +70,57 @@ export default function SettingsContent(props) {
         )
     }
 
+    function checkAndDelete(){
+        // Check participant count for all selected settings
+        let promises = [];
+        for(let zaehler = 0; zaehler<selectedRowSettings.length; zaehler++){
+            promises.push(
+                fetch("/api/get-participant-count?surveyID=" + encodeURIComponent(selectedRowSettings[zaehler].umfrageID))
+                    .then(res => res.json())
+            );
+        }
+        
+        Promise.all(promises).then(results => {
+            // Sum up all participants and records
+            let totalParticipants = 0;
+            let totalRecords = 0;
+            let hasData = false;
+            
+            results.forEach(data => {
+                if (data.hasData) {
+                    hasData = true;
+                    totalParticipants += (data.participantCount || 0);
+                    totalRecords += (data.totalRecords || 0);
+                }
+            });
+            console.log('Participant count results:', results);
+            
+            if (hasData) {
+                // Show info dialog - cannot delete
+                setParticipantCount(totalParticipants);
+                setDeleteDialogMessage(
+                    `${totalParticipants} participant(s) have contributed ${totalRecords} data record(s). ` +
+                    `Please delete the results data first if you wish to remove this survey setting.`
+                );
+                setOpenDeleteDialog(true);
+            } else {
+                // No data - delete immediately
+                deleteSettings();
+            }
+        });
+    }
+
     function deleteSettings(){
         let promises = [];
         for(let zaehler = 0; zaehler<selectedRowSettings.length; zaehler++){
             promises.push(fetch("/api/delete-settings" + "?surveyid=" + selectedRowSettings[zaehler].umfrageID));
         }
-        Promise.all(promises)
-        location.reload();
+        Promise.all(promises).then(() => {
+            location.reload();
+        }).catch(error => {
+            console.error('Error deleting settings:', error);
+            alert('Error deleting settings. Please try again.');
+        });
     }
 
     function renderDeleteButton(){
@@ -81,7 +129,7 @@ export default function SettingsContent(props) {
                 <Button 
                     startIcon={<DeleteOutlinedIcon />}
                     onClick={() => {
-                        deleteSettings()
+                        checkAndDelete()
                     }}
                     disabled={selectedRowSettings.length !== 0 ? false : true}
                 >
@@ -177,6 +225,30 @@ export default function SettingsContent(props) {
         )
     }
 
+
+    function renderDeleteDialog(){
+        return(
+            <Dialog
+                open={openDeleteDialog}
+                onClose={() => setOpenDeleteDialog(false)}
+            >
+                <DialogTitle>
+                    Cannot Delete Settings
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {deleteDialogMessage}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDeleteDialog(false)} color="primary">
+                        OK
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
     return(
     <div>
         <h1 data-heading='true' class='settings-title'>
@@ -215,6 +287,7 @@ export default function SettingsContent(props) {
             </div>
         </div>
         {renderSettingsTable()}
+        {renderDeleteDialog()}
     </div>
     )
 }

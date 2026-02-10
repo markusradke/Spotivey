@@ -1233,7 +1233,7 @@ class UpdateSettingsSecondSurveyEndURL(APIView):
             return Response({'msg': 'Settings updated'}, status=status.HTTP_200_OK)
 
 class DeleteSettings(APIView):
-    # Retrieval profile is deleted
+    # Retrieval profile is deleted - only if no participant data exists
     
     lookup_url_kwarg = 'surveyid'
 
@@ -1241,32 +1241,29 @@ class DeleteSettings(APIView):
         surveyID = request.GET.get(self.lookup_url_kwarg)
         if surveyID is not None:
             settings = Settings.objects.filter(umfrageID=surveyID)
-
-            savedTracksSpotify = SavedTracksSpotify.objects.filter(settings__in=settings)
-            savedTracksSpotify.delete()
             
-            topTracksSpotify = TopTracksSpotify.objects.filter(settings__in=settings)
-            topTracksSpotify.delete()
-
-            topArtistsSpotify = TopArtistsSpotify.objects.filter(settings__in=settings)
-            topArtistsSpotify.delete()
-
-            followedArtistsSpotify = FollowedArtistsSpotify.objects.filter(settings__in=settings)
-            followedArtistsSpotify.delete()
-
-            recentlyTracksSpotify = RecentlyTracksSpotify.objects.filter(settings__in=settings)
-            recentlyTracksSpotify.delete()
-
-            currentPlaylistsSpotify = CurrentPlaylistsSpotify.objects.filter(settings__in=settings)
-            currentPlaylistsSpotify.delete()
-
-            settingsTwo = SettingsSecondSurvey.objects.filter(settings__in=settings)
-            settingsTwo.delete()
-
-            settings.delete()
-
-            return Response({}, status=status.HTTP_200_OK)
-        return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
+            if not settings.exists():
+                return Response({'error': 'Survey ID not found'}, status=status.HTTP_404_NOT_FOUND)
+            
+            try:
+                # Delete follow-up survey settings first (not protected)
+                settingsTwo = SettingsSecondSurvey.objects.filter(settings__in=settings)
+                settingsTwo.delete()
+                
+                # Try to delete the settings - will fail if protected data exists
+                settings.delete()
+                
+                return Response({'message': 'Settings deleted successfully'}, status=status.HTTP_200_OK)
+                
+            except models.ProtectedError:
+                # This should rarely happen - frontend checks first
+                # Only occurs in race conditions or if frontend bypassed
+                return Response({
+                    'error': 'Cannot delete settings with existing participant data',
+                    'message': 'Participant data exists. Please delete the results data first.'
+                }, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({'error': 'Survey ID parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateSettings(APIView):
@@ -1451,5 +1448,33 @@ class UpdateConfirmText(APIView):
         return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
             
             
+class GetParticipantCountForSurvey(APIView):
+    # Get count of participants and data records for a survey ID
+    lookup_url_kwarg = 'surveyID'
 
+    def get(self, request): 
+        surveyID = request.GET.get(self.lookup_url_kwarg)
+        if surveyID is not None: 
+            settings = Settings.objects.filter(umfrageID=surveyID)
+            if not settings.exists():
+                return Response({'error': 'Survey ID not found'}, status=status.HTTP_404_NOT_FOUND)
 
+            # count participants across all data types
+            participants = set()
+            total_records = 0
+
+            for model in [SavedTracksSpotify, TopTracksSpotify, TopArtistsSpotify, 
+                            UsersProfileSpotify, FollowedArtistsSpotify, 
+                            CurrentPlaylistsSpotify, RecentlyTracksSpotify]:
+                records = model.objects.filter(settings__in=settings)
+                total_records += records.count()
+                for record in records: 
+                    if record.participant: 
+                        participants.add(record.participant.participant)
+            return Response({
+                'surveyID': surveyID, 
+                'participantCount': len(participants), 
+                'totalRecords': total_records, 
+                'hasData': total_records > 0
+            }, status=status.HTTP_200_OK)
+        return Response({'error': 'Survey ID parameter missing'}, status=status.HTTP_400_BAD_REQUEST)
