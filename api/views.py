@@ -1302,7 +1302,7 @@ class DeleteOnlyResultsWithID(APIView):
     def get(self, request):
         surveyID = request.GET.get(self.lookup_url_kwarg)
         if surveyID is not None:
-            settings = Settings.objects.filter(umfrageID=surveyID)
+            settings = Settings.objects.filter(umfrageID=surveyID).first()
             if not settings: 
                 return Response({'Bad Request': 'Survey not found'}, status=status.HTTP_404_NOT_FOUND)
             participants = Participant.objects.filter(settings=settings)
@@ -1366,19 +1366,19 @@ class SaveCheckData(APIView):
                     if int(zaehler)==0 or int(zaehler)==1 or int(zaehler)==2:
                         isrcCheckData = noData[j].get('isrc')
                         if int(zaehler)==0:
-                            confirmData = SavedTracksSpotify.objects.filter(participant=participant, savedTracksData__isrc=isrcCheckData).delete()
+                            confirmData = SavedTracksSpotify.objects.filter(participant=participant, data__isrc=isrcCheckData).delete()
                         elif int(zaehler)==1:
-                            confirmData = TopTracksSpotify.objects.filter(participant=participant, topTracksData__isrc=isrcCheckData).delete()
+                            confirmData = TopTracksSpotify.objects.filter(participant=participant, data__isrc=isrcCheckData).delete()
                         else:
-                            confirmData = RecentlyTracksSpotify.objects.filter(participant=participant, recentlyTracksData__isrc=isrcCheckData).delete()
+                            confirmData = RecentlyTracksSpotify.objects.filter(participant=participant, data__isrc=isrcCheckData).delete()
                     else:
                         idCheckData = noData[j].get('id')
                         if int(zaehler)==3:
-                            confirmData = TopArtistsSpotify.objects.filter(participant=participant, topArtistsData__id=idCheckData).delete()
+                            confirmData = TopArtistsSpotify.objects.filter(participant=participant, data__id=idCheckData).delete()
                         elif int(zaehler)==4:
-                            confirmData = FollowedArtistsSpotify.objects.filter(participant=participant, followedArtistsData__id=idCheckData).delete()
+                            confirmData = FollowedArtistsSpotify.objects.filter(participant=participant, data__id=idCheckData).delete()
                         else:
-                            confirmData = CurrentPlaylistsSpotify.objects.filter(participant=participant, currentPlaylistsData__id=idCheckData).delete()
+                            confirmData = CurrentPlaylistsSpotify.objects.filter(participant=participant, data__id=idCheckData).delete()
                 
             return Response({'checkData':checkData}, status=status.HTTP_200_OK)
         return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
