@@ -12,70 +12,50 @@ class SpotifyToken(models.Model):
 
 class Participant(models.Model):
     participant = models.CharField(max_length=50, default='')
+    settings = models.ForeignKey(Settings, on_delete=models.PROTECT)
     retrieval_session_key = models.CharField(max_length=50, unique=True, default='')
     started_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=20, default='in_progress')
 
+
 class SavedTracksSpotify(models.Model):
-    code = models.CharField(max_length=50, default='')
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    surveyID = models.CharField(max_length=50, default='')
-    savedTracksData = models.JSONField(default=dict)
+    data = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
-    settings = models.ForeignKey(Settings, on_delete=models.PROTECT, null= True, blank=True)
 
 class TopTracksSpotify(models.Model):
-    code = models.CharField(max_length=50, default='')
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    surveyID = models.CharField(max_length=50, default='')
-    topTracksData = models.JSONField(default=dict)
+    data = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
-    settings = models.ForeignKey(Settings, on_delete=models.PROTECT, null= True, blank=True)
 
 class TopArtistsSpotify(models.Model):
-    code = models.CharField(max_length=50, default='')
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    surveyID = models.CharField(max_length=50, default='')
-    topArtistsData = models.JSONField(default=dict)
+    data = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
-    settings = models.ForeignKey(Settings, on_delete=models.PROTECT, null= True, blank=True)
 
 class UsersProfileSpotify(models.Model):
-    code = models.CharField(max_length=50, default='')
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    surveyID = models.CharField(max_length=50, default='')
-    usersProfileData = models.JSONField(default=dict)
+    data = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
-    settings = models.ForeignKey(Settings, on_delete=models.PROTECT, null= True, blank=True)
 
 class FollowedArtistsSpotify(models.Model):
-    code = models.CharField(max_length=50, default='')
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    surveyID = models.CharField(max_length=50, default='')
-    followedArtistsData = models.JSONField(default=dict)
+    data = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
-    settings = models.ForeignKey(Settings, on_delete=models.PROTECT, null= True, blank=True)
 
 class CurrentPlaylistsSpotify(models.Model):
-    code = models.CharField(max_length=50, default='')
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    surveyID = models.CharField(max_length=50, default='')
-    currentPlaylistsData = models.JSONField(default=dict)
+    data = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
-    settings = models.ForeignKey(Settings, on_delete=models.PROTECT, null= True, blank=True)
 
 class RecentlyTracksSpotify(models.Model):
-    code = models.CharField(max_length=50, default='')
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    surveyID = models.CharField(max_length=50, default='')
-    recentlyTracksData = models.JSONField(default=dict)
+    data = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
-    settings = models.ForeignKey(Settings, on_delete=models.PROTECT, null= True, blank=True)
 
 class SpotifyAudioFeatures(models.Model):
-    surveyID = models.CharField(max_length=50, default='')
     dataString = models.CharField(max_length=50, default='')
-    dataAudioFeatures = models.JSONField(default=dict)
+    data = models.JSONField(default=dict)
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
 

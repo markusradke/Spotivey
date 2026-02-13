@@ -221,15 +221,15 @@ class GetAudioFeaturesSpotify(APIView):
             participant_id_list = []
             if dataString == "savedTracksData":
                 searchSpotifyList = SavedTracksSpotify.objects.filter(
-                    settings__in=settings
+                    participant__settings__in=settings
                 ).values_list(dataString, "participant")
             elif dataString == "topTracksData":
                 searchSpotifyList = TopTracksSpotify.objects.filter(
-                    settings__in=settings
+                    participant__settings__in=settings
                 ).values_list(dataString, "participant")
             elif dataString == "recentlyTracksData":
                 searchSpotifyList = RecentlyTracksSpotify.objects.filter(
-                    settings__in=settings
+                    participant__settings__in=settings
                 ).values_list(dataString, "participant")
             else:
                 return Response(
@@ -307,16 +307,14 @@ class GetAudioFeaturesSpotify(APIView):
 
                     filterAF = SpotifyAudioFeatures.objects.filter(
                         participant=participant_list[von + i],
-                        surveyID=surveyID,
                         dataString=dataString,
-                        dataAudioFeatures__spotify_id=id_list[von + i],
+                        data__spotify_id=id_list[von + i],
                     )
 
                     if not filterAF.exists():
                         af = SpotifyAudioFeatures(
-                            surveyID=surveyID,
                             dataString=dataString,
-                            dataAudioFeatures=dataAudioFeatures,
+                            data=dataAudioFeatures,
                             participant=participant_list[von + i],
                         )
                         af.save()
@@ -472,12 +470,9 @@ class TopArtists(APIView):
             }
 
             topArtistsSpotify = TopArtistsSpotify(
-                code=roomCode,
-                surveyID=surveyID,
-                topArtistsData=artistsInfoData,
+                data=artistsInfoData,
                 confirm=confirm,
                 participant=participant,
-                settings=settings,
             )
             topArtistsSpotify.save()
 
@@ -608,12 +603,9 @@ class TopTracks(APIView):
             }
 
             topTracksSpotify = TopTracksSpotify(
-                code=roomCode,
-                surveyID=surveyID,
-                topTracksData=tracksInfoData,
+                data=tracksInfoData,
                 confirm=confirm,
                 participant=participant,
-                settings=settings,
             )
             topTracksSpotify.save()
 
@@ -756,12 +748,9 @@ class GetSavedTracksSpotify(APIView):
             }
 
             savedTracksSpotify = SavedTracksSpotify(
-                code=roomCode,
-                surveyID=surveyID,
-                savedTracksData=tracksInfoData,
+                data=tracksInfoData,
                 confirm=confirm,
                 participant=participant,
-                settings=settings,
             )
             savedTracksSpotify.save()
 
@@ -819,12 +808,9 @@ class GetUsersProfileSpotify(APIView):
             return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
 
         usersProfileSpotify = UsersProfileSpotify(
-            code=roomCode,
-            surveyID=surveyID,
-            usersProfileData=users_info,
+            data=users_info,
             confirm=False,
             participant=participant,
-            settings=settings,
         )
         usersProfileSpotify.save()
 
@@ -915,12 +901,9 @@ class GetFollowedArtistsSpotify(APIView):
             }
 
             followedArtistsSpotify = FollowedArtistsSpotify(
-                code=roomCode,
-                surveyID=surveyID,
-                followedArtistsData=artistsInfoData,
+                data=artistsInfoData,
                 confirm=confirm,
                 participant=participant,
-                settings=settings,
             )
             followedArtistsSpotify.save()
 
@@ -1062,12 +1045,9 @@ class GetPlaylistsSpotify(APIView):
                 }
 
                 currentPlaylistsSpotify = CurrentPlaylistsSpotify(
-                    code=roomCode,
-                    surveyID=surveyID,
-                    currentPlaylistsData=playlistsInfoData,
+                    data=playlistsInfoData,
                     confirm=confirm,
                     participant=participant,
-                    settings=settings,
                 )
                 currentPlaylistsSpotify.save()
 
@@ -1213,12 +1193,9 @@ class GetRecentlyPlayedTracksSpotify(APIView):
             }
 
             recentlyTracksSpotify = RecentlyTracksSpotify(
-                code=roomCode,
-                surveyID=surveyID,
-                recentlyTracksData=tracksInfoData,
+                data=tracksInfoData,
                 confirm=confirm,
                 participant=participant,
-                settings=settings,
             )
             recentlyTracksSpotify.save()
 
