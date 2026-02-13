@@ -12,6 +12,10 @@ class SpotifyToken(models.Model):
 
 class Participant(models.Model):
     participant = models.CharField(max_length=50, default='')
+    retrieval_session_key = models.CharField(max_length=50, unique=True, default='')
+    started_at = models.DateTimeField(auto_now_add=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=20, default='in_progress')
 
 class SavedTracksSpotify(models.Model):
     code = models.CharField(max_length=50, default='')

@@ -23,6 +23,7 @@ urlpatterns = [
     path('update-settings', UpdateSettings.as_view()),
     path('delete-settings-second-survey', DeleteSettingsSecondSurvey.as_view()),
     path('save-check-data', SaveCheckData.as_view()),
+    path('finalize-participant-data', FinalizeParticipantData.as_view()),
     path('update-confirm-text', UpdateConfirmText.as_view()),
     path('delete-only-results', DeleteOnlyResultsWithID.as_view())
 ]

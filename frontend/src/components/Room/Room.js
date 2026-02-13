@@ -606,22 +606,41 @@ export default function Room (props) {
       }
     }
     Promise.all(promises)
-
-    if (endURLSecondSurvey) {
-      dataAll = [savedTracks, topTracks, recentlyTracks , topArtists, followedArtists, currentPlaylists]
-      let paramsURL = selectedOption ? getGetParams(questionTypeCheck, selectedOption, dataFieldsCheck, idName, idTracks, idArtists, idPlaylists, 
-        dataAll, endURLSecondSurvey, checkArray) : null
-
-      let allParams = '&' + props.paramsObjectSession.map(item => item.join('=')).join('&')
-        
-      let passURL = !passLang ? 
-        [endURLSecondSurvey,paramsURL,'&partID=',props.participant].join('') :
-        [endURLSecondSurvey,paramsURL,'&partID=',props.participant,allParams].join('')
-      
-      let win = window.open(passURL, '_blank')
-      win.focus();
-    }
-    navigate("/end-room/" + props.language);
+      .then(() => {
+        console.log("All save-check-data calls completed");
+        const finalizeOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: 'include'
+        };
+        return fetch("/api/finalize-participant-data", finalizeOptions);
+      })
+      .then(response => {
+        console.log("Finalize response status:", response.status);
+        return response.json();
+      })
+      .then(data => {
+        console.log("Participant finalized successfully:", data);
+        if (endURLSecondSurvey) {
+          let dataAll = [savedTracks, topTracks, recentlyTracks, topArtists, followedArtists, currentPlaylists];
+          let paramsURL = selectedOption ? getGetParams(questionTypeCheck, selectedOption, dataFieldsCheck, idName, idTracks, idArtists, idPlaylists, 
+            dataAll, endURLSecondSurvey, checkArray) : null;
+    
+          let allParams = '&' + props.paramsObjectSession.map(item => item.join('=')).join('&');
+            
+          let passURL = !passLang ? 
+            [endURLSecondSurvey,paramsURL,'&partID=',props.participant].join('') :
+            [endURLSecondSurvey,paramsURL,'&partID=',props.participant,allParams].join('');
+            
+          let win = window.open(passURL, '_blank');
+          win.focus();
+        }
+        navigate("/end-room/" + props.language);
+      })
+      .catch(error => {
+        console.error("Error in confirmation process:", error);
+        navigate("/end-room/" + props.language);
+      });
   };
 
   const handleStep = (step) => () => {
@@ -721,24 +740,45 @@ export default function Room (props) {
   }
 
   function goToEndPage(){
-    if (endURLSecondSurvey) {
-      dataAll = [savedTracks, recentlyTracks, topTracks, topArtists, followedArtists, currentPlaylists]
-      let paramsURL = getGetParams(questionTypeCheck, selectedOption, dataFieldsCheck, idName, idTracks, idArtists, idPlaylists, 
-        dataAll, endURLSecondSurvey)
+  console.log("goToEndPage called - finalizing participant data");
+  
+  const finalizeOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: 'include'
+  };
+  
+  fetch("/api/finalize-participant-data", finalizeOptions)
+    .then(response => {
+      console.log("Finalize response status (no confirmation):", response.status);
+      return response.json();
+    })
+    .then(data => {
+      console.log("Participant finalized successfully (no confirmation):", data);
+      
+      if (endURLSecondSurvey) {
+        let dataAll = [savedTracks, recentlyTracks, topTracks, topArtists, followedArtists, currentPlaylists];
+        let paramsURL = getGetParams(questionTypeCheck, selectedOption, dataFieldsCheck, idName, idTracks, idArtists, idPlaylists, 
+          dataAll, endURLSecondSurvey);
 
-      let allParams = '&' + props.paramsObjectSession.map(item => item.join('=')).join('&')
-      
-      let passURL = !passLang ? 
-        [endURLSecondSurvey,paramsURL,'&partID=',props.participant].join('') :
-        [endURLSecondSurvey,paramsURL,'&partID=',props.participant,allParams].join('')
-      
-      let win = window.open(passURL, '_blank')
-      console.log(passLang, passURL)
-      win.focus();
-    } else {
+        let allParams = '&' + props.paramsObjectSession.map(item => item.join('=')).join('&');
+        
+        let passURL = !passLang ? 
+          [endURLSecondSurvey,paramsURL,'&partID=',props.participant].join('') :
+          [endURLSecondSurvey,paramsURL,'&partID=',props.participant,allParams].join('');
+        
+        let win = window.open(passURL, '_blank');
+        console.log(passLang, passURL);
+        win.focus();
+      } else {
         navigate("/end-room/" + props.language);
-    }
-  }
+      }
+    })
+    .catch(error => {
+      console.error("Error finalizing participant (no confirmation):", error);
+      navigate("/end-room/" + props.language);
+    });
+}
 
   return(
     <React.Fragment>

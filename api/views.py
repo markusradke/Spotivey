@@ -1,5 +1,6 @@
 
 from django.shortcuts import render
+from django.utils import timezone
 from rest_framework import status
 from .serializers import *
 from .models import *
@@ -10,6 +11,7 @@ from django.contrib.auth.models import User
 from .util import *
 from django.contrib.auth import authenticate
 import numpy as np
+import uuid
 from spotify.models import *
 
 
@@ -489,37 +491,44 @@ class CreateRoomView(APIView):
                         if token.exists():
                             token.delete()
             else:
-                Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
 
         serializer = self.serializer_class(data=request.data)
 
-        surveyID = request.data.get('surveyID')
-        participant = request.data.get('participant')
 
         if serializer.is_valid():
             host = self.request.session.session_key
+            surveyID = request.data.get('surveyID')
+            participant_id = request.data.get('participant')
+
+            retrieval_session_key = str(uuid.uuid4())
+            participant_obj = Participant.objects.create(
+                participant=participant_id, 
+                retrieval_session_key=retrieval_session_key,
+                status='in_progress'
+            )
+            
             queryset = Room.objects.filter(host=host)
             if queryset.exists():
                 room = queryset[0]
+                room.surveyID = surveyID
+                room.participant = participant_id
                 room.save()
-                self.request.session['room_code'] = room.code
-                self.request.session['surveyID'] = request.data.get('surveyID')
-                self.request.session['participant'] = request.data.get('participant')
-                self.request.session['language'] = request.data.get('lang')
-                self.request.session['paramsObject'] = request.data.get('paramsObject')
-                return Response(RoomSerializer(room).data, status=status.HTTP_200_OK)
             else:
-                room = Room(host=host, surveyID=surveyID, participant=participant)
+                room = Room(host=host, surveyID=surveyID, participant=participant_id)
                 room.save()
-                self.request.session['room_code'] = room.code
-                self.request.session['surveyID'] = request.data.get('surveyID')
-                self.request.session['participant'] = request.data.get('participant')
-                self.request.session['language'] = request.data.get('lang')
-                self.request.session['paramsObject'] = request.data.get('paramsObject')
-                return Response(RoomSerializer(room).data, status=status.HTTP_201_CREATED)
+            
+            self.request.session['room_code'] = room.code
+            self.request.session['surveyID'] = surveyID
+            self.request.session['participant'] = participant_id
+            self.request.session['retrieval_session_key'] = retrieval_session_key  
+            self.request.session['language'] = request.data.get('lang')
+            self.request.session['paramsObject'] = request.data.get('paramsObject')
+    
+            return Response(RoomSerializer(room).data, status=status.HTTP_200_OK if queryset.exists() else status.HTTP_201_CREATED)
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -535,18 +544,18 @@ class UserInRoom(APIView):
 
         resultExist=False
 
-        if surveyID is not None and participant is not None:
-            participantSavedTracks = SavedTracksSpotify.objects.filter(surveyID=surveyID, confirm=True,participant__participant=participant)
-            participantTopTracks = TopTracksSpotify.objects.filter(surveyID=surveyID, confirm=True,participant__participant=participant)
-            participantRecentlyTracks = RecentlyTracksSpotify.objects.filter(surveyID=surveyID, confirm=True,participant__participant=participant)
-            participantTopArtists = TopArtistsSpotify.objects.filter(surveyID=surveyID, confirm=True,participant__participant=participant)
-            participantFollowedArtists = FollowedArtistsSpotify.objects.filter(surveyID=surveyID, confirm=True,participant__participant=participant)
-            participantCurrentPlaylists = CurrentPlaylistsSpotify.objects.filter(surveyID=surveyID, confirm=True,participant__participant=participant)
-            participantUsersProfile = UsersProfileSpotify.objects.filter(surveyID=surveyID, confirm=True,participant__participant=participant)
-            if (participantSavedTracks.exists() or participantTopTracks.exists() or participantRecentlyTracks.exists() or
-                participantTopArtists.exists() or participantFollowedArtists.exists() or participantUsersProfile.exists() or
-                participantCurrentPlaylists.exists()):
-                resultExist = True
+        # if surveyID is not None and participant is not None:
+        #     participantSavedTracks = SavedTracksSpotify.objects.filter(surveyID=surveyID, confirm=True,participant__participant=participant)
+        #     participantTopTracks = TopTracksSpotify.objects.filter(surveyID=surveyID, confirm=True,participant__participant=participant)
+        #     participantRecentlyTracks = RecentlyTracksSpotify.objects.filter(surveyID=surveyID, confirm=True,participant__participant=participant)
+        #     participantTopArtists = TopArtistsSpotify.objects.filter(surveyID=surveyID, confirm=True,participant__participant=participant)
+        #     participantFollowedArtists = FollowedArtistsSpotify.objects.filter(surveyID=surveyID, confirm=True,participant__participant=participant)
+        #     participantCurrentPlaylists = CurrentPlaylistsSpotify.objects.filter(surveyID=surveyID, confirm=True,participant__participant=participant)
+        #     participantUsersProfile = UsersProfileSpotify.objects.filter(surveyID=surveyID, confirm=True,participant__participant=participant)
+        #     if (participantSavedTracks.exists() or participantTopTracks.exists() or participantRecentlyTracks.exists() or
+        #         participantTopArtists.exists() or participantFollowedArtists.exists() or participantUsersProfile.exists() or
+        #         participantCurrentPlaylists.exists()):
+        #         resultExist = True
 
         participantSavedTracks = SavedTracksSpotify.objects.filter(surveyID=surveyID, confirm=False).delete()
         participantTopTracks = TopTracksSpotify.objects.filter(surveyID=surveyID, confirm=False).delete()
@@ -556,13 +565,13 @@ class UserInRoom(APIView):
         participantCurrentPlaylists = CurrentPlaylistsSpotify.objects.filter(surveyID=surveyID, confirm=False).delete()
         participantUsersProfile = UsersProfileSpotify.objects.filter(surveyID=surveyID, confirm=False).delete()
 
-        if resultExist:
-            self.request.session['room_code'] = None
-            self.request.session['surveyID'] = None
-            self.request.session['participant'] = None
-            self.request.session['welcome'] = None
-            self.request.session['language'] = None
-            self.request.session['paramsObject'] = None
+        # if resultExist:
+        #     self.request.session['room_code'] = None
+        #     self.request.session['surveyID'] = None
+        #     self.request.session['participant'] = None
+        #     self.request.session['welcome'] = None
+        #     self.request.session['language'] = None
+        #     self.request.session['paramsObject'] = None
 
         if 'fullname' in self.request.session:
             fullName = self.request.session['fullname']
@@ -590,6 +599,10 @@ class LeaveRoom(APIView):
     def post(self, request, format=None):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
+        room_code = self.request.session.get('room_code')
+        if room_code:
+            Room.objects.filter(code=room_code).delete()
+
         self.request.session.flush()
         return Response({'Message': 'Success'}, status=status.HTTP_200_OK)
 
@@ -1357,10 +1370,13 @@ class SaveCheckData(APIView):
                 settings = settingsFilter[0]
                 settings.save()
 
-            participantFilter = Participant.objects.filter(participant=participant)
-            if participantFilter.exists():
-                participant = participantFilter[0]
-                participant.save()
+            retrieval_session_key = self.request.session.get('retrieval_session_key')
+            if not retrieval_session_key: 
+                return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
+            try: 
+                participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
+            except Participant.DoesNotExist:
+                return Response({'error': 'Participant not found'}, status=status.HTTP_404_NOT_FOUND)
                 
             if len(checkData) > 0:
                 for i in range(len(checkData)):
@@ -1401,10 +1417,43 @@ class SaveCheckData(APIView):
                             confirmData = FollowedArtistsSpotify.objects.filter(participant=participant, followedArtistsData__id=idCheckData).delete()
                         else:
                             confirmData = CurrentPlaylistsSpotify.objects.filter(participant=participant, currentPlaylistsData__id=idCheckData).delete()
-                return Response({'checkData':checkData}, status=status.HTTP_200_OK)
-            return Response({'checkData':[]}, status=status.HTTP_200_OK)
+                
+            return Response({'checkData':checkData}, status=status.HTTP_200_OK)
         return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class FinalizeParticipantData(APIView): 
+    # Mark participant as completed and clean up old attempts
+
+    def post(self, request, format=None):
+        retrieval_session_key = self.request.session.get('retrieval_session_key')
+        if not retrieval_session_key:
+            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
+        except Participant.DoesNotExist:
+            return Response({'error': 'Participant not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        participant.status = 'completed'
+        participant.completed_at = timezone.now()
+        participant.save()
+
+        old_participants = Participant.objects.filter(
+            participant=participant.participant
+        ).exclude(id=participant.id)
+
+        if old_participants.exists():
+            for old_p in old_participants:
+                SavedTracksSpotify.objects.filter(participant=old_p).delete()
+                TopTracksSpotify.objects.filter(participant=old_p).delete()
+                RecentlyTracksSpotify.objects.filter(participant=old_p).delete()
+                TopArtistsSpotify.objects.filter(participant=old_p).delete()
+                FollowedArtistsSpotify.objects.filter(participant=old_p).delete()
+                CurrentPlaylistsSpotify.objects.filter(participant=old_p).delete()
+                UsersProfileSpotify.objects.filter(participant=old_p).delete()
+            old_participants.delete()
+        return Response({'message': 'Participant data finalized successfully'}, status=status.HTTP_200_OK)
 
 class UpdateConfirmText(APIView):
     # Confirmation text is changed

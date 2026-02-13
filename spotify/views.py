@@ -414,11 +414,14 @@ class TopArtists(APIView):
             settings = settingsFilter[0]
             settings.save()
 
-        participantFilter = Participant.objects.filter(participant=participant_id)
-        if participantFilter.exists():
-            participant = participantFilter[0]
-            participant.save()
-            self.request.session["participant"] = participant.participant
+        retrieval_session_key = self.request.session.get('retrieval_session_key')
+        if not retrieval_session_key:
+            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
+        except Participant.DoesNotExist:
+            return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
 
         endpoint = "me/top/artists?time_range=" + timeRange + "&limit=" + limit
 
@@ -510,11 +513,14 @@ class TopTracks(APIView):
             settings = settingsFilter[0]
             settings.save()
 
-        participantFilter = Participant.objects.filter(participant=participant_id)
-        if participantFilter.exists():
-            participant = participantFilter[0]
-            participant.save()
-            self.request.session["participant"] = participant.participant
+        retrieval_session_key = self.request.session.get('retrieval_session_key')
+        if not retrieval_session_key:
+            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
+        except Participant.DoesNotExist:
+            return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
 
         host = roommodel.host
         endpoint = "me/top/tracks?time_range=" + timeRange + "&limit=" + limit
@@ -641,11 +647,14 @@ class GetSavedTracksSpotify(APIView):
             settings = settingsFilter[0]
             settings.save()
 
-        participantFilter = Participant.objects.filter(participant=participant_id)
-        if participantFilter.exists():
-            participant = participantFilter[0]
-            participant.save()
-            self.request.session["participant"] = participant.participant
+        retrieval_session_key = self.request.session.get('retrieval_session_key')
+        if not retrieval_session_key:
+            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
+        except Participant.DoesNotExist:
+            return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
 
         room_code = self.request.session.get("room_code")
         roommodel = Room.objects.filter(code=room_code)
@@ -800,11 +809,14 @@ class GetUsersProfileSpotify(APIView):
             settings = settingsFilter[0]
             settings.save()
 
-        participantFilter = Participant.objects.filter(participant=participant_id)
-        if participantFilter.exists():
-            participant = participantFilter[0]
-            participant.save()
-            self.request.session["participant"] = participant.participant
+        retrieval_session_key = self.request.session.get('retrieval_session_key')
+        if not retrieval_session_key:
+            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
+        except Participant.DoesNotExist:
+            return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
 
         usersProfileSpotify = UsersProfileSpotify(
             code=roomCode,
@@ -845,11 +857,14 @@ class GetFollowedArtistsSpotify(APIView):
             settings = settingsFilter[0]
             settings.save()
 
-        participantFilter = Participant.objects.filter(participant=participant_id)
-        if participantFilter.exists():
-            participant = participantFilter[0]
-            participant.save()
-            self.request.session["participant"] = participant.participant
+        retrieval_session_key = self.request.session.get('retrieval_session_key')
+        if not retrieval_session_key:
+            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
+        except Participant.DoesNotExist:
+            return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
 
         endpoint = "me/following?type=artist&limit=" + limit
 
@@ -942,11 +957,14 @@ class GetPlaylistsSpotify(APIView):
             settings = settingsFilter[0]
             settings.save()
 
-        participantFilter = Participant.objects.filter(participant=participant_id)
-        if participantFilter.exists():
-            participant = participantFilter[0]
-            participant.save()
-            self.request.session["participant"] = participant.participant
+        retrieval_session_key = self.request.session.get('retrieval_session_key')
+        if not retrieval_session_key:
+            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
+        except Participant.DoesNotExist:
+            return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
 
         endpoint = "me/playlists??offset=0&limit=" + limit
 
@@ -1084,11 +1102,14 @@ class GetRecentlyPlayedTracksSpotify(APIView):
             settings = settingsFilter[0]
             settings.save()
 
-        participantFilter = Participant.objects.filter(participant=participant_id)
-        if participantFilter.exists():
-            participant = participantFilter[0]
-            participant.save()
-            self.request.session["participant"] = participant.participant
+        retrieval_session_key = self.request.session.get('retrieval_session_key')
+        if not retrieval_session_key:
+            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
+        except Participant.DoesNotExist:
+            return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
 
         endpoint = "me/player/recently-played?limit=" + limit
 
