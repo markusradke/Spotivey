@@ -1,32 +1,23 @@
 from django.db import models
-import string
 import random
+import string
 from django.contrib.auth.models import User
 
-
 def generate_unique_code():
+    """Generate unique 6-character code for UserCode"""
     length = 6
-
+    
     while True:
         code = ''.join(random.choices(string.ascii_uppercase, k=length))
-        if Room.objects.filter(code=code).count() == 0:
+        if UserCode.objects.filter(code=code).count() == 0:
             break
-
+    
     return code
 
-class Room(models.Model):
-    code = models.CharField(max_length=8, default=generate_unique_code, unique=True)
-    host = models.CharField(max_length=50)
-    created_at = models.DateTimeField(auto_now_add=True)
-    surveyID = models.CharField(max_length=20, default='')
-    participant = models.CharField(max_length=20, default='')
-
-
 class UserCode(models.Model):
-    code = models.CharField(max_length=8, default=generate_unique_code, unique=True)
+    code = models.CharField(max_length=8, default='', unique=True)
     host = models.CharField(max_length=50)
     user = models.ManyToManyField(User, default='')
-
 
 class Settings(models.Model):
     defaultConfirmTextEng = """Please confirm the results.

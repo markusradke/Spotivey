@@ -7,22 +7,22 @@ import { useNavigate } from "react-router-dom";
 
 export default function Version() {
 
-    const [userInRoomCheck, setUserInRoomCheck] = useState(false)
+    const [getParticipantSessionCheck, setgetParticipantSessionCheck] = useState(false)
     const navigate = useNavigate()
 
     useEffect(() => {
-        async function userInRoom() {
-          fetch("/api/user-in-room")
+        async function getParticipantSession() {
+          fetch("/api/get-user-session")
             .then((response) => response.json())
             .then((data) => {
               if (data.username === null){
-                setUserInRoomCheck(false)
+                setgetParticipantSessionCheck(false)
               } else {
-                setUserInRoomCheck(true)
+                setgetParticipantSessionCheck(true)
               }
             });
         }
-        userInRoom();
+        getParticipantSession();
       }, [])
 
     

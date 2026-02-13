@@ -41,8 +41,8 @@ export default function UserResultPage(props) {
       }, [username])
 
     useEffect(() => {
-        async function userInRoom() {
-            fetch("/api/user-in-room")
+        async function getParticipantSession() {
+            fetch("/api/get-user-session")
               .then((response) => response.json())
               .then((data) => {
                 if (data.username === null){
@@ -63,7 +63,7 @@ export default function UserResultPage(props) {
                 }
               });
           }
-        userInRoom();
+        getParticipantSession();
     }, [])
 
     useEffect(() => {

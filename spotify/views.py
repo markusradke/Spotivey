@@ -5,7 +5,7 @@ from requests import Request, post
 from rest_framework import status
 from rest_framework.response import Response
 from .util import *
-from api.models import Room, Settings
+from api.models import Settings
 import numpy as np
 import random
 from .models import *
@@ -391,26 +391,7 @@ class TopArtists(APIView):
     lookup_url_kwarg_timeRange = "timeRange"
 
     def post(self, request, format=None):
-        room_code = self.request.session.get("room_code")
-        room = Room.objects.filter(code=room_code)
-        if room.exists():
-            room = room[0]
-        else:
-            return Response({}, status=status.HTTP_404_NOT_FOUND)
-        host = room.host
-
-        limit = request.GET.get(self.lookup_url_kwarg_limit)
-
-        timeRange = request.GET.get(self.lookup_url_kwarg_timeRange)
-        participant_id = request.data.get("participant")
-        surveyID = request.data.get("surveyID")
-        roomCode = request.data.get("roomCode")
         confirm = False if request.data.get("confirm") else True
-
-        settingsFilter = Settings.objects.filter(umfrageID=surveyID)
-        if settingsFilter.exists():
-            settings = settingsFilter[0]
-            settings.save()
 
         retrieval_session_key = self.request.session.get('retrieval_session_key')
         if not retrieval_session_key:
@@ -421,8 +402,11 @@ class TopArtists(APIView):
         except Participant.DoesNotExist:
             return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
 
+        limit = request.GET.get(self.lookup_url_kwarg_limit)
+        timeRange = request.GET.get(self.lookup_url_kwarg_timeRange)
         endpoint = "me/top/artists?time_range=" + timeRange + "&limit=" + limit
 
+        host = self.request.session.session_key
         response = execute_spotify_api_request(host, endpoint)
 
         if "error" in response or "items" not in response:
@@ -487,26 +471,7 @@ class TopTracks(APIView):
     lookup_url_kwarg_timeRange = "timeRange"
 
     def post(self, request, format=None):
-        room_code = self.request.session.get("room_code")
-        roommodel = Room.objects.filter(code=room_code)
-        if roommodel.exists():
-            roommodel = roommodel[0]
-        else:
-            return Response({}, status=status.HTTP_404_NOT_FOUND)
-
-        limit = request.GET.get(self.lookup_url_kwarg_limit)
-
-        timeRange = request.GET.get(self.lookup_url_kwarg_timeRange)
-
-        participant_id = request.data.get("participant")
-        surveyID = request.data.get("surveyID")
-        roomCode = request.data.get("roomCode")
         confirm = False if request.data.get("confirm") else True
-
-        settingsFilter = Settings.objects.filter(umfrageID=surveyID)
-        if settingsFilter.exists():
-            settings = settingsFilter[0]
-            settings.save()
 
         retrieval_session_key = self.request.session.get('retrieval_session_key')
         if not retrieval_session_key:
@@ -517,8 +482,11 @@ class TopTracks(APIView):
         except Participant.DoesNotExist:
             return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        host = roommodel.host
+        limit = request.GET.get(self.lookup_url_kwarg_limit)
+        timeRange = request.GET.get(self.lookup_url_kwarg_timeRange)
         endpoint = "me/top/tracks?time_range=" + timeRange + "&limit=" + limit
+
+        host = self.request.session.session_key
         response = execute_spotify_api_request(host, endpoint)
 
         if "error" in response or "items" not in response:
@@ -625,19 +593,7 @@ class GetSavedTracksSpotify(APIView):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
 
-        limit = request.GET.get(self.lookup_url_kwarg_limit)
-        market = request.GET.get(self.lookup_url_kwarg_market)
-
-        participant_id = request.data.get("participant")
-        surveyID = request.data.get("surveyID")
-        roomCode = request.data.get("roomCode")
-
         confirm = False if request.data.get("confirm") else True
-
-        settingsFilter = Settings.objects.filter(umfrageID=surveyID)
-        if settingsFilter.exists():
-            settings = settingsFilter[0]
-            settings.save()
 
         retrieval_session_key = self.request.session.get('retrieval_session_key')
         if not retrieval_session_key:
@@ -648,21 +604,15 @@ class GetSavedTracksSpotify(APIView):
         except Participant.DoesNotExist:
             return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        room_code = self.request.session.get("room_code")
-        roommodel = Room.objects.filter(code=room_code)
-
-        if roommodel.exists():
-            roommodel = roommodel[0]
-        else:
-            return Response({}, status=status.HTTP_404_NOT_FOUND)
-
-        host = roommodel.host
+        limit = request.GET.get(self.lookup_url_kwarg_limit)
+        market = request.GET.get(self.lookup_url_kwarg_market)
 
         if market != "":
             endpoint = "me/tracks?market=" + market + "&limit=" + limit
         else:
             endpoint = "me/tracks?limit=" + limit
 
+        host = self.request.session.session_key
         response = execute_spotify_api_request(host, endpoint)
 
         if "error" in response or "items" not in response:
@@ -763,19 +713,8 @@ class GetUsersProfileSpotify(APIView):
     # get users profile
 
     def post(self, request):
-        room_code = self.request.session.get("room_code")
-        roommodel = Room.objects.filter(code=room_code)
 
-        if roommodel.exists():
-            roommodel = roommodel[0]
-        else:
-            return Response({}, status=status.HTTP_404_NOT_FOUND)
-
-        participant_id = request.data.get("participant")
-        surveyID = request.data.get("surveyID")
-        roomCode = request.data.get("roomCode")
-
-        host = roommodel.host
+        host = self.request.session.session_key
         endpoint = "me"
 
         response = execute_spotify_api_request(host, endpoint)
@@ -792,11 +731,6 @@ class GetUsersProfileSpotify(APIView):
             "followers": followers,
             "product": product,
         }
-
-        settingsFilter = Settings.objects.filter(umfrageID=surveyID)
-        if settingsFilter.exists():
-            settings = settingsFilter[0]
-            settings.save()
 
         retrieval_session_key = self.request.session.get('retrieval_session_key')
         if not retrieval_session_key:
@@ -823,25 +757,10 @@ class GetFollowedArtistsSpotify(APIView):
     lookup_url_kwarg_limit = "limit"
 
     def post(self, request, format=None):
-        room_code = self.request.session.get("room_code")
-        room = Room.objects.filter(code=room_code)
-        if room.exists():
-            room = room[0]
-        else:
-            return Response({}, status=status.HTTP_404_NOT_FOUND)
-        host = room.host
-
+        host = self.request.session.session_key
         limit = request.GET.get(self.lookup_url_kwarg_limit)
 
-        participant_id = request.data.get("participant")
-        surveyID = request.data.get("surveyID")
-        roomCode = request.data.get("roomCode")
         confirm = False if request.data.get("confirm") else True
-
-        settingsFilter = Settings.objects.filter(umfrageID=surveyID)
-        if settingsFilter.exists():
-            settings = settingsFilter[0]
-            settings.save()
 
         retrieval_session_key = self.request.session.get('retrieval_session_key')
         if not retrieval_session_key:
@@ -919,26 +838,9 @@ class GetPlaylistsSpotify(APIView):
     lookup_url_kwarg_public = "public"
 
     def post(self, request, format=None):
-        room_code = self.request.session.get("room_code")
-        room = Room.objects.filter(code=room_code)
-        if room.exists():
-            room = room[0]
-        else:
-            return Response({}, status=status.HTTP_404_NOT_FOUND)
-        host = room.host
+        host = self.request.session.session_key
 
-        limit = request.GET.get(self.lookup_url_kwarg_limit)
-        publicCheck = request.GET.get(self.lookup_url_kwarg_public)
-
-        participant_id = request.data.get("participant")
-        surveyID = request.data.get("surveyID")
-        roomCode = request.data.get("roomCode")
         confirm = False if request.data.get("confirm") else True
-
-        settingsFilter = Settings.objects.filter(umfrageID=surveyID)
-        if settingsFilter.exists():
-            settings = settingsFilter[0]
-            settings.save()
 
         retrieval_session_key = self.request.session.get('retrieval_session_key')
         if not retrieval_session_key:
@@ -949,6 +851,8 @@ class GetPlaylistsSpotify(APIView):
         except Participant.DoesNotExist:
             return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
 
+        limit = request.GET.get(self.lookup_url_kwarg_limit)
+        publicCheck = request.GET.get(self.lookup_url_kwarg_public)
         endpoint = "me/playlists??offset=0&limit=" + limit
 
         response = execute_spotify_api_request(host, endpoint)
@@ -1062,25 +966,8 @@ class GetRecentlyPlayedTracksSpotify(APIView):
     lookup_url_kwarg_limit = "limit"
 
     def post(self, request, format=None):
-        room_code = self.request.session.get("room_code")
-        room = Room.objects.filter(code=room_code)
-        if room.exists():
-            room = room[0]
-        else:
-            return Response({}, status=status.HTTP_404_NOT_FOUND)
-        host = room.host
-
-        limit = request.GET.get(self.lookup_url_kwarg_limit)
-
-        participant_id = request.data.get("participant")
-        surveyID = request.data.get("surveyID")
-        roomCode = request.data.get("roomCode")
+        host = self.request.session.session_key
         confirm = False if request.data.get("confirm") else True
-
-        settingsFilter = Settings.objects.filter(umfrageID=surveyID)
-        if settingsFilter.exists():
-            settings = settingsFilter[0]
-            settings.save()
 
         retrieval_session_key = self.request.session.get('retrieval_session_key')
         if not retrieval_session_key:
@@ -1091,6 +978,7 @@ class GetRecentlyPlayedTracksSpotify(APIView):
         except Participant.DoesNotExist:
             return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
 
+        limit = request.GET.get(self.lookup_url_kwarg_limit)
         endpoint = "me/player/recently-played?limit=" + limit
 
         response = execute_spotify_api_request(host, endpoint)

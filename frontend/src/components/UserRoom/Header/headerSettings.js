@@ -15,7 +15,7 @@ export default function headerSettings (props) {
             method: "POST",
             headers: { "Content-Type": "application/json" },
           };
-          fetch("/api/leave-room", requestOptions).then((_response) => {
+          fetch("/api/logout-user", requestOptions).then((_response) => {
             navigate("/login");
           });
     }

@@ -2,10 +2,10 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('create-room', CreateRoomView.as_view()),
-    path('get-room', GetRoom.as_view()),
-    path('user-in-room', UserInRoom.as_view()),
-    path('leave-room', LeaveRoom.as_view()),
+    path('init-participant-session', InitParticipantSession.as_view()),
+    path('get-participant-session', GetParticipantSession.as_view()),
+    path('get-user-session', GetUserSession.as_view()),
+    path('logout-user', LogoutUser.as_view()),
     path('create-settings-user', CreateSettingsUser.as_view()),
     path('login-settings-user', LoginSettingsUser.as_view()),
     path('create-settings', CreateSettings.as_view()),

@@ -53,30 +53,35 @@ export default function FirstPage () {
 
   useEffect(() => {
     const url = new URL(window.location.href)
-    const paramsObject = paramsToObject(url.searchParams.entries())
-    console.log(paramsObject)
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        surveyID: url.searchParams.get('surveyID'),
-        participant: url.searchParams.get('participant'),
-        lang: url.searchParams.get('lang'),
-        paramsObject:paramsObject,
-      }),
-    };
-    if (!createRoom){
-      fetch("/api/create-room", requestOptions)
+    const surveyID = url.searchParams.get('surveyID')
+    const participant = url.searchParams.get('participant')
+    const lang = url.searchParams.get('lang')
+    
+    // Only initialize participant session if URL params exist
+    if (!createRoom && surveyID && participant) {
+      const paramsObject = paramsToObject(url.searchParams)
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          surveyID,
+          participant,
+          lang,
+          paramsObject,
+        }),
+      };
+      
+      fetch("/api/init-participant-session", requestOptions)
         .then((response) => response.json())
         .then((data) => {
             setCreateRoom(true)
         });
-      }
+    }
   }, [])
 
   useEffect(() => {
     if (createRoom) {
-      fetch("/api/user-in-room")
+      fetch("/api/get-participant-session")
         .then((response) => response.json())
         .then((data) => {
           if (!data.surveyID) {

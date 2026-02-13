@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from api.models import Room, UserCode, Settings, SettingsSecondSurvey
+from api.models import UserCode, Settings, SettingsSecondSurvey
 # Register your models here.
 import csv
 from django.http import HttpResponse
@@ -25,7 +25,6 @@ def export_as_csv(self, request, queryset):
 def make_published(modeladmin, request, queryset):
     queryset.update(status='p')
 
-admin.site.register(Room)
 admin.site.register(UserCode)
 admin.site.register(Settings)
 admin.site.register(SettingsSecondSurvey)

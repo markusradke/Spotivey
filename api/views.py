@@ -433,39 +433,11 @@ class saveToCSVFileView(APIView):
             return Response(rowsGesamt, status=status.HTTP_200_OK)
         return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
 
-class GetRoom(APIView):
-    # Get room and create participant instance
 
-    serializer_class = RoomSerializer
-    lookup_url_kwarg = 'code'
-    lookup_url_kwarg_participant = 'participant'
-
-    def get(self, request, format=None):
-        code = request.GET.get(self.lookup_url_kwarg)
-        participant_id = request.GET.get(self.lookup_url_kwarg_participant)
-
-        if code != None:
-            self.request.session['room_code'] = code
-            room = Room.objects.filter(code=code)
-            if len(room) > 0:
-                # participantFilter = Participant.objects.filter(participant=participant_id)
-                # if len(participantFilter) == 0:
-                #     participant = Participant(participant=participant_id)
-                #     participant.save()
-
-                data = RoomSerializer(room[0]).data
-                data['is_host'] = self.request.session.session_key == room[0].host
-                return Response(data, status=status.HTTP_200_OK)
-            return Response({'Room Not Found': 'Invalid Room Code.'}, status=status.HTTP_404_NOT_FOUND)
-
-        return Response({'Bad Request': 'Code paramater not found in request'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class CreateRoomView(APIView):
-    # A room consists of the room code, the surveyID, the participant ID and the language code.
+class InitParticipantSession(APIView):
+    # Creates a participant session with surveyID, participant ID, and language.
     # If necessary, the language code and the subject ID are updated. The Spotify token that may exist is also deleted.
 
-    serializer_class = CreateRoomSerializer
     def post(self, request, format=None):
         if self.request.session.exists(self.request.session.session_key):
             if request.data.get('participant') is not None and request.data.get('surveyID') is not None:
@@ -493,49 +465,35 @@ class CreateRoomView(APIView):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
 
-        serializer = self.serializer_class(data=request.data)
+        surveyID = request.data.get('surveyID')
+        participant_id = request.data.get('participant')
+
+        settings = Settings.objects.filter(umfrageID=surveyID).first()
+        if not settings: 
+            return Response({'Error': 'Survey not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        retrieval_session_key = str(uuid.uuid4())
+        Participant.objects.create(
+            participant=participant_id, 
+            settings=settings,
+            retrieval_session_key=retrieval_session_key,
+            status='in_progress'
+        )
+        
+        room_code = str(uuid.uuid4())[:8].upper()
+
+        self.request.session['room_code'] = room_code
+        self.request.session['surveyID'] = surveyID
+        self.request.session['participant'] = participant_id
+        self.request.session['retrieval_session_key'] = retrieval_session_key  
+        self.request.session['language'] = request.data.get('lang')
+        self.request.session['paramsObject'] = request.data.get('paramsObject')
+
+        return Response({'code': room_code}, status=status.HTTP_200_OK)
 
 
-        if serializer.is_valid():
-            host = self.request.session.session_key
-            surveyID = request.data.get('surveyID')
-            participant_id = request.data.get('participant')
-
-            settings = Settings.objects.filter(umfrageID=surveyID).first()
-            if not settings: 
-                return Response({'Error': 'Survey not found'}, status=status.HTTP_404_NOT_FOUND)
-
-            retrieval_session_key = str(uuid.uuid4())
-            participant_obj = Participant.objects.create(
-                participant=participant_id, 
-                settings=settings,
-                retrieval_session_key=retrieval_session_key,
-                status='in_progress'
-            )
-            
-            queryset = Room.objects.filter(host=host)
-            if queryset.exists():
-                room = queryset[0]
-                room.surveyID = surveyID
-                room.participant = participant_id
-                room.save()
-            else:
-                room = Room(host=host, surveyID=surveyID, participant=participant_id)
-                room.save()
-            
-            self.request.session['room_code'] = room.code
-            self.request.session['surveyID'] = surveyID
-            self.request.session['participant'] = participant_id
-            self.request.session['retrieval_session_key'] = retrieval_session_key  
-            self.request.session['language'] = request.data.get('lang')
-            self.request.session['paramsObject'] = request.data.get('paramsObject')
-    
-            return Response(RoomSerializer(room).data, status=status.HTTP_200_OK if queryset.exists() else status.HTTP_201_CREATED)
-        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class UserInRoom(APIView):
-    #Looks in database for participant data
+class GetParticipantSession(APIView):
+    """Get session data for survey participants"""
 
     def get(self, request, format=None):
         if not self.request.session.exists(self.request.session.session_key):
@@ -552,36 +510,40 @@ class UserInRoom(APIView):
         UsersProfileSpotify.objects.filter(participant=participant, confirm=False).delete()
 
 
-        if 'fullname' in self.request.session:
-            fullName = self.request.session['fullname']
-        else:
-            fullName = None
-
         data = {
-            'username': self.request.session.get('username'),
-            'code': self.request.session.get('code'),
             'roomCode': self.request.session.get('room_code'),
             'surveyID': self.request.session.get('surveyID'),
             'participant': self.request.session.get('participant'),
             'welcome': self.request.session.get('welcome'),
             'language': self.request.session.get('language'),
             'paramsObject': self.request.session.get('paramsObject'),
-            'fullName': fullName,
-            'resultExist': resultExist
+            'resultExist': False  # Could enhance this check if needed
         }
         return JsonResponse(data, status=status.HTTP_200_OK)
 
+class GetUserSession(APIView):
+    """Get session data for users (researchers)"""
+    
+    def get(self, request, format=None):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
 
-class LeaveRoom(APIView):
+        fullName = self.request.session.get('fullname', None)
+
+        data = {
+            'username': self.request.session.get('username'),
+            'code': self.request.session.get('code'),
+            'fullName': fullName,
+        }
+        return JsonResponse(data, status=status.HTTP_200_OK)
+
+class LogoutUser(APIView):
     # Deletes user and all associated cookies
 
     def post(self, request, format=None):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-        room_code = self.request.session.get('room_code')
-        if room_code:
-            Room.objects.filter(code=room_code).delete()
-
+        
         self.request.session.flush()
         return Response({'Message': 'Success'}, status=status.HTTP_200_OK)
 

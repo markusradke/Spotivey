@@ -1,19 +1,7 @@
 from django.db import models
 from rest_framework import serializers
-from .models import Room
 from django.contrib.auth.models import User
 
-class RoomSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Room
-        fields = ('id', 'code', 'host', 'created_at')
-
-class CreateRoomSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Room
-        fields = '__all__'
-        read_only_fields = ['host']
 
 
 class CreateSettingsUserSerializer(serializers.ModelSerializer):
@@ -36,10 +24,3 @@ class LoginSettingsUserSerializerZwei(serializers.ModelSerializer):
         model = User
         fields = ('email', 'password')
 
-
-class UpdateRoomSerializer(serializers.ModelSerializer):
-    code = serializers.CharField(validators=[])
-
-    class Meta:
-        model = Room
-        fields = ('code')

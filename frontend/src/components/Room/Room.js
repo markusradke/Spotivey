@@ -307,19 +307,10 @@ export default function Room (props) {
   }, [topTracks, savedTracks, topArtists, followedArtists, currentPlaylists, recentlyTracks])
 
   useEffect(() => {
-    if (props.welcomePageOK && props.participant){
-      fetch("/api/get-room" + "?code=" + props.roomCode + "&participant=" + props.participant)
-        .then((response) => {
-          if (!response.ok) {
-            navigate("/");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          authenticateSpotify();
-        });
-      }
-  }, [props.welcomePageOK])
+  if (props.welcomePageOK && props.participant){
+    authenticateSpotify();  // ← Just call directly, no get-room needed
+  }
+}, [props.welcomePageOK])
   
   function authenticateSpotify() {
     fetch("/spotify/is-authenticated")

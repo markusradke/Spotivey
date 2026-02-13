@@ -24,8 +24,8 @@ export default function ConfirmTextDesign(){
     const [confirmTextArray, setConfirmTextArray] = useState(Array(6).fill(['', '']))
 
     useEffect(() => {
-        async function userInRoom() {
-            fetch("/api/user-in-room")
+        async function getParticipantSession() {
+            fetch("/api/get-user-session")
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.username === null){
@@ -53,7 +53,7 @@ export default function ConfirmTextDesign(){
                     }
                 });
             }
-        userInRoom();
+        getParticipantSession();
     }, [])
 
     function renderTextFieldConfirmation(title, label, setStateVar, value, index, index2, labelLang){

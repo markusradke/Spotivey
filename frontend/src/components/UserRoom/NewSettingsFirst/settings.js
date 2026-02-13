@@ -206,8 +206,8 @@ export default function SettingsPage(props) {
      recentlyTracksChecked, topItemsTracksChecked])
 
   useEffect(() => {
-    async function userInRoom() {
-      fetch("/api/user-in-room")
+    async function getParticipantSession() {
+      fetch("/api/get-user-session")
         .then((response) => response.json())
         .then((data) => {
           if (data.username === null){
@@ -217,7 +217,7 @@ export default function SettingsPage(props) {
           }
         });
     }
-    userInRoom();
+    getParticipantSession();
   }, [])
   
   function openCollapse(){
