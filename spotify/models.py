@@ -22,37 +22,37 @@ class Participant(models.Model):
 class SavedTracksSpotify(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
     data = models.JSONField(default=dict)
-    confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
+    confirm = models.BooleanField(default=False)    
 
 class TopTracksSpotify(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
     data = models.JSONField(default=dict)
-    confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
+    confirm = models.BooleanField(default=False)    
 
 class TopArtistsSpotify(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
     data = models.JSONField(default=dict)
-    confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
+    confirm = models.BooleanField(default=False)    
 
 class UsersProfileSpotify(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
     data = models.JSONField(default=dict)
-    confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
+    confirm = models.BooleanField(default=False)   
 
 class FollowedArtistsSpotify(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
     data = models.JSONField(default=dict)
-    confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
+    confirm = models.BooleanField(default=False)    
 
 class CurrentPlaylistsSpotify(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
     data = models.JSONField(default=dict)
-    confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
+    confirm = models.BooleanField(default=False)   
 
 class RecentlyTracksSpotify(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
     data = models.JSONField(default=dict)
-    confirm = models.BooleanField(default=False)    #ist überhaupt bestätigt?
+    confirm = models.BooleanField(default=False)    
 
 class SpotifyAudioFeatures(models.Model):
     dataString = models.CharField(max_length=50, default='')

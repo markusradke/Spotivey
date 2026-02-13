@@ -246,6 +246,11 @@ class saveToCSVFileView(APIView):
                         tracksLiveness[indexPart] += [''] * (countDataParticipantTranspose[indexCount][laengeIndexMax[indexCount]] - (index))
                         tracksValence[indexPart] += [''] * (countDataParticipantTranspose[indexCount][laengeIndexMax[indexCount]] - (index))
                         tracksTempo[indexPart] += [''] * (countDataParticipantTranspose[indexCount][laengeIndexMax[indexCount]] - (index))
+                        if indexPart < 2:
+                            padding_count = countDataParticipantTranspose[indexCount][laengeIndexMax[indexCount]]
+                            tracksPlayedAt += [''] * padding_count
+                            tracksContextType += [''] * padding_count
+                            tracksContextUri += [''] * padding_count
                     elif indexPart==2:
                         tracksPlayedAt += [''] * (countDataParticipantTranspose[indexCount][laengeIndexMax[indexCount]] - (index))
                         tracksContextType += [''] * (countDataParticipantTranspose[indexCount][laengeIndexMax[indexCount]] - (index))
