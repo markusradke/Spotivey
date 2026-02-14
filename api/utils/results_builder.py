@@ -1,18 +1,11 @@
-import regex
-from .models import *
-from spotify.models import *
-
-regexString = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-
-def check_email(usernameString):
-    #Check if string is an email address
-
-    if regex.search(regexString, usernameString):
-        check = 0
-    else:
-        check = 1
-
-    return check
+"""Results dictionary builder for displaying retrieval data."""
+from ..models import RetrievalSetting
+from spotify.models import (
+    SavedTrack, TopTrack, RecentTrack,
+    TopArtist, FollowedArtist,
+    CurrentPlaylist, ParticipantProfile,
+    Participant, AudioFeatures
+)
 
 
 def getResultDict(surveyID):

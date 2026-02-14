@@ -1,5 +1,10 @@
 from django.urls import path
-from .views import *
+from .views import (
+    AuthURL, AuthURL2, spotify_callback, spotify_callback2, IsAuthenticated,
+    GetAudioFeaturesSpotify, TopArtists, GetFollowedArtistsSpotify,
+    TopTracks, GetSavedTracksSpotify, GetRecentlyPlayedTracksSpotify,
+    GetPlaylistsSpotify, GetUsersProfileSpotify
+)
 
 urlpatterns = [
     path('get-auth-url', AuthURL.as_view()),
