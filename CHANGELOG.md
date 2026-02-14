@@ -1,4 +1,8 @@
 # Spotivey Changelog
+## 2026-02-13 - Model Naming Standardization
+- **Renamed models to singular form** - `SavedTracksSpotify` → `SavedTrack`, `TopTracksSpotify` → `TopTrack`, `TopArtistsSpotify` → `TopArtist`, `UsersProfileSpotify` → `ParticipantProfile`, `FollowedArtistsSpotify` → `FollowedArtist`, `CurrentPlaylistsSpotify` → `CurrentPlaylist`, `RecentlyTracksSpotify` → `RecentTrack`, `SpotifyAudioFeatures` → `AudioFeatures`
+- **Renamed Settings model** - `Settings` → `RetrievalSetting`, `SettingsSecondSurvey` → `FollowupSurvey` for clearer semantics
+- **Updated all references** - Changed imports, queries, and instantiations in `api/views.py`, `api/util.py`, `api/admin.py`, `spotify/views.py`, `spotify/admin.py`
 
 ## 2026-02-13 - Session & Architecture Cleanup
 - **Removed Room model** - Obsolete model deleted from `api/models.py`, `api/serializers.py`, `api/admin.py`

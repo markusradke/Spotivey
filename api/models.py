@@ -19,7 +19,8 @@ class UserCode(models.Model):
     host = models.CharField(max_length=50)
     user = models.ManyToManyField(User, default='')
 
-class Settings(models.Model):
+    
+class RetrievalSetting(models.Model):
     defaultConfirmTextEng = """Please confirm the results.
 If some results are unfamiliar or uncomfortable to you, please feel free to contradict the results."""
     defaultConfirmTextDe = """Bitte bestätigen Sie die Ergebnisse.
@@ -43,10 +44,13 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie den 
     confirmTextFADe = models.TextField(default=defaultConfirmTextDe)
     confirmTextCPDe = models.TextField(default=defaultConfirmTextDe)
 
+    def __str__(self):
+        return self.nameUmfrage + " (survey ID: " + self.umfrageID + ")"
 
-class SettingsSecondSurvey(models.Model):
+
+class FollowupSurvey(models.Model):
     user = models.ManyToManyField(User, default='')
-    settings = models.ForeignKey(Settings, on_delete=models.CASCADE, null= True, blank=True)
+    settings = models.ForeignKey(RetrievalSetting, on_delete=models.CASCADE, null= True, blank=True)
     secondSurveyID = models.TextField(max_length=50, default='', blank=True)
     secondSurveyServer = models.TextField(max_length=50, default='', blank=True)
     secondSurveyLanguage = models.TextField(max_length=50, default='', blank=True)
@@ -54,3 +58,6 @@ class SettingsSecondSurvey(models.Model):
     secondSurveyData = models.JSONField(null=True, blank=True)
     secondSurveyEndURL = models.URLField(max_length=200, default='', blank=True)
     passLang = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "Follow-up survey for " + self.settings.nameUmfrage + " (follow-up survey ID: " + self.settings.umfrageID + ")"

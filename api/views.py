@@ -79,34 +79,34 @@ class saveToCSVFileView(APIView):
             tracksContextType = []
             tracksContextUri = []
 
-            settingsObject = Settings.objects.filter(umfrageID=surveyID)
+            settingsObject = RetrievalSetting.objects.filter(umfrageID=surveyID)
 
-            savedTracks = SavedTracksSpotify.objects.filter(participant__settings__in=settingsObject, confirm=True).values_list(
+            savedTracks = SavedTrack.objects.filter(participant__settings__in=settingsObject, confirm=True).values_list(
                 'data', 'participant').order_by('participant__participant').values()
-            topTracks = TopTracksSpotify.objects.filter(participant__settings__in=settingsObject, confirm=True).values_list(
+            topTracks = TopTrack.objects.filter(participant__settings__in=settingsObject, confirm=True).values_list(
                 'data', 'participant').order_by('participant__participant').values()
-            recentlyTracks = RecentlyTracksSpotify.objects.filter(participant__settings__in=settingsObject, confirm=True).values_list(
+            recentlyTracks = RecentTrack.objects.filter(participant__settings__in=settingsObject, confirm=True).values_list(
                 'data', 'participant').order_by('participant__participant').values()
-            topArtists = TopArtistsSpotify.objects.filter(participant__settings__in=settingsObject, confirm=True).values_list(
+            topArtists = TopArtist.objects.filter(participant__settings__in=settingsObject, confirm=True).values_list(
                 'data', 'participant').order_by('participant__participant').values()
-            followedArtists = FollowedArtistsSpotify.objects.filter(participant__settings__in=settingsObject, confirm=True).values_list(
+            followedArtists = FollowedArtist.objects.filter(participant__settings__in=settingsObject, confirm=True).values_list(
                 'data', 'participant').order_by('participant__participant').values()
-            currentPlaylists = CurrentPlaylistsSpotify.objects.filter(participant__settings__in=settingsObject, confirm=True).values_list(
+            currentPlaylists = CurrentPlaylist.objects.filter(participant__settings__in=settingsObject, confirm=True).values_list(
                 'data', 'participant').order_by('participant__participant').values()
-            usersProfile = UsersProfileSpotify.objects.filter(participant__settings__in=settingsObject).values_list(
+            usersProfile = ParticipantProfile.objects.filter(participant__settings__in=settingsObject).values_list(
                 'data', 'participant').order_by('participant__participant').values()
             allDataArray = [savedTracks, topTracks, recentlyTracks, topArtists, 
                 followedArtists, currentPlaylists, usersProfile]
 
-            settings = Settings.objects.get(umfrageID=surveyID)
+            settings = RetrievalSetting.objects.get(umfrageID=surveyID)
             howManyPartArray = [
-                SavedTracksSpotify.objects.filter(participant__settings=settings, confirm=True).values('participant').distinct().count(),
-                TopTracksSpotify.objects.filter(participant__settings=settings, confirm=True).values('participant').distinct().count(),
-                RecentlyTracksSpotify.objects.filter(participant__settings=settings, confirm=True).values('participant').distinct().count(),
-                TopArtistsSpotify.objects.filter(participant__settings=settings, confirm=True).values('participant').distinct().count(),
-                FollowedArtistsSpotify.objects.filter(participant__settings=settings, confirm=True).values('participant').distinct().count(),
-                CurrentPlaylistsSpotify.objects.filter(participant__settings=settings, confirm=True).values('participant').distinct().count(),
-                UsersProfileSpotify.objects.filter(participant__settings=settings, confirm=True).values('participant').distinct().count()
+                SavedTrack.objects.filter(participant__settings=settings, confirm=True).values('participant').distinct().count(),
+                TopTrack.objects.filter(participant__settings=settings, confirm=True).values('participant').distinct().count(),
+                RecentTrack.objects.filter(participant__settings=settings, confirm=True).values('participant').distinct().count(),
+                TopArtist.objects.filter(participant__settings=settings, confirm=True).values('participant').distinct().count(),
+                FollowedArtist.objects.filter(participant__settings=settings, confirm=True).values('participant').distinct().count(),
+                CurrentPlaylist.objects.filter(participant__settings=settings, confirm=True).values('participant').distinct().count(),
+                ParticipantProfile.objects.filter(participant__settings=settings, confirm=True).values('participant').distinct().count()
             ]
 
             maxParticipantCount = max(howManyPartArray)
@@ -119,32 +119,32 @@ class saveToCSVFileView(APIView):
                     for j in range(len(data)):
                         if index == 0:
                             if countCheck == j:
-                                countCheck+=int(SavedTracksSpotify.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
-                                countDataParticipant[index].append(SavedTracksSpotify.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
+                                countCheck+=int(SavedTrack.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
+                                countDataParticipant[index].append(SavedTrack.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
                         elif index == 1:
                             if countCheck == j:
-                                countCheck+=int(TopTracksSpotify.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
-                                countDataParticipant[index].append(TopTracksSpotify.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
+                                countCheck+=int(TopTrack.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
+                                countDataParticipant[index].append(TopTrack.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
                         elif index == 2:
                             if countCheck == j:
-                                countCheck+=int(RecentlyTracksSpotify.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
-                                countDataParticipant[index].append(RecentlyTracksSpotify.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
+                                countCheck+=int(RecentTrack.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
+                                countDataParticipant[index].append(RecentTrack.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
                         elif index == 3:
                             if countCheck == j:
-                                countCheck+=int(TopArtistsSpotify.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
-                                countDataParticipant[index].append(TopArtistsSpotify.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
+                                countCheck+=int(TopArtist.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
+                                countDataParticipant[index].append(TopArtist.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
                         elif index == 4:
                             if countCheck == j:
-                                countCheck+=int(FollowedArtistsSpotify.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
-                                countDataParticipant[index].append(FollowedArtistsSpotify.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
+                                countCheck+=int(FollowedArtist.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
+                                countDataParticipant[index].append(FollowedArtist.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
                         elif index == 5:
                             if countCheck == j:
-                                countCheck+=int(CurrentPlaylistsSpotify.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
-                                countDataParticipant[index].append(CurrentPlaylistsSpotify.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
+                                countCheck+=int(CurrentPlaylist.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
+                                countDataParticipant[index].append(CurrentPlaylist.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
                         else:
                             if countCheck == j:
-                                countCheck+=int(UsersProfileSpotify.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
-                                countDataParticipant[index].append(UsersProfileSpotify.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
+                                countCheck+=int(ParticipantProfile.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
+                                countDataParticipant[index].append(ParticipantProfile.objects.filter(participant__settings=settings, confirm=True,participant__participant=Participant.objects.filter(id=data[j].get('participant_id')).values_list('participant')[0][0]).count())
                 else:
                     countDataParticipant[index] = [0] * maxParticipantCount
                     
@@ -468,7 +468,7 @@ class InitParticipantSession(APIView):
         surveyID = request.data.get('surveyID')
         participant_id = request.data.get('participant')
 
-        settings = Settings.objects.filter(umfrageID=surveyID).first()
+        settings = RetrievalSetting.objects.filter(umfrageID=surveyID).first()
         if not settings: 
             return Response({'Error': 'Survey not found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -501,13 +501,13 @@ class GetParticipantSession(APIView):
 
         participant = self.request.session.get('participant')
         resultExist=False
-        SavedTracksSpotify.objects.filter(participant=participant, confirm=False).delete()
-        TopTracksSpotify.objects.filter(participant=participant, confirm=False).delete()
-        RecentlyTracksSpotify.objects.filter(participant=participant, confirm=False).delete()
-        TopArtistsSpotify.objects.filter(participant=participant, confirm=False).delete()
-        FollowedArtistsSpotify.objects.filter(participant=participant, confirm=False).delete()
-        CurrentPlaylistsSpotify.objects.filter(participant=participant, confirm=False).delete()
-        UsersProfileSpotify.objects.filter(participant=participant, confirm=False).delete()
+        SavedTrack.objects.filter(participant=participant, confirm=False).delete()
+        TopTrack.objects.filter(participant=participant, confirm=False).delete()
+        RecentTrack.objects.filter(participant=participant, confirm=False).delete()
+        TopArtist.objects.filter(participant=participant, confirm=False).delete()
+        FollowedArtist.objects.filter(participant=participant, confirm=False).delete()
+        CurrentPlaylist.objects.filter(participant=participant, confirm=False).delete()
+        ParticipantProfile.objects.filter(participant=participant, confirm=False).delete()
 
 
         data = {
@@ -746,13 +746,13 @@ class CreateSettings(APIView):
         if not user.exists():
             return Response({'msg': 'Neu anmelden...'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            if Settings.objects.filter(umfrageID=umfrageID).exists(): 
+            if RetrievalSetting.objects.filter(umfrageID=umfrageID).exists(): 
                 return Response({
                     'msg': 'Survey ID already exists (possibly created by another user)', 
                     'error': 'duplicate_survey_ID',
                     'surveyID': umfrageID
                 }, status=status.HTTP_400_BAD_REQUEST)  
-            settings = Settings(data=data, nameUmfrage=nameUmfrage, umfrageID=umfrageID,
+            settings = RetrievalSetting(data=data, nameUmfrage=nameUmfrage, umfrageID=umfrageID,
                             umfrageURL=umfrageURL)
             settings.save()
             settings.user.add(user.values()[0].get('id'))
@@ -766,7 +766,7 @@ class CheckSurveyIDExists(APIView):
     def get(self, request):
         surveyID = request.GET.get(self.lookup_url_kwarg)
         if surveyID is not None:
-            exists = Settings.objects.filter(umfrageID=surveyID).exists()
+            exists = RetrievalSetting.objects.filter(umfrageID=surveyID).exists()
             return Response({'exists': exists, 'surveyID': surveyID}, status=status.HTTP_200_OK)
         return Response({'error': 'No survey ID provided'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -782,8 +782,8 @@ class GetSettingsSecondSurvey(APIView):
             if len(user) > 0:
                 rows = []
                 id = list(User.objects.filter(username=username).values())[0].get('id')
-                settings = Settings.objects.filter(user=id)
-                settingsIDSecond = np.transpose(np.array(SettingsSecondSurvey.objects.filter(
+                settings = RetrievalSetting.objects.filter(user=id)
+                settingsIDSecond = np.transpose(np.array(FollowupSurvey.objects.filter(
                         settings__in=settings).values_list('settings')))
                 settingslist = np.array(settings.values_list('id', 'nameUmfrage', 'umfrageID'))
                 settingslistData = np.array(settings.values_list('data'))
@@ -795,7 +795,7 @@ class GetSettingsSecondSurvey(APIView):
 
                 indexSecondSetting = 0
                 for i in range (len(settingslist)):
-                    settingslistsecond = np.array(SettingsSecondSurvey.objects.filter(
+                    settingslistsecond = np.array(FollowupSurvey.objects.filter(
                         settings__in=settings).values_list('settings','secondSurveyID', 'secondSurveyServer',
                         'secondSurveyLanguage', 'secondSurveyEndURL', 'passLang'))
                     if not checkID[i]:
@@ -848,7 +848,7 @@ class getSettingsListView(APIView):
             if len(user) > 0:
                 rows = []
                 id = list(User.objects.filter(username=username).values())[0].get('id')
-                settings = Settings.objects.filter(user=id)
+                settings = RetrievalSetting.objects.filter(user=id)
 
                 settingslist = np.array(settings.values_list('id', 'nameUmfrage', 'umfrageID', 'umfrageURL'))
                 confirmTextList = np.array(settings.values_list('confirmTextSTEng', 'confirmTextTTEng', 'confirmTextRTEng', 
@@ -948,9 +948,9 @@ class getSettingsFromIDView(APIView):
         surveyID = request.GET.get(self.lookup_url_kwarg)
 
         if surveyID is not None:
-            settings = Settings.objects.filter(umfrageID=surveyID)
+            settings = RetrievalSetting.objects.filter(umfrageID=surveyID)
             if len(settings) > 0:
-                settingsTwo = SettingsSecondSurvey.objects.filter(settings__in=settings)
+                settingsTwo = FollowupSurvey.objects.filter(settings__in=settings)
                 settingsTwoDataEndURL = np.array(settingsTwo.values_list('secondSurveyEndURL'))
                 settingsPassLang = np.array(settingsTwo.values_list('passLang'))
                 settingsTwoData = np.array(settingsTwo.values_list('secondSurveyData'))
@@ -1112,11 +1112,11 @@ class CreateSettingsSecondSurvey(APIView):
         if not user.exists():
             return Response({'msg': 'Neu anmelden...'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            settingsFilter = Settings.objects.filter(umfrageID=surveyID)
+            settingsFilter = RetrievalSetting.objects.filter(umfrageID=surveyID)
             if settingsFilter.exists():
                 settingsOne = settingsFilter[0]
                 settingsOne.save()
-            settingsTwo = SettingsSecondSurvey(settings=settingsOne, secondSurveyID=secondSurveyID,
+            settingsTwo = FollowupSurvey(settings=settingsOne, secondSurveyID=secondSurveyID,
                 secondSurveyServer=secondSurveyServer, secondSurveyLanguage=secondSurveyLanguage, secondSurveyEndURL=endURL, passLang=passLang)
             settingsTwo.save()
             settingsTwo.user.add(user.values()[0].get('id'))
@@ -1140,12 +1140,12 @@ class UpdateSettingsSecondSurvey(APIView):
         if not user.exists():
             return Response({'msg': 'Neu anmelden...'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            settingsFilter = Settings.objects.filter(umfrageID=surveyID)
+            settingsFilter = RetrievalSetting.objects.filter(umfrageID=surveyID)
             if settingsFilter.exists():
                 settingsOne = settingsFilter[0]
                 settingsOne.save()
 
-            settingsTwo = SettingsSecondSurvey.objects.filter(settings=settingsOne)
+            settingsTwo = FollowupSurvey.objects.filter(settings=settingsOne)
 
             settingsTwo.update(secondSurveyData=data)
 
@@ -1171,12 +1171,12 @@ class UpdateSettingsSecondSurveyEndURL(APIView):
         if not user.exists():
             return Response({'msg': 'Neu anmelden...'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            settingsFilter = Settings.objects.filter(umfrageID=surveyID)
+            settingsFilter = RetrievalSetting.objects.filter(umfrageID=surveyID)
             if settingsFilter.exists():
                 settingsOne = settingsFilter[0]
                 settingsOne.save()
 
-            settingsTwo = SettingsSecondSurvey.objects.filter(settings=settingsOne)
+            settingsTwo = FollowupSurvey.objects.filter(settings=settingsOne)
 
             settingsTwo.update(secondSurveyID=secondSurveyID)
             settingsTwo.update(secondSurveyServer=secondSurveyServer)
@@ -1194,14 +1194,14 @@ class DeleteSettings(APIView):
     def get(self, request):
         surveyID = request.GET.get(self.lookup_url_kwarg)
         if surveyID is not None:
-            settings = Settings.objects.filter(umfrageID=surveyID)
+            settings = RetrievalSetting.objects.filter(umfrageID=surveyID)
             
             if not settings.exists():
                 return Response({'error': 'Survey ID not found'}, status=status.HTTP_404_NOT_FOUND)
             
             try:
                 # Delete follow-up survey settings first (not protected)
-                settingsTwo = SettingsSecondSurvey.objects.filter(settings__in=settings)
+                settingsTwo = FollowupSurvey.objects.filter(settings__in=settings)
                 settingsTwo.delete()
                 
                 # Try to delete the settings - will fail if protected data exists
@@ -1240,7 +1240,7 @@ class UpdateSettings(APIView):
             return Response({'msg': 'Neu anmelden...'}, status=status.HTTP_404_NOT_FOUND)
         else:
 
-            settings = Settings.objects.filter(umfrageID=updateID)
+            settings = RetrievalSetting.objects.filter(umfrageID=updateID)
             if settings.exists():
                 settings.update(data=data, nameUmfrage=nameUmfrage, umfrageID=umfrageID, umfrageURL=umfrageURL)
                 return Response({'msg': 'Settings updated'}, status=status.HTTP_200_OK)
@@ -1255,8 +1255,8 @@ class DeleteSettingsSecondSurvey(APIView):
     def get(self, request):
         surveyID = request.GET.get(self.lookup_url_kwarg)
         if surveyID is not None:
-            settings = Settings.objects.filter(umfrageID=surveyID)
-            settingsTwo = SettingsSecondSurvey.objects.filter(settings__in=settings)
+            settings = RetrievalSetting.objects.filter(umfrageID=surveyID)
+            settingsTwo = FollowupSurvey.objects.filter(settings__in=settings)
             settingsTwo.delete()
             return Response({}, status=status.HTTP_200_OK)
 
@@ -1269,7 +1269,7 @@ class DeleteOnlyResultsWithID(APIView):
     def get(self, request):
         surveyID = request.GET.get(self.lookup_url_kwarg)
         if surveyID is not None:
-            settings = Settings.objects.filter(umfrageID=surveyID).first()
+            settings = RetrievalSetting.objects.filter(umfrageID=surveyID).first()
             if not settings: 
                 return Response({'Bad Request': 'Survey not found'}, status=status.HTTP_404_NOT_FOUND)
             participants = Participant.objects.filter(settings=settings)
@@ -1293,7 +1293,7 @@ class SaveCheckData(APIView):
         noData = request.data.get('noData')
 
         if surveyID is not None:
-            settingsFilter = Settings.objects.filter(umfrageID=surveyID)
+            settingsFilter = RetrievalSetting.objects.filter(umfrageID=surveyID)
 
             if settingsFilter.exists():
                 settings = settingsFilter[0]
@@ -1312,19 +1312,19 @@ class SaveCheckData(APIView):
                     if int(zaehler)==0 or int(zaehler)==1 or int(zaehler)==2:
                         isrcCheckData = checkData[i].get('isrc')
                         if int(zaehler)==0:
-                            confirmData = SavedTracksSpotify.objects.filter(participant=participant, data__isrc=isrcCheckData)
+                            confirmData = SavedTrack.objects.filter(participant=participant, data__isrc=isrcCheckData)
                         elif int(zaehler)==1:
-                            confirmData = TopTracksSpotify.objects.filter(participant=participant, data__isrc=isrcCheckData)
+                            confirmData = TopTrack.objects.filter(participant=participant, data__isrc=isrcCheckData)
                         else:
-                            confirmData = RecentlyTracksSpotify.objects.filter(participant=participant, data__isrc=isrcCheckData)
+                            confirmData = RecentTrack.objects.filter(participant=participant, data__isrc=isrcCheckData)
                     else:
                         idCheckData = checkData[i].get('id')
                         if int(zaehler)==3:
-                            confirmData = TopArtistsSpotify.objects.filter(participant=participant, data__id=idCheckData)
+                            confirmData = TopArtist.objects.filter(participant=participant, data__id=idCheckData)
                         elif int(zaehler)==4:
-                            confirmData = FollowedArtistsSpotify.objects.filter(participant=participant, data__id=idCheckData)
+                            confirmData = FollowedArtist.objects.filter(participant=participant, data__id=idCheckData)
                         else:
-                            confirmData = CurrentPlaylistsSpotify.objects.filter(participant=participant, data__id=idCheckData)
+                            confirmData = CurrentPlaylist.objects.filter(participant=participant, data__id=idCheckData)
 
                     confirmData.update(confirm=True)
 
@@ -1333,19 +1333,19 @@ class SaveCheckData(APIView):
                     if int(zaehler)==0 or int(zaehler)==1 or int(zaehler)==2:
                         isrcCheckData = noData[j].get('isrc')
                         if int(zaehler)==0:
-                            confirmData = SavedTracksSpotify.objects.filter(participant=participant, data__isrc=isrcCheckData).delete()
+                            confirmData = SavedTrack.objects.filter(participant=participant, data__isrc=isrcCheckData).delete()
                         elif int(zaehler)==1:
-                            confirmData = TopTracksSpotify.objects.filter(participant=participant, data__isrc=isrcCheckData).delete()
+                            confirmData = TopTrack.objects.filter(participant=participant, data__isrc=isrcCheckData).delete()
                         else:
-                            confirmData = RecentlyTracksSpotify.objects.filter(participant=participant, data__isrc=isrcCheckData).delete()
+                            confirmData = RecentTrack.objects.filter(participant=participant, data__isrc=isrcCheckData).delete()
                     else:
                         idCheckData = noData[j].get('id')
                         if int(zaehler)==3:
-                            confirmData = TopArtistsSpotify.objects.filter(participant=participant, data__id=idCheckData).delete()
+                            confirmData = TopArtist.objects.filter(participant=participant, data__id=idCheckData).delete()
                         elif int(zaehler)==4:
-                            confirmData = FollowedArtistsSpotify.objects.filter(participant=participant, data__id=idCheckData).delete()
+                            confirmData = FollowedArtist.objects.filter(participant=participant, data__id=idCheckData).delete()
                         else:
-                            confirmData = CurrentPlaylistsSpotify.objects.filter(participant=participant, data__id=idCheckData).delete()
+                            confirmData = CurrentPlaylist.objects.filter(participant=participant, data__id=idCheckData).delete()
                 
             return Response({'checkData':checkData}, status=status.HTTP_200_OK)
         return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
@@ -1386,7 +1386,7 @@ class UpdateConfirmText(APIView):
         confirmTextArray = request.data.get('confirmTextArray')
 
         if surveyID is not None:
-            settingsFilter = Settings.objects.filter(umfrageID=surveyID, user__username=username)
+            settingsFilter = RetrievalSetting.objects.filter(umfrageID=surveyID, user__username=username)
 
             if settingsFilter.exists():
                 settings = settingsFilter
@@ -1425,7 +1425,7 @@ class GetParticipantCountForSurvey(APIView):
     def get(self, request): 
         surveyID = request.GET.get(self.lookup_url_kwarg)
         if surveyID is not None: 
-            settings = Settings.objects.filter(umfrageID=surveyID)
+            settings = RetrievalSetting.objects.filter(umfrageID=surveyID)
             if not settings.exists():
                 return Response({'error': 'Survey ID not found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -1433,9 +1433,9 @@ class GetParticipantCountForSurvey(APIView):
             participants = set()
             total_records = 0
 
-            for model in [SavedTracksSpotify, TopTracksSpotify, TopArtistsSpotify, 
-                            UsersProfileSpotify, FollowedArtistsSpotify, 
-                            CurrentPlaylistsSpotify, RecentlyTracksSpotify]:
+            for model in [SavedTrack, TopTrack, TopArtist, 
+                            ParticipantProfile, FollowedArtist, 
+                            CurrentPlaylist, RecentTrack]:
                 records = model.objects.filter(participant__settings__in=settings)
                 total_records += records.count()
                 for record in records: 

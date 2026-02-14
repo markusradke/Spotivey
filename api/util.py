@@ -18,10 +18,10 @@ def check_email(usernameString):
 def getResultDict(surveyID):
     # Result list as dict
 
-    settings = Settings.objects.filter(umfrageID=surveyID)
+    settings = RetrievalSetting.objects.filter(umfrageID=surveyID)
 
     # Line 23 - Fixed query
-    savedTracksSpotify = SavedTracksSpotify.objects.filter(
+    savedTracksSpotify = SavedTrack.objects.filter(
         participant__settings__in=settings, confirm=True
     ).order_by('participant__participant').values_list('participant', 'data')
     participantSavedTracks = Participant.objects.filter(id__in=savedTracksSpotify.values_list('participant'))
@@ -73,7 +73,7 @@ def getResultDict(surveyID):
             })
         
     # Line 73 - Fixed query
-    topTracksSpotify = TopTracksSpotify.objects.filter(
+    topTracksSpotify = TopTrack.objects.filter(
         participant__settings__in=settings, confirm=True
     ).values_list('participant', 'data')
     participantTopTracks = Participant.objects.filter(id__in=topTracksSpotify.values_list('participant'))
@@ -122,7 +122,7 @@ def getResultDict(surveyID):
             })
 
     # Line 116 - Fixed query
-    recentlyTracksSpotify = RecentlyTracksSpotify.objects.filter(
+    recentlyTracksSpotify = RecentTrack.objects.filter(
         participant__settings__in=settings, confirm=True
     ).values_list('participant', 'data')
     participantRecentlyTracks = Participant.objects.filter(id__in=recentlyTracksSpotify.values_list('participant'))
@@ -171,7 +171,7 @@ def getResultDict(surveyID):
             })
 
     # Line 163 - Fixed query
-    topArtistsSpotify = TopArtistsSpotify.objects.filter(
+    topArtistsSpotify = TopArtist.objects.filter(
         participant__settings__in=settings, confirm=True
     ).values_list('participant', 'data')
     participantTopArtists = Participant.objects.filter(id__in=topArtistsSpotify.values_list('participant'))
@@ -200,7 +200,7 @@ def getResultDict(surveyID):
             })
 
     # Line 189 - Fixed query
-    followedArtistsSpotify = FollowedArtistsSpotify.objects.filter(
+    followedArtistsSpotify = FollowedArtist.objects.filter(
         participant__settings__in=settings, confirm=True
     ).values_list('participant', 'data')
     participantFollowedArtists = Participant.objects.filter(id__in=followedArtistsSpotify.values_list('participant'))
@@ -229,7 +229,7 @@ def getResultDict(surveyID):
             })
         
     # Line 216 - Fixed query
-    currentPlaylistsSpotify = CurrentPlaylistsSpotify.objects.filter(
+    currentPlaylistsSpotify = CurrentPlaylist.objects.filter(
         participant__settings__in=settings, confirm=True
     ).values_list('participant', 'data')
     participantCurrentPlaylists = Participant.objects.filter(id__in=currentPlaylistsSpotify.values_list('participant'))
@@ -259,7 +259,7 @@ def getResultDict(surveyID):
             })
 
     # Line 245 - Fixed query  
-    usersProfileSpotify = UsersProfileSpotify.objects.filter(
+    usersProfileSpotify = ParticipantProfile.objects.filter(
         participant__settings__in=settings
     ).values_list('participant')
     participantUsersProfile = Participant.objects.filter(id__in=usersProfileSpotify.values_list('participant'))
@@ -269,13 +269,13 @@ def getResultDict(surveyID):
         participantCount = 0
         for participantZaehler in range(len(usersProfileSpotify)):
             participantCount += 1
-            participantID = list(UsersProfileSpotify.objects.filter(
+            participantID = list(ParticipantProfile.objects.filter(
                 participant__settings__in=settings).values_list('participant'))[participantZaehler]
             participantString = list(Participant.objects.filter(id=usersProfileSpotify[participantZaehler][0]).values_list('participant')[0])
             if participantString not in participantArray:
                 participantCount = 1
                 participantArray.append(participantString)
-            for profileListResult in list(UsersProfileSpotify.objects.filter(participant__id__in=participantID).values_list('data')):
+            for profileListResult in list(ParticipantProfile.objects.filter(participant__id__in=participantID).values_list('data')):
                 for profileList in profileListResult:
                     rowsUsersProfile.append({
                         'id': len(rowsUsersProfile)+1, 

@@ -5,7 +5,7 @@ from requests import Request, post
 from rest_framework import status
 from rest_framework.response import Response
 from .util import *
-from api.models import Settings
+from api.models import RetrievalSetting
 import numpy as np
 import random
 from .models import *
@@ -30,7 +30,7 @@ class AuthURL(APIView):
     def get(self, request, fornat=None):
         surveyID = request.GET.get(self.lookup_url_kwarg)
         if surveyID is not None:
-            settings = Settings.objects.filter(umfrageID=surveyID)
+            settings = RetrievalSetting.objects.filter(umfrageID=surveyID)
             if len(settings) > 0:
                 settingslistdata = np.array(settings.values_list("data"))
 
@@ -212,7 +212,7 @@ class GetAudioFeaturesSpotify(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            settings = Settings.objects.filter(umfrageID=surveyID)
+            settings = RetrievalSetting.objects.filter(umfrageID=surveyID)
 
             dataString = request.GET.get(self.lookup_url_kwarg_dataString)
 
@@ -220,15 +220,15 @@ class GetAudioFeaturesSpotify(APIView):
             participant_list = []
             participant_id_list = []
             if dataString == "savedTracksData":
-                searchSpotifyList = SavedTracksSpotify.objects.filter(
+                searchSpotifyList = SavedTrack.objects.filter(
                     participant__settings__in=settings
                 ).values_list(dataString, "participant")
             elif dataString == "topTracksData":
-                searchSpotifyList = TopTracksSpotify.objects.filter(
+                searchSpotifyList = TopTrack.objects.filter(
                     participant__settings__in=settings
                 ).values_list(dataString, "participant")
             elif dataString == "recentlyTracksData":
-                searchSpotifyList = RecentlyTracksSpotify.objects.filter(
+                searchSpotifyList = RecentTrack.objects.filter(
                     participant__settings__in=settings
                 ).values_list(dataString, "participant")
             else:
@@ -305,14 +305,14 @@ class GetAudioFeaturesSpotify(APIView):
                         "participant": participant_id_list[von + i],
                     }
 
-                    filterAF = SpotifyAudioFeatures.objects.filter(
+                    filterAF = AudioFeatures.objects.filter(
                         participant=participant_list[von + i],
                         dataString=dataString,
                         data__spotify_id=id_list[von + i],
                     )
 
                     if not filterAF.exists():
-                        af = SpotifyAudioFeatures(
+                        af = AudioFeatures(
                             dataString=dataString,
                             data=dataAudioFeatures,
                             participant=participant_list[von + i],
@@ -453,7 +453,7 @@ class TopArtists(APIView):
                 "id": artists_id,
             }
 
-            topArtistsSpotify = TopArtistsSpotify(
+            topArtistsSpotify = TopArtist(
                 data=artistsInfoData,
                 confirm=confirm,
                 participant=participant,
@@ -570,7 +570,7 @@ class TopTracks(APIView):
                 "dataAudioFeatures": dataAudioFeatures,
             }
 
-            topTracksSpotify = TopTracksSpotify(
+            topTracksSpotify = TopTrack(
                 data=tracksInfoData,
                 confirm=confirm,
                 participant=participant,
@@ -697,7 +697,7 @@ class GetSavedTracksSpotify(APIView):
                 "dataAudioFeatures": dataAudioFeatures,
             }
 
-            savedTracksSpotify = SavedTracksSpotify(
+            savedTracksSpotify = SavedTrack(
                 data=tracksInfoData,
                 confirm=confirm,
                 participant=participant,
@@ -741,7 +741,7 @@ class GetUsersProfileSpotify(APIView):
         except Participant.DoesNotExist:
             return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        usersProfileSpotify = UsersProfileSpotify(
+        usersProfileSpotify = ParticipantProfile(
             data=users_info,
             confirm=False,
             participant=participant,
@@ -819,7 +819,7 @@ class GetFollowedArtistsSpotify(APIView):
                 "id": artists_id,
             }
 
-            followedArtistsSpotify = FollowedArtistsSpotify(
+            followedArtistsSpotify = FollowedArtist(
                 data=artistsInfoData,
                 confirm=confirm,
                 participant=participant,
@@ -948,7 +948,7 @@ class GetPlaylistsSpotify(APIView):
                     "tracksCheck": [],
                 }
 
-                currentPlaylistsSpotify = CurrentPlaylistsSpotify(
+                currentPlaylistsSpotify = CurrentPlaylist(
                     data=playlistsInfoData,
                     confirm=confirm,
                     participant=participant,
@@ -1080,7 +1080,7 @@ class GetRecentlyPlayedTracksSpotify(APIView):
                 "dataAudioFeatures": dataAudioFeatures,
             }
 
-            recentlyTracksSpotify = RecentlyTracksSpotify(
+            recentlyTracksSpotify = RecentTrack(
                 data=tracksInfoData,
                 confirm=confirm,
                 participant=participant,
