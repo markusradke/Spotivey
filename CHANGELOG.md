@@ -1,4 +1,9 @@
 # Spotivey Changelog
+## 2026-02-14 - Code Reorganization
+- **Restructured spotify app** - Split `spotify/views.py` into shorter modular files: `auth.py`, `tracks.py`, `artists.py`, `playlists.py`, `profile.py`, `audio_features.py`
+- **Restructured api app** - Split `api/views.py` into: `auth.py`, `participants.py`, `settings.py`, `results.py`, `csv_export.py`
+- **Moved utilities** - `spotify/util.py` → `spotify/utils/spotify_api.py`, `api/util.py` → `api/utils/results_builder.py`
+
 ## 2026-02-13 - Model Naming Standardization
 - **Renamed models to singular form** - `SavedTracksSpotify` → `SavedTrack`, `TopTracksSpotify` → `TopTrack`, `TopArtistsSpotify` → `TopArtist`, `UsersProfileSpotify` → `ParticipantProfile`, `FollowedArtistsSpotify` → `FollowedArtist`, `CurrentPlaylistsSpotify` → `CurrentPlaylist`, `RecentlyTracksSpotify` → `RecentTrack`, `SpotifyAudioFeatures` → `AudioFeatures`
 - **Renamed Settings model** - `Settings` → `RetrievalSetting`, `SettingsSecondSurvey` → `FollowupSurvey` for clearer semantics
