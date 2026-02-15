@@ -8,8 +8,8 @@ from requests import Request, post
 import random
 import string
 
-from ..credentials import REDIRECT_URI, CLIENT_SECRET, CLIENT_ID, REDIRECT_URI2
-from ..utils.spotify_api import update_or_create_user_tokens, is_spotify_authenticated
+from spotify.credentials import REDIRECT_URI, CLIENT_SECRET, CLIENT_ID, REDIRECT_URI2
+from spotify.utils.spotify_api import update_or_create_user_tokens, is_spotify_authenticated
 from api.models import RetrievalSetting
 import numpy as np
 

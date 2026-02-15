@@ -9,11 +9,48 @@ from .spotify_api import (
     getAudioFeatures
 )
 
+from .batch_operations import (
+    batch_fetch_albums,
+    batch_fetch_artists,
+    batch_fetch_audio_features
+)
+
+from .bulk_db import (
+    bulk_create_with_retry,
+    bulk_update_fields,
+    bulk_update_objects
+)
+
+from .retrieval_helpers import (
+    get_participant_from_session,
+    random_sample_items,
+    extract_artist_info,
+    extract_album_info,
+    get_artist_genres,
+    get_image_url
+)
+
 __all__ = [
+    # Spotify API 
     'get_user_tokens',
     'update_or_create_user_tokens',
     'is_spotify_authenticated',
     'refresh_spotify_token',
     'execute_spotify_api_request',
     'getAudioFeatures',
+    # Batch operations
+    'batch_fetch_albums',
+    'batch_fetch_artists',
+    'batch_fetch_audio_features',
+    # Bulk DB operations
+    'bulk_create_with_retry',
+    'bulk_update_fields',
+    'bulk_update_objects',
+    # Retrieval helpers
+    'get_participant_from_session',
+    'random_sample_items',
+    'extract_artist_info',
+    'extract_album_info',
+    'get_artist_genres',
+    'get_image_url',
 ]

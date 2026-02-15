@@ -1,7 +1,7 @@
-from ..models import SpotifyToken
+from spotify.models import SpotifyToken
 from django.utils import timezone
 from datetime import timedelta
-from ..credentials import CLIENT_ID, CLIENT_SECRET
+from spotify.credentials import CLIENT_ID, CLIENT_SECRET
 from requests import post, put, get, Session
 from requests.adapters import HTTPAdapter, Retry
 
