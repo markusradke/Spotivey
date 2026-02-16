@@ -80,11 +80,11 @@ class SaveCheckData(APIView):
                     if int(zaehler)==0 or int(zaehler)==1 or int(zaehler)==2:
                         isrcCheckData = checkData[i].get('isrc')
                         if int(zaehler)==0:
-                            confirmData = SavedTrack.objects.filter(participant=participant, data__isrc=isrcCheckData)
+                            confirmData = SavedTrack.objects.filter(participant=participant, isrc=isrcCheckData)
                         elif int(zaehler)==1:
-                            confirmData = TopTrack.objects.filter(participant=participant, data__isrc=isrcCheckData)
+                            confirmData = TopTrack.objects.filter(participant=participant, isrc=isrcCheckData)
                         else:
-                            confirmData = RecentTrack.objects.filter(participant=participant, data__isrc=isrcCheckData)
+                            confirmData = RecentTrack.objects.filter(participant=participant, isrc=isrcCheckData)
                     else:
                         idCheckData = checkData[i].get('id')
                         if int(zaehler)==3:
@@ -94,18 +94,18 @@ class SaveCheckData(APIView):
                         else:
                             confirmData = CurrentPlaylist.objects.filter(participant=participant, data__id=idCheckData)
 
-                    confirmData.update(confirm=True)
+                    confirmData.update(confirmed=True)
 
             if len(noData) > 0:    
                 for j in range(len(noData)):
                     if int(zaehler)==0 or int(zaehler)==1 or int(zaehler)==2:
                         isrcCheckData = noData[j].get('isrc')
                         if int(zaehler)==0:
-                            confirmData = SavedTrack.objects.filter(participant=participant, data__isrc=isrcCheckData).delete()
+                            confirmData = SavedTrack.objects.filter(participant=participant, isrc=isrcCheckData).delete()
                         elif int(zaehler)==1:
-                            confirmData = TopTrack.objects.filter(participant=participant, data__isrc=isrcCheckData).delete()
+                            confirmData = TopTrack.objects.filter(participant=participant, isrc=isrcCheckData).delete()
                         else:
-                            confirmData = RecentTrack.objects.filter(participant=participant, data__isrc=isrcCheckData).delete()
+                            confirmData = RecentTrack.objects.filter(participant=participant, isrc=isrcCheckData).delete()
                     else:
                         idCheckData = noData[j].get('id')
                         if int(zaehler)==3:
@@ -118,31 +118,6 @@ class SaveCheckData(APIView):
             return Response({'checkData':checkData}, status=status.HTTP_200_OK)
         return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-class FinalizeParticipantData(APIView): 
-    # Mark participant as completed and clean up old attempts
-
-    def post(self, request, format=None):
-        retrieval_session_key = self.request.session.get('retrieval_session_key')
-        if not retrieval_session_key:
-            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        try:
-            participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
-        except Participant.DoesNotExist:
-            return Response({'error': 'Participant not found'}, status=status.HTTP_404_NOT_FOUND)
-        
-        participant.status = 'completed'
-        participant.completed_at = timezone.now()
-        participant.save()
-
-        old_participants = Participant.objects.filter(
-            participant=participant.participant
-        ).exclude(id=participant.id)
-
-        if old_participants.exists():
-            old_participants.delete()
-        return Response({'message': 'Participant data finalized successfully'}, status=status.HTTP_200_OK)
 
            
 class GetParticipantCountForSurvey(APIView):

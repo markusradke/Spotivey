@@ -6,8 +6,8 @@ from rest_framework.response import Response
 import numpy as np
 import random
 
-from ..models import Participant, TopArtist, FollowedArtist
-from ..utils.spotify_api import execute_spotify_api_request
+from spotify.models import Participant, TopArtist, FollowedArtist
+from spotify.utils.spotify_api import execute_spotify_api_request
 
 
 class TopArtists(APIView):

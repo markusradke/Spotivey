@@ -1,4 +1,11 @@
 # Spotivey Changelog
+
+## 2026-02-15 - Performance Optimization Framework 
+- **Created batch API operations** - `spotify/utils/batch_operations.py` with `batch_fetch_albums()`, `batch_fetch_artists()`, `batch_fetch_audio_features()` to reduce individual API calls to batched requests
+- **Created bulk database operations** - `spotify/utils/bulk_db.py` with `bulk_create_with_retry()`, `bulk_update_fields()` to reduce 50 individual saves to single bulk transaction 
+- **Created retrieval helpers** - `spotify/utils/retrieval_helpers.py` with `get_participant_from_session()`, `random_sample_items()`, `extract_artist_info()`, `extract_album_info()` for DRY code reuse across all retrieval views
+- **Added tests** - `spotify/tests/utils/test_bulk_db.py` and `test_retrieval_helpers.py` for validation
+
 ## 2026-02-14 - Code Reorganization
 - **Restructured spotify app** - Split `spotify/views.py` into shorter modular files: `auth.py`, `tracks.py`, `artists.py`, `playlists.py`, `profile.py`, `audio_features.py`
 - **Restructured api app** - Split `api/views.py` into: `auth.py`, `participants.py`, `settings.py`, `results.py`, `csv_export.py`

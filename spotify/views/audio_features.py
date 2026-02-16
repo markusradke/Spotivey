@@ -6,8 +6,8 @@ from rest_framework.response import Response
 import numpy as np
 
 from api.models import RetrievalSetting
-from ..models import SavedTrack, TopTrack, RecentTrack, AudioFeatures
-from ..utils.spotify_api import execute_spotify_api_request
+from spotify.models import SavedTrack, TopTrack, RecentTrack, AudioFeatures
+from spotify.utils.spotify_api import execute_spotify_api_request
 
 
 class GetAudioFeaturesSpotify(APIView):

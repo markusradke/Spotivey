@@ -77,8 +77,7 @@ class GetParticipantSession(APIView):
             self.request.session.create()
 
         participant = self.request.session.get('participant')
-        resultExist=False
-        SavedTrack.objects.filter(participant=participant, confirm=False).delete()
+        SavedTrack.objects.filter(participant=participant, confirmed=False).delete()
         TopTrack.objects.filter(participant=participant, confirm=False).delete()
         RecentTrack.objects.filter(participant=participant, confirm=False).delete()
         TopArtist.objects.filter(participant=participant, confirm=False).delete()
@@ -104,23 +103,24 @@ class FinalizeParticipantData(APIView):
     
     def post(self, request, format=None):
         retrieval_session_key = self.request.session.get('retrieval_session_key')
-        
         if not retrieval_session_key:
-            return Response({
-                'error': 'No active retrieval session'
-            }, status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
+        
         try:
             participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
-            participant.completed_at = timezone.now()
-            participant.status = 'completed'
-            participant.save()
-            
-            return Response({
-                'message': 'Participant data finalized',
-                'participant': participant.participant
-            }, status=status.HTTP_200_OK)
         except Participant.DoesNotExist:
-            return Response({
-                'error': 'Participant session not found'
-            }, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Participant not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        participant.status = 'completed'
+        participant.completed_at = timezone.now()
+        participant.save()
+
+        old_participants = Participant.objects.filter(
+            participant=participant.participant, 
+            settings=participant.settings
+        ).exclude(id=participant.id)
+        print(f"Cleaning up {old_participants.count()} old participant records for participant {participant.participant}")
+ 
+        if old_participants.exists():
+            old_participants.delete()
+        return Response({'message': 'Participant data finalized successfully'}, status=status.HTTP_200_OK)

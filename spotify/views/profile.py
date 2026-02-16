@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
-from ..models import Participant, ParticipantProfile
-from ..utils.spotify_api import execute_spotify_api_request
+from spotify.models import Participant, ParticipantProfile
+from spotify.utils.spotify_api import execute_spotify_api_request
 
 
 class GetUsersProfileSpotify(APIView):
