@@ -81,9 +81,9 @@ export default function UserResultPage(props) {
                     .then((data) => {
                         if (!data.error){
                             setResultsData(resultsData => [...resultsData, data])
-                            setCheckThereAreData(checkThereAreData => [...checkThereAreData,[data.rowGesamt[0][0].length > 0, data.rowGesamt[1][0].length > 0,
-                                data.rowGesamt[2][0].length > 0, data.rowGesamt[3][0].length > 0,
-                                data.rowGesamt[4][0].length > 0, data.rowGesamt[5][0].length > 0, data.rowGesamt[6][0].length > 0]])
+                            // Check which data types have results
+                            const hasData = data.dataTypes.map(dt => dt.hasData)
+                            setCheckThereAreData(checkThereAreData => [...checkThereAreData, hasData])
                             setResultsID(resultID => [...resultID, surveyIDRows[zaehler].umfrageID])
                             setResultsName(resultName => [...resultName, surveyIDRows[zaehler].nameUmfrage])
                         }
@@ -187,13 +187,13 @@ export default function UserResultPage(props) {
                                     </p>
                                 </div>
                                 <div style={{display: 'flex'}}>
-                                    {checkThereAreData[index].slice(0,6)?.map((check, checkIndex) => {
-                                        if(check){
+                                    {resultsData[index]?.dataTypes?.map((dataType, dtIndex) => {
+                                        if(dataType.hasData){
                                             return(
-                                                <React.Fragment>
+                                                <React.Fragment key={dtIndex}>
                                                     <div className="result-card-choose-id-container">
-                                                    {checkIndex !== 0 ? <Divider orientation="vertical" flexItem /> : null}
-                                                    {getResultListSmall(shuffle(resultsData[index].rowGesamt[checkIndex][0]).slice(0,16))}
+                                                    {dtIndex !== 0 ? <Divider orientation="vertical" flexItem /> : null}
+                                                    {getResultListSmall(shuffle(dataType.data).slice(0,16))}
                                                     </div>
                                                 </React.Fragment>
                                             )

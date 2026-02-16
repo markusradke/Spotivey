@@ -1,5 +1,14 @@
 # Spotivey Changelog
 
+## 2026-02-16 - Results Display Refactoring & SavedTrack Transformation
+- **Restructured results data format** - Replaced magic-array `rowGesamt[index][0]` structure with clean, self-documenting `dataTypes` array using explicit property names
+- **Improved code readability** - Eliminated German variable names (`rowGesamt`, `zaehler`, `participantArray`) in favor of clear English names (`dataTypes`, `participantList`)
+- **Updated results_builder.py** - Returns structured objects with named fields: `id`, `title`, `type`, `data`, `participantCount`, `resultCount`, `hasData`
+- **Updated frontend components** - Modified `UserResultPage.js` and `ResultContentUserPageComponent.js` to use object property access (`dataType.title`) instead of array indices (`item[1]`)
+- **Transformed SavedTrack model** - Added structured fields (album_label, track_name, spotify_id, artist_names, etc.) replacing JSON storage
+- **Updated SavedTrack retrieval** - Integrated Phase 1 batch operations and bulk DB utilities, now uses structured fields with `to_dict()` serialization method
+- **Simplified results display** - Only returns 8 fields needed for table display instead of 30+ unused fields
+
 ## 2026-02-15 - Performance Optimization Framework 
 - **Created batch API operations** - `spotify/utils/batch_operations.py` with `batch_fetch_albums()`, `batch_fetch_artists()`, `batch_fetch_audio_features()` to reduce individual API calls to batched requests
 - **Created bulk database operations** - `spotify/utils/bulk_db.py` with `bulk_create_with_retry()`, `bulk_update_fields()` to reduce 50 individual saves to single bulk transaction 

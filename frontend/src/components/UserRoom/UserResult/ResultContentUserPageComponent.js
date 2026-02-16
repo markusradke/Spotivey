@@ -201,7 +201,7 @@ export default function ResultContent(props) {
                             {type === 'Playlists' ? <th>Title</th> : null}
                             {type === 'Tracks' ? <th>Artists Name</th> : null}
                             <th>Spotify ID</th>
-                            {type === 'Tracks' ? <th>ISRC Number</th> : null}
+                            {type === 'Tracks' ? <th>ISRC</th> : null}
                             {type === 'Artists' ? <th>Type</th> : null}
                             {type === 'Artists' ? <th>Popularity</th> : null}
                             {type === 'Artists' ? <th>Followers Total</th> : null}
@@ -293,12 +293,13 @@ export default function ResultContent(props) {
         )
     }
 
-    function clickListEntryCard(index) {
+    function clickListEntryCard(dataType) {
         props.setFirstPage(false)
+        const index = props.data.dataTypes.indexOf(dataType)
         let items = [...listEntriesShow]
         items[index] = true
         setListEntriesShow(items)
-        setPages(Math.ceil(props.data.rowGesamt[index][0].length / 100))
+        setPages(Math.ceil(dataType.data.length / 100))
     }
 
     function deleteResults(surveyID){
@@ -344,31 +345,35 @@ export default function ResultContent(props) {
                 </div>
                 {props.firstPage ? 
                 <div className={'render-result-card-container'}>
-                    {props.data.rowGesamt.map((item, index) => {
+                    {props.data.dataTypes?.map((dataType, index) => {
                         return(
-                            <React.Fragment>
-                            {item[0]?.length ? 
+                            <React.Fragment key={index}>
+                            {dataType.hasData ? 
                             <div 
                                 className={'render-result-card'}
                                 onClick={() => {
-                                    clickListEntryCard(index)
+                                    clickListEntryCard(dataType)
                                 }}
                             >
-                                {item[0]?.length !== 0 ? renderResultsCard(item[1]) : null}
+                                {renderResultsCard(dataType.title)}
                             </div> : null }
                             </React.Fragment>
                         )
                     })}
                 </div> : 
                 <div>
-                    {renderListEntriesData(
-                        props.data.rowGesamt[listEntriesShow.indexOf(true)][0].sort((a, b) => parseFloat(a.id) - parseFloat(b.id)), 
-                        props.data.rowGesamt[listEntriesShow.indexOf(true)][1], 
-                        props.data.rowGesamt[listEntriesShow.indexOf(true)][2].resultCount, 
-                        props.data.rowGesamt[listEntriesShow.indexOf(true)][2].participantCount, 
-                        props.data.rowGesamt[listEntriesShow.indexOf(true)][3],
-                        listEntriesShow.indexOf(true)
-                    )}
+                    {(() => {
+                        const activeIndex = listEntriesShow.indexOf(true)
+                        const activeDataType = props.data.dataTypes[activeIndex]
+                        return renderListEntriesData(
+                            activeDataType.data.sort((a, b) => parseFloat(a.id) - parseFloat(b.id)), 
+                            activeDataType.title, 
+                            activeDataType.resultCount, 
+                            activeDataType.participantCount, 
+                            activeDataType.type,
+                            activeIndex
+                        )
+                    })()}
                 </div>
                 }
                 <Dialog

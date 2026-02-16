@@ -163,8 +163,6 @@ class GetSavedTracksSpotify(APIView):
         for item in items:
             track = item['track']
             album_data = albums_cache.get(track['album']['id'], {})
-            
-            # Extract artist info
             artist_names = []
             artist_ids_list = []
             artist_genres = []
