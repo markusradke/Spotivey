@@ -78,8 +78,8 @@ class GetParticipantSession(APIView):
 
         participant = self.request.session.get('participant')
         SavedTrack.objects.filter(participant=participant, confirmed=False).delete()
-        TopTrack.objects.filter(participant=participant, confirm=False).delete()
-        RecentTrack.objects.filter(participant=participant, confirm=False).delete()
+        TopTrack.objects.filter(participant=participant, confirmed=False).delete()
+        RecentTrack.objects.filter(participant=participant, confirmed=False).delete()
         TopArtist.objects.filter(participant=participant, confirm=False).delete()
         FollowedArtist.objects.filter(participant=participant, confirm=False).delete()
         CurrentPlaylist.objects.filter(participant=participant, confirm=False).delete()

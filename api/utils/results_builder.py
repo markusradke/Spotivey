@@ -4,8 +4,8 @@ from spotify.models import (
     SavedTrack, TopTrack, RecentTrack,
     TopArtist, FollowedArtist,
     CurrentPlaylist, ParticipantProfile,
-    Participant, AudioFeatures
-)
+    Participant
+    )
 
 
 def getResultDict(surveyID):

@@ -25,64 +25,98 @@ class Participant(models.Model):
     def __str__(self):
         return self.participant + " (retrieval settings: " + self.settings.nameUmfrage + ")"
 
-
-class SavedTrack(models.Model):
-    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True)
-    confirmed = models.BooleanField(default=False) 
-    album_label = models.CharField(max_length=200, default='')
-    album_name = models.CharField(max_length=200,  default='')
-    album_type = models.CharField(max_length=50,   default='')
-    release_date = models.CharField(max_length=20, default='')
-    image_url = models.URLField(max_length=500,  default='')
-    track_name = models.CharField(max_length=300,  default='')
-    duration_ms = models.IntegerField(null=True,  default=None)
-    explicit = models.BooleanField(null=True, default=None)
-    isrc = models.CharField(max_length=20, default='')
-    spotify_id = models.CharField(max_length=50, db_index=True, null=False, default='')
-    track_uri = models.CharField(max_length=100, default='')
-    popularity = models.IntegerField(null=True, default=None)
-    added_at = models.DateTimeField(null=True, default=None)
-    artist_names = models.TextField(default='')  # "Artist1, Artist2"
-    artist_ids = models.TextField(default='')    # JSON array as string
-    artist_genres = models.TextField(default='')  # "Genre1, Genre2"
+class BaseTrack(models.Model):
+    """Abstract base model for all track types."""
+    participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
+    confirmed = models.BooleanField(default=False)
     
-    def to_dict(self): 
-        """Serialize to frontend-compatible dictionary."""
+    # Track identification
+    spotify_id = models.CharField(max_length=50, db_index=True)
+    isrc = models.CharField(max_length=20, default='')
+    track_uri = models.CharField(max_length=100, default='')
+    
+    # Track metadata
+    track_name = models.CharField(max_length=300, default='')
+    duration_ms = models.IntegerField(null=True, default=None)
+    explicit = models.BooleanField(null=True, default=None)
+    popularity = models.IntegerField(null=True, default=None)
+    
+    # Album information
+    album_id = models.CharField(max_length=50, default='')
+    album_name = models.CharField(max_length=200, default='')
+    album_label = models.CharField(max_length=200, default='')
+    album_type = models.CharField(max_length=50, default='')
+    release_date = models.CharField(max_length=20, default='')
+    image_url = models.URLField(max_length=500, default='')
+    
+    # Artist information (comma-separated or JSON)
+    artist_names = models.TextField(default='')
+    artist_ids = models.TextField(default='')
+    artist_genres = models.TextField(default='')
+    
+    class Meta:
+        abstract = True
+        indexes = [
+            models.Index(fields=['participant', 'spotify_id']),
+        ]
+    
+    def get_base_dict(self):
+        """Return common fields for frontend."""
         return {
             'track_name': self.track_name,
             'album_type': self.album_type,
             'duration_ms': self.duration_ms,
             'image_url': self.image_url,
-            'added_at': self.added_at, 
             'explicit': self.explicit,
             'isrc': self.isrc,
             'spotify_id': self.spotify_id,
             'popularity': self.popularity,
-            'spotify_artist_string': self.artist_names,  # Comma-separated string of artist names
-            'spotify_artist_id': json.loads(self.artist_ids),  # Deserialize JSON array
+            'spotify_artist_string': self.artist_names,
+            'spotify_artist_id': json.loads(self.artist_ids),
             'track_uri': self.track_uri,
             'albumLabel': self.album_label,
             'albumName': self.album_name,
+            'album_id': self.album_id,
             'releaseDate': self.release_date,
             'spotify_artist_genre': [g.strip() for g in self.artist_genres.split(', ') if g],
-            # TODO: dataAudioFeatures omitted for now - handle later
         }
 
-    class Meta:
-        indexes = [
-            models.Index(fields=['participant', 'spotify_id']),
-        ]
-
-
     def __str__(self):
-        return f"Saved track (ID: {self.spotify_id}) for participant {self.participant.participant} (retrieval settings: {self.participant.settings.nameUmfrage})"
+        return f"Track (ID: {self.spotify_id}) for participant {self.participant.participant} (retrieval settings: {self.participant.settings.nameUmfrage})"
 
-class TopTrack(models.Model):
-    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    data = models.JSONField(default=dict)
-    confirm = models.BooleanField(default=False)    
-    def __str__(self):
-        return "Top track for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
+
+class SavedTrack(BaseTrack):
+    """Participant's saved track."""
+    added_at = models.DateTimeField(null=True, default=None)
+    
+    def to_dict(self): 
+        data = self.get_base_dict()
+        data['added_at'] = self.added_at
+        return data
+
+
+class TopTrack(BaseTrack):
+    """Participant's top track."""
+
+    def to_dict(self): 
+        return self.get_base_dict()
+    
+
+class RecentTrack(BaseTrack):
+    """Participant's recently played track."""
+    played_at = models.DateTimeField(null=True, default=None)
+    context_type = models.CharField(max_length=50, default='')
+    context_uri = models.CharField(max_length=200, default='')
+    
+    def to_dict(self): 
+        data = self.get_base_dict()
+        data.update({
+            'played_at': self.played_at,
+            'context_type': self.context_type,
+            'context_uri': self.context_uri,
+        })
+        return data
+
 
 class TopArtist(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
@@ -91,19 +125,19 @@ class TopArtist(models.Model):
     def __str__(self):
         return "Top artist for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
 
-class ParticipantProfile(models.Model):
-    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    data = models.JSONField(default=dict)
-    confirm = models.BooleanField(default=False)   
-    def __str__(self):
-        return "Participant profile for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
-
 class FollowedArtist(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
     data = models.JSONField(default=dict)
     confirm = models.BooleanField(default=False)    
     def __str__(self):
         return "Followed artist for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
+
+class ParticipantProfile(models.Model):
+    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
+    data = models.JSONField(default=dict)
+    confirm = models.BooleanField(default=False)   
+    def __str__(self):
+        return "Participant profile for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
 
 class CurrentPlaylist(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
@@ -112,20 +146,3 @@ class CurrentPlaylist(models.Model):
     def __str__(self):
         return "Current playlist for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
 
-class RecentTrack(models.Model):
-    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    data = models.JSONField(default=dict)
-    confirm = models.BooleanField(default=False)    
-    def __str__(self):
-        return "Recent track for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
-
-class AudioFeatures(models.Model):
-    dataString = models.CharField(max_length=50, default='')
-    data = models.JSONField(default=dict)
-    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    
-    def __str__(self):
-        return "Audio features for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
-
-    class Meta: 
-        verbose_name_plural = "Audio Features"

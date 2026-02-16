@@ -23,10 +23,11 @@ from .bulk_db import (
 
 from .retrieval_helpers import (
     get_participant_from_session,
-    random_sample_items,
+)
+
+from .field_extractors import (
+    extract_base_track_fields,
     extract_artist_info,
-    extract_album_info,
-    get_artist_genres,
     get_image_url
 )
 
@@ -48,9 +49,8 @@ __all__ = [
     'bulk_update_objects',
     # Retrieval helpers
     'get_participant_from_session',
-    'random_sample_items',
+    # Field extractors
+    'extract_base_track_fields',
     'extract_artist_info',
-    'extract_album_info',
-    'get_artist_genres',
     'get_image_url',
 ]
