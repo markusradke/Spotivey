@@ -8,12 +8,62 @@ from spotify.models import (
     )
 
 
+def _build_track_row_from_structured_fields(track, idx):
+    """Build row dict from track with structured fields (SavedTrack)."""
+    return {
+        'id': idx,
+        'no': idx,
+        'participant': track.participant.participant,
+        'cover': track.image_url,
+        'trackName': track.track_name,
+        'spotify_artist_string': track.artist_names,
+        'spotifyID': track.spotify_id,
+        'isrc': track.isrc,
+    }
+
+
+
+
+def _build_track_results(model_class, title, data_type_id, survey_settings):
+    """
+    Build results structure for any track model following DRY principles.
+    
+    Args:
+        model_class: Django model class (SavedTrack, TopTrack, or RecentTrack)
+        title: Display title for this data type
+        data_type_id: Unique identifier for frontend routing
+        survey_settings: QuerySet of RetrievalSetting objects
+        
+    Returns:
+        Dictionary with track results metadata and rows
+    """
+    tracks = model_class.objects.filter(
+        participant__settings__in=survey_settings
+    ).select_related('participant').order_by('participant__participant')
+    rows = []
+    participants = set()
+    
+    for idx, track in enumerate(tracks, start=1):
+        participants.add(track.participant.participant)
+        rows.append(_build_track_row_from_structured_fields(track, idx))
+    
+    return {
+        'id': data_type_id,
+        'title': title,
+        'type': 'Tracks',
+        'data': rows,
+        'participantCount': len(participants),
+        'resultCount': len(rows),
+        'hasData': len(rows) > 0
+    }
+
+
 def getResultDict(surveyID):
     """
     Build results dictionary for researcher dashboard display.
     
-    Returns clean, self-documenting structure with SavedTrack data using
-    structured fields (no JSON parsing).
+    Returns clean, self-documenting structure with data from all track types
+    (SavedTrack, TopTrack, RecentTrack) using DRY helper functions.
     
     Args:
         surveyID: Survey identifier to filter results
@@ -23,43 +73,22 @@ def getResultDict(surveyID):
     """
     settings = RetrievalSetting.objects.filter(umfrageID=surveyID)
     
-    saved_tracks = SavedTrack.objects.filter(
-        participant__settings__in=settings,
-        confirmed=True
-    ).select_related('participant').order_by('participant__participant')
+    data_types = []
+    all_participants = set()
     
-    rows = []
-    participants = set()
+    # Build results for each track type
+    track_configs = [
+        (SavedTrack, 'Saved Tracks', 'savedTracks'),
+        (TopTrack, 'Top Tracks', 'topTracks'),
+        (RecentTrack, 'Recently Played', 'recentTracks'),
+    ]
     
-    for idx, track in enumerate(saved_tracks, start=1):
-        participant_name = track.participant.participant
-        participants.add(participant_name)
-        
-        rows.append({
-            'id': idx,
-            'no': idx,
-            'participant': participant_name,
-            'cover': track.image_url,
-            'trackName': track.track_name,
-            'spotify_artist_string': track.artist_names,
-            'spotifyID': track.spotify_id,
-            'isrc': track.isrc,
-        })
-    
-    participant_count = len(participants)
-    result_count = len(rows)
+    for model_class, title, data_id in track_configs:
+        result = _build_track_results(model_class, title, data_id, settings)
+        data_types.append(result)
+        all_participants.update(row['participant'] for row in result['data'])
     
     return {
-        'dataTypes': [
-            {
-                'id': 'savedTracks',
-                'title': 'Saved Tracks',
-                'type': 'Tracks',
-                'data': rows,
-                'participantCount': participant_count,
-                'resultCount': result_count,
-                'hasData': result_count > 0
-            }
-        ],
-        'participantList': list(participants)
+        'dataTypes': data_types,
+        'participantList': list(all_participants)
     }

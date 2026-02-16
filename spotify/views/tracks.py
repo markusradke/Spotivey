@@ -34,8 +34,7 @@ def _build_and_create_tracks(session_key, items, track_extractor, model_class,
     tracks_to_create = []
     for item in items:
         track_obj = track_extractor(item)
-        fields = extract_base_track_fields(track_obj, albums_cache,
-                                                                             artists_cache)
+        fields = extract_base_track_fields(track_obj, albums_cache, artists_cache)
         if extra_fields_fn is not None:
             fields.update(extra_fields_fn(item))
         fields['participant'] = participant
@@ -56,8 +55,7 @@ class GetTopTracks(APIView):
         time_range = request.GET.get('timeRange', 'medium_term')
         endpoint = f"me/top/tracks?time_range={time_range}&limit={limit}"
 
-        response = execute_spotify_api_request(request.session.session_key,
-                                                                                     endpoint)
+        response = execute_spotify_api_request(request.session.session_key, endpoint)
         if 'error' in response:
             return Response({'error': response},
                                             status=status.HTTP_204_NO_CONTENT)
