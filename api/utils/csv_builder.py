@@ -1,7 +1,7 @@
 """CSV export builders for Spotify data models."""
 import json
 import logging
-from spotify.models import SavedTrack, TopTrack, RecentTrack
+from spotify.models import SavedTrack, TopTrack, RecentTrack, ParticipantProfile
 
 
 def _build_base_track_csv_row(track, track_type):
@@ -150,6 +150,39 @@ def build_recent_tracks_csv(survey_settings):
     return rows
 
 
+def build_profiles_csv(survey_settings):
+    """
+    Build CSV rows for ParticipantProfile with all fields.
+    
+    Args:
+        survey_settings: QuerySet or list of RetrievalSetting objects
+        
+    Returns:
+        List of dictionaries ready for CSV export
+    """
+    profiles = ParticipantProfile.objects.filter(
+        participant__settings__in=survey_settings,
+    ).select_related('participant').order_by('participant__participant')
+    
+    rows = []
+    for profile in profiles:
+        rows.append({
+            # Metadata
+            'data_type': 'profile',
+            'participant_id': profile.participant.participant,
+            'survey_id': profile.participant.settings.umfrageID,
+            'survey_name': profile.participant.settings.nameUmfrage,
+            'confirmed': profile.confirmed,
+            
+            # Profile fields
+            'country': profile.country or '',
+            'followers': profile.followers if profile.followers is not None else '',
+            'product': profile.product or '',
+        })
+    
+    return rows
+
+
 def build_all_data_types_csv(survey_id):
     """
     Build complete CSV export for all data types in a survey.
@@ -174,6 +207,7 @@ def build_all_data_types_csv(survey_id):
         build_saved_tracks_csv,
         build_top_tracks_csv,
         build_recent_tracks_csv,
+        build_profiles_csv,
     ]
     
     all_rows = []
@@ -185,6 +219,5 @@ def build_all_data_types_csv(survey_id):
     # top_artists = build_top_artists_csv(survey_settings)
     # followed_artists = build_followed_artists_csv(survey_settings)
     # playlists = build_playlists_csv(survey_settings)
-    # profiles = build_profiles_csv(survey_settings)
     
     return all_rows

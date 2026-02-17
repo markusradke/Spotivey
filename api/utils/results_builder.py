@@ -22,6 +22,18 @@ def _build_track_row_from_structured_fields(track, idx):
     }
 
 
+def _build_profile_row(profile, idx):
+    """Build row dict from ParticipantProfile."""
+    return {
+        'id': idx,
+        'no': idx,
+        'participant': profile.participant.participant,
+        'country': profile.country or '',
+        'followers': profile.followers if profile.followers is not None else 0,
+        'product': profile.product or '',
+    }
+
+
 
 
 def _build_track_results(model_class, title, data_type_id, survey_settings):
@@ -58,6 +70,38 @@ def _build_track_results(model_class, title, data_type_id, survey_settings):
     }
 
 
+def _build_profile_results(survey_settings):
+    """
+    Build results structure for ParticipantProfile.
+    
+    Args:
+        survey_settings: QuerySet of RetrievalSetting objects
+        
+    Returns:
+        Dictionary with profile results metadata and rows
+    """
+    profiles = ParticipantProfile.objects.filter(
+        participant__settings__in=survey_settings,
+    ).select_related('participant').order_by('participant__participant')
+    
+    rows = []
+    participants = set()
+    
+    for idx, profile in enumerate(profiles, start=1):
+        participants.add(profile.participant.participant)
+        rows.append(_build_profile_row(profile, idx))
+    
+    return {
+        'id': 'profiles',
+        'title': 'User Profiles',
+        'type': 'Profile',
+        'data': rows,
+        'participantCount': len(participants),
+        'resultCount': len(rows),
+        'hasData': len(rows) > 0
+    }
+
+
 def getResultDict(surveyID):
     """
     Build results dictionary for researcher dashboard display.
@@ -87,6 +131,11 @@ def getResultDict(surveyID):
         result = _build_track_results(model_class, title, data_id, settings)
         data_types.append(result)
         all_participants.update(row['participant'] for row in result['data'])
+    
+    # Build profile results
+    profile_result = _build_profile_results(settings)
+    data_types.append(profile_result)
+    all_participants.update(row['participant'] for row in profile_result['data'])
     
     return {
         'dataTypes': data_types,

@@ -118,6 +118,24 @@ class RecentTrack(BaseTrack):
         return data
 
 
+class ParticipantProfile(models.Model):
+    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
+    country = models.CharField(max_length=20, default='')
+    followers = models.IntegerField(null=True, default=None)
+    product = models.CharField(max_length=50, default='')
+    confirmed = models.BooleanField(default=False)   
+    
+    def __str__(self):
+        return "Participant profile for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
+    
+    def to_dict(self):
+        return {
+            'country': self.country,
+            'followers': self.followers,
+            'product': self.product,
+        }
+
+
 class TopArtist(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
     data = models.JSONField(default=dict)
@@ -132,12 +150,6 @@ class FollowedArtist(models.Model):
     def __str__(self):
         return "Followed artist for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
 
-class ParticipantProfile(models.Model):
-    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    data = models.JSONField(default=dict)
-    confirm = models.BooleanField(default=False)   
-    def __str__(self):
-        return "Participant profile for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
 
 class CurrentPlaylist(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)

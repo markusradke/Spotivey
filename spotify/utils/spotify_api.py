@@ -76,11 +76,11 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
     retries = Retry(total=5,
                 backoff_factor=0.1,
                 status_forcelist=[ 500, 502, 503, 504 ])
-
+    
     s.mount(BASE_URL + endpoint, HTTPAdapter(max_retries=retries))
 
     response = s.get(BASE_URL + endpoint, headers=headers)
-    
+
     try:
         return response.json()
     except:

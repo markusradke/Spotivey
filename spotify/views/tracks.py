@@ -83,6 +83,9 @@ class GetSavedTracksSpotify(APIView):
         limit = request.GET.get('limit')
         response = execute_spotify_api_request(request.session.session_key,
                                                 f"me/tracks?limit={limit}")
+        if 'error' in response:
+            return Response({'error': response},
+                                            status=status.HTTP_204_NO_CONTENT)
         items = response.get("items")
 
         response_data = _build_and_create_tracks(
@@ -112,6 +115,9 @@ class GetRecentlyPlayedTracksSpotify(APIView):
             request.session.session_key,
             f"me/player/recently-played?limit={limit}"
         )
+        if 'error' in response:
+            return Response({'error': response},
+                                            status=status.HTTP_204_NO_CONTENT)
         items = response.get("items")
 
         def _recent_extra(item):
