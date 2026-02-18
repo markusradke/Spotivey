@@ -115,9 +115,6 @@ export default function Room (props) {
 
   const [endURLSecondSurvey, setEndURLSecondSurvey] = useState(null)
 
-  const [collapseOpen, setCollapseOpen] = useState(Array(20).fill(false))
-  const [checkArrayPlaylistsTracks, setCheckArrayPlaylistsTracks] = useState([0, 0, 0, Array(20).fill(Array(10).fill(true))])
-
   const [getSettingsCheck, setGetSettingsCheck] = useState(false)
   const [noConfirm, setNoConfirm] = useState(false)
 
@@ -399,8 +396,6 @@ export default function Room (props) {
       .then((response) => response.json())
       .then((data) => {
         setCurrentPlaylists(data);
-        setCollapseOpen(Array(data.length).fill(false))
-        setCheckArrayPlaylistsTracks([0, 0, 0, Array(data.length).fill(Array(10).fill(true))])
       });
   }
 
@@ -477,13 +472,11 @@ export default function Room (props) {
       );
   }
 
-  function renderResultListPlaylists (playlistsList, title, count, checkArray, setCheckArray, index, 
-    setCollapseOpen, collapseOpen, checkArray2, setCheckArray2) {
+  function renderResultListPlaylists (playlistsList, title, count, checkArray, setCheckArray, index) {
     return(
       <React.Fragment>
         {resultListPlaylist(
-          playlistsList.slice(0,count), title, checkArray, setCheckArray, index, setCollapseOpen, collapseOpen, 
-          checkArray2, setCheckArray2
+          playlistsList.slice(0,count), title, checkArray, setCheckArray, index
         )}
       </React.Fragment>
       );
@@ -528,8 +521,7 @@ export default function Room (props) {
             { pageName === 'Current Playlists' ? 
               currentPlaylists.length > 0 ?
                 renderResultListPlaylists(
-                  currentPlaylists, pageName, showItemsCurrentPlaylists, checkArray, setCheckArray, 5, 
-                  setCollapseOpen, collapseOpen, checkArrayPlaylistsTracks, setCheckArrayPlaylistsTracks) : 
+                  currentPlaylists, pageName, showItemsCurrentPlaylists, checkArray, setCheckArray, 5) : 
                 renderLoading() : 
               null
             }
@@ -574,11 +566,15 @@ export default function Room (props) {
       let spotifyIDArrayNotConfirm = []
       let checkZaehler = -1
       checkArray[zaehler].filter((item, index) => {
+        const dataItem = dataAll[zaehler][index]
+        if (dataItem === undefined || dataItem === null) {
+          return // Skip missing items
+        }
         if(item){
           checkZaehler += 1
-          spotifyIDArray.push(dataAll[zaehler][index])
+          spotifyIDArray.push(dataItem)
         } else {
-          spotifyIDArrayNotConfirm.push(dataAll[zaehler][index])
+          spotifyIDArrayNotConfirm.push(dataItem)
         }
       })
       const requestOptions = {

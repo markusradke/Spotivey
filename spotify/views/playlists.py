@@ -3,137 +3,90 @@
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-import numpy as np
 import random
 
-from spotify.models import Participant, CurrentPlaylist
+from spotify.models import CurrentPlaylist
+from spotify.utils.bulk_db import bulk_create_with_retry
+from spotify.utils.retrieval_helpers import get_participant_from_session
 from spotify.utils.spotify_api import execute_spotify_api_request
+
+
+def _extract_playlist_fields(playlist_item, current_user_id):
+    """Extract playlist fields from Spotify API response."""
+    owner_id = playlist_item.get('owner', {}).get('id', '')
+    images = playlist_item.get('images', [])
+    
+    return {
+        'playlist_id': playlist_item.get('id', ''),
+        'playlist_name': playlist_item.get('name', ''),
+        'playlist_cover': images[0].get('url', '') if images else '',
+        'is_collaborative': playlist_item.get('collaborative', False),
+        'is_public': playlist_item.get('public', False),
+        'is_self_owned': owner_id == current_user_id,
+        'n_tracks': playlist_item.get('tracks', {}).get('total', 0),
+    }
+
+
+def _build_and_create_playlists(session_key, playlists, participant, 
+                                  public_filter=None):
+    """Build and bulk create playlist objects."""
+    user_response = execute_spotify_api_request(session_key, 'me')
+    current_user_id = user_response.get('id', '')
+    
+    filtered_playlists = []
+    for playlist in playlists:
+        is_public = playlist.get('public', False)
+        if public_filter is not None and public_filter:
+            if is_public:
+                filtered_playlists.append(playlist)
+        else:
+            filtered_playlists.append(playlist)
+    
+    playlists_to_create = []
+    for playlist_item in filtered_playlists:
+        fields = _extract_playlist_fields(playlist_item, current_user_id)
+        fields['participant'] = participant
+        fields['confirmed'] = False
+        playlists_to_create.append(CurrentPlaylist(**fields))
+    
+    bulk_create_with_retry(CurrentPlaylist, playlists_to_create)
+    return [p.to_dict() for p in playlists_to_create]
 
 
 class GetPlaylistsSpotify(APIView):
     """Get user's playlists from Spotify."""
-    
-    lookup_url_kwarg_limit = "limit"
-    lookup_url_kwarg_public = "public"
 
-    def post(self, request, format=None):
-        host = self.request.session.session_key
+    def post(self, request):
+        participant, fail_response = get_participant_from_session(request)
+        if participant is None:
+            return fail_response
 
-        confirm = False if request.data.get("confirm") else True
+        limit = request.GET.get('limit', 50)
+        public_check = request.GET.get('public')
 
-        retrieval_session_key = self.request.session.get('retrieval_session_key')
-        if not retrieval_session_key:
-            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
+        public_filter = None
+        if public_check is not None:
+            # will check for public playlists if public_check is 'true', otherwise will not filter by public status
+            public_filter = public_check.lower() == 'false' 
+        print(f"Public filter for playlists: {public_filter}")
+        
+        endpoint = f"me/playlists?offset=0&limit={limit}"
+        response = execute_spotify_api_request(
+            request.session.session_key, 
+            endpoint
+        )
 
-        try:
-            participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
-        except Participant.DoesNotExist:
-            return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
+        if 'error' in response or 'items' not in response:
+            return Response({'error': response}, 
+                          status=status.HTTP_204_NO_CONTENT)
 
-        limit = request.GET.get(self.lookup_url_kwarg_limit)
-        publicCheck = request.GET.get(self.lookup_url_kwarg_public)
-        endpoint = "me/playlists??offset=0&limit=" + limit
+        items = response.get('items', [])
+        
+        response_data = _build_and_create_playlists(
+            request.session.session_key,
+            items,
+            participant,
+            public_filter=public_filter
+        )
 
-        response = execute_spotify_api_request(host, endpoint)
-
-        if "error" in response or "items" not in response:
-            return Response({}, status=status.HTTP_204_NO_CONTENT)
-
-        item = response.get("items")
-
-        anzahl_playlists = 50
-
-        if int(limit) < anzahl_playlists or len(item) < anzahl_playlists:
-            anzahl_playlists = int(limit)
-            if len(item) < anzahl_playlists:
-                anzahl_playlists = len(item)
-
-        random_10 = random.sample(range(int(anzahl_playlists)), anzahl_playlists)
-        playlists_infos = []
-
-        item = np.array(item)
-        item_top = list(item[random_10])
-
-        for j in range(anzahl_playlists):
-            item_top_j = item_top[j]
-
-            collaborative = item_top_j.get("collaborative")
-            name = item_top_j.get("name")
-            owner = item_top_j.get("owner").get("id")
-            playlists_cover_item = item_top_j.get("images")
-            if len(playlists_cover_item) > 0:
-                playlists_cover = playlists_cover_item[0].get("url")
-            else:
-                playlists_cover = ""
-            public = item_top_j.get("public")
-            tracks_total = item_top_j.get("tracks").get("total")
-            playlist_id = item_top_j.get("id")
-
-            if eval(str(publicCheck).title()) != eval(str(public).title()) or eval(
-                str(publicCheck).title()
-            ):
-                endpoint = f"playlists/{playlist_id}/tracks?limit=50"
-
-                response2 = execute_spotify_api_request(host, endpoint)
-
-                playlistsTracksRow = []
-
-                if not "Error" in response2 or "items" in response:
-                    playlistsTracks = response2.get("items")
-                    playlistsTracksRow = []
-
-                    for zaehlerPlaylist in range(len(playlistsTracks)):
-                        trackItem = playlistsTracks[zaehlerPlaylist].get("track")
-                        artists_string_mit_komma = ""
-                        for i, artist in enumerate(trackItem.get("artists")):
-                            name_artist = artist.get("name")
-                            if i > 0:
-                                artists_string_mit_komma += ", "
-                            name_artist = artist.get("name")
-                            artists_string_mit_komma += name_artist
-
-                        if len(trackItem.get("album").get("images")) > 0:
-                            coverTracks = trackItem.get("album").get("images")[0]
-                        else:
-                            coverTracks = ""
-
-                        playlistsTracksRow.append(
-                            {
-                                "id": trackItem.get("id"),
-                                "name": trackItem.get("name").replace('"', "'"),
-                                "artistName": artists_string_mit_komma,
-                                "type": trackItem.get("type"),
-                                "cover": coverTracks,
-                                "release_date": trackItem.get("album").get(
-                                    "release_date"
-                                ),
-                                "duration_ms": trackItem.get("duration_ms"),
-                                "isrc": trackItem.get("external_ids").get("isrc"),
-                                "albumName": trackItem.get("album")
-                                .get("name")
-                                .replace('"', "'"),
-                            }
-                        )
-
-                playlistsInfoData = {
-                    "collaborative": collaborative,
-                    "name": name.replace('"', "'"),
-                    "owner": owner,
-                    "playlists_cover": playlists_cover,
-                    "public": public,
-                    "tracks_total": tracks_total,
-                    "id": playlist_id,
-                    "playlistsTracksRow": playlistsTracksRow,
-                    "tracksCheck": [],
-                }
-
-                currentPlaylistsSpotify = CurrentPlaylist(
-                    data=playlistsInfoData,
-                    confirm=confirm,
-                    participant=participant,
-                )
-                currentPlaylistsSpotify.save()
-
-                playlists_infos.append(playlistsInfoData)
-
-        return Response(playlists_infos, status=status.HTTP_200_OK)
+        return Response(response_data, status=status.HTTP_200_OK)

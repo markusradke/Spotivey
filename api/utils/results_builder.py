@@ -102,6 +102,48 @@ def _build_profile_results(survey_settings):
     }
 
 
+def _build_playlist_results(survey_settings):
+    """
+    Build results structure for CurrentPlaylist.
+    
+    Args:
+        survey_settings: QuerySet of RetrievalSetting objects
+        
+    Returns:
+        Dictionary with playlist results metadata and rows
+    """
+    playlists = CurrentPlaylist.objects.filter(
+        participant__settings__in=survey_settings,
+    ).select_related('participant').order_by('participant__participant')
+    
+    rows = []
+    participants = set()
+    
+    for idx, playlist in enumerate(playlists, start=1):
+        participants.add(playlist.participant.participant)
+        rows.append({
+            'id': idx,
+            'no': idx,
+            'participant': playlist.participant.participant,
+            'playlist_id': playlist.playlist_id,
+            'playlist_name': playlist.playlist_name,
+            'cover': playlist.playlist_cover,
+            'is_collaborative': playlist.is_collaborative,
+            'is_public': playlist.is_public,
+            'is_self_owned': playlist.is_self_owned,
+            'n_tracks': playlist.n_tracks,
+        })
+    
+    return {
+        'id': 'playlists',
+        'title': 'Current Playlists',
+        'type': 'Playlists',
+        'data': rows,
+        'participantCount': len(participants),
+        'resultCount': len(rows),
+        'hasData': len(rows) > 0
+    }
+
 def getResultDict(surveyID):
     """
     Build results dictionary for researcher dashboard display.
@@ -136,6 +178,11 @@ def getResultDict(surveyID):
     profile_result = _build_profile_results(settings)
     data_types.append(profile_result)
     all_participants.update(row['participant'] for row in profile_result['data'])
+
+    # Build playlist results
+    playlist_result = _build_playlist_results(settings)
+    data_types.append(playlist_result)
+    all_participants.update(row['participant'] for row in playlist_result['data'])
     
     return {
         'dataTypes': data_types,

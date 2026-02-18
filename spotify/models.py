@@ -136,6 +136,32 @@ class ParticipantProfile(models.Model):
         }
 
 
+class CurrentPlaylist(models.Model):
+    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
+    playlist_id = models.CharField(max_length=100, default='')
+    playlist_name = models.CharField(max_length=200, default='')
+    playlist_cover = models.URLField(max_length=500, default='')
+    is_collaborative = models.BooleanField(null=True, default=None)
+    is_public = models.BooleanField(null=True, default=None)
+    is_self_owned = models.BooleanField(null=True, default=None)
+    n_tracks = models.IntegerField(null=True, default=None)
+
+    confirmed = models.BooleanField(default=False)   
+    def __str__(self):
+        return "Current playlist for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
+
+    def to_dict(self):
+        return {
+            'playlist_id': self.playlist_id,
+            'playlist_name': self.playlist_name,
+            'playlist_cover': self.playlist_cover,
+            'is_collaborative': self.is_collaborative,
+            'is_public': self.is_public,
+            'is_self_owned': self.is_self_owned,
+            'n_tracks': self.n_tracks,
+        }
+
+
 class TopArtist(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
     data = models.JSONField(default=dict)
@@ -150,11 +176,4 @@ class FollowedArtist(models.Model):
     def __str__(self):
         return "Followed artist for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
 
-
-class CurrentPlaylist(models.Model):
-    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    data = models.JSONField(default=dict)
-    confirm = models.BooleanField(default=False)   
-    def __str__(self):
-        return "Current playlist for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
 

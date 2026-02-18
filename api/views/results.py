@@ -51,72 +51,107 @@ class DeleteOnlyResultsWithID(APIView):
 
 
 class SaveCheckData(APIView):
-    # Check if respondent has confirmed Spotify data, if not, it will be deleted.
+    """Process user confirmation of retrieved Spotify data.
+    
+    Marks confirmed items as verified and deletes rejected items.
+    Maps data type index to corresponding model and identifier field.
+    """
+    
+    # Map index to (model_class, identifier_field, identifier_key_in_request)
+    DATA_TYPE_MAP = {
+        0: (SavedTrack, 'isrc', 'isrc'),
+        1: (TopTrack, 'isrc', 'isrc'),
+        2: (RecentTrack, 'isrc', 'isrc'),
+        3: (TopArtist, 'data__id', 'id'),
+        4: (FollowedArtist, 'data__id', 'id'),
+        5: (CurrentPlaylist, 'playlist_id', 'playlist_id'),
+    }
 
     def post(self, request, format=None):
+        data_type_index = request.data.get('index')
+        survey_id = request.data.get('surveyID')
+        confirmed_items = request.data.get('checkData', [])
+        rejected_items = request.data.get('noData', [])
 
-        zaehler = request.data.get('index')
-        surveyID = request.data.get('surveyID')
-        checkData = request.data.get('checkData')
-        noData = request.data.get('noData')
+        if not survey_id:
+            return Response(
+                {'error': 'Survey ID parameter missing'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        if surveyID is not None:
-            settingsFilter = RetrievalSetting.objects.filter(umfrageID=surveyID)
+        retrieval_session_key = request.session.get('retrieval_session_key')
+        if not retrieval_session_key: 
+            return Response(
+                {'error': 'No active retrieval session'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-            if settingsFilter.exists():
-                settings = settingsFilter[0]
-                settings.save()
+        try: 
+            participant = Participant.objects.get(
+                retrieval_session_key=retrieval_session_key
+            )
+        except Participant.DoesNotExist:
+            return Response(
+                {'error': 'Participant not found'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
 
-            retrieval_session_key = self.request.session.get('retrieval_session_key')
-            if not retrieval_session_key: 
-                return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
-            try: 
-                participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
-            except Participant.DoesNotExist:
-                return Response({'error': 'Participant not found'}, status=status.HTTP_404_NOT_FOUND)
-                
-            if len(checkData) > 0:
-                for i in range(len(checkData)):
-                    if int(zaehler)==0 or int(zaehler)==1 or int(zaehler)==2:
-                        isrcCheckData = checkData[i].get('isrc')
-                        if int(zaehler)==0:
-                            confirmData = SavedTrack.objects.filter(participant=participant, isrc=isrcCheckData)
-                        elif int(zaehler)==1:
-                            confirmData = TopTrack.objects.filter(participant=participant, isrc=isrcCheckData)
-                        else:
-                            confirmData = RecentTrack.objects.filter(participant=participant, isrc=isrcCheckData)
-                    else:
-                        idCheckData = checkData[i].get('id')
-                        if int(zaehler)==3:
-                            confirmData = TopArtist.objects.filter(participant=participant, data__id=idCheckData)
-                        elif int(zaehler)==4:
-                            confirmData = FollowedArtist.objects.filter(participant=participant, data__id=idCheckData)
-                        else:
-                            confirmData = CurrentPlaylist.objects.filter(participant=participant, data__id=idCheckData)
+        try:
+            data_type_index = int(data_type_index)
+            if data_type_index not in self.DATA_TYPE_MAP:
+                return Response(
+                    {'error': f'Invalid data type index: {data_type_index}'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        except (ValueError, TypeError):
+            return Response(
+                {'error': 'Data type index must be an integer'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-                    confirmData.update(confirmed=True)
+        model_class, identifier_field, request_key = self.DATA_TYPE_MAP[data_type_index]
+        
+        self._mark_items_as_confirmed(
+            model_class, participant, identifier_field, request_key, confirmed_items
+        )
+        self._delete_rejected_items(
+            model_class, participant, identifier_field, request_key, rejected_items
+        )
+        
+        return Response(
+            {'confirmed_count': len(confirmed_items), 'deleted_count': len(rejected_items)}, 
+            status=status.HTTP_200_OK
+        )
 
-            if len(noData) > 0:    
-                for j in range(len(noData)):
-                    if int(zaehler)==0 or int(zaehler)==1 or int(zaehler)==2:
-                        isrcCheckData = noData[j].get('isrc')
-                        if int(zaehler)==0:
-                            confirmData = SavedTrack.objects.filter(participant=participant, isrc=isrcCheckData).delete()
-                        elif int(zaehler)==1:
-                            confirmData = TopTrack.objects.filter(participant=participant, isrc=isrcCheckData).delete()
-                        else:
-                            confirmData = RecentTrack.objects.filter(participant=participant, isrc=isrcCheckData).delete()
-                    else:
-                        idCheckData = noData[j].get('id')
-                        if int(zaehler)==3:
-                            confirmData = TopArtist.objects.filter(participant=participant, data__id=idCheckData).delete()
-                        elif int(zaehler)==4:
-                            confirmData = FollowedArtist.objects.filter(participant=participant, data__id=idCheckData).delete()
-                        else:
-                            confirmData = CurrentPlaylist.objects.filter(participant=participant, data__id=idCheckData).delete()
-                
-            return Response({'checkData':checkData}, status=status.HTTP_200_OK)
-        return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
+    def _mark_items_as_confirmed(
+        self, model_class, participant, identifier_field, request_key, items
+    ):
+        """Mark items as confirmed in database."""
+        for item in items:
+            if item is None:
+                continue
+            identifier_value = item.get(request_key)
+            if identifier_value:
+                filter_kwargs = {
+                    'participant': participant,
+                    identifier_field: identifier_value
+                }
+                model_class.objects.filter(**filter_kwargs).update(confirmed=True)
+
+    def _delete_rejected_items(
+        self, model_class, participant, identifier_field, request_key, items
+    ):
+        """Delete rejected items from database."""
+        for item in items:
+            if item is None:
+                continue
+            identifier_value = item.get(request_key)
+            if identifier_value:
+                filter_kwargs = {
+                    'participant': participant,
+                    identifier_field: identifier_value
+                }
+                model_class.objects.filter(**filter_kwargs).delete()
 
 
            

@@ -82,7 +82,7 @@ class GetParticipantSession(APIView):
         RecentTrack.objects.filter(participant=participant, confirmed=False).delete()
         TopArtist.objects.filter(participant=participant, confirm=False).delete()
         FollowedArtist.objects.filter(participant=participant, confirm=False).delete()
-        CurrentPlaylist.objects.filter(participant=participant, confirm=False).delete()
+        CurrentPlaylist.objects.filter(participant=participant, confirmed=False).delete()
         ParticipantProfile.objects.filter(participant=participant, confirmed=False).delete()
 
 

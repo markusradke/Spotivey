@@ -206,8 +206,9 @@ export default function ResultContent(props) {
                             {type === 'Artists' ? <th>Popularity</th> : null}
                             {type === 'Artists' ? <th>Followers Total</th> : null}
                             {type === 'Artists' ? <th>Genres</th> : null}
-                            {type === 'Playlists' ? <th>Public?</th> : null}
                             {type === 'Playlists' ? <th>Tracks Total</th> : null}
+                            {type === 'Playlists' ? <th>Self Owned?</th> : null}
+                            {type === 'Playlists' ? <th>Public?</th> : null}
                             {type === 'Playlists' ? <th>Collaborative?</th> : null}
                         </React.Fragment> : 
                         <React.Fragment>
@@ -228,25 +229,29 @@ export default function ResultContent(props) {
                                 {type !== 'Profile' ? 
                                 <React.Fragment>
                                     <td>
-                                        <img className={'img-table'} src={item.cover}></img>
+                                        <img className={'img-table'} src={type === 'Playlists' ? item.cover : item.cover} alt=""></img>
                                     </td>
                                     {type === 'Tracks' ? <td>{item.trackName}</td> : null}
                                     {type === 'Artists' ? <td>{item.artistName}</td> : null}
-                                    {type === 'Playlists' ? <td>{item.playlistName}</td> : null}
+                                    {type === 'Playlists' ? <td>{item.playlist_name}</td> : null}
                                     {type === 'Tracks' ? <td>{item.spotify_artist_string}</td> : null}
-                                    <td>{item.spotifyID}</td>
+                                    <td>{type === 'Playlists' ? item.playlist_id : item.spotifyID}</td>
                                     {type === 'Tracks' ? <td>{item.isrc}</td> : null}
                                     {type === 'Artists' ? <td>{item.type}</td> : null}
                                     {type === 'Artists' ? <td>{item.popularity}</td> : null}
                                     {type === 'Artists' ? <td>{item.followers}</td> : null}
                                     {type === 'Artists' ? <td>{item.genre_string}</td> : null}
-                                    {type === 'Playlists' ? <td>{item.public ? <CheckBoxIcon/> : <NotInterestedIcon/>}</td> : null}
-                                    {type === 'Playlists' ? <td>{item.tracks_total}</td> : null}
-                                    {type === 'Playlists' ? <td>{item.collaborative ? <CheckBoxIcon/> : <NotInterestedIcon/>}</td> : null}
+                                    {type === 'Playlists' ? <td>{item.n_tracks}</td> : null}
+                                    {type === 'Playlists' ? <td>{item.is_self_owned ? <CheckBoxIcon/> : <NotInterestedIcon/>}</td> : null}
+                                    {type === 'Playlists' ? <td>{item.is_public ? <CheckBoxIcon/> : <NotInterestedIcon/>}</td> : null}
+                                    {type === 'Playlists' ? <td>{item.is_collaborative ? <CheckBoxIcon/> : <NotInterestedIcon/>}</td> : null}
                                 </React.Fragment> : 
                                 <React.Fragment>
                                     <td>
-                                        <img className={'img-table'} src={`https://flagcdn.com/w20/${item.country.toLowerCase()}.png`}></img>
+                                        {item.country && item.country.trim() ? (
+                                        <img className={'img-table'} src={`https://flagcdn.com/w20/${item.country.toLowerCase()}.png`}></img>)
+                                        : <span>-</span>
+                                    }
                                     </td>
                                     <td>{item.followers}</td>
                                     <td>{item.product}</td>

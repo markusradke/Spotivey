@@ -1,49 +1,36 @@
 import React, { Component } from "react";
 import { Checkbox } from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import resultListTrack from "./resultList";
 import { IndexKind } from "typescript";
 
 export default function resultListPlaylist (
-    list, title, checkArray, setCheckArray, i, setCollapseOpen, collapseOpen, checkArray2, setCheckArray2
+    list, title, checkArray, setCheckArray, i
     ) {
 
     function handleCheckboxClicked (e, index) {
         let items = [...checkArray];
         items[i][index] =  e.target.checked;
         setCheckArray(items)
-        let items2 = [...checkArray2];
-        items2[3][index] =  Array(50).fill(e.target.checked);
-        setCheckArray2(items2)
-    }
-
-    function handleCollapseClicked (e, indexCollaps) {
-        let items = [...collapseOpen];
-        items[indexCollaps] =  !items[indexCollaps];
-        setCollapseOpen(items)
     }
 
     return(
         <React.Fragment>
             {list.map((playlists, index) => { 
                 return(
-                    <React.Fragment>
+                    <React.Fragment key={index}>
                         <div className={"result-list-card-outer"}>
                             <div className="result-list-card-outer-container">
                                 <div className="result-list-card-container">
-                                    <img class={"result-list-img"} src={playlists.playlists_cover} />
-                                    <div className="result-list-card-container-outer" onClick={(e) => handleCollapseClicked(e, index)}>
+                                    {playlists.playlist_cover && (
+                                        <img class={"result-list-img"} src={playlists.playlist_cover} alt={playlists.playlist_name} />
+                                    )}
+                                    <div className="result-list-card-container-outer">
                                         <div className="result-list-card-container-inner">
                                             <body1 className="result-list-card-script-track-name">
-                                                {playlists.name} 
+                                                {playlists.playlist_name} 
                                             </body1>
                                             <body1 className="result-list-card-script-artist-string"> 
-                                                Owner: {playlists.owner} || collaborative: {playlists.collaborative ? "Yes" : "No"}
+                                                {playlists.n_tracks} tracks || Owner: {playlists.is_self_owned ? "You" : "Other"} || Collaborative: {playlists.is_collaborative ? "Yes" : "No"}
                                             </body1>
-                                        </div>
-                                        <div style={{margin: 'auto 0'}}>
-                                            {collapseOpen[index] ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
                                         </div>
                                     </div>
                                     <div className={"result-list-checkbox"}>
@@ -57,12 +44,6 @@ export default function resultListPlaylist (
                                 </div>
                             </div>
                         </div>
-                        {collapseOpen[index] ? 
-                            <div style={{width: '80%', margin: '0 auto'}}>
-                            {resultListTrack(playlists.playlistsTracksRow.slice(0,playlists.playlistsTracksRow.length), 
-                            '', checkArray2, setCheckArray2, 3, index)}
-                            </div> : 
-                        null}
                     </React.Fragment>
                 )}
             )}

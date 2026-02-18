@@ -1,7 +1,7 @@
 """CSV export builders for Spotify data models."""
 import json
 import logging
-from spotify.models import SavedTrack, TopTrack, RecentTrack, ParticipantProfile
+from spotify.models import SavedTrack, TopTrack, RecentTrack, ParticipantProfile, CurrentPlaylist
 
 
 def _build_base_track_csv_row(track, track_type):
@@ -183,6 +183,43 @@ def build_profiles_csv(survey_settings):
     return rows
 
 
+
+def build_playlists_csv(survey_settings):
+    """
+    Build CSV rows for CurrentPlaylist with all fields.
+    
+    Args:
+        survey_settings: QuerySet or list of RetrievalSetting objects
+    Returns:
+        List of dictionaries ready for CSV export
+    """
+    playlists = CurrentPlaylist.objects.filter(
+        participant__settings__in=survey_settings,
+    ).select_related('participant').order_by('participant__participant')
+    
+    rows = []
+    for playlist in playlists:
+        rows.append({
+            # Metadata
+            'data_type': 'current_playlist',
+            'participant_id': playlist.participant.participant,
+            'survey_id': playlist.participant.settings.umfrageID,
+            'survey_name': playlist.participant.settings.nameUmfrage,
+            'confirmed': playlist.confirmed,
+            
+            # Playlist fields
+            'playlist_id': playlist.playlist_id,
+            'playlist_name': playlist.playlist_name,
+            'playlist_cover': playlist.playlist_cover,
+            'is_collaborative': playlist.is_collaborative,
+            'is_public': playlist.is_public,
+            'is_self_owned': playlist.is_self_owned,
+            'n_tracks': playlist.n_tracks,
+        })
+    
+    return rows
+
+
 def build_all_data_types_csv(survey_id):
     """
     Build complete CSV export for all data types in a survey.
@@ -208,6 +245,7 @@ def build_all_data_types_csv(survey_id):
         build_top_tracks_csv,
         build_recent_tracks_csv,
         build_profiles_csv,
+        build_playlists_csv, 
     ]
     
     all_rows = []
