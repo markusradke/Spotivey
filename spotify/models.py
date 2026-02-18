@@ -162,18 +162,55 @@ class CurrentPlaylist(models.Model):
         }
 
 
-class TopArtist(models.Model):
-    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    data = models.JSONField(default=dict)
-    confirm = models.BooleanField(default=False)    
-    def __str__(self):
-        return "Top artist for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
+class BaseArtist(models.Model):
+    """Abstract base model for all artist types."""
+    participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
+    confirmed = models.BooleanField(default=False)
+    
+    # Artist identification
+    spotify_id = models.CharField(max_length=50, db_index=True)
+    
+    # Artist metadata
+    artist_name = models.CharField(max_length=300, default='')
+    artist_type = models.CharField(max_length=50, default='')
+    popularity = models.IntegerField(null=True, default=None)
+    followers = models.IntegerField(null=True, default=None)
+    image_url = models.URLField(max_length=500, default='')
+    genre_string = models.TextField(default='')
+    
+    class Meta:
+        abstract = True
+        indexes = [
+            models.Index(fields=['participant', 'spotify_id']),
+        ]
+    
+    def get_base_dict(self):
+        """Return common fields for frontend."""
+        return {
+            'artist': self.artist_name,
+            'type': self.artist_type,
+            'popularity': self.popularity,
+            'followers': self.followers,
+            'image_url': self.image_url,
+            'genre_string': self.genre_string,
+            'id': self.spotify_id,
+        }
 
-class FollowedArtist(models.Model):
-    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    data = models.JSONField(default=dict)
-    confirm = models.BooleanField(default=False)    
     def __str__(self):
-        return "Followed artist for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
+        return f"Artist (ID: {self.spotify_id}) for participant {self.participant.participant} (retrieval settings: {self.participant.settings.nameUmfrage})"
+
+
+class TopArtist(BaseArtist):
+    """Participant's top artist."""
+    
+    def to_dict(self):
+        return self.get_base_dict()
+
+
+class FollowedArtist(BaseArtist):
+    """Participant's followed artist."""
+    
+    def to_dict(self):
+        return self.get_base_dict()
 
 

@@ -1,7 +1,11 @@
 """CSV export builders for Spotify data models."""
 import json
 import logging
-from spotify.models import SavedTrack, TopTrack, RecentTrack, ParticipantProfile, CurrentPlaylist
+from spotify.models import (
+    SavedTrack, TopTrack, RecentTrack,
+    TopArtist, FollowedArtist,
+    ParticipantProfile, CurrentPlaylist
+)
 
 
 def _build_base_track_csv_row(track, track_type):
@@ -91,7 +95,6 @@ def build_saved_tracks_csv(survey_settings):
         participant__settings__in=survey_settings,
     ).select_related('participant').order_by('participant__participant')
     
-    print(track.keys() for track in tracks[:5])  # Debug: print keys of first 5 tracks
     rows = []
     for track in tracks:
         row = _build_base_track_csv_row(track, 'saved_track')
@@ -149,6 +152,83 @@ def build_recent_tracks_csv(survey_settings):
     
     return rows
 
+def _build_base_artist_csv_row(artist, artist_type):
+    """
+    Build CSV row with all common BaseArtist fields.
+    
+    Extracts and formats all shared fields from any artist model following DRY principles.
+    Handles empty/null values safely.
+    
+    Args:
+        artist: Artist model instance (TopArtist or FollowedArtist)
+        artist_type: String identifier for the artist type
+        
+    Returns:
+        Dictionary with all common artist fields ready for CSV export
+    """
+    return {
+        # Metadata
+        'data_type': artist_type,
+        'participant_id': artist.participant.participant,
+        'survey_id': artist.participant.settings.umfrageID,
+        'survey_name': artist.participant.settings.nameUmfrage,
+        'confirmed': artist.confirmed,
+        
+        # Artist identification
+        'spotify_id': artist.spotify_id or '',
+        
+        # Artist metadata
+        'artist_name': artist.artist_name or '',
+        'artist_type': artist.artist_type or '',
+        'popularity': artist.popularity if artist.popularity is not None else '',
+        'followers': artist.followers if artist.followers is not None else '',
+        'image_url': artist.image_url or '',
+        'genre_string': artist.genre_string or '',
+    }
+
+
+def build_top_artists_csv(survey_settings):
+    """
+    Build CSV rows for TopArtist with all BaseArtist fields.
+    
+    Args:
+        survey_settings: QuerySet or list of RetrievalSetting objects
+        
+    Returns:
+        List of dictionaries ready for CSV export
+    """
+    artists = TopArtist.objects.filter(
+        participant__settings__in=survey_settings,
+    ).select_related('participant').order_by('participant__participant')
+    
+    rows = []
+    for artist in artists:
+        row = _build_base_artist_csv_row(artist, 'top_artist')
+        rows.append(row)
+    
+    return rows
+
+
+def build_followed_artists_csv(survey_settings):
+    """
+    Build CSV rows for FollowedArtist with all BaseArtist fields.
+    
+    Args:
+        survey_settings: QuerySet or list of RetrievalSetting objects
+        
+    Returns:
+        List of dictionaries ready for CSV export
+    """
+    artists = FollowedArtist.objects.filter(
+        participant__settings__in=survey_settings,
+    ).select_related('participant').order_by('participant__participant')
+    
+    rows = []
+    for artist in artists:
+        row = _build_base_artist_csv_row(artist, 'followed_artist')
+        rows.append(row)
+    
+    return rows
 
 def build_profiles_csv(survey_settings):
     """
@@ -224,8 +304,9 @@ def build_all_data_types_csv(survey_id):
     """
     Build complete CSV export for all data types in a survey.
     
-    Uses DRY principles to aggregate data from all track models.
-    Returns empty list if no survey settings found or no data available.
+    Uses DRY principles to aggregate data from all track models (SavedTrack, 
+    TopTrack, RecentTrack), artist models (TopArtist, FollowedArtist), profiles,
+    and playlists. Returns empty list if no survey settings found or no data available.
     
     Args:
         survey_id: Survey identifier
@@ -244,6 +325,8 @@ def build_all_data_types_csv(survey_id):
         build_saved_tracks_csv,
         build_top_tracks_csv,
         build_recent_tracks_csv,
+        build_top_artists_csv,
+        build_followed_artists_csv,
         build_profiles_csv,
         build_playlists_csv, 
     ]
@@ -252,10 +335,5 @@ def build_all_data_types_csv(survey_id):
     for builder_func in builders:
         rows = builder_func(survey_settings)
         all_rows.extend(rows)
-    
-    # TODO: Add other data types as they're transformed
-    # top_artists = build_top_artists_csv(survey_settings)
-    # followed_artists = build_followed_artists_csv(survey_settings)
-    # playlists = build_playlists_csv(survey_settings)
     
     return all_rows

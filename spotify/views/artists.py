@@ -3,173 +3,90 @@
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-import numpy as np
-import random
 
 from spotify.models import Participant, TopArtist, FollowedArtist
+from spotify.utils.bulk_db import bulk_create_with_retry
+from spotify.utils.field_extractors import extract_artist_fields
+from spotify.utils.retrieval_helpers import get_participant_from_session, sample_items
 from spotify.utils.spotify_api import execute_spotify_api_request
+
+
+def _build_and_create_artists(items, model_class, participant, max_sample=50):
+    """
+    Build artist model instances and bulk create them.
+    
+    Args:
+        items: List of artist items from Spotify API
+        model_class: TopArtist or FollowedArtist
+        participant: Participant instance
+        max_sample: Maximum number of artists to sample
+    
+    Returns:
+        List of artist dictionaries for response
+    """
+    sampled_items = sample_items(items, max_sample)
+    
+    artists_to_create = []
+    for artist_item in sampled_items:
+        fields = extract_artist_fields(artist_item)
+        fields['participant'] = participant
+        fields['confirmed'] = False
+        artists_to_create.append(model_class(**fields))
+    
+    bulk_create_with_retry(model_class, artists_to_create)
+    return [artist.to_dict() for artist in artists_to_create]
 
 
 class TopArtists(APIView):
     """Get user's top artists from Spotify."""
-    
-    lookup_url_kwarg_limit = "limit"
-    lookup_url_kwarg_timeRange = "timeRange"
 
     def post(self, request, format=None):
-        confirm = False if request.data.get("confirm") else True
+        participant, error_response = get_participant_from_session(request)
+        if error_response:
+            return error_response
 
-        retrieval_session_key = self.request.session.get('retrieval_session_key')
-        if not retrieval_session_key:
-            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
+        limit = request.GET.get('limit', 50)
+        time_range = request.GET.get('timeRange', 'medium_term')
+        endpoint = f"me/top/artists?time_range={time_range}&limit={limit}"
 
-        try:
-            participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
-        except Participant.DoesNotExist:
-            return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        limit = request.GET.get(self.lookup_url_kwarg_limit)
-        timeRange = request.GET.get(self.lookup_url_kwarg_timeRange)
-        endpoint = "me/top/artists?time_range=" + timeRange + "&limit=" + limit
-
-        host = self.request.session.session_key
-        response = execute_spotify_api_request(host, endpoint)
-
-        if "error" in response or "items" not in response:
+        response = execute_spotify_api_request(request.session.session_key, endpoint)
+        
+        if 'error' in response or 'items' not in response:
             return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-        item = response.get("items")
+        items = response.get('items')
+        response_data = _build_and_create_artists(
+            items, 
+            TopArtist, 
+            participant,
+            max_sample=50
+        )
 
-        anzahl_artists = 50
-
-        if int(limit) < anzahl_artists:
-            anzahl_artists = int(limit)
-
-        random_10 = random.sample(range(int(limit)), anzahl_artists)
-        artists_infos = []
-
-        item = np.array(item)
-        item_top = list(item[random_10])
-
-        for j in range(anzahl_artists):
-            item_top_j = item_top[j]
-            artists_name = item_top_j.get("name")
-            artists_type = item_top_j.get("type")
-            artists_popularity = item_top_j.get("popularity")
-            artists_followers = item_top_j.get("followers").get("total")
-            artists_cover_item = item_top_j.get("images")
-            if len(artists_cover_item) > 0:
-                artists_cover = artists_cover_item[0].get("url")
-            else:
-                artists_cover = ""
-
-            artists_genre_helper = item_top_j.get("genres")
-            artists_genre = ""
-            for zaehlerGenre in range(len(artists_genre_helper)):
-                if zaehlerGenre > 0:
-                    artists_genre += ", "
-                artists_genre += artists_genre_helper[zaehlerGenre]
-
-            artists_id = item_top_j.get("id")
-
-            artistsInfoData = {
-                "artist": artists_name.replace('"', "'"),
-                "type": artists_type,
-                "popularity": artists_popularity,
-                "followers": artists_followers,
-                "image_url": artists_cover,
-                "genre_string": artists_genre,
-                "id": artists_id,
-            }
-
-            topArtistsSpotify = TopArtist(
-                data=artistsInfoData,
-                confirm=confirm,
-                participant=participant,
-            )
-            topArtistsSpotify.save()
-
-            artists_infos.append(artistsInfoData)
-
-        return Response(artists_infos, status=status.HTTP_200_OK)
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class GetFollowedArtistsSpotify(APIView):
     """Get artists followed by the user."""
-    
-    lookup_url_kwarg_limit = "limit"
 
     def post(self, request, format=None):
-        host = self.request.session.session_key
-        limit = request.GET.get(self.lookup_url_kwarg_limit)
+        participant, error_response = get_participant_from_session(request)
+        if error_response:
+            return error_response
 
-        confirm = False if request.data.get("confirm") else True
+        limit = request.GET.get('limit', 50)
+        endpoint = f"me/following?type=artist&limit={limit}"
 
-        retrieval_session_key = self.request.session.get('retrieval_session_key')
-        if not retrieval_session_key:
-            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
-        except Participant.DoesNotExist:
-            return Response({'error': 'Participant session not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        endpoint = "me/following?type=artist&limit=" + limit
-
-        response = execute_spotify_api_request(host, endpoint)
-
-        if "error" in response or "artists" not in response:
+        response = execute_spotify_api_request(request.session.session_key, endpoint)
+        
+        if 'error' in response or 'artists' not in response:
             return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-        item = response.get("artists").get("items")
+        items = response.get('artists', {}).get('items', [])
+        response_data = _build_and_create_artists(
+            items, 
+            FollowedArtist, 
+            participant,
+            max_sample=50
+        )
 
-        anzahl_artists = 50
-
-        if int(limit) < anzahl_artists:
-            anzahl_artists = int(limit)
-
-        random_10 = random.sample(range(int(limit)), anzahl_artists)
-        artists_infos = []
-
-        item = np.array(item)
-        item_top = list(item[random_10])
-
-        for j in range(anzahl_artists):
-            item_top_j = item_top[j]
-            artists_name = item_top_j.get("name")
-            artists_type = item_top_j.get("type")
-            artists_popularity = item_top_j.get("popularity")
-            artists_followers = item_top_j.get("followers").get("total")
-            artists_cover_item = item_top_j.get("images")
-            if len(artists_cover_item) > 0:
-                artists_cover = artists_cover_item[0].get("url")
-            else:
-                artists_cover = ""
-            artists_genre_helper = item_top_j.get("genres")
-            artists_genre = ""
-            for zaehlerGenre in range(len(artists_genre_helper)):
-                if zaehlerGenre > 0:
-                    artists_genre += ", "
-                artists_genre += artists_genre_helper[zaehlerGenre]
-            artists_id = item_top_j.get("id")
-
-            artistsInfoData = {
-                "artist": artists_name.replace('"', "'"),
-                "type": artists_type,
-                "popularity": artists_popularity,
-                "followers": artists_followers,
-                "image_url": artists_cover,
-                "genre_string": artists_genre,
-                "id": artists_id,
-            }
-
-            followedArtistsSpotify = FollowedArtist(
-                data=artistsInfoData,
-                confirm=confirm,
-                participant=participant,
-            )
-            followedArtistsSpotify.save()
-
-            artists_infos.append(artistsInfoData)
-
-        return Response(artists_infos, status=status.HTTP_200_OK)
+        return Response(response_data, status=status.HTTP_200_OK)

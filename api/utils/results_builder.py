@@ -22,6 +22,22 @@ def _build_track_row_from_structured_fields(track, idx):
     }
 
 
+def _build_artist_row(artist, idx):
+    """Build row dict from artist with structured fields."""
+    return {
+        'id': idx,
+        'no': idx,
+        'participant': artist.participant.participant,
+        'cover': artist.image_url,
+        'artistName': artist.artist_name,
+        'spotifyID': artist.spotify_id,
+        'type': artist.artist_type,
+        'popularity': artist.popularity if artist.popularity is not None else 0,
+        'followers': artist.followers if artist.followers is not None else 0,
+        'genre_string': artist.genre_string,
+    }
+
+
 def _build_profile_row(profile, idx):
     """Build row dict from ParticipantProfile."""
     return {
@@ -63,6 +79,41 @@ def _build_track_results(model_class, title, data_type_id, survey_settings):
         'id': data_type_id,
         'title': title,
         'type': 'Tracks',
+        'data': rows,
+        'participantCount': len(participants),
+        'resultCount': len(rows),
+        'hasData': len(rows) > 0
+    }
+
+
+def _build_artist_results(model_class, title, data_type_id, survey_settings):
+    """
+    Build results structure for any artist model following DRY principles.
+    
+    Args:
+        model_class: Django model class (TopArtist or FollowedArtist)
+        title: Display title for this data type
+        data_type_id: Unique identifier for frontend routing
+        survey_settings: QuerySet of RetrievalSetting objects
+        
+    Returns:
+        Dictionary with artist results metadata and rows
+    """
+    artists = model_class.objects.filter(
+        participant__settings__in=survey_settings
+    ).select_related('participant').order_by('participant__participant')
+    
+    rows = []
+    participants = set()
+    
+    for idx, artist in enumerate(artists, start=1):
+        participants.add(artist.participant.participant)
+        rows.append(_build_artist_row(artist, idx))
+    
+    return {
+        'id': data_type_id,
+        'title': title,
+        'type': 'Artists',
         'data': rows,
         'participantCount': len(participants),
         'resultCount': len(rows),
@@ -149,7 +200,8 @@ def getResultDict(surveyID):
     Build results dictionary for researcher dashboard display.
     
     Returns clean, self-documenting structure with data from all track types
-    (SavedTrack, TopTrack, RecentTrack) using DRY helper functions.
+    (SavedTrack, TopTrack, RecentTrack), artist types (TopArtist, FollowedArtist),
+    profiles, and playlists using DRY helper functions.
     
     Args:
         surveyID: Survey identifier to filter results
@@ -171,6 +223,17 @@ def getResultDict(surveyID):
     
     for model_class, title, data_id in track_configs:
         result = _build_track_results(model_class, title, data_id, settings)
+        data_types.append(result)
+        all_participants.update(row['participant'] for row in result['data'])
+    
+    # Build results for each artist type
+    artist_configs = [
+        (TopArtist, 'Top Artists', 'topArtists'),
+        (FollowedArtist, 'Followed Artists', 'followedArtists'),
+    ]
+    
+    for model_class, title, data_id in artist_configs:
+        result = _build_artist_results(model_class, title, data_id, settings)
         data_types.append(result)
         all_participants.update(row['participant'] for row in result['data'])
     

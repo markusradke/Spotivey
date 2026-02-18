@@ -43,3 +43,22 @@ def get_participant_from_session(request) -> tuple:
         ))
 
 
+def sample_items(items: List[Any], max_sample: int = 50) -> List[Any]:
+    """
+    Randomly sample items from a list, up to max_sample.
+    
+    Args:
+        items: List of items to sample from
+        max_sample: Maximum number of items to return
+    
+    Returns:
+        List of sampled items (or all items if fewer than max_sample)
+    
+    Usage:
+        sampled = sample_items(all_artists, max_sample=50)
+    """
+    if len(items) <= max_sample:
+        return items
+    
+    indices = random.sample(range(len(items)), max_sample)
+    return [items[i] for i in indices]

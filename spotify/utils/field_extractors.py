@@ -73,6 +73,30 @@ def extract_artist_info(artists_array: List[dict], artists_cache=None) -> Dict[s
     return names_string, ids, genres
 
 
+def extract_artist_fields(artist_item):
+    """
+    Extract artist fields from Spotify API response.
+    
+    Args:
+        artist_item: Artist object from Spotify API
+    
+    Returns:
+        Dictionary with all BaseArtist model fields
+    """
+    genres_list = artist_item.get('genres', [])
+    genre_string = ', '.join(genres_list) if genres_list else ''
+    
+    return {
+        'spotify_id': artist_item['id'],
+        'artist_name': artist_item.get('name', '').replace('"', "'"),
+        'artist_type': artist_item.get('type', ''),
+        'popularity': artist_item.get('popularity'),
+        'followers': artist_item.get('followers', {}).get('total'),
+        'image_url': get_image_url(artist_item.get('images', [])),
+        'genre_string': genre_string,
+    }
+
+
 def get_image_url(images_array: List[dict], default: str = '') -> str:
     """
     Get first image URL from Spotify images array.
