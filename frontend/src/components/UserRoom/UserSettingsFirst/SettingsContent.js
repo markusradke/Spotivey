@@ -21,6 +21,8 @@ export default function SettingsContent(props) {
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [deleteDialogMessage, setDeleteDialogMessage] = useState('');
     const [participantCount, setParticipantCount] = useState(0);
+    const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+    const [updateDialogMessage, setUpdateDialogMessage] = useState('');
 
 
     const navigate = useNavigate()
@@ -123,6 +125,64 @@ export default function SettingsContent(props) {
         });
     }
 
+    function checkAndUpdate(){
+        fetch("/api/get-participant-count?surveyID=" + encodeURIComponent(selectedRowSettings[0].umfrageID))
+            .then(res => res.json())
+            .then(data => {
+                if (data.hasData) {
+                    setUpdateDialogMessage(
+                        `${data.participantCount} participant(s) have contributed ${data.totalRecords} data record(s). ` +
+                        `Settings cannot be modified after data collection has started.`
+                    );
+                    setOpenUpdateDialog(true);
+                } else {
+                    navigateToUpdatePage();
+                }
+            })
+            .catch(error => {
+                console.error('Error checking participant count:', error);
+                alert('Error checking participant data. Please try again.');
+            });
+    }
+
+    function navigateToUpdatePage(){
+        navigate('/user/settings/new', {
+            state: {
+                update: true,
+                surveyID: selectedRowSettings[0].umfrageID
+            }
+       })
+    }
+
+    function checkAndUpdateConfirmText(){
+        fetch("/api/get-participant-count?surveyID=" + encodeURIComponent(selectedRowSettings[0].umfrageID))
+            .then(res => res.json())
+            .then(data => {
+                if (data.hasData) {
+                    setUpdateDialogMessage(
+                        `${data.participantCount} participant(s) have contributed ${data.totalRecords} data record(s). ` +
+                        `Settings cannot be modified after data collection has started.`
+                    );
+                    setOpenUpdateDialog(true);
+                } else {
+                    navigateToConfirmTextPage();
+                }
+            })
+            .catch(error => {
+                console.error('Error checking participant count:', error);
+                alert('Error checking participant data. Please try again.');
+            });
+    }
+
+    function navigateToConfirmTextPage(){
+        navigate( '/user/settings/confirm-text-design', {
+            state: {
+                update: true,
+                surveyID: selectedRowSettings[0].umfrageID
+            }
+       })
+    }
+
     function renderDeleteButton(){
         return(
             <div>
@@ -139,21 +199,12 @@ export default function SettingsContent(props) {
         )
     }
 
-    function updateSettings(){
-        navigate('/user/settings/new', {
-            state: {
-                update: true,
-                surveyID: selectedRowSettings[0].umfrageID
-            }
-       })
-    }
-
     function renderChangeButton(){
         return(
             <div>
                 <Button 
                     startIcon={<ManageHistoryOutlinedIcon />}
-                    onClick={() => {updateSettings()}}
+                    onClick={() => {checkAndUpdate()}}
                     disabled={selectedRowSettings.length === 1 ? false : true}
                 >
                     Edit Profile
@@ -202,21 +253,12 @@ export default function SettingsContent(props) {
         )
     }
 
-    function confirmTextDesign(){
-        navigate( '/user/settings/confirm-text-design', {
-            state: {
-                update: true,
-                surveyID: selectedRowSettings[0].umfrageID
-            }
-       })
-    }
-
     function renderChangeConfirmButton() {
         return(
             <React.Fragment>
                 <Button 
                     startIcon={<TextFieldsIcon />}
-                    onClick={() => {confirmTextDesign()}}
+                    onClick={() => {checkAndUpdateConfirmText()}}
                     disabled={selectedRowSettings.length === 1 ? false : true}
                 >
                     Edit Confirmation Text
@@ -242,6 +284,29 @@ export default function SettingsContent(props) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpenDeleteDialog(false)} color="primary">
+                        OK
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
+    function renderUpdateDialog(){
+        return(
+            <Dialog
+                open={openUpdateDialog}
+                onClose={() => setOpenUpdateDialog(false)}
+            >
+                <DialogTitle>
+                    Cannot Edit Settings
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {updateDialogMessage}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenUpdateDialog(false)} color="primary">
                         OK
                     </Button>
                 </DialogActions>
@@ -288,6 +353,7 @@ export default function SettingsContent(props) {
         </div>
         {renderSettingsTable()}
         {renderDeleteDialog()}
+        {renderUpdateDialog()}
     </div>
     )
 }
