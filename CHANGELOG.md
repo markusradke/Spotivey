@@ -1,4 +1,21 @@
 # Spotivey Changelog
+## 2026-02-19 - Privacy Notice & OAuth Flow Bug Fix
+- **Fixed privacy notice persistence** - Separated `privacy_accepted` session flag from OAuth `welcome` flag, ensuring privacy notice displays consistently on first visits
+- **Fixed authentication status check** - Added explicit `return False` to `is_spotify_authenticated()` function (previously returned `None` causing frontend logic errors)
+- **Fixed OAuth callback redirect** - Modified `spotify_callback()` to redirect with `oauth_complete=true` flag, allowing FirstPage.js to restore session context after Spotify authentication
+- **Added authentication gate** - Introduced `isAuthenticated` state in Room.js to prevent data fetching race conditions before OAuth completes
+- **Eliminated duplicate Participant records** - Added check to delete existing in-progress sessions with same participant ID and survey ID before creating new Participant in `init_participant_session` view
+
+
+## 2026-02-18 - Track Model Transformation & DRY Refactoring
+- **Created BaseTrack abstract model** - Extracted common fields (track identification, metadata, album info, artist info) shared across SavedTrack, TopTrack, and RecentTrack to eliminate duplication
+- **Transformed TopTrack and RecentTrack models** - Migrated from JSON storage to structured fields, added type-specific fields (played_at, context_type, context_uri for RecentTrack)
+- **Refactored all track retrieval views** - Applied batch operations pattern to TopTrack and RecentTrack views, reducing single API calls to batched requests per retrieval
+- **Extended results display** - Added TopTrack and RecentTrack to researcher dashboard, implemented `_build_track_results()` helper supporting both structured fields and legacy JSON storage
+- **Added ParticipantProfile support** - Integrated profile data into results display and CSV export with full field coverage (country, followers, product)
+- **Refactored GetPlaylistsSpotify** - Restructured to follow DRY pattern using `_extract_playlist_fields()` and `_build_and_create_playlists()` helpers
+- **Added Support for FollowedArtist and TopArtist** - Implemented batch retrieval and structured field transformation for artist data, integrated into results display and CSV export; following the same DRY refactoring pattern as for tracks
+
 
 ## 2026-02-16 - Results Display Refactoring & SavedTrack Transformation
 - **Restructured results data format** - Replaced magic-array `rowGesamt[index][0]` structure with clean, self-documenting `dataTypes` array using explicit property names

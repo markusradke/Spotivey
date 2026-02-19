@@ -94,7 +94,23 @@ export default function WelcomePage (props) {
                 </div>
             </div>
             <div class='speicher-button'>
-                <Button variant={'contained'} onClick={() => {props.setWelcomePageOK(true)}}>
+                <Button variant={'contained'} onClick={() => {
+                    fetch("/api/accept-privacy-policy", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: 'include',
+                    })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        props.setWelcomePageOK(true)
+                    })
+                    .catch((error) => {
+                        console.log("Privacy policy data:", data);
+                        console.log("Setting welcomePageOK to true");
+                        console.error("Error accepting privacy policy:", error);
+                    })
+                
+                }}>
                     OK
                 </Button>
             </div>

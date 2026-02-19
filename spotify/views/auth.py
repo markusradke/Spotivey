@@ -151,7 +151,7 @@ def spotify_callback(request, format=None):
         request.session.session_key, access_token, token_type, expires_in, refresh_token
     )
 
-    return redirect("frontend:")
+    return redirect("/?oauth_complete=true")
 
 
 def spotify_callback2(request, format=None):

@@ -33,6 +33,7 @@ class InitParticipantSession(APIView):
                         self.request.session['language'] = request.data.get('lang')
                         self.request.session['paramsObject'] = request.data.get('paramsObject')
                         self.request.session['welcome'] = None
+                        self.request.session['privacy_accepted'] = None
                         token = SpotifyToken.objects.filter(user=self.request.session.session_key)
                         if token.exists():
                             token.delete()
@@ -50,6 +51,15 @@ class InitParticipantSession(APIView):
             return Response({'Error': 'Survey not found'}, status=status.HTTP_404_NOT_FOUND)
 
         retrieval_session_key = str(uuid.uuid4())
+
+        existing_participants = Participant.objects.filter(
+            participant=participant_id,
+            settings=settings,
+            status='in_progress'
+        )
+        if existing_participants.exists():
+            existing_participants.delete()
+
         Participant.objects.create(
             participant=participant_id, 
             settings=settings,
@@ -65,9 +75,20 @@ class InitParticipantSession(APIView):
         self.request.session['retrieval_session_key'] = retrieval_session_key  
         self.request.session['language'] = request.data.get('lang')
         self.request.session['paramsObject'] = request.data.get('paramsObject')
+        self.request.session['welcome'] = False
 
         return Response({'code': room_code}, status=status.HTTP_200_OK)
 
+
+class AcceptPrivacyPolicy(APIView):
+    """Accept privacy policy and update session accordingly."""
+
+    def post(self, request, format=None):
+        if not self.request.session.exists(self.request.session.session_key):
+            return Response({'error': 'Session not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        self.request.session['privacy_accepted'] = True
+        return Response({'message': 'Privacy policy accepted'}, status=status.HTTP_200_OK)
 
 class GetParticipantSession(APIView):
     """Get session data for survey participants"""
@@ -93,7 +114,9 @@ class GetParticipantSession(APIView):
             'welcome': self.request.session.get('welcome'),
             'language': self.request.session.get('language'),
             'paramsObject': self.request.session.get('paramsObject'),
-            'resultExist': False  # Could enhance this check if needed
+            'resultExist': False,
+            'welcome': self.request.session.get('welcome'),
+            'privacy_accepted': self.request.session.get('privacy_accepted', False)
         }
         return JsonResponse(data, status=status.HTTP_200_OK)
 

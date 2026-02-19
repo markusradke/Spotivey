@@ -48,6 +48,8 @@ export default function Room (props) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
   const [usersProfileList, setUsersProfileList] = useState([])
 
   const [loading, setLoading] = useState(false)
@@ -253,46 +255,46 @@ export default function Room (props) {
   }, [confirmCheckArray])
 
   useEffect(() => {
-    if (savedTracksData.check && savedTracksData.limit > 0 && props.welcomePageOK) {
+    if (savedTracksData.check && savedTracksData.limit > 0 && props.welcomePageOK && isAuthenticated) {
       getSavedTracks();
     }
-  }, [savedTracksData, props.welcomePageOK])
+  }, [savedTracksData, props.welcomePageOK, isAuthenticated])
 
   useEffect(() => {
-    if (usersProfileData.check && props.welcomePageOK) {
+    if (usersProfileData.check && props.welcomePageOK && isAuthenticated) {
       getUsersProfile();
     }
-  }, [usersProfileData, props.welcomePageOK])
+  }, [usersProfileData, props.welcomePageOK, isAuthenticated])
 
   useEffect(() => {
-    if (topTracksData.check && topTracksData.limit > 0 && props.welcomePageOK) {
+    if (topTracksData.check && topTracksData.limit > 0 && props.welcomePageOK && isAuthenticated) {
       getTopTracks();
     }
-  }, [topTracksData, props.welcomePageOK])
+  }, [topTracksData, props.welcomePageOK, isAuthenticated])
 
   useEffect(() => {
-    if (topArtistsData.check && topArtistsData.limit > 0 && props.welcomePageOK) {
+    if (topArtistsData.check && topArtistsData.limit > 0 && props.welcomePageOK && isAuthenticated) {
       getTopArtists();
     }
-  }, [topArtistsData, props.welcomePageOK])
+  }, [topArtistsData, props.welcomePageOK, isAuthenticated])
 
   useEffect(() => {
-    if (followedArtistsData.check && followedArtistsData.limit > 0 && props.welcomePageOK) {
+    if (followedArtistsData.check && followedArtistsData.limit > 0 && props.welcomePageOK && isAuthenticated) {
       getFollowedArtists();
     }
-  }, [followedArtistsData, props.welcomePageOK])
+  }, [followedArtistsData, props.welcomePageOK, isAuthenticated])
 
   useEffect(() => {
-    if (currentPlaylistsData.check && currentPlaylistsData.limit > 0 && checkPublicCurrentPlaylists !== null && props.welcomePageOK) {
+    if (currentPlaylistsData.check && currentPlaylistsData.limit > 0 && checkPublicCurrentPlaylists !== null && props.welcomePageOK && isAuthenticated) {
       getCurrentPlaylists();
     }
-  }, [currentPlaylistsData, checkPublicCurrentPlaylists], props.welcomePageOK)
+  }, [currentPlaylistsData, checkPublicCurrentPlaylists, props.welcomePageOK, isAuthenticated])
 
   useEffect(() => {
-    if (recentlyTracksData.check && recentlyTracksData.limit > 0 && props.welcomePageOK) {
+    if (recentlyTracksData.check && recentlyTracksData.limit > 0 && props.welcomePageOK && isAuthenticated) {
       getRecentlyTracks();
     }
-  }, [recentlyTracksData, props.welcomePageOK])
+  }, [recentlyTracksData, props.welcomePageOK, isAuthenticated])
 
   useEffect(() => {
     let arrayAllDataLength = [topTracks, savedTracks, recentlyTracks, topArtists, followedArtists, currentPlaylists].filter(
@@ -304,21 +306,28 @@ export default function Room (props) {
   }, [topTracks, savedTracks, topArtists, followedArtists, currentPlaylists, recentlyTracks])
 
   useEffect(() => {
-  if (props.welcomePageOK && props.participant){
-    authenticateSpotify();  // ← Just call directly, no get-room needed
-  }
+    console.log("welcomePageOK changed:", props.welcomePageOK, "participant:", props.participant);
+    if (props.welcomePageOK && props.participant){
+      console.log("Calling authenticateSpotify");
+      authenticateSpotify();  
+    }
 }, [props.welcomePageOK])
   
   function authenticateSpotify() {
     fetch("/spotify/is-authenticated")
       .then((response) => response.json())
       .then((data) => {
+        console.log("is-authenticated response:", data);
         if (!data.status) {
+          console.log("Not authenticated - getting auth URL");
           fetch("/spotify/get-auth-url" + "?surveyid=" + surveyID)
             .then((response) => response.json())
             .then((data) => {
               window.location.replace(data.url);
             });
+        } else {
+          console.log("Already authenticated - setting isAuthenticated to true");
+          setIsAuthenticated(true)
         }
       });
   }

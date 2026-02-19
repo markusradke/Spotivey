@@ -2,7 +2,7 @@
 from .user_session import CreateSettingsUser, LoginSettingsUser, LogoutUser, GetUserSession
 
 # Participant session views
-from .participant_session import InitParticipantSession, GetParticipantSession, FinalizeParticipantData
+from .participant_session import InitParticipantSession, AcceptPrivacyPolicy, GetParticipantSession, FinalizeParticipantData
 
 # Settings views
 from .retrieval_settings import (
@@ -38,6 +38,7 @@ __all__ = [
     'GetUserSession',
     # Participants
     'InitParticipantSession',
+    'AcceptPrivacyPolicy',
     'GetParticipantSession',
     'FinalizeParticipantData',
     # Settings

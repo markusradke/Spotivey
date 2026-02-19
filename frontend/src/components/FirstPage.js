@@ -56,9 +56,30 @@ export default function FirstPage () {
     const surveyID = url.searchParams.get('surveyID')
     const participant = url.searchParams.get('participant')
     const lang = url.searchParams.get('lang')
+    const oauthComplete = url.searchParams.get('oauth_complete')
     
-    // Only initialize participant session if URL params exist
-    if (!createRoom && surveyID && participant) {
+
+    if (oauthComplete === 'true' && !createRoom) {
+      // Restore session from backend after OAuth
+      fetch("/api/get-participant-session")
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.surveyID && data.participant) {
+            setSurveyID(data.surveyID)
+            setLanguage(data.language)
+            setRoomCode(data.roomCode)
+            setParticipant(data.participant)
+            setWelcomePageOK(data.privacy_accepted)
+            setParamsObjectSession(data.paramsObject)
+            setCreateRoom(true)
+            
+            // Clean URL by removing oauth_complete param
+            window.history.replaceState({}, '', '/')
+          }
+        });
+    }
+    // Flow before authentification: Iitialize participant session if URL params exist
+    else if (!createRoom && surveyID && participant) {
       const paramsObject = paramsToObject(url.searchParams)
       const requestOptions = {
         method: "POST",
@@ -93,7 +114,7 @@ export default function FirstPage () {
           setLanguage(data.language)
           setRoomCode(data.roomCode)
           setParticipant(data.participant)
-          setWelcomePageOK(data.welcome)
+          setWelcomePageOK(data.privacy_accepted) 
           setParamsObjectSession(data.paramsObject)
         });
     }

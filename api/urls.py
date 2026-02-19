@@ -3,7 +3,7 @@ from .views import (
     # Auth views
     CreateSettingsUser, LoginSettingsUser, LogoutUser, GetUserSession,
     # Participant views
-    InitParticipantSession, GetParticipantSession, FinalizeParticipantData,
+    InitParticipantSession, AcceptPrivacyPolicy, GetParticipantSession, FinalizeParticipantData,
     # Settings views
     CreateSettings, CheckSurveyIDExists, getSettingsListView, getSettingsFromIDView,
     UpdateSettings, SaveCheckData, DeleteSettings, UpdateConfirmText,
@@ -19,6 +19,7 @@ urlpatterns = [
     # Participant session management
     path('init-participant-session', InitParticipantSession.as_view()),
     path('get-participant-session', GetParticipantSession.as_view()),
+    path('accept-privacy-policy', AcceptPrivacyPolicy.as_view()),
     path('finalize-participant-data', FinalizeParticipantData.as_view()),
     
     # Authentication & session
