@@ -1,6 +1,4 @@
-import React, { Component } from "react";
 import { Checkbox } from '@mui/material';
-import { IndexKind } from "typescript";
 
 export default function resultListPlaylist (
     list, title, checkArray, setCheckArray, i

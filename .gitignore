@@ -1,3 +1,5 @@
+# node modules
+frontend/node_modules
 
 # local credentials
 spotify/credentials.py

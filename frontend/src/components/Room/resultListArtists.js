@@ -1,4 +1,3 @@
-import React, { Component } from "react";
 import { Checkbox } from '@mui/material';
 
 export default function resultListArtist (list, title, checkArray, setCheckArray, i) {
