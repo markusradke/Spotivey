@@ -23,4 +23,5 @@ urlpatterns = [
     path('end-room/<str:lang>', index),
     path('privacy', index),
     path('version', index),
+    path('error/<str:errorType>', index),
 ]

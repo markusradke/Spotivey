@@ -13,9 +13,12 @@ import Button from '@mui/material/Button';
 import getGetParams from "./getGetParams";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import WelcomePage from "./WelcomePage.js";
+import { use } from "react";
 
 
 export default function Room (props) {
+  const navigate = useNavigate();
+
 
   const [showItemsSavedTracks, setShowItemsSavedTracks] = useState(50)
   const [showItemsTopTracks, setShowItemsTopTracks] = useState(50)
@@ -113,8 +116,6 @@ export default function Room (props) {
 
   const surveyID = props.surveyID
 
-  const navigate = useNavigate();
-
   const [endURLSecondSurvey, setEndURLSecondSurvey] = useState(null)
 
   const [getSettingsCheck, setGetSettingsCheck] = useState(false)
@@ -124,7 +125,7 @@ export default function Room (props) {
 
   const arrayPageTitle = ['Saved Tracks', 'Top Tracks', 'Last Tracks', 'Top Artists', 
     'Followed Artists', 'Current Playlists']
-
+    
   useEffect(() => {
     if (checkArray.length > 0) {
       setCheckArrayLength(checkArray.filter(item => item.length > 0).length)
@@ -173,7 +174,14 @@ export default function Room (props) {
   useEffect(() => {
     if (props.surveyID){
       return fetch("/api/get-settingsfromid" + "?surveyid=" + props.surveyID)
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            console.error('Failed to fetch settings'); 
+            navigate('/error/generic');
+            return null; 
+          }
+          return response.json();
+        })
         .then((data) => {
             if (!data.error){
                 setSettings(data.data[0])
@@ -227,6 +235,10 @@ export default function Room (props) {
 
                 setGetSettingsCheck(true)
             }
+        })
+        .catch((error) => {
+          console.error('Error loading survey settings:', error); 
+          navigate('/error/network-error');
         });
       }
   }, [props.surveyID])
@@ -635,7 +647,7 @@ export default function Room (props) {
       })
       .catch(error => {
         console.error("Error in confirmation process:", error);
-        navigate("/end-room/" + props.language);
+        navigate("/error/generic");
       });
   };
 
@@ -772,7 +784,7 @@ export default function Room (props) {
     })
     .catch(error => {
       console.error("Error finalizing participant (no confirmation):", error);
-      navigate("/end-room/" + props.language);
+      navigate("/error/generic");
     });
 }
 
