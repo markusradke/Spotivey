@@ -1,18 +1,20 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { ParticipantContext } from "../context/ParticipantContext";
-import { DATA_TYPES, DATA_TYPE_ORDER } from "../constants/dataTypes";
+import { DATA_TYPES } from "../constants/dataTypes";
 import {
-    fetchSavedTracks,
-    fetchTopTracks,
-    fetchRecentTracks,
-    fetchTopArtists,
-    fetchFollowedArtists,
     fetchCurrentPlaylists,
+    fetchFollowedArtists,
     fetchParticipantProfile,
+    fetchRecentTracks,
+    fetchSavedTracks,
+    fetchTopArtists,
+    fetchTopTracks,
 } from "../api/spotifyApi";
 
 export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
     const { participant, roomCode, surveyID } = useContext(ParticipantContext);
+
+    const lastFetchKeyRef = useRef(null);
 
     const [data, setData] = useState({
         [DATA_TYPES.SAVED_TRACKS]: [],
@@ -28,6 +30,14 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
 
     useEffect(() => {
         if (!settings || !isAuthenticated || !welcomePageOK) return;
+
+        const fetchKey = `${participant}|${surveyID}|${roomCode}`;
+        if (lastFetchKeyRef.current === fetchKey) {
+            return;
+        }
+        lastFetchKeyRef.current = fetchKey;
+
+        let isCancelled = false;
 
         async function fetchAllData() {
             setIsLoading(true);
@@ -51,9 +61,10 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
 
             if (settings[DATA_TYPES.PARTICIPANT_PROFILE]?.check) {
                 fetchPromises.push(
-                    fetchParticipantProfile(participant, surveyID, roomCode).then(
-                        (result) => ({ type: DATA_TYPES.PARTICIPANT_PROFILE, result })
-                    )
+                    fetchParticipantProfile(participant, surveyID, roomCode).then((result) => ({
+                        type: DATA_TYPES.PARTICIPANT_PROFILE,
+                        result,
+                    }))
                 );
             }
 
@@ -137,29 +148,31 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
 
             try {
                 const results = await Promise.all(fetchPromises);
-                const newData = { ...data };
+                if (isCancelled) return;
 
-                results.forEach(({ type, result }) => {
-                    newData[type] = result;
+                setData((prev) => {
+                    const next = { ...prev };
+                    results.forEach(({ type, result }) => {
+                        next[type] = result;
+                    });
+                    return next;
                 });
-
-                setData(newData);
             } catch (error) {
                 console.error("Error fetching Spotify data:", error);
+                lastFetchKeyRef.current = null;
             } finally {
-                setIsLoading(false);
+                if (!isCancelled) {
+                    setIsLoading(false);
+                }
             }
         }
 
         fetchAllData();
-    }, [
-        settings,
-        isAuthenticated,
-        welcomePageOK,
-        participant,
-        surveyID,
-        roomCode,
-    ]);
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [settings, isAuthenticated, welcomePageOK, participant, surveyID, roomCode]);
 
     return { data, isLoading };
 }

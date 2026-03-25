@@ -12,12 +12,16 @@ function buildPostOptions(body) {
 }
 
 export async function checkAuthentication() {
-  const response = await fetch("/spotify/is-authenticated");
+  const response = await fetch("/spotify/is-authenticated", {
+    credentials: "include",
+  });
   return response.json();
 }
 
 export async function getAuthUrl(surveyId) {
-  const response = await fetch("/spotify/get-auth-url?surveyid=" + surveyId);
+  const response = await fetch("/spotify/get-auth-url?surveyid=" + surveyId, {
+    credentials: "include",
+  });
   return response.json();
 }
 

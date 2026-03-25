@@ -6,7 +6,7 @@ function buildPostOptions(body, includeCredentials = false) {
     headers: BASE_HEADERS,
   };
   if (body !== undefined) {
-    options.body = JON.stringify(body);
+    options.body = JSON.stringify(body);
   }
   if (includeCredentials) {
     options.credentials = "include";

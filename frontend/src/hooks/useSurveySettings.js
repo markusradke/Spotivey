@@ -8,6 +8,7 @@ export function useSurveySettings() {
     const [settings, setSettings] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [rawSettings, setRawSettings] = useState(null);
 
     useEffect(() => {
         if (!surveyID) return;
@@ -23,6 +24,7 @@ export function useSurveySettings() {
                 }
 
                 const rawSettings = response.data[0];
+                setRawSettings(rawSettings);
                 const normalizedSettings = normalizeSettings(rawSettings);
                 setSettings(normalizedSettings);
             } catch (err) {
@@ -36,7 +38,7 @@ export function useSurveySettings() {
         loadSettings();
     }, [surveyID]);
 
-    return { settings, isLoading, error };
+    return { rawSettings, settings, isLoading, error };
 }
 
 function normalizeSettings(rawSettings) {

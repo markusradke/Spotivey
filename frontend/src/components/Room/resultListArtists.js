@@ -1,40 +1,53 @@
 import { Checkbox } from '@mui/material';
 
-export default function resultListArtist (list, title, checkArray, setCheckArray, i) {
+export default function ArtistResultList({
+    items,
+    checkArray,
+    setCheckArray,
+    categoryIndex,
+}) {
 
-    function handleCheckboxClicked (e, index) {
-        let items = [...checkArray];
-        items[i][index] =  e.target.checked;
-        setCheckArray(items)
+    function handleCheckboxClicked(e, itemIndex) {
+        const next = [...checkArray];
+        if (!next[categoryIndex]) {
+            next[categoryIndex] = [];
+        }
+        next[categoryIndex][itemIndex] = e.target.checked;
+        setCheckArray(next);
     }
 
-    return(
+    return (
         <React.Fragment>
-            {list.map((artists, index) => 
-                <div className={"result-list-card-outer"}>
+            {items.map((artist, itemIndex) => (
+                <div
+                    key={artist.id ?? artist.spotify_id ?? itemIndex}
+                    className="result-list-card-outer"
+                >
                     <div className="result-list-card-outer-container">
                         <div className="result-list-card-container">
-                            <img class={"result-list-img artist-img"} src={artists.image_url} />
+                            <img
+                                className="result-list-img artist-img"
+                                src={artist.image_url}
+                                alt={artist.artist}
+                            />
                             <div className="result-list-card-container-inner">
                                 <body1 className="result-list-card-script-track-name">
-                                    {artists.artist} 
+                                    {artist.artist}
                                 </body1>
-                                <body1 className="result-list-card-script-artist-string"> 
-                                    Genre: {artists.genre_string}
+                                <body1 className="result-list-card-script-artist-string">
+                                    Genre: {artist.genre_string}
                                 </body1>
                             </div>
-                            <div className={"result-list-checkbox"}>
+                            <div className="result-list-checkbox">
                                 <Checkbox
-                                    checked={checkArray[i][index]}
-                                    onClick={(e) => {
-                                        handleCheckboxClicked(e, index)
-                                    }}
+                                    checked={Boolean(checkArray?.[categoryIndex]?.[itemIndex])}
+                                    onChange={(e) => handleCheckboxClicked(e, itemIndex)}
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
-            )}
+            ))}
         </React.Fragment>
-    )
+    );
 }

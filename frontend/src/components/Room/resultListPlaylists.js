@@ -1,50 +1,59 @@
 import { Checkbox } from '@mui/material';
 
-export default function resultListPlaylist (
-    list, title, checkArray, setCheckArray, i
-    ) {
+export default function PlaylistResultList({
+    items,
+    checkArray,
+    setCheckArray,
+    categoryIndex,
+}) {
 
-    function handleCheckboxClicked (e, index) {
-        let items = [...checkArray];
-        items[i][index] =  e.target.checked;
-        setCheckArray(items)
+    function handleCheckboxClicked(e, itemIndex) {
+        const next = [...checkArray];
+        if (!next[categoryIndex]) {
+            next[categoryIndex] = [];
+        }
+        next[categoryIndex][itemIndex] = e.target.checked;
+        setCheckArray(next);
     }
 
-    return(
+    return (
         <React.Fragment>
-            {list.map((playlists, index) => { 
-                return(
-                    <React.Fragment key={index}>
-                        <div className={"result-list-card-outer"}>
-                            <div className="result-list-card-outer-container">
-                                <div className="result-list-card-container">
-                                    {playlists.playlist_cover && (
-                                        <img class={"result-list-img"} src={playlists.playlist_cover} alt={playlists.playlist_name} />
-                                    )}
-                                    <div className="result-list-card-container-outer">
-                                        <div className="result-list-card-container-inner">
-                                            <body1 className="result-list-card-script-track-name">
-                                                {playlists.playlist_name} 
-                                            </body1>
-                                            <body1 className="result-list-card-script-artist-string"> 
-                                                {playlists.n_tracks} tracks || Owner: {playlists.is_self_owned ? "You" : "Other"} || Collaborative: {playlists.is_collaborative ? "Yes" : "No"}
-                                            </body1>
-                                        </div>
-                                    </div>
-                                    <div className={"result-list-checkbox"}>
-                                        <Checkbox
-                                            checked={checkArray[i][index]}
-                                            onClick={(e) => {
-                                                handleCheckboxClicked(e, index)
-                                            }}
-                                        />
-                                    </div>
+            {items.map((playlist, itemIndex) => (
+                <div
+                    key={playlist.id ?? playlist.spotify_id ?? itemIndex}
+                    className="result-list-card-outer"
+                >
+                    <div className="result-list-card-outer-container">
+                        <div className="result-list-card-container">
+                            {playlist.playlist_cover && (
+                                <img
+                                    className="result-list-img"
+                                    src={playlist.playlist_cover}
+                                    alt={playlist.playlist_name}
+                                />
+                            )}
+                            <div className="result-list-card-container-outer">
+                                <div className="result-list-card-container-inner">
+                                    <body1 className="result-list-card-script-track-name">
+                                        {playlist.playlist_name}
+                                    </body1>
+                                    <body1 className="result-list-card-script-artist-string">
+                                        {playlist.n_tracks} tracks || Owner:{" "}
+                                        {playlist.is_self_owned ? "You" : "Other"} || Collaborative:{" "}
+                                        {playlist.is_collaborative ? "Yes" : "No"}
+                                    </body1>
                                 </div>
                             </div>
+                            <div className="result-list-checkbox">
+                                <Checkbox
+                                    checked={Boolean(checkArray?.[categoryIndex]?.[itemIndex])}
+                                    onChange={(e) => handleCheckboxClicked(e, itemIndex)}
+                                />
+                            </div>
                         </div>
-                    </React.Fragment>
-                )}
-            )}
+                    </div>
+                </div>
+            ))}
         </React.Fragment>
-    )
+    );
 }
