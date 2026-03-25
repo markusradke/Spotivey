@@ -1,9 +1,10 @@
 import React from "react";
+import { DATA_TYPES, DATA_TYPE_ORDER } from "../../constants/dataTypes.js";
 import { useState, useEffect } from 'react';
 import { Typography, StepButton } from "@mui/material";
-import {CircularProgress} from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
-import resultListTrack from "./resultList.js"; 
+import resultListTrack from "./resultList.js";
 import resultListArtist from "./resultListArtists.js";
 import resultListPlaylist from "./resultListPlaylists.js";
 import Box from '@mui/material/Box';
@@ -13,12 +14,19 @@ import Button from '@mui/material/Button';
 import getGetParams from "./getGetParams";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import WelcomePage from "./WelcomePage.js";
-import { use } from "react";
 
 
-export default function Room (props) {
+export default function Room(props) {
   const navigate = useNavigate();
 
+  const surveyFieldPrefixByType = {
+    [DATA_TYPES.SAVED_TRACKS]: "SavedTracks",
+    [DATA_TYPES.TOP_TRACKS]: "TopTracks",
+    [DATA_TYPES.RECENT_TRACKS]: "LastTracks",
+    [DATA_TYPES.TOP_ARTISTS]: "TopArtists",
+    [DATA_TYPES.FOLLOWED_ARTISTS]: "FolArtists",
+    [DATA_TYPES.CURRENT_PLAYLISTS]: "Playlist",
+  };
 
   const [showItemsSavedTracks, setShowItemsSavedTracks] = useState(50)
   const [showItemsTopTracks, setShowItemsTopTracks] = useState(50)
@@ -29,16 +37,16 @@ export default function Room (props) {
 
   const [checkArray, setCheckArray] = useState([])
   const [checkArrayLength, setCheckArrayLength] = useState(0)
- 
+
   const [dataFieldsCheck, setDataFieldsCheck] = useState(null)
   const [selectedOption, setSelectedOption] = useState(null)
   const [passLang, setPassLang] = useState(null)
 
   const [questionTypeCheck, setQuestionTypeCheck] = useState(null)
 
-  const idName = ['SavdTracks', 'TopTracks', 'LastTracks', 'TopArtists', 'FolArtists', 'Playlist']
+  const idName = DATA_TYPE_ORDER.map((type) => surveyFieldPrefixByType[type]);
 
-  const idTracks = ['SpotID', 'Title', 'Artist', 'Label', 'RelDat', 'Cover', 'Player','PlayAt', 'ConTyp', 'ConURI']
+  const idTracks = ['SpotID', 'Title', 'Artist', 'Label', 'RelDat', 'Cover', 'Player', 'PlayAt', 'ConTyp', 'ConURI']
   const idArtists = ['SpotID', 'Title', 'Cover', 'Genres']
   const idPlaylists = ['SpotID', 'Title', 'Cover']
 
@@ -58,7 +66,7 @@ export default function Room (props) {
   const [loading, setLoading] = useState(false)
 
   const [settings, setSettings] = useState([])
-  
+
   const [topTracks, setTopTracks] = useState([])
   const [welcomeSettingsDeutschArray, setWelcomeSettingsDeutschArray] = useState([])
   const [welcomeSettingsEnglishArray, setWelcomeSettingsEnglishArray] = useState([])
@@ -68,6 +76,7 @@ export default function Room (props) {
   const [currentPlaylists, setCurrentPlaylists] = useState([])
   const [recentlyTracks, setRecentlyTracks] = useState([])
   const [checkPublicCurrentPlaylists, setCheckPublicCurrentPlaylists] = useState(null)
+
 
   const [savedTracksData, setSavedTracksData] = useState({
     check: false,
@@ -87,7 +96,7 @@ export default function Room (props) {
     timeRange: "",
     confirmCheck: false,
   })
-  
+
   const [topArtistsData, setTopArtistsData] = useState({
     check: false,
     limit: 20,
@@ -123,9 +132,19 @@ export default function Room (props) {
 
   const [confirmTextArray, setConfirmTextArray] = useState(Array(6).fill(''))
 
-  const arrayPageTitle = ['Saved Tracks', 'Top Tracks', 'Last Tracks', 'Top Artists', 
+  const arrayPageTitle = ['Saved Tracks', 'Top Tracks', 'Last Tracks', 'Top Artists',
     'Followed Artists', 'Current Playlists']
-    
+
+  const dataByType = {
+    [DATA_TYPES.SAVED_TRACKS]: savedTracks,
+    [DATA_TYPES.TOP_TRACKS]: topTracks,
+    [DATA_TYPES.RECENT_TRACKS]: recentlyTracks,
+    [DATA_TYPES.TOP_ARTISTS]: topArtists,
+    [DATA_TYPES.FOLLOWED_ARTISTS]: followedArtists,
+    [DATA_TYPES.CURRENT_PLAYLISTS]: currentPlaylists,
+    [DATA_TYPES.PARTICIPANT_PROFILE]: usersProfileList,
+  };
+
   useEffect(() => {
     if (checkArray.length > 0) {
       setCheckArrayLength(checkArray.filter(item => item.length > 0).length)
@@ -133,36 +152,36 @@ export default function Room (props) {
   }, [checkArray])
 
   useEffect(() => {
-    if (settings.length !== 0){
+    if (settings.length !== 0) {
       let checkCheckSettingsDeutsch = []
       let checkCheckSettingsEnglish = []
-      if (settings.text1.check){
+      if (settings.text1.check) {
         checkCheckSettingsDeutsch.push([true, 'Ihrer gespeicherten Musik (Lieblingssongs)'])
         checkCheckSettingsEnglish.push([true, 'Your saved Tracks (Liked Songs)'])
       }
-      if (settings.text2.check){
+      if (settings.text2.check) {
         checkCheckSettingsDeutsch.push([true, 'Ihrem Spotify Abonnement, Ihrem Herkunfsland und die Anzahl Ihrer Follower'])
         checkCheckSettingsEnglish.push([true, 'Your Spotify subscription level, the total number of followers and your country'])
       }
-      if (settings.text3.check){
+      if (settings.text3.check) {
         checkCheckSettingsDeutsch.push([true, 'Ihrer Top Tracks'])
         checkCheckSettingsEnglish.push([true, 'Your Top Tracks'])
       }
-      if (settings.text4.check){
+      if (settings.text4.check) {
         checkCheckSettingsDeutsch.push([true, 'Ihrer Top Interpreten'])
         checkCheckSettingsEnglish.push([true, 'Your Top Artists'])
       }
-      if (settings.text5.check){
+      if (settings.text5.check) {
         checkCheckSettingsDeutsch.push([true, 'Den Interpreten den Sie folgen'])
         checkCheckSettingsEnglish.push([true, 'Your Followed Artists'])
       }
-      if (settings.text6.check){
+      if (settings.text6.check) {
         let playlistCheckWelcomeTextGer = settings.text6.public ? 'Ihrer Playlists' : 'Ihren öffentlichen Playlists'
         checkCheckSettingsDeutsch.push([true, playlistCheckWelcomeTextGer])
         let playlistCheckWelcomeTextEn = settings.text6.public ? 'Your Playlists' : 'Your public Playlists'
         checkCheckSettingsDeutsch.push([true, playlistCheckWelcomeTextEn])
       }
-      if (settings.text7.check){
+      if (settings.text7.check) {
         checkCheckSettingsDeutsch.push([true, 'Ihrer kürzlich gehörten Musik'])
         checkCheckSettingsEnglish.push([true, 'Your last heard music'])
       }
@@ -172,88 +191,88 @@ export default function Room (props) {
   }, [settings])
 
   useEffect(() => {
-    if (props.surveyID){
+    if (props.surveyID) {
       return fetch("/api/get-settingsfromid" + "?surveyid=" + props.surveyID)
         .then(response => {
           if (!response.ok) {
-            console.error('Failed to fetch settings'); 
+            console.error('Failed to fetch settings');
             navigate('/error/generic');
-            return null; 
+            return null;
           }
           return response.json();
         })
         .then((data) => {
-            if (!data.error){
-                setSettings(data.data[0])
-                setConfirmTextArray(data.data[0].confirmTextOnlyCheck)
+          if (!data.error) {
+            setSettings(data.data[0])
+            setConfirmTextArray(data.data[0].confirmTextOnlyCheck)
 
-                setSavedTracksData(data.data[0].text1)
-                setShowItemsSavedTracks(data.data[0].text1.limit)
+            setSavedTracksData(data.data[0].text1)
+            setShowItemsSavedTracks(data.data[0].text1.limit)
 
-                setUsersProfileData(data.data[0].text2)
-                  
-                setTopTracksData(data.data[0].text3)
-                setShowItemsTopTracks(data.data[0].text3.limit)
+            setUsersProfileData(data.data[0].text2)
 
-                setTopArtistsData(data.data[0].text4)
-                setShowItemsTopArtists(data.data[0].text4.limit)
-                
-                setFollowedArtistsData(data.data[0].text5)
-                setShowItemsFollowedArtists(data.data[0].text5.limit)
-              
-                setCurrentPlaylistsData(data.data[0].text6)
-                setShowItemsCurrentPlaylists(data.data[0].text6.limit)
-                setCheckPublicCurrentPlaylists(data.data[0].text6.public)
-                
-                setRecentlyTracksData(data.data[0].text7)
-                setShowItemsRecentlyTracks(data.data[0].text7.limit)
+            setTopTracksData(data.data[0].text3)
+            setShowItemsTopTracks(data.data[0].text3.limit)
 
-                setCheckArray([data.data[0].text1.check && data.data[0].text1.confirmCheck ? Array(data.data[0].text1.limit).fill(true) : Array(0).fill(true), 
-                    data.data[0].text3.check && data.data[0].text3.confirmCheck ? Array(data.data[0].text3.limit).fill(true) : Array(0).fill(true), 
-                    data.data[0].text7.check && data.data[0].text7.confirmCheck ? Array(data.data[0].text7.limit).fill(true) : Array(0).fill(true), 
-                    data.data[0].text4.check && data.data[0].text4.confirmCheck ? Array(data.data[0].text4.limit).fill(true) : Array(0).fill(true), 
-                    data.data[0].text5.check && data.data[0].text5.confirmCheck ? Array(data.data[0].text5.limit).fill(true) : Array(0).fill(true),
-                    data.data[0].text6.check && data.data[0].text6.confirmCheck ? Array(data.data[0].text6.limit).fill(true) : Array(0).fill(true)
-                ])
-                
-                setArrayPagesCheck([data.data[0].text1.check, data.data[0].text3.check, 
-                  data.data[0].text7.check, data.data[0].text4.check, 
-                  data.data[0].text5.check, data.data[0].text6.check])
-                setConfirmCheckArray([
-                  data.data[0].text1.confirmCheck && data.data[0].text1.limit > 0, 
-                  data.data[0].text3.confirmCheck && data.data[0].text3.limit > 0, 
-                  data.data[0].text7.confirmCheck && data.data[0].text7.limit > 0, 
-                  data.data[0].text4.confirmCheck && data.data[0].text4.limit > 0, 
-                  data.data[0].text5.confirmCheck && data.data[0].text5.limit > 0,
-                  data.data[0].text6.confirmCheck && data.data[0].text6.limit > 0 
-                ])
-                setEndURLSecondSurvey(data.data[0].secondEndUrl !== '' ? data.data[0].secondEndUrl : null)
-                setQuestionTypeCheck(data.data[0].secondEndUrl !== '' ? data.data[0].questionTypeCheck : null)
-                setDataFieldsCheck(data.data[0].secondEndUrl !== '' ? data.data[0].dataFieldsCheck : null)
-                setSelectedOption(data.data[0].secondEndUrl !== '' ? data.data[0].selectedOption : null)
-                setPassLang(data.data[0].secondEndUrl !== '' ? data.data[0].passLang : false)
+            setTopArtistsData(data.data[0].text4)
+            setShowItemsTopArtists(data.data[0].text4.limit)
 
-                setGetSettingsCheck(true)
-            }
+            setFollowedArtistsData(data.data[0].text5)
+            setShowItemsFollowedArtists(data.data[0].text5.limit)
+
+            setCurrentPlaylistsData(data.data[0].text6)
+            setShowItemsCurrentPlaylists(data.data[0].text6.limit)
+            setCheckPublicCurrentPlaylists(data.data[0].text6.public)
+
+            setRecentlyTracksData(data.data[0].text7)
+            setShowItemsRecentlyTracks(data.data[0].text7.limit)
+
+            setCheckArray([data.data[0].text1.check && data.data[0].text1.confirmCheck ? Array(data.data[0].text1.limit).fill(true) : Array(0).fill(true),
+            data.data[0].text3.check && data.data[0].text3.confirmCheck ? Array(data.data[0].text3.limit).fill(true) : Array(0).fill(true),
+            data.data[0].text7.check && data.data[0].text7.confirmCheck ? Array(data.data[0].text7.limit).fill(true) : Array(0).fill(true),
+            data.data[0].text4.check && data.data[0].text4.confirmCheck ? Array(data.data[0].text4.limit).fill(true) : Array(0).fill(true),
+            data.data[0].text5.check && data.data[0].text5.confirmCheck ? Array(data.data[0].text5.limit).fill(true) : Array(0).fill(true),
+            data.data[0].text6.check && data.data[0].text6.confirmCheck ? Array(data.data[0].text6.limit).fill(true) : Array(0).fill(true)
+            ])
+
+            setArrayPagesCheck([data.data[0].text1.check, data.data[0].text3.check,
+            data.data[0].text7.check, data.data[0].text4.check,
+            data.data[0].text5.check, data.data[0].text6.check])
+            setConfirmCheckArray([
+              data.data[0].text1.confirmCheck && data.data[0].text1.limit > 0,
+              data.data[0].text3.confirmCheck && data.data[0].text3.limit > 0,
+              data.data[0].text7.confirmCheck && data.data[0].text7.limit > 0,
+              data.data[0].text4.confirmCheck && data.data[0].text4.limit > 0,
+              data.data[0].text5.confirmCheck && data.data[0].text5.limit > 0,
+              data.data[0].text6.confirmCheck && data.data[0].text6.limit > 0
+            ])
+            setEndURLSecondSurvey(data.data[0].secondEndUrl !== '' ? data.data[0].secondEndUrl : null)
+            setQuestionTypeCheck(data.data[0].secondEndUrl !== '' ? data.data[0].questionTypeCheck : null)
+            setDataFieldsCheck(data.data[0].secondEndUrl !== '' ? data.data[0].dataFieldsCheck : null)
+            setSelectedOption(data.data[0].secondEndUrl !== '' ? data.data[0].selectedOption : null)
+            setPassLang(data.data[0].secondEndUrl !== '' ? data.data[0].passLang : false)
+
+            setGetSettingsCheck(true)
+          }
         })
         .catch((error) => {
-          console.error('Error loading survey settings:', error); 
+          console.error('Error loading survey settings:', error);
           navigate('/error/network-error');
         });
-      }
+    }
   }, [props.surveyID])
 
   useEffect(() => {
-    if (getSettingsCheck && confirmCheckArray.length > 0 && checkArray.filter(item => item.length > 0).length === 0){
+    if (getSettingsCheck && confirmCheckArray.length > 0 && checkArray.filter(item => item.length > 0).length === 0) {
       setNoConfirm(true)
     }
   }, [getSettingsCheck, confirmCheckArray])
 
-  function getPagesCount(array, lengthArray){
+  function getPagesCount(array, lengthArray) {
     let counts = 0
     let arrayTemp = []
     for (let schritt = 0; schritt < lengthArray; schritt++) {
-      if (confirmCheckArray[schritt] && array[schritt]){
+      if (confirmCheckArray[schritt] && array[schritt]) {
         counts = counts + 1
         arrayTemp.push(arrayPageTitle[schritt])
       }
@@ -261,7 +280,7 @@ export default function Room (props) {
     setLengthPages(counts)
     setPagesNamesArray(arrayTemp)
   }
-  
+
   useEffect(() => {
     getPagesCount(arrayPagesCheck, arrayPagesCheck.length)
   }, [confirmCheckArray])
@@ -311,20 +330,20 @@ export default function Room (props) {
   useEffect(() => {
     let arrayAllDataLength = [topTracks, savedTracks, recentlyTracks, topArtists, followedArtists, currentPlaylists].filter(
       item => item.length > 0
-      ).length
-    if (arrayAllDataLength === checkArrayLength && checkArrayLength !== 0){
+    ).length
+    if (arrayAllDataLength === checkArrayLength && checkArrayLength !== 0) {
       setLoading(true)
     }
   }, [topTracks, savedTracks, topArtists, followedArtists, currentPlaylists, recentlyTracks])
 
   useEffect(() => {
     console.log("welcomePageOK changed:", props.welcomePageOK, "participant:", props.participant);
-    if (props.welcomePageOK && props.participant){
+    if (props.welcomePageOK && props.participant) {
       console.log("Calling authenticateSpotify");
-      authenticateSpotify();  
+      authenticateSpotify();
     }
-}, [props.welcomePageOK])
-  
+  }, [props.welcomePageOK])
+
   function authenticateSpotify() {
     fetch("/spotify/is-authenticated")
       .then((response) => response.json())
@@ -389,7 +408,7 @@ export default function Room (props) {
         participant: props.participant,
         surveyID: surveyID,
         roomCode: props.roomCode,
-        confirm: followedArtistsData.confirmCheck, 
+        confirm: followedArtistsData.confirmCheck,
       }),
       credentials: 'include'
     };
@@ -408,12 +427,12 @@ export default function Room (props) {
         participant: props.participant,
         surveyID: surveyID,
         roomCode: props.roomCode,
-        confirm: currentPlaylistsData.confirmCheck, 
+        confirm: currentPlaylistsData.confirmCheck,
       }),
       credentials: 'include'
     };
-    fetch("/spotify/current-playlists" + "?limit=" + currentPlaylistsData.limit + '&public=' + checkPublicCurrentPlaylists, 
-    requestOptions)
+    fetch("/spotify/current-playlists" + "?limit=" + currentPlaylistsData.limit + '&public=' + checkPublicCurrentPlaylists,
+      requestOptions)
       .then((response) => response.json())
       .then((data) => {
         setCurrentPlaylists(data);
@@ -428,7 +447,7 @@ export default function Room (props) {
         participant: props.participant,
         surveyID: surveyID,
         roomCode: props.roomCode,
-        confirm: recentlyTracksData.confirmCheck, 
+        confirm: recentlyTracksData.confirmCheck,
       }),
       credentials: 'include'
     };
@@ -447,7 +466,7 @@ export default function Room (props) {
         participant: props.participant,
         surveyID: surveyID,
         roomCode: props.roomCode,
-        confirm: topTracksData.confirmCheck, 
+        confirm: topTracksData.confirmCheck,
       }),
       credentials: 'include'
     };
@@ -466,7 +485,7 @@ export default function Room (props) {
         participant: props.participant,
         surveyID: surveyID,
         roomCode: props.roomCode,
-        confirm: savedTracksData.confirmCheck, 
+        confirm: savedTracksData.confirmCheck,
       }),
       credentials: 'include'
     };
@@ -477,73 +496,73 @@ export default function Room (props) {
       });
   }
 
-  function renderResultListTracks (trackList, title, count, checkArray, setCheckArray, index) {
-    return(
+  function renderResultListTracks(trackList, title, count, checkArray, setCheckArray, index) {
+    return (
       <React.Fragment>
-        {resultListTrack(trackList.slice(0,count), title.toString(), checkArray, setCheckArray, index)}
+        {resultListTrack(trackList.slice(0, count), title.toString(), checkArray, setCheckArray, index)}
       </React.Fragment>
-      );
+    );
   }
 
-  function renderResultListArtists (artistList, title, count, checkArray, setCheckArray, index) {
-    return(
+  function renderResultListArtists(artistList, title, count, checkArray, setCheckArray, index) {
+    return (
       <React.Fragment>
-        {resultListArtist(artistList.slice(0,count), title, checkArray, setCheckArray, index)}
+        {resultListArtist(artistList.slice(0, count), title, checkArray, setCheckArray, index)}
       </React.Fragment>
-      );
+    );
   }
 
-  function renderResultListPlaylists (playlistsList, title, count, checkArray, setCheckArray, index) {
-    return(
+  function renderResultListPlaylists(playlistsList, title, count, checkArray, setCheckArray, index) {
+    return (
       <React.Fragment>
         {resultListPlaylist(
-          playlistsList.slice(0,count), title, checkArray, setCheckArray, index
+          playlistsList.slice(0, count), title, checkArray, setCheckArray, index
         )}
       </React.Fragment>
-      );
+    );
   }
 
-  function resultListData(pageName){
-    return(
+  function resultListData(pageName) {
+    return (
       <div className="render-result-container">
         <div className="render-result-container-inner">
           <div className="render-result">
-            { pageName === 'Saved Tracks' ? 
+            {pageName === 'Saved Tracks' ?
               savedTracks.length > 0 ?
-                renderResultListTracks(savedTracks, pageName, showItemsSavedTracks, checkArray, setCheckArray, 0) : 
-                renderLoading() : 
-              null 
+                renderResultListTracks(savedTracks, pageName, showItemsSavedTracks, checkArray, setCheckArray, 0) :
+                renderLoading() :
+              null
             }
-            { pageName === 'Top Tracks' ? 
+            {pageName === 'Top Tracks' ?
               topTracks.length > 0 ?
-                renderResultListTracks(topTracks, pageName, showItemsTopTracks, checkArray, setCheckArray, 1) : 
-                renderLoading() : 
+                renderResultListTracks(topTracks, pageName, showItemsTopTracks, checkArray, setCheckArray, 1) :
+                renderLoading() :
               null}
-            { pageName === 'Last Tracks' ? 
+            {pageName === 'Last Tracks' ?
               recentlyTracks.length > 0 ?
                 renderResultListTracks(
-                  recentlyTracks, pageName, showItemsRecentlyTracks, checkArray, setCheckArray, 2) : 
+                  recentlyTracks, pageName, showItemsRecentlyTracks, checkArray, setCheckArray, 2) :
                 renderLoading() :
               null
             }
-            { pageName === 'Top Artists' ? 
+            {pageName === 'Top Artists' ?
               topArtists.length > 0 ?
-                renderResultListArtists(topArtists, pageName, showItemsTopArtists, checkArray, setCheckArray, 3) : 
-                renderLoading() : 
+                renderResultListArtists(topArtists, pageName, showItemsTopArtists, checkArray, setCheckArray, 3) :
+                renderLoading() :
               null
             }
-            { pageName === 'Followed Artists' ? 
+            {pageName === 'Followed Artists' ?
               followedArtists.length > 0 ?
                 renderResultListArtists(
-                  followedArtists, pageName, showItemsFollowedArtists, checkArray, setCheckArray, 4) : 
+                  followedArtists, pageName, showItemsFollowedArtists, checkArray, setCheckArray, 4) :
                 renderLoading() :
               null
             }
-            { pageName === 'Current Playlists' ? 
+            {pageName === 'Current Playlists' ?
               currentPlaylists.length > 0 ?
                 renderResultListPlaylists(
-                  currentPlaylists, pageName, showItemsCurrentPlaylists, checkArray, setCheckArray, 5) : 
-                renderLoading() : 
+                  currentPlaylists, pageName, showItemsCurrentPlaylists, checkArray, setCheckArray, 5) :
+                renderLoading() :
               null
             }
           </div>
@@ -552,37 +571,38 @@ export default function Room (props) {
     )
   }
 
-  function renderStepperButton(){
-    return(
-    <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-      <Box sx={{ flex: '1 1 auto' }} />
-      {activeStep !== pagesNamesArray.length &&
-        <Button onClick={() => {
+  function renderStepperButton() {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+        <Box sx={{ flex: '1 1 auto' }} />
+        {activeStep !== pagesNamesArray.length &&
+          <Button onClick={() => {
             handleComplete()
-            if (Object.keys(completed).length === pagesNamesArray.length){
+            if (Object.keys(completed).length === pagesNamesArray.length) {
               handleSaveCheck()
-            }}
+            }
+          }
           } variant="contained">
-          {activeStep !== pagesNamesArray.length - 1 ? <ArrowForwardIcon/> : 'OK'}
-        </Button>
-      }
-    </Box>
+            {activeStep !== pagesNamesArray.length - 1 ? <ArrowForwardIcon /> : 'OK'}
+          </Button>
+        }
+      </Box>
     )
   }
 
   const handleNext = () => {
     const newActiveStep =
-      activeStep === pagesNamesArray.length - 1 && !(Object.keys(completed).length === pagesNamesArray.length) ? 
-        pagesNamesArray.findIndex((label, i) => !(i in completed)) : 
+      activeStep === pagesNamesArray.length - 1 && !(Object.keys(completed).length === pagesNamesArray.length) ?
+        pagesNamesArray.findIndex((label, i) => !(i in completed)) :
         activeStep + 1;
     setActiveStep(newActiveStep);
   };
 
   const handleSaveCheck = () => {
-    let dataAll = [savedTracks, topTracks, recentlyTracks, topArtists, followedArtists, currentPlaylists]
+    let dataAll = DATA_TYPE_ORDER.map(type => dataByType[type]);
     let promises = [];
-    
-    for (let zaehler = 0; zaehler<confirmCheckArray.length; zaehler++) {
+
+    for (let zaehler = 0; zaehler < confirmCheckArray.length; zaehler++) {
       let spotifyIDArray = []
       let spotifyIDArrayNotConfirm = []
       let checkZaehler = -1
@@ -591,7 +611,7 @@ export default function Room (props) {
         if (dataItem === undefined || dataItem === null) {
           return // Skip missing items
         }
-        if(item){
+        if (item) {
           checkZaehler += 1
           spotifyIDArray.push(dataItem)
         } else {
@@ -605,11 +625,11 @@ export default function Room (props) {
           index: zaehler,
           participant: props.participant,
           surveyID: surveyID,
-          checkData: spotifyIDArray, 
-          noData:spotifyIDArrayNotConfirm,
+          checkData: spotifyIDArray,
+          noData: spotifyIDArrayNotConfirm,
         })
       };
-      if(confirmCheckArray[zaehler]){
+      if (confirmCheckArray[zaehler]) {
         promises.push(fetch("/api/save-check-data", requestOptions))
       }
     }
@@ -631,15 +651,15 @@ export default function Room (props) {
         console.log("Participant finalized successfully:", data);
         if (endURLSecondSurvey) {
           let dataAll = [savedTracks, topTracks, recentlyTracks, topArtists, followedArtists, currentPlaylists];
-          let paramsURL = selectedOption ? getGetParams(questionTypeCheck, selectedOption, dataFieldsCheck, idName, idTracks, idArtists, idPlaylists, 
+          let paramsURL = selectedOption ? getGetParams(questionTypeCheck, selectedOption, dataFieldsCheck, idName, idTracks, idArtists, idPlaylists,
             dataAll, endURLSecondSurvey, checkArray) : null;
-    
+
           let allParams = '&' + props.paramsObjectSession.map(item => item.join('=')).join('&');
-            
-          let passURL = !passLang ? 
-            [endURLSecondSurvey,paramsURL,'&partID=',props.participant].join('') :
-            [endURLSecondSurvey,paramsURL,'&partID=',props.participant,allParams].join('');
-            
+
+          let passURL = !passLang ?
+            [endURLSecondSurvey, paramsURL, '&partID=', props.participant].join('') :
+            [endURLSecondSurvey, paramsURL, '&partID=', props.participant, allParams].join('');
+
           let win = window.open(passURL, '_blank');
           win.focus();
         }
@@ -662,8 +682,8 @@ export default function Room (props) {
     handleNext();
   };
 
-  function renderText(){
-    return(
+  function renderText() {
+    return (
       <div className='render-result-explanation-container'>
         <div className='render-result-explanation-inner'>
           <body1 className='render-result-explanation'>
@@ -674,13 +694,13 @@ export default function Room (props) {
     )
   }
 
-  function renderStepper(){
-    return(
+  function renderStepper() {
+    return (
       <React.Fragment>
         {Object.keys(completed).length === pagesNamesArray.length ?
           null :
           <React.Fragment>
-            <div style={{padding: '60px 0 0'}}>
+            <div style={{ padding: '60px 0 0' }}>
               {renderText()}
             </div>
             <Stepper activeStep={activeStep}>
@@ -705,26 +725,26 @@ export default function Room (props) {
     )
   }
 
-  function renderErgebnis(){
-    return(
+  function renderErgebnis() {
+    return (
       <React.Fragment>
         {pagesNamesArray.length !== 0 ? renderStepper() : renderLoading()}
       </React.Fragment>
-      );
+    );
   }
 
-  function renderLoading () {
+  function renderLoading() {
     return (
       <div className={"loading-container"}>
         <div className={'loading-item'}>
           <div className={'loading-inner'}>
-            <CircularProgress style={{margin: 'auto'}} />
+            <CircularProgress style={{ margin: 'auto' }} />
             {props.language != 'de' ?
-              <body1 style={{paddingTop: '48px'}} className={'endPage-Stepper-body'}>
+              <body1 style={{ paddingTop: '48px' }} className={'endPage-Stepper-body'}>
                 Spotify data is loading. <br></br>
                 Please do not refresh the page.
               </body1> :
-              <body1 style={{paddingTop: '48px'}} className={'endPage-Stepper-body'}>
+              <body1 style={{ paddingTop: '48px' }} className={'endPage-Stepper-body'}>
                 Spotify-Daten werden geladen. <br></br>
                 Bitte laden Sie die Seite nicht neu.
               </body1>
@@ -735,87 +755,87 @@ export default function Room (props) {
     )
   }
 
-  function renderResultContainer () {
-    return(
+  function renderResultContainer() {
+    return (
       <React.Fragment>
         <div className={"render-result-container-outer"}>
           <div className={"render-result-result-container-inner"}>
-            {renderErgebnis()} 
+            {renderErgebnis()}
           </div>
         </div>
       </React.Fragment>
     )
   }
 
-  function goToEndPage(){
-  console.log("goToEndPage called - finalizing participant data");
-  
-  const finalizeOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: 'include'
-  };
-  
-  fetch("/api/finalize-participant-data", finalizeOptions)
-    .then(response => {
-      console.log("Finalize response status (no confirmation):", response.status);
-      return response.json();
-    })
-    .then(data => {
-      console.log("Participant finalized successfully (no confirmation):", data);
-      
-      if (endURLSecondSurvey) {
-        let dataAll = [savedTracks, recentlyTracks, topTracks, topArtists, followedArtists, currentPlaylists];
-        let paramsURL = getGetParams(questionTypeCheck, selectedOption, dataFieldsCheck, idName, idTracks, idArtists, idPlaylists, 
-          dataAll, endURLSecondSurvey);
+  function goToEndPage() {
+    console.log("goToEndPage called - finalizing participant data");
 
-        let allParams = '&' + props.paramsObjectSession.map(item => item.join('=')).join('&');
-        
-        let passURL = !passLang ? 
-          [endURLSecondSurvey,paramsURL,'&partID=',props.participant].join('') :
-          [endURLSecondSurvey,paramsURL,'&partID=',props.participant,allParams].join('');
-        
-        let win = window.open(passURL, '_blank');
-        console.log(passLang, passURL);
-        win.focus();
-      } else {
-        navigate("/end-room/" + props.language);
-      }
-    })
-    .catch(error => {
-      console.error("Error finalizing participant (no confirmation):", error);
-      navigate("/error/generic");
-    });
-}
+    const finalizeOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include'
+    };
 
-  return(
+    fetch("/api/finalize-participant-data", finalizeOptions)
+      .then(response => {
+        console.log("Finalize response status (no confirmation):", response.status);
+        return response.json();
+      })
+      .then(data => {
+        console.log("Participant finalized successfully (no confirmation):", data);
+
+        if (endURLSecondSurvey) {
+          let dataAll = [savedTracks, recentlyTracks, topTracks, topArtists, followedArtists, currentPlaylists];
+          let paramsURL = getGetParams(questionTypeCheck, selectedOption, dataFieldsCheck, idName, idTracks, idArtists, idPlaylists,
+            dataAll, endURLSecondSurvey);
+
+          let allParams = '&' + props.paramsObjectSession.map(item => item.join('=')).join('&');
+
+          let passURL = !passLang ?
+            [endURLSecondSurvey, paramsURL, '&partID=', props.participant].join('') :
+            [endURLSecondSurvey, paramsURL, '&partID=', props.participant, allParams].join('');
+
+          let win = window.open(passURL, '_blank');
+          console.log(passLang, passURL);
+          win.focus();
+        } else {
+          navigate("/end-room/" + props.language);
+        }
+      })
+      .catch(error => {
+        console.error("Error finalizing participant (no confirmation):", error);
+        navigate("/error/generic");
+      });
+  }
+
+  return (
     <React.Fragment>
       <div class="room-header">
         <header class="room-header-inner">
-            <div class="room-header-content-container">
-              <div class="room-header-content-container-inner">
-                <span class="logo-tu-berlin">
-                  {/* <img src="../../../static/images/logo_grau-schwarz.png" width="25.755" height="25" />
+          <div class="room-header-content-container">
+            <div class="room-header-content-container-inner">
+              <span class="logo-tu-berlin">
+                {/* <img src="../../../static/images/logo_grau-schwarz.png" width="25.755" height="25" />
                   <img src="../../../static/images/TU-Berlin-Logo.svg" width="34.09" height="25" /> */}
-                  <img src="../../../static/images/SpotiveyLogo2_Schrift.svg" width="100%" height="100%"/>
-                </span>
-              </div>
+                <img src="../../../static/images/SpotiveyLogo2_Schrift.svg" width="100%" height="100%" />
+              </span>
             </div>
+          </div>
         </header>
       </div>
       <div class='room-page-main'>
-        {!props.welcomePageOK ? 
-          <WelcomePage 
+        {!props.welcomePageOK ?
+          <WelcomePage
             setWelcomePageOK={props.setWelcomePageOK}
-            welcomeSettingsDeutschArray = {welcomeSettingsDeutschArray}
-            welcomeSettingsEnglishArray = {welcomeSettingsEnglishArray}
-            language = {props.language}
-          /> : 
+            welcomeSettingsDeutschArray={welcomeSettingsDeutschArray}
+            welcomeSettingsEnglishArray={welcomeSettingsEnglishArray}
+            language={props.language}
+          /> :
           <React.Fragment>
-            {noConfirm ? 
+            {noConfirm ?
               goToEndPage() :
               <React.Fragment>
-                {loading ? 
+                {loading ?
                   <div class="room-content-main">
                     <div class='room-content-wrapper'>
                       <div class="room-content-wrapper-inner">
@@ -831,10 +851,10 @@ export default function Room (props) {
                       </div>
                     </div>
                   </div>
-                :
-                renderLoading()}
+                  :
+                  renderLoading()}
               </React.Fragment>
-              }
+            }
           </React.Fragment>}
       </div>
     </React.Fragment>

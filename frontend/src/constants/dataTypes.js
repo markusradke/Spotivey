@@ -1,0 +1,18 @@
+export const DATA_TYPES = {
+  SAVED_TRACKS: "savedTracks",
+  TOP_TRACKS: "topTracks",
+  RECENT_TRACKS: "recentTracks",
+  TOP_ARTISTS: "topArtists",
+  FOLLOWED_ARTISTS: "followedArtists",
+  CURRENT_PLAYLISTS: "currentPlaylists",
+  PARTICIPANT_PROFILE: "participantProfile",
+};
+
+export const DATA_TYPE_ORDER = [
+  DATA_TYPES.SAVED_TRACKS,
+  DATA_TYPES.TOP_TRACKS,
+  DATA_TYPES.RECENT_TRACKS,
+  DATA_TYPES.TOP_ARTISTS,
+  DATA_TYPES.FOLLOWED_ARTISTS,
+  DATA_TYPES.CURRENT_PLAYLISTS,
+];
