@@ -1,13 +1,7 @@
-import React from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import { getParticipantSession, initParticipantSession } from "../api/sessionApi.js";
 import { ParticipantContext } from "../context/ParticipantContext";
-
-import SettingsPage from "./UserRoom/NewSettingsFirst/settings";
-import SettingsPageSecond from "./UserRoom/UserSettingsSecond/SettingsSecond";
-import UserPage from "./UserRoom/UserOverview/UserPage";
 import Room from "./Room/Room";
-import LoginPage from "./Login/SignIn";
-import SignUpPage from "./SignUp/SignUp";
 import {
   BrowserRouter as Router,
   Route,
@@ -15,20 +9,41 @@ import {
   Routes,
   useNavigate
 } from "react-router-dom";
-import { useState, useEffect } from 'react';
 import CreateRoom from './CreateRoom.js';
-import AudioFeaturesDashboard from './UserRoom/UserResult/AudioFeaturesDashboard.js';
-import UserResultPage from './UserRoom/UserResult/UserResultPage.js';
-import UserTutorialPage from './UserRoom/UserTutorial/UserTutorialPage.js';
-import UserSettingsPage from './UserRoom/UserSettingsFirst/UserSettingsPage.js';
-import UserSettingsPageSecond from './UserRoom/UserSettingsSecond/UserSettingsPageSecond.js';
-import SettingsPageSecondTwo from './UserRoom/UserSettingsSecond/SettingsPageSecondTwo.js';
 import EndPage from "./EndRoom/EndPage";
 import ErrorPage from "./ErrorPages/ErrorPage";
 import PrivacyComponent from "./Privacy/PrivacyComponent";
-import ConfirmTextDesign from "./UserRoom/ConfirmTextDesign/ConfirmTextDesign";
 import SpotiveyFooter from "./Footer/footerSpotivey";
 import Version from "./Version/version";
+
+const SettingsPage = lazy(() => import("./UserRoom/NewSettingsFirst/settings"));
+const ConfirmTextDesign = lazy(
+  () => import("./UserRoom/ConfirmTextDesign/ConfirmTextDesign")
+);
+const SettingsPageSecond = lazy(
+  () => import("./UserRoom/UserSettingsSecond/SettingsSecond")
+);
+const SettingsPageSecondTwo = lazy(
+  () => import("./UserRoom/UserSettingsSecond/SettingsPageSecondTwo")
+);
+const UserPage = lazy(() => import("./UserRoom/UserOverview/UserPage"));
+const UserSettingsPage = lazy(
+  () => import("./UserRoom/UserSettingsFirst/UserSettingsPage")
+);
+const UserSettingsPageSecond = lazy(
+  () => import("./UserRoom/UserSettingsSecond/UserSettingsPageSecond")
+);
+const UserTutorialPage = lazy(
+  () => import("./UserRoom/UserTutorial/UserTutorialPage")
+);
+const UserResultPage = lazy(
+  () => import("./UserRoom/UserResult/UserResultPage")
+);
+const AudioFeaturesDashboard = lazy(
+  () => import("./UserRoom/UserResult/AudioFeaturesDashboard")
+);
+const LoginPage = lazy(() => import("./Login/SignIn"));
+const SignUpPage = lazy(() => import("./SignUp/SignUp"));
 
 function AppRoutes() {
   const navigate = useNavigate();
@@ -130,48 +145,57 @@ function AppRoutes() {
 
   return (
     <ParticipantContext.Provider value={{ participant, roomCode, surveyID, language }}>
-      <Routes>
-        <Route
-          exact
-          path="/"
-          element={!roomCode && !surveyID && !participant && !language ?
-            redirectCheck ? <Navigate to={'/login'} replace /> :
-              <CreateRoom /> :
-            <Navigate to={'/room'} replace />
-          }
-        />
-        <Route
-          path="/room"
-          element={
-            <Room
-              surveyID={surveyID}
-              roomCode={roomCode}
-              participant={participant}
-              leaveRoomCallback={clearRoomCode}
-              welcomePageOK={welcomePageOK}
-              setWelcomePageOK={setWelcomePageOK}
-              language={language}
-              paramsObjectSession={paramsObjectSession}
-            />
-          }
-        />
-        <Route path="/user/settings/new" element={<SettingsPage />} />
-        <Route path="/user/settings/confirm-text-design" element={<ConfirmTextDesign />} />
-        <Route path="/user/settings2/new" element={<SettingsPageSecond />} />
-        <Route path="/user/settings2/new2" element={<SettingsPageSecondTwo />} />
-        <Route exact path="/user" element={<UserPage />} />
-        <Route exact path="/user/settings" element={<UserSettingsPage />} />
-        <Route exact path="/user/settings2" element={<UserSettingsPageSecond />} />
-        <Route exact path="/user/tutorial" element={<UserTutorialPage />} />
-        <Route exact path="/user/results" element={<UserResultPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/sign-up" element={<SignUpPage />} />
-        <Route exact path="/user/results-audio-features" element={<AudioFeaturesDashboard />} />
-        <Route path='/end-room/:lang' element={<EndPage />} />
-        <Route path={'/privacy'} element={<PrivacyComponent />} />
-        <Route path={'/version'} element={<Version />} />
-        <Route path="/error/:errorType" element={<ErrorPage />} />
-      </Routes>
+      <Suspense fallback={null}>
+        <Routes>
+          <Route
+            exact
+            path="/"
+            element={!roomCode && !surveyID && !participant && !language ?
+              redirectCheck ? <Navigate to={'/login'} replace /> :
+                <CreateRoom /> :
+              <Navigate to={'/room'} replace />
+            }
+          />
+          <Route
+            path="/room"
+            element={
+              <Room
+                surveyID={surveyID}
+                roomCode={roomCode}
+                participant={participant}
+                leaveRoomCallback={clearRoomCode}
+                welcomePageOK={welcomePageOK}
+                setWelcomePageOK={setWelcomePageOK}
+                language={language}
+                paramsObjectSession={paramsObjectSession}
+              />
+            }
+          />
+          <Route path="/user/settings/new" element={<SettingsPage />} />
+          <Route
+            path="/user/settings/confirm-text-design"
+            element={<ConfirmTextDesign />}
+          />
+          <Route path="/user/settings2/new" element={<SettingsPageSecond />} />
+          <Route path="/user/settings2/new2" element={<SettingsPageSecondTwo />} />
+          <Route exact path="/user" element={<UserPage />} />
+          <Route exact path="/user/settings" element={<UserSettingsPage />} />
+          <Route exact path="/user/settings2" element={<UserSettingsPageSecond />} />
+          <Route exact path="/user/tutorial" element={<UserTutorialPage />} />
+          <Route exact path="/user/results" element={<UserResultPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/sign-up" element={<SignUpPage />} />
+          <Route
+            exact
+            path="/user/results-audio-features"
+            element={<AudioFeaturesDashboard />}
+          />
+          <Route path='/end-room/:lang' element={<EndPage />} />
+          <Route path={'/privacy'} element={<PrivacyComponent />} />
+          <Route path={'/version'} element={<Version />} />
+          <Route path="/error/:errorType" element={<ErrorPage />} />
+        </Routes>
+      </Suspense>
       <div className="footer-container">
         <SpotiveyFooter participant={participant} />
       </div>
