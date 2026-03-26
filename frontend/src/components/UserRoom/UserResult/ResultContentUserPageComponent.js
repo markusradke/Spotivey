@@ -12,6 +12,12 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import NotInterestedIcon from '@mui/icons-material/NotInterested';
 import { useNavigate } from "react-router-dom";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import {
+    deleteOnlyResults,
+    fetchUserSession,
+    saveToCsvFile,
+    spotifyAudioFeatures,
+} from "../../../api/surveyApi";
 
 export default function ResultContent(props) {
 
@@ -30,38 +36,36 @@ export default function ResultContent(props) {
 
     const navigate = useNavigate()
 
-    function handleCloseDialog () {
+    function handleCloseDialog() {
         setOpenDeleteDialog(false);
     }
 
     function getSpotifyAudioFeautures(dataString) {
-        fetch("/spotify/audio-features-spotify" + "?dataString=" + dataString + '&surveyID=' + props.surveyID)
-        .then(response => response.json())
-        .then((data) => {
-            if (!data.error){
+        spotifyAudioFeatures(dataString, props.surveyID)
+            .then(({ ok, data }) => {
+                if (!ok || !data || data.error) {
+                    return;
+                }
                 setDataAudioFeatures(data)
-            }
-        })
+            })
     }
 
-    const handleDataFetch = async() => {
-        fetch("/api/save-to-csv-file" + '?surveyID=' + props.surveyID)
-        .then(response => response.json())
-        .then((data) => {
-            if (!data.error){
-                if(data.length !== 0){
+    const handleDataFetch = async () => {
+        saveToCsvFile(props.surveyID)
+            .then(({ ok, data }) => {
+                if (!ok || !data || data.error) {
+                    return;
+                }
+                if (data.length !== 0) {
                     setFileData(data)
                 }
-            }
-        });
-      };
+            });
+    };
 
-      useEffect(() => {
+    useEffect(() => {
         async function getParticipantSession() {
-          fetch("/api/get-user-session")
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.username === null){
+            fetchUserSession().then(({ ok, data }) => {
+                if (!ok || !data || data.username === null) {
                     navigate('/login')
                 }
             });
@@ -71,7 +75,7 @@ export default function ResultContent(props) {
     }, [])
 
     function renderBackButton() {
-        return(
+        return (
             <div className={'back-button-result'}>
                 <IconButton
                     onClick={() => {
@@ -79,16 +83,16 @@ export default function ResultContent(props) {
                         setListEntriesShow(listEntriesShow.fill(false))
                     }}
                 >
-                    <ArrowBackIosNewIcon/>
+                    <ArrowBackIosNewIcon />
                 </IconButton>
             </div>
         )
     }
 
-    function renderTable(data, type, index){
+    function renderTable(data, type, index) {
         let pageLimit = 5
 
-        let dataString = index===0 ? 'savedTracksData' : index===1 ? 'topTracksData' : 'recentlyTracksData'
+        let dataString = index === 0 ? 'savedTracksData' : index === 1 ? 'topTracksData' : 'recentlyTracksData'
 
         function goToNextPage() {
             setCurrentPage((page) => page + 1);
@@ -119,24 +123,24 @@ export default function ResultContent(props) {
 
         const getPaginationGroup = () => {
             let start = Math.floor((currentPage - 1) / pageLimit) * pageLimit;
-            if (currentPage >=4){
-                start = currentPage-3
+            if (currentPage >= 4) {
+                start = currentPage - 3
             }
-            if (pages-start < pageLimit){
-                start = pages-pageLimit
+            if (pages - start < pageLimit) {
+                start = pages - pageLimit
             }
             if (pages < pageLimit) {
                 pageLimit = pages
             }
-            if (start<0){
-                start=0
+            if (start < 0) {
+                start = 0
             }
-    
+
             return new Array(pageLimit).fill().map((_, idx) => start + idx + 1);
         };
 
-        function renderPagination(){
-            return(
+        function renderPagination() {
+            return (
                 <div className="pagination">
                     <IconButton
                         size="small"
@@ -179,83 +183,83 @@ export default function ResultContent(props) {
             )
         }
 
-        return(
+        return (
             <React.Fragment>
-                {type === 'Tracks' ? 
-                <Button
-                    onClick={() => {getSpotifyAudioFeautures(dataString)}}
-                    variant="outlined"
-                >
-                    Get Spotify Audio Features Results
-                </Button> : null }
+                {type === 'Tracks' ?
+                    <Button
+                        onClick={() => { getSpotifyAudioFeautures(dataString) }}
+                        variant="outlined"
+                    >
+                        Get Spotify Audio Features Results
+                    </Button> : null}
                 {renderPagination()}
                 <table id={'tableResultParticipant'}>
                     <tr>
                         <th>Participant ID</th>
                         <th>No</th>
-                        {type !== 'Profile' ? 
-                        <React.Fragment>
-                            <th>Cover</th>
-                            {type === 'Tracks' ? <th>Title</th> : null}
-                            {type === 'Artists' ? <th>Title</th> : null}
-                            {type === 'Playlists' ? <th>Title</th> : null}
-                            {type === 'Tracks' ? <th>Artists Name</th> : null}
-                            <th>Spotify ID</th>
-                            {type === 'Tracks' ? <th>ISRC</th> : null}
-                            {type === 'Artists' ? <th>Type</th> : null}
-                            {type === 'Artists' ? <th>Popularity</th> : null}
-                            {type === 'Artists' ? <th>Followers Total</th> : null}
-                            {type === 'Artists' ? <th>Genres</th> : null}
-                            {type === 'Playlists' ? <th>Tracks Total</th> : null}
-                            {type === 'Playlists' ? <th>Self Owned?</th> : null}
-                            {type === 'Playlists' ? <th>Public?</th> : null}
-                            {type === 'Playlists' ? <th>Collaborative?</th> : null}
-                        </React.Fragment> : 
-                        <React.Fragment>
-                            <th>Country</th>
-                            <th>Followers Total</th>
-                            <th>Product</th>
-                        </React.Fragment>
+                        {type !== 'Profile' ?
+                            <React.Fragment>
+                                <th>Cover</th>
+                                {type === 'Tracks' ? <th>Title</th> : null}
+                                {type === 'Artists' ? <th>Title</th> : null}
+                                {type === 'Playlists' ? <th>Title</th> : null}
+                                {type === 'Tracks' ? <th>Artists Name</th> : null}
+                                <th>Spotify ID</th>
+                                {type === 'Tracks' ? <th>ISRC</th> : null}
+                                {type === 'Artists' ? <th>Type</th> : null}
+                                {type === 'Artists' ? <th>Popularity</th> : null}
+                                {type === 'Artists' ? <th>Followers Total</th> : null}
+                                {type === 'Artists' ? <th>Genres</th> : null}
+                                {type === 'Playlists' ? <th>Tracks Total</th> : null}
+                                {type === 'Playlists' ? <th>Self Owned?</th> : null}
+                                {type === 'Playlists' ? <th>Public?</th> : null}
+                                {type === 'Playlists' ? <th>Collaborative?</th> : null}
+                            </React.Fragment> :
+                            <React.Fragment>
+                                <th>Country</th>
+                                <th>Followers Total</th>
+                                <th>Product</th>
+                            </React.Fragment>
                         }
-                    </tr>         
-                    {getPaginatedData().map((item, index) => { 
-                        let idTableRow = (getPaginatedData()[index+1]?.participant[0] !== getPaginatedData()[index].participant[0] &&
-                        getPaginatedData()[index+1]?.participant[0]) ? 
+                    </tr>
+                    {getPaginatedData().map((item, index) => {
+                        let idTableRow = (getPaginatedData()[index + 1]?.participant[0] !== getPaginatedData()[index].participant[0] &&
+                            getPaginatedData()[index + 1]?.participant[0]) ?
                             'divider-table' : 'no-divider'
-                        return(
+                        return (
                             <tr id={idTableRow}>
                                 <td>{item.participant}</td>
                                 <td>{item.no}</td>
-                                {type !== 'Profile' ? 
-                                <React.Fragment>
-                                    <td>
-                                        <img className={'img-table'} src={type === 'Playlists' ? item.cover : item.cover} alt=""></img>
-                                    </td>
-                                    {type === 'Tracks' ? <td>{item.trackName}</td> : null}
-                                    {type === 'Artists' ? <td>{item.artistName}</td> : null}
-                                    {type === 'Playlists' ? <td>{item.playlist_name}</td> : null}
-                                    {type === 'Tracks' ? <td>{item.spotify_artist_string}</td> : null}
-                                    <td>{type === 'Playlists' ? item.playlist_id : item.spotifyID}</td>
-                                    {type === 'Tracks' ? <td>{item.isrc}</td> : null}
-                                    {type === 'Artists' ? <td>{item.type}</td> : null}
-                                    {type === 'Artists' ? <td>{item.popularity}</td> : null}
-                                    {type === 'Artists' ? <td>{item.followers}</td> : null}
-                                    {type === 'Artists' ? <td>{item.genre_string}</td> : null}
-                                    {type === 'Playlists' ? <td>{item.n_tracks}</td> : null}
-                                    {type === 'Playlists' ? <td>{item.is_self_owned ? <CheckBoxIcon/> : <NotInterestedIcon/>}</td> : null}
-                                    {type === 'Playlists' ? <td>{item.is_public ? <CheckBoxIcon/> : <NotInterestedIcon/>}</td> : null}
-                                    {type === 'Playlists' ? <td>{item.is_collaborative ? <CheckBoxIcon/> : <NotInterestedIcon/>}</td> : null}
-                                </React.Fragment> : 
-                                <React.Fragment>
-                                    <td>
-                                        {item.country && item.country.trim() ? (
-                                        <img className={'img-table'} src={`https://flagcdn.com/w20/${item.country.toLowerCase()}.png`}></img>)
-                                        : <span>-</span>
-                                    }
-                                    </td>
-                                    <td>{item.followers}</td>
-                                    <td>{item.product}</td>
-                                </React.Fragment>}
+                                {type !== 'Profile' ?
+                                    <React.Fragment>
+                                        <td>
+                                            <img className={'img-table'} src={type === 'Playlists' ? item.cover : item.cover} alt=""></img>
+                                        </td>
+                                        {type === 'Tracks' ? <td>{item.trackName}</td> : null}
+                                        {type === 'Artists' ? <td>{item.artistName}</td> : null}
+                                        {type === 'Playlists' ? <td>{item.playlist_name}</td> : null}
+                                        {type === 'Tracks' ? <td>{item.spotify_artist_string}</td> : null}
+                                        <td>{type === 'Playlists' ? item.playlist_id : item.spotifyID}</td>
+                                        {type === 'Tracks' ? <td>{item.isrc}</td> : null}
+                                        {type === 'Artists' ? <td>{item.type}</td> : null}
+                                        {type === 'Artists' ? <td>{item.popularity}</td> : null}
+                                        {type === 'Artists' ? <td>{item.followers}</td> : null}
+                                        {type === 'Artists' ? <td>{item.genre_string}</td> : null}
+                                        {type === 'Playlists' ? <td>{item.n_tracks}</td> : null}
+                                        {type === 'Playlists' ? <td>{item.is_self_owned ? <CheckBoxIcon /> : <NotInterestedIcon />}</td> : null}
+                                        {type === 'Playlists' ? <td>{item.is_public ? <CheckBoxIcon /> : <NotInterestedIcon />}</td> : null}
+                                        {type === 'Playlists' ? <td>{item.is_collaborative ? <CheckBoxIcon /> : <NotInterestedIcon />}</td> : null}
+                                    </React.Fragment> :
+                                    <React.Fragment>
+                                        <td>
+                                            {item.country && item.country.trim() ? (
+                                                <img className={'img-table'} src={`https://flagcdn.com/w20/${item.country.toLowerCase()}.png`}></img>)
+                                                : <span>-</span>
+                                            }
+                                        </td>
+                                        <td>{item.followers}</td>
+                                        <td>{item.product}</td>
+                                    </React.Fragment>}
                             </tr>
                         )
                     })}
@@ -266,14 +270,14 @@ export default function ResultContent(props) {
     }
 
     function renderListEntriesData(data, title, resultCount, participantCount, type, index) {
-        return(
+        return (
             <div>
                 {renderBackButton()}
                 <h1 data-heading='true' class='settings-title'>
                     Results - {title}
                 </h1>
                 <h1 className="user-result-headline-subtitle">
-                    Survey Name: {props.surveyName} <br></br> 
+                    Survey Name: {props.surveyName} <br></br>
                     Survey ID: {props.surveyID}
                 </h1>
                 <h2>
@@ -281,15 +285,15 @@ export default function ResultContent(props) {
                 </h2>
                 <div className={'saved-tracks-dashboard-outer'}>
                     {type === 'Tracks' ? renderTable(data, 'Tracks', index)
-                    : type === 'Artists' ? renderTable(data, 'Artists', index) 
-                    : type === 'Playlists' ? renderTable(data, 'Playlists', index) : renderTable(data, 'Profile', index)}
+                        : type === 'Artists' ? renderTable(data, 'Artists', index)
+                            : type === 'Playlists' ? renderTable(data, 'Playlists', index) : renderTable(data, 'Profile', index)}
                 </div>
             </div>
         )
     }
 
     function renderResultsCard(title) {
-        return(
+        return (
             <React.Fragment>
                 <h1 data-heading='true' class='result-card-title'>
                     {title}
@@ -307,102 +311,100 @@ export default function ResultContent(props) {
         setPages(Math.ceil(dataType.data.length / 100))
     }
 
-    function deleteResults(surveyID){
-        fetch("/api/delete-only-results" + "?surveyid=" + surveyID)
-        .then((response) => response.json())
-        .then((data) => {
+    function deleteResults(surveyID) {
+        deleteOnlyResults(surveyID).then(() => {
             location.reload();
         });
     }
 
-    return(
+    return (
         <React.Fragment>
-            {dataAudioFeatures.length===0 ? 
-            <React.Fragment>
-                <div className='buttons-result-wrapper'>
-                    {fileData ?
-                        <div className={'button-result-user-container'}>
-                            <CSVLink
-                                className={'csv-link-export-file'}
-                                data={fileData}
-                                filename={"Spotivey_Result_" + props.surveyID + "_Data.csv"}
-                                target="_blank"
-                                separator={";"}
-                            >   
-                                <div className={'button-csv-inner-container'}>
-                                    <div className={'button-csv-title'}>
-                                        Export CSV-File
+            {dataAudioFeatures.length === 0 ?
+                <React.Fragment>
+                    <div className='buttons-result-wrapper'>
+                        {fileData ?
+                            <div className={'button-result-user-container'}>
+                                <CSVLink
+                                    className={'csv-link-export-file'}
+                                    data={fileData}
+                                    filename={"Spotivey_Result_" + props.surveyID + "_Data.csv"}
+                                    target="_blank"
+                                    separator={";"}
+                                >
+                                    <div className={'button-csv-inner-container'}>
+                                        <div className={'button-csv-title'}>
+                                            Export CSV-File
+                                        </div>
+                                        <div className={'button-csv-icon'}>
+                                            <FileDownloadIcon />
+                                        </div>
                                     </div>
-                                    <div className={'button-csv-icon'}>
-                                        <FileDownloadIcon/>
-                                    </div>
-                                </div>
-                            </CSVLink>
-                            <Button
-                                onClick={() => {setOpenDeleteDialog(true)}}
-                                variant={'outlined'}
-                                startIcon={<DeleteOutlinedIcon />}
-                            >
-                                Delete Results
-                            </Button>
-                        </div> : null
+                                </CSVLink>
+                                <Button
+                                    onClick={() => { setOpenDeleteDialog(true) }}
+                                    variant={'outlined'}
+                                    startIcon={<DeleteOutlinedIcon />}
+                                >
+                                    Delete Results
+                                </Button>
+                            </div> : null
+                        }
+                    </div>
+                    {props.firstPage ?
+                        <div className={'render-result-card-container'}>
+                            {props.data.dataTypes?.map((dataType, index) => {
+                                return (
+                                    <React.Fragment key={index}>
+                                        {dataType.hasData ?
+                                            <div
+                                                className={'render-result-card'}
+                                                onClick={() => {
+                                                    clickListEntryCard(dataType)
+                                                }}
+                                            >
+                                                {renderResultsCard(dataType.title)}
+                                            </div> : null}
+                                    </React.Fragment>
+                                )
+                            })}
+                        </div> :
+                        <div>
+                            {(() => {
+                                const activeIndex = listEntriesShow.indexOf(true)
+                                const activeDataType = props.data.dataTypes[activeIndex]
+                                return renderListEntriesData(
+                                    activeDataType.data.sort((a, b) => parseFloat(a.id) - parseFloat(b.id)),
+                                    activeDataType.title,
+                                    activeDataType.resultCount,
+                                    activeDataType.participantCount,
+                                    activeDataType.type,
+                                    activeIndex
+                                )
+                            })()}
+                        </div>
                     }
-                </div>
-                {props.firstPage ? 
-                <div className={'render-result-card-container'}>
-                    {props.data.dataTypes?.map((dataType, index) => {
-                        return(
-                            <React.Fragment key={index}>
-                            {dataType.hasData ? 
-                            <div 
-                                className={'render-result-card'}
-                                onClick={() => {
-                                    clickListEntryCard(dataType)
-                                }}
-                            >
-                                {renderResultsCard(dataType.title)}
-                            </div> : null }
-                            </React.Fragment>
-                        )
-                    })}
-                </div> : 
-                <div>
-                    {(() => {
-                        const activeIndex = listEntriesShow.indexOf(true)
-                        const activeDataType = props.data.dataTypes[activeIndex]
-                        return renderListEntriesData(
-                            activeDataType.data.sort((a, b) => parseFloat(a.id) - parseFloat(b.id)), 
-                            activeDataType.title, 
-                            activeDataType.resultCount, 
-                            activeDataType.participantCount, 
-                            activeDataType.type,
-                            activeIndex
-                        )
-                    })()}
-                </div>
-                }
-                <Dialog
-                    open={openDeleteDialog}
-                    onClose={handleCloseDialog}
-                >
-                    <DialogTitle>
-                        {"Delete Results?"}
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            Do you really want to delete all results for the survey with ID {props.surveyID}? 
-                            All results will be removed and you will not be able to get them back.
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleCloseDialog}>Disagree</Button>
-                        <Button onClick={() => {deleteResults(props.surveyID)}}>
-                            Agree
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </React.Fragment> : 
-            AudioFeaturesDashboard(dataAudioFeatures, setDataAudioFeatures, chartRef)}
+                    <Dialog
+                        open={openDeleteDialog}
+                        onClose={handleCloseDialog}
+                    >
+                        <DialogTitle>
+                            {"Delete Results?"}
+                        </DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                Do you really want to delete all results for the survey with ID {props.surveyID}?
+                                All results will be removed and you will not be able to get them back.
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseDialog}>Disagree</Button>
+                            <Button onClick={() => { deleteResults(props.surveyID) }}>
+                                Agree
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                </React.Fragment> :
+                AudioFeaturesDashboard(dataAudioFeatures, setDataAudioFeatures, chartRef)}
         </React.Fragment>
     )
 }

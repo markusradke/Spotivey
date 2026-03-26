@@ -1,6 +1,6 @@
 import * as React from "react";
-import {Collapse, Snackbar, Alert} from '@mui/material';
-import {IconButton} from '@mui/material';
+import { Collapse, Snackbar, Alert } from '@mui/material';
+import { IconButton } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router";
 import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
@@ -15,6 +15,11 @@ import { tracksSettingsCard } from './SettingsCard/tracksSettingsCard';
 import { usersSettingsCard } from './SettingsCard/usersSettingsCard';
 import { playlistSettingsCard } from './SettingsCard/playlistSettingsCard';
 import { saveButton } from './Button/openSettingsDialog';
+import {
+  checkSurveyId,
+  fetchSurveySettingsById,
+  fetchUserSession,
+} from "../../../api/surveyApi";
 
 export default function SettingsPage(props) {
 
@@ -22,9 +27,9 @@ export default function SettingsPage(props) {
   const [topItemsTracksLimit, setTopItemsTracksLimit] = useState(20)
   const [topItemsArtistsLimit, setTopItemsArtistsLimit] = useState(20)
   const [followedArtistsLimit, setFollowedArtistsLimit] = useState(20)
-  const [tracksMarket, setTracksMarket] = useState({Code: "", Name: ""})
-  const [topTracksTimeRange, setTopTracksTimeRange] = useState({name: 'medium_term', info: 'approximately last 6 months'})
-  const [topArtistsTimeRange, setTopArtistsTimeRange] = useState({name: 'medium_term', info: 'approximately last 6 months'})
+  const [tracksMarket, setTracksMarket] = useState({ Code: "DE", Name: "Germany" })
+  const [topTracksTimeRange, setTopTracksTimeRange] = useState({ name: 'medium_term', info: 'approximately last 6 months' })
+  const [topArtistsTimeRange, setTopArtistsTimeRange] = useState({ name: 'medium_term', info: 'approximately last 6 months' })
   const [savedTracksChecked, setSavedTracksChecked] = useState(false);
   const [topItemsTracksChecked, setTopItemsTracksChecked] = useState(false);
   const [currentUsersChecked, setCurrentUsersChecked] = useState(false);
@@ -32,7 +37,7 @@ export default function SettingsPage(props) {
   const [followedArtistsChecked, setFollowedArtistsChecked] = useState(false);
 
   const [confirmSavedTracksYes, setConfirmSavedTracksYes] = useState(true)
-  const [confirmTopItemsTracksYes, setConfirmTopItemsTracksYes]  = useState(true)
+  const [confirmTopItemsTracksYes, setConfirmTopItemsTracksYes] = useState(true)
   const [confirmTopItemsArtistsYes, setConfirmTopItemsArtistsYes] = useState(true)
   const [confirmFollowedArtistsYes, setConfirmFollowedArtistsYes] = useState(true)
   const [confirmCurrentPlaylistsYes, setConfirmCurrentPlaylistsYes] = useState(true)
@@ -68,7 +73,7 @@ export default function SettingsPage(props) {
   const [settingsCheckArray, setSettingsCheckArray] = useState([false, false, false, false, false, false, false])
   const [settingsLimitArray, setSettingsLimitArray] = useState(
     [[savedTracksLimit, tracksMarket], [], [topItemsTracksLimit, topTracksTimeRange], [topItemsArtistsLimit, topArtistsTimeRange],
-     [followedArtistsLimit], [currentPlaylistsLimit, checkPublic], [recentlyTracksLimit]]
+    [followedArtistsLimit], [currentPlaylistsLimit, checkPublic], [recentlyTracksLimit]]
   )
   const [settingsTextArray, setSettingsTextArray] = useState(['', '', ''])
 
@@ -80,16 +85,16 @@ export default function SettingsPage(props) {
   const [stateTextCP, setStateTextCP] = useState('')
 
   useEffect(() => {
-    setConfirmArray([confirmSavedTracksYes, false, confirmTopItemsTracksYes, confirmTopItemsArtistsYes, 
+    setConfirmArray([confirmSavedTracksYes, false, confirmTopItemsTracksYes, confirmTopItemsArtistsYes,
       confirmFollowedArtistsYes, confirmCurrentPlaylistsYes, confirmRecentlyTracksYes])
-  }, [confirmSavedTracksYes, confirmTopItemsTracksYes, confirmTopItemsArtistsYes, confirmFollowedArtistsYes, 
-      confirmCurrentPlaylistsYes, confirmRecentlyTracksYes])
+  }, [confirmSavedTracksYes, confirmTopItemsTracksYes, confirmTopItemsArtistsYes, confirmFollowedArtistsYes,
+    confirmCurrentPlaylistsYes, confirmRecentlyTracksYes])
 
   const navigate = useNavigate();
   const location = useLocation();
 
   const update = location.state?.update ? true : false
-  
+
   useEffect(() => {
     if (update || !umfrageID || umfrageID.trim() === '') {
       setSurveyIDError('')
@@ -99,10 +104,12 @@ export default function SettingsPage(props) {
     const timeoutID = setTimeout(() => {
       setSurveyIDChecking(true)
 
-      fetch(`/api/check-survey-id?surveyID=${encodeURIComponent(umfrageID)}`)
-        .then(response => response.json())
-        .then(data => {
+      checkSurveyId(umfrageID)
+        .then(({ ok, data }) => {
           setSurveyIDChecking(false)
+          if (!ok || !data) {
+            return;
+          }
           if (data.exists) {
             setSurveyIDError('This Survey ID already exists (possibly created by another user). Please use a different ID.')
           } else {
@@ -120,72 +127,81 @@ export default function SettingsPage(props) {
 
   useEffect(() => {
     if (update) {
-      fetch("/api/get-settingsfromid" + "?surveyid=" + location.state?.surveyID)
-      .then(response => response.json())
-      .then((data) => {
-          if (!data.error){
-            setUmfrageName(data.data[0].nameUmfrage)
-            setUmfrageID(data.data[0].umfrageID)
-            setSavedTracksLimit(data.data[0].text1.limit)
-            setTopItemsTracksLimit(data.data[0].text3.limit)
-            setTopItemsArtistsLimit(data.data[0].text4.limit)
-            setFollowedArtistsLimit(data.data[0].text5.limit)
-            setTracksMarket({
-              Code: data.data[0].text1.marketCode, 
-              Name: data.data[0].text1.market
-            })
-            setTopTracksTimeRange({
-              name: data.data[0].text3.timeRange, 
-              info: ''
-            })
-            setTopArtistsTimeRange({
-              name: data.data[0].text4.timeRange, 
-              info: ''
-            })
-            setCurrentPlaylistsLimit(data.data[0].text6.limit)
-            setRecentlyTracksLimit(data.data[0].text7.limit)
-
-            setSavedTracksChecked(data.data[0].text1.check)
-            setTopItemsTracksChecked(data.data[0].text3.check)
-            setCurrentUsersChecked(data.data[0].text2.check)
-            setTopItemsArtistsChecked(data.data[0].text4.check)
-            setFollowedArtistsChecked(data.data[0].text5.check)
-            setRecentlyTracksChecked(data.data[0].text7.check)
-            setCurrentPlaylistsChecked(data.data[0].text6.check)
-
-            setConfirmSavedTracksYes(data.data[0].text1.confirmCheck)
-            setConfirmTopItemsTracksYes(data.data[0].text3.confirmCheck)
-            setConfirmTopItemsArtistsYes(data.data[0].text4.confirmCheck)
-            setConfirmFollowedArtistsYes(data.data[0].text5.confirmCheck)
-            setConfirmCurrentPlaylistsYes(data.data[0].text6.confirmCheck)
-            setConfirmRecentlyTracksYes(data.data[0].text7.confirmCheck)
-
-            setCheckPublic(data.data[0].text6.public ? data.data[0].text6.public : false )
+      fetchSurveySettingsById(location.state?.surveyID)
+        .then((data) => {
+          if (!data || data.error) {
+            return;
           }
+          const raw = data.data[0]
+          const savedTracks = raw.saved_tracks
+          const profile = raw.profile
+          const topTracks = raw.top_tracks
+          const topArtists = raw.top_artists
+          const followedArtists = raw.followed_artists
+          const currentPlaylists = raw.current_playlists
+          const recentlyPlayed = raw.recently_played
+
+          setUmfrageName(data.data[0].nameUmfrage)
+          setUmfrageID(data.data[0].umfrageID)
+          setSavedTracksLimit(savedTracks.limit)
+          setTopItemsTracksLimit(topTracks.limit)
+          setTopItemsArtistsLimit(topArtists.limit)
+          setFollowedArtistsLimit(followedArtists.limit)
+          setTracksMarket({
+            Code: savedTracks.marketCode,
+            Name: savedTracks.market
+          })
+          setTopTracksTimeRange({
+            name: topTracks.timeRange,
+            info: ''
+          })
+          setTopArtistsTimeRange({
+            name: topArtists.timeRange,
+            info: ''
+          })
+          setCurrentPlaylistsLimit(currentPlaylists.limit)
+          setRecentlyTracksLimit(recentlyPlayed.limit)
+
+          setSavedTracksChecked(savedTracks.check)
+          setTopItemsTracksChecked(topTracks.check)
+          setCurrentUsersChecked(profile.check)
+          setTopItemsArtistsChecked(topArtists.check)
+          setFollowedArtistsChecked(followedArtists.check)
+          setRecentlyTracksChecked(recentlyPlayed.check)
+          setCurrentPlaylistsChecked(currentPlaylists.check)
+
+          setConfirmSavedTracksYes(savedTracks.confirmCheck)
+          setConfirmTopItemsTracksYes(topTracks.confirmCheck)
+          setConfirmTopItemsArtistsYes(topArtists.confirmCheck)
+          setConfirmFollowedArtistsYes(followedArtists.confirmCheck)
+          setConfirmCurrentPlaylistsYes(currentPlaylists.confirmCheck)
+          setConfirmRecentlyTracksYes(recentlyPlayed.confirmCheck)
+
+          setCheckPublic(currentPlaylists.public ? currentPlaylists.public : false)
         });
     }
   }, [update])
 
   useEffect(() => {
     setSettingsLimitArray([[savedTracksLimit, tracksMarket], [], [topItemsTracksLimit, topTracksTimeRange], [topItemsArtistsLimit, topArtistsTimeRange],
-      [followedArtistsLimit], [currentPlaylistsLimit, checkPublic], [recentlyTracksLimit]])
+    [followedArtistsLimit], [currentPlaylistsLimit, checkPublic], [recentlyTracksLimit]])
   }, [savedTracksLimit, tracksMarket, topItemsTracksLimit, topTracksTimeRange, topItemsArtistsLimit, topArtistsTimeRange,
     followedArtistsLimit, currentPlaylistsLimit, recentlyTracksLimit, checkPublic])
 
   useEffect(() => {
-    if(umfrageName !=='' && umfrageID !== '') {
+    if (umfrageName !== '' && umfrageID !== '') {
       if (!secondSurveyCheck) {
         setChangeTextfield(true)
       }
-      else{
-        if (secondSurveyServer !=='' && secondSurveyID !== '' && secondSurveyLanguage !== '') {
+      else {
+        if (secondSurveyServer !== '' && secondSurveyID !== '' && secondSurveyLanguage !== '') {
           setChangeTextfield(true)
         } else {
           setChangeTextfield(false)
         }
       }
       setChangeTextfield(true)
-    } else{
+    } else {
       setChangeTextfield(false)
     }
     setSettingsTextArray([umfrageName, umfrageID/* , umfrageEndUrl */])
@@ -194,36 +210,34 @@ export default function SettingsPage(props) {
 
 
   useEffect(() => {
-    let arr1 = [savedTracksChecked,currentUsersChecked, topItemsTracksChecked,topItemsArtistsChecked, followedArtistsChecked, 
+    let arr1 = [savedTracksChecked, currentUsersChecked, topItemsTracksChecked, topItemsArtistsChecked, followedArtistsChecked,
       currentPlaylistsChecked, recentlyTracksChecked]
-    
+
     setSettingsCheckArray(arr1)
 
     const count1 = arr1.filter(value => value === true).length;
     setCountCheckboxen(count1)
 
   }, [savedTracksChecked, currentPlaylistsChecked, followedArtistsChecked, topItemsArtistsChecked, currentUsersChecked,
-     recentlyTracksChecked, topItemsTracksChecked])
+    recentlyTracksChecked, topItemsTracksChecked])
 
   useEffect(() => {
     async function getParticipantSession() {
-      fetch("/api/get-user-session")
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.username === null){
-            goBackToLogin(navigate)
-          } else {
-            setUsername(data.username)
-          }
-        });
+      fetchUserSession().then(({ ok, data }) => {
+        if (!ok || !data || data.username === null) {
+          goBackToLogin(navigate)
+          return;
+        }
+        setUsername(data.username)
+      });
     }
     getParticipantSession();
   }, [])
-  
-  function openCollapse(){
+
+  function openCollapse() {
     let items = [...openSettingsListItem];
-    let itemNew = {...items[mySwiper.activeIndex]};
-    let itemOld = {...items[mySwiper.previousIndex]};
+    let itemNew = { ...items[mySwiper.activeIndex] };
+    let itemOld = { ...items[mySwiper.previousIndex] };
     itemNew = true;
     itemOld = false;
     items[mySwiper.activeIndex] = itemNew;
@@ -232,16 +246,16 @@ export default function SettingsPage(props) {
   }
 
   const handleSettingsButtonPressed = (indexTo) => {
-      mySwiper.slideTo(indexTo)
-      openCollapse();
+    mySwiper.slideTo(indexTo)
+    openCollapse();
   }
 
-  function handleCloseDialog () {
+  function handleCloseDialog() {
     setOpenDialog(false)
   }
 
   function renderDialog() {
-    return(
+    return (
       <React.Fragment>
         <Dialog
           fullWidth
@@ -253,227 +267,228 @@ export default function SettingsPage(props) {
         >
           {
             openDialog ?
-              <SettingsDialog 
+              <SettingsDialog
                 props={
                   [[openDialog, setOpenDialog],
-                  settingsCheckArray, 
-                  settingsLimitArray, 
-                  settingsTextArray,
-                  username, 
-                  confirmArray,
-                  update, 
+                    settingsCheckArray,
+                    settingsLimitArray,
+                    settingsTextArray,
+                    username,
+                    confirmArray,
+                    update,
                   location.state?.surveyID]
-                }  
-              /> 
-            : null
+                }
+              />
+              : null
           }
         </Dialog>
       </React.Fragment>
     )
   }
-  
-  function renderSettingsPage() {
-      return (
-          <React.Fragment>
-            <div class="setting-header">
-              <header class="setting-header-inner">
-                <div class="setting-header-content-container">
-                  <div class="setting-header-content-container-inner">
-                    {headerSettings()}
-                  </div>
-                </div>
-              </header>
-            </div>
-            <div class='setting-page-main'>
-              <div class="setting-navigation">
-                <div class="navbar-setting">
-                  <nav class="navbar-new-settings-content">
-                    <ul className="list-new-settings-container">
-                      <list className='list-new-settings-item'>
-                        <IconButton onClick={() => backButtonPressed(navigate)}>
-                          <ArrowBackIosNewOutlinedIcon />
-                        </IconButton>
-                      </list>
-                      <list className='list-new-settings-item-container'>
-                        <a 
-                          class={mySwiper?.activeIndex===0 ? 'list-new-settings-item-bold' : 'list-new-settings-item-regular'}
-                          onClick={() => handleSettingsButtonPressed(0)}
-                        >
-                          Main Settings
-                        </a>
-                        <Collapse in={openSettingsListItem[0]} timeout="auto" unmountOnExit>
-                          <ul className={"list-new-settings-collapse-inner"}>
-                              <li className={"list-new-settings-collapse-item"}>
-                                Settings Name
-                              </li>
-                              <li className={"list-new-settings-collapse-item"}>
-                                Survey ID (1st Survey)
-                              </li>
-                          </ul>
-                        </Collapse>
-                      </list>
-                      <list className='list-new-settings-item-container'>
-                        <a 
-                          class={mySwiper?.activeIndex===1 ? 'list-new-settings-item-bold' : 'list-new-settings-item-regular'}
-                          onClick={() => handleSettingsButtonPressed(1)}
-                        >
-                          Tracks
-                        </a>
-                        <Collapse in={openSettingsListItem[1]} timeout="auto" unmountOnExit>
-                          <ul className={"list-new-settings-collapse-inner"}>
-                              <li className={"list-new-settings-collapse-item"}>
-                                Get User's Saved Tracks
-                              </li>
-                              <li className={"list-new-settings-collapse-item"}>
-                                Get Last Played Tracks
-                              </li>
-                          </ul>
-                        </Collapse>
-                      </list>
-                      <list className='list-new-settings-item-container'>
-                        <a 
-                          class={mySwiper?.activeIndex===2 ? 'list-new-settings-item-bold' : 'list-new-settings-item-regular'}
-                          onClick={() => handleSettingsButtonPressed(2)}
-                        >
-                          User's
-                        </a>
-                        <Collapse in={openSettingsListItem[2]} timeout="auto" unmountOnExit>
-                          <ul className={"list-new-settings-collapse-inner"}>
-                              <li className={"list-new-settings-collapse-item"}>
-                                Get Current User's Profile
-                              </li>
-                              <li className={"list-new-settings-collapse-item"}>
-                                Get User's Top Items (Tracks)
-                              </li>
-                              <li className={"list-new-settings-collapse-item"}>
-                                Get User's Top Items (Artists)
-                              </li>
-                              <li className={"list-new-settings-collapse-item"}>
-                                Get Followed Artists
-                              </li>
-                          </ul>
-                        </Collapse>
-                      </list>
-                      <list className='list-new-settings-item-container'>
-                        <a 
-                          class={mySwiper?.activeIndex===3 ? 'list-new-settings-item-bold' : 'list-new-settings-item-regular'}
-                          onClick={() => handleSettingsButtonPressed(3)}
-                        >
-                          Playlists
-                        </a>
-                        <Collapse in={openSettingsListItem[3]} timeout="auto" unmountOnExit>
-                          <ul className={"list-new-settings-collapse-inner"}>
-                              <li className={"list-new-settings-collapse-item"}>
-                                Get Current User's Playlists
-                              </li>
-                          </ul>
-                        </Collapse>
-                      </list>
-                    </ul>
-                  </nav>
-                </div>
-              </div>
-              <div class="setting-content-main">
-                <div class='setting-content-wrapper'>
-                  <div class="setting-content-wrapper-inner">
-                    <div class="setting-content-outer">
-                        <Swiper
-                          pagination={{
-                            type: "progressbar"
-                          }}
-                          navigation={true}
-                          allowTouchMove={false}
-                          mousewheel={{'forceToAxis': true}}
-                          modules={[Navigation, Pagination, Mousewheel]}
-                          className="mySwiper"
-                          onSwiper={setMySwiper}
-                          onSlideChange={(swiper) => {
-                            openCollapse();
-                            setMySwiperActiveIndex(swiper.activeIndex)}
-                          }
-                          onInit={(swiper) => {
-                            setMySwiper(swiper)
-                        }}
-                          height={'100%'}
-                        >
-                          <SwiperSlide>
-                              {mainSettingsCard(
-                                  umfrageName, setUmfrageName,
-                                  umfrageID, setUmfrageID, 
-                                  surveyIDError, surveyIDChecking
-                              )}
-                          </SwiperSlide>
-                          <SwiperSlide>
-                              {tracksSettingsCard (
-                                  savedTracksChecked, setSavedTracksChecked,
-                                  savedTracksLimit, setSavedTracksLimit,
-                                  tracksMarket, setTracksMarket,
-                                  confirmSavedTracksYes, setConfirmSavedTracksYes, 
-                                  recentlyTracksChecked, setRecentlyTracksChecked,
-                                  recentlyTracksLimit, setRecentlyTracksLimit,
-                                  confirmRecentlyTracksYes, setConfirmRecentlyTracksYes,
-                                  setStateTextST, stateTextST, setStateTextRT, stateTextRT
-                              )}
-                          </SwiperSlide>
-                          <SwiperSlide>
-                              {usersSettingsCard (
-                                  currentUsersChecked, setCurrentUsersChecked,
-                                  topItemsTracksChecked, setTopItemsTracksChecked,
-                                  topItemsTracksLimit, setTopItemsTracksLimit,
-                                  topTracksTimeRange, setTopTracksTimeRange,
-                                  topItemsArtistsChecked, setTopItemsArtistsChecked,
-                                  topItemsArtistsLimit, setTopItemsArtistsLimit,
-                                  topArtistsTimeRange, setTopArtistsTimeRange,
-                                  followedArtistsChecked, setFollowedArtistsChecked,
-                                  followedArtistsLimit, setFollowedArtistsLimit,
-                                  confirmTopItemsTracksYes, setConfirmTopItemsTracksYes,
-                                  confirmTopItemsArtistsYes, setConfirmTopItemsArtistsYes,
-                                  confirmFollowedArtistsYes, setConfirmFollowedArtistsYes,
-                                  setStateTextTT, stateTextTT, setStateTextTA, stateTextTA,
-                                  setStateTextFA, stateTextFA
-                              )}
-                          </SwiperSlide>
-                          <SwiperSlide>
-                              {playlistSettingsCard(
-                                currentPlaylistsChecked, setCurrentPlaylistsChecked,
-                                currentPlaylistsLimit, setCurrentPlaylistsLimit,
-                                confirmCurrentPlaylistsYes, setConfirmCurrentPlaylistsYes,
-                                checkPublic, setCheckPublic, stateTextCP, setStateTextCP
-                              )}
-                          </SwiperSlide>
-                        </Swiper>
-                    </div>
-                  </div> 
-                </div>
-              </div>
-            </div>
-            {saveButton(
-              setOpenDialog, 
-              mySwiperActiveIndex, countCheckboxen, changeTextfield, update
-              )}
-          </React.Fragment>
-      );
-    }
 
-    return(
+  function renderSettingsPage() {
+    return (
       <React.Fragment>
-        {renderSettingsPage()}
-        {renderDialog()}
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration = {6000}
-          onClose={() => setSnackbarOpen(false)}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
-        >
-          <Alert
-             onClose={()=> setSnackbarOpen(false)}
-             severity="error"
-             sx={{ width: '100%' }}
-          >
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
+        <div class="setting-header">
+          <header class="setting-header-inner">
+            <div class="setting-header-content-container">
+              <div class="setting-header-content-container-inner">
+                {headerSettings()}
+              </div>
+            </div>
+          </header>
+        </div>
+        <div class='setting-page-main'>
+          <div class="setting-navigation">
+            <div class="navbar-setting">
+              <nav class="navbar-new-settings-content">
+                <ul className="list-new-settings-container">
+                  <list className='list-new-settings-item'>
+                    <IconButton onClick={() => backButtonPressed(navigate)}>
+                      <ArrowBackIosNewOutlinedIcon />
+                    </IconButton>
+                  </list>
+                  <list className='list-new-settings-item-container'>
+                    <a
+                      class={mySwiper?.activeIndex === 0 ? 'list-new-settings-item-bold' : 'list-new-settings-item-regular'}
+                      onClick={() => handleSettingsButtonPressed(0)}
+                    >
+                      Main Settings
+                    </a>
+                    <Collapse in={openSettingsListItem[0]} timeout="auto" unmountOnExit>
+                      <ul className={"list-new-settings-collapse-inner"}>
+                        <li className={"list-new-settings-collapse-item"}>
+                          Settings Name
+                        </li>
+                        <li className={"list-new-settings-collapse-item"}>
+                          Survey ID (1st Survey)
+                        </li>
+                      </ul>
+                    </Collapse>
+                  </list>
+                  <list className='list-new-settings-item-container'>
+                    <a
+                      class={mySwiper?.activeIndex === 1 ? 'list-new-settings-item-bold' : 'list-new-settings-item-regular'}
+                      onClick={() => handleSettingsButtonPressed(1)}
+                    >
+                      Tracks
+                    </a>
+                    <Collapse in={openSettingsListItem[1]} timeout="auto" unmountOnExit>
+                      <ul className={"list-new-settings-collapse-inner"}>
+                        <li className={"list-new-settings-collapse-item"}>
+                          Get User's Saved Tracks
+                        </li>
+                        <li className={"list-new-settings-collapse-item"}>
+                          Get Last Played Tracks
+                        </li>
+                      </ul>
+                    </Collapse>
+                  </list>
+                  <list className='list-new-settings-item-container'>
+                    <a
+                      class={mySwiper?.activeIndex === 2 ? 'list-new-settings-item-bold' : 'list-new-settings-item-regular'}
+                      onClick={() => handleSettingsButtonPressed(2)}
+                    >
+                      User's
+                    </a>
+                    <Collapse in={openSettingsListItem[2]} timeout="auto" unmountOnExit>
+                      <ul className={"list-new-settings-collapse-inner"}>
+                        <li className={"list-new-settings-collapse-item"}>
+                          Get Current User's Profile
+                        </li>
+                        <li className={"list-new-settings-collapse-item"}>
+                          Get User's Top Items (Tracks)
+                        </li>
+                        <li className={"list-new-settings-collapse-item"}>
+                          Get User's Top Items (Artists)
+                        </li>
+                        <li className={"list-new-settings-collapse-item"}>
+                          Get Followed Artists
+                        </li>
+                      </ul>
+                    </Collapse>
+                  </list>
+                  <list className='list-new-settings-item-container'>
+                    <a
+                      class={mySwiper?.activeIndex === 3 ? 'list-new-settings-item-bold' : 'list-new-settings-item-regular'}
+                      onClick={() => handleSettingsButtonPressed(3)}
+                    >
+                      Playlists
+                    </a>
+                    <Collapse in={openSettingsListItem[3]} timeout="auto" unmountOnExit>
+                      <ul className={"list-new-settings-collapse-inner"}>
+                        <li className={"list-new-settings-collapse-item"}>
+                          Get Current User's Playlists
+                        </li>
+                      </ul>
+                    </Collapse>
+                  </list>
+                </ul>
+              </nav>
+            </div>
+          </div>
+          <div class="setting-content-main">
+            <div class='setting-content-wrapper'>
+              <div class="setting-content-wrapper-inner">
+                <div class="setting-content-outer">
+                  <Swiper
+                    pagination={{
+                      type: "progressbar"
+                    }}
+                    navigation={true}
+                    allowTouchMove={false}
+                    mousewheel={{ 'forceToAxis': true }}
+                    modules={[Navigation, Pagination, Mousewheel]}
+                    className="mySwiper"
+                    onSwiper={setMySwiper}
+                    onSlideChange={(swiper) => {
+                      openCollapse();
+                      setMySwiperActiveIndex(swiper.activeIndex)
+                    }
+                    }
+                    onInit={(swiper) => {
+                      setMySwiper(swiper)
+                    }}
+                    height={'100%'}
+                  >
+                    <SwiperSlide>
+                      {mainSettingsCard(
+                        umfrageName, setUmfrageName,
+                        umfrageID, setUmfrageID,
+                        surveyIDError, surveyIDChecking
+                      )}
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      {tracksSettingsCard(
+                        savedTracksChecked, setSavedTracksChecked,
+                        savedTracksLimit, setSavedTracksLimit,
+                        tracksMarket, setTracksMarket,
+                        confirmSavedTracksYes, setConfirmSavedTracksYes,
+                        recentlyTracksChecked, setRecentlyTracksChecked,
+                        recentlyTracksLimit, setRecentlyTracksLimit,
+                        confirmRecentlyTracksYes, setConfirmRecentlyTracksYes,
+                        setStateTextST, stateTextST, setStateTextRT, stateTextRT
+                      )}
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      {usersSettingsCard(
+                        currentUsersChecked, setCurrentUsersChecked,
+                        topItemsTracksChecked, setTopItemsTracksChecked,
+                        topItemsTracksLimit, setTopItemsTracksLimit,
+                        topTracksTimeRange, setTopTracksTimeRange,
+                        topItemsArtistsChecked, setTopItemsArtistsChecked,
+                        topItemsArtistsLimit, setTopItemsArtistsLimit,
+                        topArtistsTimeRange, setTopArtistsTimeRange,
+                        followedArtistsChecked, setFollowedArtistsChecked,
+                        followedArtistsLimit, setFollowedArtistsLimit,
+                        confirmTopItemsTracksYes, setConfirmTopItemsTracksYes,
+                        confirmTopItemsArtistsYes, setConfirmTopItemsArtistsYes,
+                        confirmFollowedArtistsYes, setConfirmFollowedArtistsYes,
+                        setStateTextTT, stateTextTT, setStateTextTA, stateTextTA,
+                        setStateTextFA, stateTextFA
+                      )}
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      {playlistSettingsCard(
+                        currentPlaylistsChecked, setCurrentPlaylistsChecked,
+                        currentPlaylistsLimit, setCurrentPlaylistsLimit,
+                        confirmCurrentPlaylistsYes, setConfirmCurrentPlaylistsYes,
+                        checkPublic, setCheckPublic, stateTextCP, setStateTextCP
+                      )}
+                    </SwiperSlide>
+                  </Swiper>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {saveButton(
+          setOpenDialog,
+          mySwiperActiveIndex, countCheckboxen, changeTextfield, update
+        )}
       </React.Fragment>
-    )
+    );
+  }
+
+  return (
+    <React.Fragment>
+      {renderSettingsPage()}
+      {renderDialog()}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity="error"
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </React.Fragment>
+  )
 }
 

@@ -1,6 +1,6 @@
 import * as React from "react";
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import {Button, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText} from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { columns } from './DataGridColumns.js';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
@@ -11,8 +11,15 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import ManageHistoryOutlinedIcon from '@mui/icons-material/ManageHistoryOutlined';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
+import {
+    deleteSettings as deleteSettingsApi,
+    fetchParticipantCount,
+    fetchSettingsList,
+} from "../../../api/surveyApi";
 
 export default function SettingsContent(props) {
+
+    const navigate = useNavigate();
 
     const [settingsRows, setSettingsRows] = useState(null)
     const [selectedRowSettings, setSelectedRowSettings] = useState([])
@@ -24,71 +31,45 @@ export default function SettingsContent(props) {
     const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
     const [updateDialogMessage, setUpdateDialogMessage] = useState('');
 
-
-    const navigate = useNavigate()
-
     useEffect(() => {
-        if(props.username){
-            fetch("/api/get-settingslist" + "?username=" + props.username).then(response => response.json())
-            .then((data) => {
-                if (!data.error){
-                    setSettingsRows(data.data)
-                }
-            });
+        if (!props.username) {
+            return;
         }
-    }, [])
 
-    function renderSettingsTable() {
-        return(
-            <div style={{ height: 400, width: '100%' }}>
-                {settingsRows?.length !== 0 ?
-                    <DataGrid
-                        rows={settingsRows}
-                        columns={columns}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
-                        checkboxSelection
-                        disableSelectionOnClick
-                        onSelectionModelChange={(ids) => {
-                            const selectedIDs = []
-                            settingsRows.forEach((row) =>   
-                                ids.forEach(function(item, index){
-                                    if(row.id===item){
-                                        selectedIDs.push(row)
-                                    }
-                                    return(selectedIDs)
-                                })       
-                            );
-                            setSelectedRowSettings(selectedIDs)
-                        }}
-                    /> : 
-                    <div className="settings-table-card-container">
-                        <h3 class='settings-overview-text'>
-                            No settings found
-                        </h3>
-                    </div>
-                }
-            </div>
-        )
-    }
+        fetchSettingsList(props.username).then(({ ok, data }) => {
+            if (!ok || !data || !Array.isArray(data.data)) {
+                setSettingsRows([]);
+                return;
+            }
+            setSettingsRows(data.data);
+        });
+    }, [props.username]);
 
-    function checkAndDelete(){
+    function checkAndDelete() {
         // Check participant count for all selected settings
         let promises = [];
-        for(let zaehler = 0; zaehler<selectedRowSettings.length; zaehler++){
+        for (let zaehler = 0; zaehler < selectedRowSettings.length; zaehler++) {
             promises.push(
-                fetch("/api/get-participant-count?surveyID=" + encodeURIComponent(selectedRowSettings[zaehler].umfrageID))
-                    .then(res => res.json())
+                fetchParticipantCount(selectedRowSettings[zaehler].umfrageID)
+                    .then(({ ok, data }) => {
+                        if (!ok) {
+                            return null;
+                        }
+                        return data;
+                    })
             );
         }
-        
+
         Promise.all(promises).then(results => {
             // Sum up all participants and records
             let totalParticipants = 0;
             let totalRecords = 0;
             let hasData = false;
-            
-            results.forEach(data => {
+
+            results.forEach((data) => {
+                if (!data) {
+                    return;
+                }
                 if (data.hasData) {
                     hasData = true;
                     totalParticipants += (data.participantCount || 0);
@@ -96,7 +77,7 @@ export default function SettingsContent(props) {
                 }
             });
             console.log('Participant count results:', results);
-            
+
             if (hasData) {
                 // Show info dialog - cannot delete
                 setParticipantCount(totalParticipants);
@@ -107,28 +88,30 @@ export default function SettingsContent(props) {
                 setOpenDeleteDialog(true);
             } else {
                 // No data - delete immediately
-                deleteSettings();
+                deleteSettings(selectedRowSettings);
             }
         });
     }
 
-    function deleteSettings(){
+    function deleteSettings(selectedRows) {
         let promises = [];
-        for(let zaehler = 0; zaehler<selectedRowSettings.length; zaehler++){
-            promises.push(fetch("/api/delete-settings" + "?surveyid=" + selectedRowSettings[zaehler].umfrageID));
+        for (let zaehler = 0; zaehler < selectedRows.length; zaehler++) {
+            promises.push(deleteSettingsApi(selectedRows[zaehler].umfrageID));
         }
         Promise.all(promises).then(() => {
-            location.reload();
+            window.location.reload();
         }).catch(error => {
             console.error('Error deleting settings:', error);
             alert('Error deleting settings. Please try again.');
         });
     }
 
-    function checkAndUpdate(){
-        fetch("/api/get-participant-count?surveyID=" + encodeURIComponent(selectedRowSettings[0].umfrageID))
-            .then(res => res.json())
-            .then(data => {
+    function checkAndUpdate() {
+        fetchParticipantCount(selectedRowSettings[0].umfrageID)
+            .then(({ ok, data }) => {
+                if (!ok) {
+                    return;
+                }
                 if (data.hasData) {
                     setUpdateDialogMessage(
                         `${data.participantCount} participant(s) have contributed ${data.totalRecords} data record(s). ` +
@@ -145,19 +128,21 @@ export default function SettingsContent(props) {
             });
     }
 
-    function navigateToUpdatePage(){
+    function navigateToUpdatePage() {
         navigate('/user/settings/new', {
             state: {
                 update: true,
                 surveyID: selectedRowSettings[0].umfrageID
             }
-       })
+        })
     }
 
-    function checkAndUpdateConfirmText(){
-        fetch("/api/get-participant-count?surveyID=" + encodeURIComponent(selectedRowSettings[0].umfrageID))
-            .then(res => res.json())
-            .then(data => {
+    function checkAndUpdateConfirmText() {
+        fetchParticipantCount(selectedRowSettings[0].umfrageID)
+            .then(({ ok, data }) => {
+                if (!ok) {
+                    return;
+                }
                 if (data.hasData) {
                     setUpdateDialogMessage(
                         `${data.participantCount} participant(s) have contributed ${data.totalRecords} data record(s). ` +
@@ -174,19 +159,19 @@ export default function SettingsContent(props) {
             });
     }
 
-    function navigateToConfirmTextPage(){
-        navigate( '/user/settings/confirm-text-design', {
+    function navigateToConfirmTextPage() {
+        navigate('/user/settings/confirm-text-design', {
             state: {
                 update: true,
                 surveyID: selectedRowSettings[0].umfrageID
             }
-       })
+        })
     }
 
-    function renderDeleteButton(){
-        return(
+    function renderDeleteButton() {
+        return (
             <div>
-                <Button 
+                <Button
                     startIcon={<DeleteOutlinedIcon />}
                     onClick={() => {
                         checkAndDelete()
@@ -199,12 +184,12 @@ export default function SettingsContent(props) {
         )
     }
 
-    function renderChangeButton(){
-        return(
+    function renderChangeButton() {
+        return (
             <div>
-                <Button 
+                <Button
                     startIcon={<ManageHistoryOutlinedIcon />}
-                    onClick={() => {checkAndUpdate()}}
+                    onClick={() => { checkAndUpdate() }}
                     disabled={selectedRowSettings.length === 1 ? false : true}
                 >
                     Edit Profile
@@ -216,7 +201,7 @@ export default function SettingsContent(props) {
     const handleTooltipClose = () => {
         setOpenTooltipCopy(false);
     };
-    
+
     const handleTooltipOpen = () => {
         setOpenTooltipCopy(true);
     };
@@ -228,7 +213,7 @@ export default function SettingsContent(props) {
     }
 
     function renderGetEndUrlSurvey() {
-        return(
+        return (
             <div>
                 <ClickAwayListener onClickAway={handleTooltipClose}>
                     <div>
@@ -240,9 +225,9 @@ export default function SettingsContent(props) {
                             disableTouchListener
                             title="Copy to Clipboard"
                         >
-                            <Button 
+                            <Button
                                 startIcon={<ContentCopyIcon />}
-                                onClick={() => {getEndUrlSurvey()}}
+                                onClick={() => { getEndUrlSurvey() }}
                             >
                                 Copy End URL for Limesurvey Survey
                             </Button>
@@ -254,11 +239,11 @@ export default function SettingsContent(props) {
     }
 
     function renderChangeConfirmButton() {
-        return(
+        return (
             <React.Fragment>
-                <Button 
+                <Button
                     startIcon={<TextFieldsIcon />}
-                    onClick={() => {checkAndUpdateConfirmText()}}
+                    onClick={() => { checkAndUpdateConfirmText() }}
                     disabled={selectedRowSettings.length === 1 ? false : true}
                 >
                     Edit Confirmation Text
@@ -268,8 +253,8 @@ export default function SettingsContent(props) {
     }
 
 
-    function renderDeleteDialog(){
-        return(
+    function renderDeleteDialog() {
+        return (
             <Dialog
                 open={openDeleteDialog}
                 onClose={() => setOpenDeleteDialog(false)}
@@ -291,8 +276,8 @@ export default function SettingsContent(props) {
         );
     }
 
-    function renderUpdateDialog(){
-        return(
+    function renderUpdateDialog() {
+        return (
             <Dialog
                 open={openUpdateDialog}
                 onClose={() => setOpenUpdateDialog(false)}
@@ -314,46 +299,80 @@ export default function SettingsContent(props) {
         );
     }
 
-    return(
-    <div>
-        <h1 data-heading='true' class='settings-title'>
-            Retrieval Settings
-        </h1>
-        <h3 class='settings-overview-text'>
-            In order to create your first profile, press the "New Profile" button. 
-            This will redirect you to a new page. There you can create and save a profile.
-            <br></br>
-            If you want to delete or update an existing profile, 
-            check the checkbox of the profile and press the button provided for it.
-            <br></br>
-            You can edit the text that participants see when they confirm their Spotify data.
-            To do this, press the button <i>Edit Confirmation Text</i>.
-            <br></br>
-            To copy an End-URL for your online survey (which you need for LimeSurvey for example), 
-            press the button <i>Copy End URL for Limesurvey Survey</i>.
-        </h3>
-        <div className="settings-table-button-container-inner" id='copy-end-url'>
-            {renderGetEndUrlSurvey()} 
+    function renderSettingsTable() {
+        return (
+            <div style={{ height: 400, width: '100%' }}>
+                {settingsRows?.length !== 0 ?
+                    <DataGrid
+                        rows={settingsRows}
+                        columns={columns}
+                        pageSize={5}
+                        rowsPerPageOptions={[5]}
+                        checkboxSelection
+                        disableSelectionOnClick
+                        onSelectionModelChange={(ids) => {
+                            const selectedIDs = []
+                            settingsRows.forEach((row) =>
+                                ids.forEach(function (item, index) {
+                                    if (row.id === item) {
+                                        selectedIDs.push(row)
+                                    }
+                                    return (selectedIDs)
+                                })
+                            );
+                            setSelectedRowSettings(selectedIDs)
+                        }}
+                    /> :
+                    <div className="settings-table-card-container">
+                        <h3 class='settings-overview-text'>
+                            No settings found
+                        </h3>
+                    </div>
+                }
+            </div>
+        )
+    }
+
+    return (
+        <div>
+            <h1 data-heading='true' class='settings-title'>
+                Retrieval Settings
+            </h1>
+            <h3 class='settings-overview-text'>
+                In order to create your first profile, press the "New Profile" button.
+                This will redirect you to a new page. There you can create and save a profile.
+                <br></br>
+                If you want to delete or update an existing profile,
+                check the checkbox of the profile and press the button provided for it.
+                <br></br>
+                You can edit the text that participants see when they confirm their Spotify data.
+                To do this, press the button <i>Edit Confirmation Text</i>.
+                <br></br>
+                To copy an End-URL for your online survey (which you need for LimeSurvey for example),
+                press the button <i>Copy End URL for Limesurvey Survey</i>.
+            </h3>
+            <div className="settings-table-button-container-inner" id='copy-end-url'>
+                {renderGetEndUrlSurvey()}
+            </div>
+            <div className="settings-table-button-container">
+                <div className="settings-table-button-container-inner">
+                    <Button startIcon={<AddOutlinedIcon />} href='settings/new'>
+                        New Profile
+                    </Button>
+                </div>
+                <div className="settings-table-button-container-inner">
+                    {renderDeleteButton()}
+                </div>
+                <div className="settings-table-button-container-inner">
+                    {renderChangeButton()}
+                </div>
+                <div className="settings-table-button-container-inner">
+                    {renderChangeConfirmButton()}
+                </div>
+            </div>
+            {renderSettingsTable()}
+            {renderDeleteDialog()}
+            {renderUpdateDialog()}
         </div>
-        <div className="settings-table-button-container">
-            <div className="settings-table-button-container-inner">
-                <Button startIcon={<AddOutlinedIcon />} href='settings/new'>
-                    New Profile
-                </Button>
-            </div>
-            <div className="settings-table-button-container-inner">
-                {renderDeleteButton()}
-            </div>
-            <div className="settings-table-button-container-inner">
-                {renderChangeButton()}
-            </div>
-            <div className="settings-table-button-container-inner">
-                {renderChangeConfirmButton()}
-            </div>
-        </div>
-        {renderSettingsTable()}
-        {renderDeleteDialog()}
-        {renderUpdateDialog()}
-    </div>
     )
 }

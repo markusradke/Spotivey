@@ -5,6 +5,7 @@ import { Button, IconButton } from "@mui/material";
 import PrivacyContent from "./PrivacyContent";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import { useNavigate } from "react-router-dom";
+import { fetchParticipantSession } from "../../api/surveyApi";
 
 export default function PrivacyComponent() {
 
@@ -13,20 +14,18 @@ export default function PrivacyComponent() {
 
     useEffect(() => {
         async function getParticipantSession() {
-          fetch("/api/get-participant-session")
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.username === null){
-                setgetParticipantSessionCheck(false)
-              } else {
-                setgetParticipantSessionCheck(true)
-              }
+            fetchParticipantSession().then(({ ok, data }) => {
+                if (!ok || !data || data.code === null) {
+                    setgetParticipantSessionCheck(false)
+                } else {
+                    setgetParticipantSessionCheck(true)
+                }
             });
         }
         getParticipantSession();
-      }, [])
+    }, [])
 
-    return(
+    return (
         <React.Fragment>
             <div class="setting-header">
                 <header class="setting-header-inner">
@@ -34,35 +33,35 @@ export default function PrivacyComponent() {
                         <div class="setting-header-content-container-inner">
                             <div className="logo-header">
                                 <span class="logo-tu-berlin">
-                                {/* <a href='https://www.ak.tu-berlin.de/menue/fachgebiet_audiokommunikation' target={'_blank'}>
+                                    {/* <a href='https://www.ak.tu-berlin.de/menue/fachgebiet_audiokommunikation' target={'_blank'}>
                                     <img src="../../static/images/TU-Berlin-Logo.svg" width="81.816" height="60" />
                                     <img src="../../static/images/logo_grau-schwarz.png" width="61.812" height="60" />
                                 </a> */}
-                                    <img src="../../../static/images/SpotiveyLogo2_Schrift.svg" width="100%" height="100%"/>
+                                    <img src="../../../static/images/SpotiveyLogo2_Schrift.svg" width="100%" height="100%" />
                                 </span>
                             </div>
                         </div>
-                        {getParticipantSessionCheck ? 
-                        <div class='header-logout'>
-                            <IconButton 
-                                variant="text" 
-                                onClick={() => {
-                                    navigate(-1)
-                                }}
-                            >
-                                <KeyboardBackspaceIcon/>
-                            </IconButton>
-                        </div> :
-                        <div class='header-logout'>
-                            <Button variant="text" startIcon={<LoginIcon />} href={'/login'} >
-                                Login
-                            </Button>
-                        </div>
+                        {getParticipantSessionCheck ?
+                            <div class='header-logout'>
+                                <IconButton
+                                    variant="text"
+                                    onClick={() => {
+                                        navigate(-1)
+                                    }}
+                                >
+                                    <KeyboardBackspaceIcon />
+                                </IconButton>
+                            </div> :
+                            <div class='header-logout'>
+                                <Button variant="text" startIcon={<LoginIcon />} href={'/login'} >
+                                    Login
+                                </Button>
+                            </div>
                         }
                     </div>
                 </header>
             </div>
-            <PrivacyContent/>
+            <PrivacyContent />
         </React.Fragment>
     )
 }

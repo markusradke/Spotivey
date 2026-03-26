@@ -44,49 +44,57 @@ export function useSurveySettings() {
 function normalizeSettings(rawSettings) {
     const normalized = {};
 
+    const savedTracks = rawSettings.saved_tracks ?? {};
+    const profile = rawSettings.profile ?? {};
+    const topTracks = rawSettings.top_tracks ?? {};
+    const topArtists = rawSettings.top_artists ?? {};
+    const followedArtists = rawSettings.followed_artists ?? {};
+    const currentPlaylists = rawSettings.current_playlists ?? {};
+    const recentlyPlayed = rawSettings.recently_played ?? {};
+
     normalized[DATA_TYPES.SAVED_TRACKS] = {
-        check: rawSettings.text1?.check || false,
-        limit: rawSettings.text1?.limit || 10,
-        timeRange: rawSettings.text1?.timeRange || "",
-        marketCode: rawSettings.text1?.marketCode || "",
-        confirmCheck: rawSettings.text1?.confirmCheck || false,
+        check: savedTracks.check || false,
+        limit: savedTracks.limit || 10,
+        timeRange: savedTracks.timeRange || "",
+        marketCode: savedTracks.marketCode || "DE",
+        confirmCheck: savedTracks.confirmCheck || false,
     };
 
     normalized[DATA_TYPES.PARTICIPANT_PROFILE] = {
-        check: rawSettings.text2?.check || false,
-        confirmCheck: rawSettings.text2?.confirmCheck || false,
+        check: profile.check || false,
+        confirmCheck: profile.confirmCheck || false,
     };
 
     normalized[DATA_TYPES.TOP_TRACKS] = {
-        check: rawSettings.text3?.check || false,
-        limit: rawSettings.text3?.limit || 20,
-        timeRange: rawSettings.text3?.timeRange || "",
-        confirmCheck: rawSettings.text3?.confirmCheck || false,
+        check: topTracks.check || false,
+        limit: topTracks.limit || 20,
+        timeRange: topTracks.timeRange || "",
+        confirmCheck: topTracks.confirmCheck || false,
     };
 
     normalized[DATA_TYPES.TOP_ARTISTS] = {
-        check: rawSettings.text4?.check || false,
-        limit: rawSettings.text4?.limit || 20,
-        confirmCheck: rawSettings.text4?.confirmCheck || false,
+        check: topArtists.check || false,
+        limit: topArtists.limit || 20,
+        confirmCheck: topArtists.confirmCheck || false,
     };
 
     normalized[DATA_TYPES.FOLLOWED_ARTISTS] = {
-        check: rawSettings.text5?.check || false,
-        limit: rawSettings.text5?.limit || 20,
-        confirmCheck: rawSettings.text5?.confirmCheck || false,
+        check: followedArtists.check || false,
+        limit: followedArtists.limit || 20,
+        confirmCheck: followedArtists.confirmCheck || false,
     };
 
     normalized[DATA_TYPES.CURRENT_PLAYLISTS] = {
-        check: rawSettings.text6?.check || false,
-        limit: rawSettings.text6?.limit || 20,
-        public: rawSettings.text6?.public || true,
-        confirmCheck: rawSettings.text6?.confirmCheck || false,
+        check: currentPlaylists.check || false,
+        limit: currentPlaylists.limit || 20,
+        public: currentPlaylists.public ?? true,
+        confirmCheck: currentPlaylists.confirmCheck || false,
     };
 
     normalized[DATA_TYPES.RECENT_TRACKS] = {
-        check: rawSettings.text7?.check || false,
-        limit: rawSettings.text7?.limit || 20,
-        confirmCheck: rawSettings.text7?.confirmCheck || false,
+        check: recentlyPlayed.check || false,
+        limit: recentlyPlayed.limit || 20,
+        confirmCheck: recentlyPlayed.confirmCheck || false,
     };
 
     return normalized;

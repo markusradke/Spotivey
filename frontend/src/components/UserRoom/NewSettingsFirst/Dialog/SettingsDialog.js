@@ -4,20 +4,22 @@ import { useNavigate } from "react-router";
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Divider from '@mui/material/Divider';
-import { createSettings } from './CreateSettingsButtonPressed';
-import updateSettings from './CreateSettingsButtonPressed';
+import {
+    createRetrievalSettings,
+    updateRetrievalSettings,
+} from "../../../../api/surveyApi";
 
 function getMarketCode(market) {
     if (!market) {
-        return "";
+        return "DE";
     }
     if (typeof market === "string") {
-        return market;
+        return market || "DE";
     }
     if (typeof market === "object") {
-        return market.Code || "";
+        return market.Code || "DE";
     }
-    return "";
+    return "DE";
 }
 
 function getTimeRange(timeRange) {
@@ -45,7 +47,7 @@ export default function SettingsDialog(props) {
 
     const navigate = useNavigate();
 
-    function handleOkayDialog() {
+    async function handleOkayDialog() {
         const checkArray = props.props[1];
         const limitArray = props.props[2];
         const confirmArray = props.props[5];
@@ -89,11 +91,28 @@ export default function SettingsDialog(props) {
             recent_tracks_limit: limitArray[6][0],
         };
 
-        if (props.props[6]) {
-            body.updateID = props.props[7];
-            updateSettings(body, navigate);
-        } else {
-            createSettings(body, navigate);
+        try {
+            if (props.props[6]) {
+                body.updateID = props.props[7];
+                const result = await updateRetrievalSettings(body);
+                if (!result.ok) {
+                    const errorMsg = result.data?.msg || result.data?.error || 'Failed to update settings';
+                    alert(`Error: ${errorMsg}`);
+                    return;
+                }
+                navigate('/user/settings', { state: { push: true } })
+                return;
+            }
+
+            const result = await createRetrievalSettings(body);
+            if (!result.ok) {
+                const errorMsg = result.data?.msg || result.data?.error || 'Failed to create settings';
+                alert(`Error: ${errorMsg}`);
+                return;
+            }
+            navigate('/user/settings', { state: { push: true } })
+        } catch (error) {
+            console.error('Error saving settings:', error);
         }
     }
 

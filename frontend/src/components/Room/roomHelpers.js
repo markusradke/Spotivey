@@ -32,12 +32,20 @@ export function buildWelcomeSettings(rawSettings) {
     const de = [];
     const en = [];
 
-    if (rawSettings.text1?.check) {
+    const savedTracks = rawSettings.saved_tracks;
+    const profile = rawSettings.profile;
+    const topTracks = rawSettings.top_tracks;
+    const topArtists = rawSettings.top_artists;
+    const followedArtists = rawSettings.followed_artists;
+    const currentPlaylists = rawSettings.current_playlists;
+    const recentlyPlayed = rawSettings.recently_played;
+
+    if (savedTracks?.check) {
         de.push([true, "Ihrer gespeicherten Musik (Lieblingssongs)"]);
         en.push([true, "Your saved Tracks (Liked Songs)"]);
     }
 
-    if (rawSettings.text2?.check) {
+    if (profile?.check) {
         de.push([
             true,
             "Ihrem Spotify Abonnement, Ihrem Herkunfsland und die Anzahl Ihrer Follower",
@@ -48,34 +56,34 @@ export function buildWelcomeSettings(rawSettings) {
         ]);
     }
 
-    if (rawSettings.text3?.check) {
+    if (topTracks?.check) {
         de.push([true, "Ihrer Top Tracks"]);
         en.push([true, "Your Top Tracks"]);
     }
 
-    if (rawSettings.text4?.check) {
+    if (topArtists?.check) {
         de.push([true, "Ihrer Top Interpreten"]);
         en.push([true, "Your Top Artists"]);
     }
 
-    if (rawSettings.text5?.check) {
+    if (followedArtists?.check) {
         de.push([true, "Den Interpreten den Sie folgen"]);
         en.push([true, "Your Followed Artists"]);
     }
 
-    if (rawSettings.text6?.check) {
-        const deText = rawSettings.text6.public
+    if (currentPlaylists?.check) {
+        const deText = currentPlaylists.public
             ? "Ihrer Playlists"
             : "Ihren öffentlichen Playlists";
         de.push([true, deText]);
 
-        const enText = rawSettings.text6.public
+        const enText = currentPlaylists.public
             ? "Your Playlists"
             : "Your public Playlists";
         en.push([true, enText]);
     }
 
-    if (rawSettings.text7?.check) {
+    if (recentlyPlayed?.check) {
         de.push([true, "Ihrer kürzlich gehörten Musik"]);
         en.push([true, "Your last heard music"]);
     }

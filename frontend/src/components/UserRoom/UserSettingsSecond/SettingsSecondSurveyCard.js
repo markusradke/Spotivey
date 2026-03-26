@@ -2,11 +2,15 @@ import * as React from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useState, useEffect } from 'react';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import {Button} from '@mui/material';
+import { Button } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { columnsSecondSurvey } from '../UserSettingsFirst/DataGridColumns.js';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import GetAppIcon from '@mui/icons-material/GetApp';
+import {
+    deleteSettingsSecondSurvey,
+    fetchSettingsSecondSurvey,
+} from "../../../api/surveyApi";
 
 export default function SettingsSecondSurveyCard(props) {
     const [settingsRows, setSettingsRows] = useState(null)
@@ -16,21 +20,22 @@ export default function SettingsSecondSurveyCard(props) {
 
     useEffect(() => {
         async function settingsInRoom() {
-            fetch("/api/get-settings-second-survey" + "?username=" + props.username).then(response => response.json())
-            .then((data) => {
-                if (!data.error){
+            fetchSettingsSecondSurvey(props.username)
+                .then(({ ok, data }) => {
+                    if (!ok || !data || data.error) {
+                        return;
+                    }
                     console.log(data.data)
                     setSettingsRows(data.data)
-                }
-            });
+                });
         }
-        if(props.username){
-          settingsInRoom();
+        if (props.username) {
+            settingsInRoom();
         }
-      }, [props.username])
+    }, [props.username])
 
-      function renderSettingsTable() {
-        return(
+    function renderSettingsTable() {
+        return (
             <div style={{ height: 400, width: '100%' }}>
                 {settingsRows?.length !== 0 ?
                     <DataGrid
@@ -42,13 +47,13 @@ export default function SettingsSecondSurveyCard(props) {
                         disableSelectionOnClick
                         onSelectionModelChange={(ids) => {
                             const selectedIDs = []
-                            settingsRows.forEach((row) =>   
-                                ids.forEach(function(item, index){
-                                    if(row.id===item){
+                            settingsRows.forEach((row) =>
+                                ids.forEach(function (item, index) {
+                                    if (row.id === item) {
                                         selectedIDs.push(row)
                                     }
-                                    return(selectedIDs)
-                                })       
+                                    return (selectedIDs)
+                                })
                             );
                             setSelectedRowSettings(selectedIDs)
                         }}
@@ -63,43 +68,44 @@ export default function SettingsSecondSurveyCard(props) {
         )
     }
 
-    function renderNewSettingsButton(){
-        return(
-            <Button 
-                startIcon={<AddOutlinedIcon />} 
+    function renderNewSettingsButton() {
+        return (
+            <Button
+                startIcon={<AddOutlinedIcon />}
                 onClick={() => {
                     navigate('/user/settings2/new', {
                         state: {
                             surveyID: selectedRowSettings[0].umfrageID,
-                            surveyIDsecond: selectedRowSettings[0].umfrageIDsecond !== '' ? 
-                                selectedRowSettings[0].umfrageIDsecond : 
+                            surveyIDsecond: selectedRowSettings[0].umfrageIDsecond !== '' ?
+                                selectedRowSettings[0].umfrageIDsecond :
                                 null,
                             endURL: selectedRowSettings[0].endURL,
                             passLang: selectedRowSettings[0].passLang,
                         }
                     })
                 }}
-                disabled={selectedRowSettings.length === 1 && 
+                disabled={selectedRowSettings.length === 1 &&
                     !selectedRowSettings[0].onlyProfile ? false : true}
             >
-                {selectedRowSettings.length === 1 ? selectedRowSettings[0]?.endURL === '' ? 'Edit Follow-Up Settings' : 'Modify Follow-Up URL':'Edit Follow-Up Settings'}
+                {selectedRowSettings.length === 1 ? selectedRowSettings[0]?.endURL === '' ? 'Edit Follow-Up Settings' : 'Modify Follow-Up URL' : 'Edit Follow-Up Settings'}
             </Button>
         )
     }
 
-    function deleteSettings(){
+    function deleteSettings() {
         let promises = [];
-        for(let zaehler = 0; zaehler<selectedRowSettings.length; zaehler++){
-            promises.push(fetch("/api/delete-settings-second-survey" + "?surveyid=" + selectedRowSettings[zaehler].umfrageID));
+        for (let zaehler = 0; zaehler < selectedRowSettings.length; zaehler++) {
+            promises.push(deleteSettingsSecondSurvey(selectedRowSettings[zaehler].umfrageID));
         }
-        Promise.all(promises)
-        location.reload();
+        Promise.all(promises).then(() => {
+            location.reload();
+        })
     }
 
-    function renderDeleteButton(){
-        return(
+    function renderDeleteButton() {
+        return (
             <div>
-                <Button 
+                <Button
                     startIcon={<DeleteOutlinedIcon />}
                     onClick={() => {
                         deleteSettings()
@@ -113,13 +119,13 @@ export default function SettingsSecondSurveyCard(props) {
     }
 
     function renderGetSurveyQuestion() {
-        return(
-            <Button 
-                startIcon={<GetAppIcon/>}
-                disabled={selectedRowSettings.length === 1 && 
+        return (
+            <Button
+                startIcon={<GetAppIcon />}
+                disabled={selectedRowSettings.length === 1 &&
                     selectedRowSettings[0].endURL !== '' &&
                     !selectedRowSettings[0].onlyProfile ? false : true}
-                onClick={()=>{
+                onClick={() => {
                     navigate('/user/settings2/new2', {
                         state: {
                             surveyID: selectedRowSettings[0].umfrageID,
@@ -133,16 +139,16 @@ export default function SettingsSecondSurveyCard(props) {
         )
     }
 
-    return(
+    return (
         <React.Fragment>
             <h1 data-heading='true' class='settings-title'>
-                Follow-Up Settings 
+                Follow-Up Settings
             </h1>
             <h3 class='settings-overview-text'>
                 Similar to your retrieval setting, press <i>Edit Follow-Up Settings</i> to edit the profile in depth.
             </h3>
             <h3 class='settings-overview-text'>
-                In order to delete your follow-up setting, press the button <i>Delete Follow-Up Settings</i>after 
+                In order to delete your follow-up setting, press the button <i>Delete Follow-Up Settings</i>after
                 checking a checkbox.
             </h3>
             <h3 class='settings-overview-text'>

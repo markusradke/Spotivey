@@ -14,9 +14,86 @@ function buildPostOptions(body, includeCredentials = false) {
   return options;
 }
 
+async function safeJson(response) {
+  try {
+    return await response.json();
+  } catch (_e) {
+    return null;
+  }
+}
+
+async function getJson(url, includeCredentials = false) {
+  const options = {};
+  if (includeCredentials) {
+    options.credentials = "include";
+  }
+  const response = await fetch(url, options);
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
+}
+
 export async function fetchSurveySettingsById(surveyId) {
   const response = await fetch("/api/get-settingsfromid?surveyid=" + surveyId);
   return response.json();
+}
+
+export async function fetchSettingsSecondSurvey(username) {
+  return getJson(
+    "/api/get-settings-second-survey?username=" +
+    encodeURIComponent(username)
+  );
+}
+
+export async function createSettingsSecondSurvey(payload) {
+  const response = await fetch(
+    "/api/create-settings-second-survey",
+    buildPostOptions(payload)
+  );
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
+}
+
+export async function updateSettingsSecondSurvey(payload) {
+  const response = await fetch(
+    "/api/update-settings-second-survey",
+    buildPostOptions(payload)
+  );
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
+}
+
+export async function updateSettingsSecondSurveyEndUrl(payload) {
+  const response = await fetch(
+    "/api/update-settings-second-survey-end-url",
+    buildPostOptions(payload)
+  );
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
+}
+
+export async function deleteSettingsSecondSurvey(surveyId) {
+  const response = await fetch(
+    "/api/delete-settings-second-survey?surveyid=" +
+    encodeURIComponent(surveyId)
+  );
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
+}
+
+export async function fetchUserSession() {
+  return getJson("/api/get-user-session", true);
+}
+
+export async function fetchSettingsList(username) {
+  return getJson("/api/get-settingslist?username=" + encodeURIComponent(username));
+}
+
+export async function fetchParticipantCount(surveyId) {
+  return getJson(
+    "/api/get-participant-count?surveyID=" + encodeURIComponent(surveyId)
+  );
+}
+
+export async function deleteSettings(surveyId) {
+  const response = await fetch(
+    "/api/delete-settings?surveyid=" + encodeURIComponent(surveyId)
+  );
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
 }
 
 export async function saveCheckData(index, participant, surveyId, checkData, noData) {
@@ -39,4 +116,110 @@ export async function finalizeParticipantData() {
     buildPostOptions(undefined, true)
   );
   return response.json();
+}
+
+export async function fetchResultList(surveyId) {
+  return getJson(
+    "/api/get-resultlist?surveyid=" + encodeURIComponent(surveyId)
+  );
+}
+
+export async function deleteOnlyResults(surveyId) {
+  const response = await fetch(
+    "/api/delete-only-results?surveyid=" + encodeURIComponent(surveyId)
+  );
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
+}
+
+export async function saveToCsvFile(surveyId) {
+  return getJson(
+    "/api/save-to-csv-file?surveyID=" + encodeURIComponent(surveyId)
+  );
+}
+
+export async function acceptPrivacyPolicy(payload) {
+  const response = await fetch(
+    "/api/accept-privacy-policy",
+    buildPostOptions(payload, true)
+  );
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
+}
+
+export async function loginSettingsUser(payload) {
+  const response = await fetch(
+    "/api/login-settings-user",
+    buildPostOptions(payload, true)
+  );
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
+}
+
+export async function createSettingsUser(payload) {
+  const response = await fetch(
+    "/api/create-settings-user",
+    buildPostOptions(payload)
+  );
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
+}
+
+export async function fetchParticipantSession() {
+  return getJson("/api/get-participant-session", true);
+}
+
+export async function spotifyIsAuthenticated() {
+  return getJson("/spotify/is-authenticated", true);
+}
+
+export async function spotifyGetAuthUrl2() {
+  return getJson("/spotify/get-auth-url2", true);
+}
+
+export async function spotifyAudioFeatures(dataString, surveyId) {
+  return getJson(
+    "/spotify/audio-features-spotify?dataString=" +
+    encodeURIComponent(dataString) +
+    "&surveyID=" +
+    encodeURIComponent(surveyId)
+  );
+}
+
+export async function updateConfirmText(payload) {
+  const response = await fetch(
+    "/api/update-confirm-text",
+    buildPostOptions(payload)
+  );
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
+}
+
+export async function logoutUser() {
+  const response = await fetch(
+    "/api/logout-user",
+    buildPostOptions(undefined, true)
+  );
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
+}
+
+export async function checkSurveyId(surveyId) {
+  return getJson(
+    "/api/check-survey-id?surveyID=" + encodeURIComponent(surveyId)
+  );
+}
+
+export async function createRetrievalSettings(payload) {
+  const response = await fetch(
+    "/api/create-settings",
+    buildPostOptions(payload)
+  );
+
+  const data = await response.json();
+  return { ok: response.ok, status: response.status, data };
+}
+
+export async function updateRetrievalSettings(payload) {
+  const response = await fetch(
+    "/api/update-settings",
+    buildPostOptions(payload)
+  );
+
+  const data = await response.json();
+  return { ok: response.ok, status: response.status, data };
 }

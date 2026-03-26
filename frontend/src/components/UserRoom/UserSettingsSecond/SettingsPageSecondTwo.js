@@ -12,6 +12,11 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 import { goBackToLogin } from '../NewSettingsFirst/Button/BackButtonFunction';
 import getXMLOutputSingleQuestion from './getXMLOutput';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import {
+    fetchSurveySettingsById,
+    fetchUserSession,
+    updateSettingsSecondSurvey,
+} from "../../../api/surveyApi";
 
 export default function SettingsPageSecondTwo(props) {
     const navigate = useNavigate()
@@ -87,13 +92,11 @@ export default function SettingsPageSecondTwo(props) {
 
     useEffect(() => {
         async function getParticipantSession() {
-            fetch("/api/get-user-session")
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.username === null) {
-                        goBackToLogin(navigate)
-                    }
-                });
+            fetchUserSession().then(({ ok, data }) => {
+                if (!ok || !data || data.username === null) {
+                    goBackToLogin(navigate)
+                }
+            });
         }
         getParticipantSession();
     }, [])
@@ -132,23 +135,31 @@ export default function SettingsPageSecondTwo(props) {
 
     useEffect(() => {
         if (surveyID) {
-            return fetch("/api/get-settingsfromid" + "?surveyid=" + surveyID)
-                .then(response => response.json())
+            fetchSurveySettingsById(surveyID)
                 .then((data) => {
-                    if (!data.error) {
-                        setCheckSavedTracks(data.data[0].text1.check)
-                        setLimitItemsSavedTracks(data.data[0].text1.limit)
-                        setCheckTopTracks(data.data[0].text3.check)
-                        setLimitItemsTopTracks(data.data[0].text3.limit)
-                        setCheckTopArtists(data.data[0].text4.check)
-                        setLimitItemsTopArtists(data.data[0].text4.limit)
-                        setCheckFollowedArtists(data.data[0].text5.check)
-                        setLimitItemsFollowedArtists(data.data[0].text5.limit)
-                        setCheckCurrentPlaylists(data.data[0].text6.check)
-                        setLimitItemsCurrentPlaylists(data.data[0].text6.limit)
-                        setCheckRecentlyTracks(data.data[0].text7.check)
-                        setLimitItemsRecentlyTracks(data.data[0].text7.limit)
+                    if (!data || data.error) {
+                        return;
                     }
+                    const raw = data.data[0]
+                    const savedTracks = raw.saved_tracks
+                    const topTracks = raw.top_tracks
+                    const topArtists = raw.top_artists
+                    const followedArtists = raw.followed_artists
+                    const currentPlaylists = raw.current_playlists
+                    const recentlyPlayed = raw.recently_played
+
+                    setCheckSavedTracks(savedTracks.check)
+                    setLimitItemsSavedTracks(savedTracks.limit)
+                    setCheckTopTracks(topTracks.check)
+                    setLimitItemsTopTracks(topTracks.limit)
+                    setCheckTopArtists(topArtists.check)
+                    setLimitItemsTopArtists(topArtists.limit)
+                    setCheckFollowedArtists(followedArtists.check)
+                    setLimitItemsFollowedArtists(followedArtists.limit)
+                    setCheckCurrentPlaylists(currentPlaylists.check)
+                    setLimitItemsCurrentPlaylists(currentPlaylists.limit)
+                    setCheckRecentlyTracks(recentlyPlayed.check)
+                    setLimitItemsRecentlyTracks(recentlyPlayed.limit)
                 });
         } else {
             navigate('/user/settings2')
@@ -466,37 +477,25 @@ export default function SettingsPageSecondTwo(props) {
                     variant="contained"
                     endIcon={<SaveOutlinedIcon />}
                     onClick={() => {
-                        const requestOptions = {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                surveyID: surveyID,
-                                username: username,
-                                data: {
-                                    selectedOption: [selectedOptionSavedTracks.value, selectedOptionTopTracks.value,
-                                    selectedOptionRecentlyTracks.value, selectedOptionTopArtists.value,
-                                    selectedOptionFollowedArtists.value, selectedOptionCurrentPlaylists.value],
-                                    idTracks: idTracks,
-                                    dataFieldsTracksCheck: dataFieldsCheckArray[0],
-                                    idArtists: idArtists,
-                                    dataFieldsArtistsCheck: dataFieldsCheckArray[1],
-                                    idPlaylists: idPlaylists,
-                                    dataFieldsPlaylistsCheck: dataFieldsCheckArray[2],
-                                    questionTypeCheck: questionTypeCheck,
-                                    dataFieldsCheckArray: dataFieldsCheckArray
-                                }
-                            }),
-                        };
-                        fetch("/api/update-settings-second-survey", requestOptions)
-                            .then((response) => {
-                                if (!response.ok) {
-                                } else {
-                                    return response.json();
-                                }
-                            })
-                            .then((data) => {
-                                navigate('/user/settings2')
-                            })
+                        updateSettingsSecondSurvey({
+                            surveyID: surveyID,
+                            username: username,
+                            data: {
+                                selectedOption: [selectedOptionSavedTracks.value, selectedOptionTopTracks.value,
+                                selectedOptionRecentlyTracks.value, selectedOptionTopArtists.value,
+                                selectedOptionFollowedArtists.value, selectedOptionCurrentPlaylists.value],
+                                idTracks: idTracks,
+                                dataFieldsTracksCheck: dataFieldsCheckArray[0],
+                                idArtists: idArtists,
+                                dataFieldsArtistsCheck: dataFieldsCheckArray[1],
+                                idPlaylists: idPlaylists,
+                                dataFieldsPlaylistsCheck: dataFieldsCheckArray[2],
+                                questionTypeCheck: questionTypeCheck,
+                                dataFieldsCheckArray: dataFieldsCheckArray
+                            }
+                        }).then(() => {
+                            navigate('/user/settings2')
+                        })
                     }}
                 >
                     OK

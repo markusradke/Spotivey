@@ -10,6 +10,11 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
 import { goBackToLogin } from '../NewSettingsFirst/Button/BackButtonFunction';
 import { confirmCheck } from "../NewSettingsFirst/SettingsCard/Content/Components/ConfirmCheck";
+import {
+    createSettingsSecondSurvey,
+    fetchUserSession,
+    updateSettingsSecondSurveyEndUrl,
+} from "../../../api/surveyApi";
 
 export default function SettingsPageSecond() {
     const navigate = useNavigate()
@@ -25,56 +30,54 @@ export default function SettingsPageSecond() {
 
     const [endURL, setEndURL] = useState(
         location?.state.endURL ?
-            location.state.endURL : 
-            'https://student-surveys.ak.tu-berlin.de/index.php/'+location?.state.surveyIDsecond
+            location.state.endURL :
+            'https://student-surveys.ak.tu-berlin.de/index.php/' + location?.state.surveyIDsecond
     )
 
     const [username, setUsername] = useState('')
 
     const url = useRef(location.state.surveyIDsecond ?
-        'https://student-surveys.ak.tu-berlin.de/index.php/'+location.state.surveyIDsecond :
+        'https://student-surveys.ak.tu-berlin.de/index.php/' + location.state.surveyIDsecond :
         'https://student-surveys.ak.tu-berlin.de/index.php/'
-        )
+    )
 
     useEffect(() => {
-        if (url.current != secondSurveyServer+'/index.php/'+secondSurveyID){
-            setEndURL(secondSurveyServer+'/index.php/'+secondSurveyID)
+        if (url.current != secondSurveyServer + '/index.php/' + secondSurveyID) {
+            setEndURL(secondSurveyServer + '/index.php/' + secondSurveyID)
         }
     }, [secondSurveyServer, secondSurveyID])
 
     useEffect(() => {
         async function getParticipantSession() {
-          fetch("/api/get-user-session")
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.username === null){
-                goBackToLogin(navigate)
-              } else {
+            fetchUserSession().then(({ ok, data }) => {
+                if (!ok || !data || data.username === null) {
+                    goBackToLogin(navigate)
+                    return;
+                }
                 setUsername(data.username)
-              }
             });
         }
         getParticipantSession();
-      }, [])
+    }, [])
 
-    return(
+    return (
         <React.Fragment>
             <div class="setting-header">
-              <header class="setting-header-inner">
-                <div class="setting-header-content-container">
-                  <div class="setting-header-content-container-inner">
-                    {headerSettings()}
-                  </div>
-                </div>
-              </header>
+                <header class="setting-header-inner">
+                    <div class="setting-header-content-container">
+                        <div class="setting-header-content-container-inner">
+                            {headerSettings()}
+                        </div>
+                    </div>
+                </header>
             </div>
             <div class='setting-page-main'>
                 <div class="setting-navigation">
                     <div class="navbar-setting">
                         <nav class="navbar-settings-content">
                             <List
-                                sx={{ width: '100%', maxWidth: 360}}
-                            > 
+                                sx={{ width: '100%', maxWidth: 360 }}
+                            >
                                 <ListItem>
                                     <IconButton href="/user/settings2">
                                         <ArrowBackIosNewOutlinedIcon />
@@ -93,54 +96,54 @@ export default function SettingsPageSecond() {
                                         <h1 data-heading='true' class='settings-title'>
                                             Settings 2nd Survey
                                         </h1>
-                                            <div className="main-content-card-container-outer">
-                                                <div className="main-content-card" id={'second-settings-main'}>
-                                                    {TextFieldMain(
-                                                        '2nd Survey Server', '2nd Survey Server', 
-                                                        setSecondSurveyServer, secondSurveyServer, true, changeURLCheck
-                                                    )}
-                                                    {TextFieldMain(
-                                                        '2nd Survey ID', 'e.g. 347491', 
-                                                        setSecondSurveyID, secondSurveyID, true, changeURLCheck
-                                                    )}
-                                                    {confirmCheck(langPass, setLangPass, true)}
-                                                </div>
-                                                <div className="main-content-card-end-url">
-                                                    {changeURLCheck ? 
-                                                        <React.Fragment>
-                                                            {TextFieldMain(
-                                                                'Start URL for the second survey', 'Change URL', 
-                                                                setEndURL, endURL, true, false
-                                                            )}
-                                                            <div className={'buttons-change-end-url-container'}>
-                                                                <button 
-                                                                    className="button-change-end-url"
-                                                                    onClick={() => {
-                                                                        setChangeURLCheck(false)
-                                                                    }}
-                                                                >
-                                                                    Change
-                                                                </button>
-                                                                <button 
-                                                                    className="button-change-end-url"
-                                                                    onClick={() => {
-                                                                        setEndURL([secondSurveyServer,'/index.php/',secondSurveyID].join(''))
-                                                                        setChangeURLCheck(false)
-                                                                    }}
-                                                                >
-                                                                    Cancel
-                                                                </button>
-                                                            </div>
-                                                        </React.Fragment>
+                                        <div className="main-content-card-container-outer">
+                                            <div className="main-content-card" id={'second-settings-main'}>
+                                                {TextFieldMain(
+                                                    '2nd Survey Server', '2nd Survey Server',
+                                                    setSecondSurveyServer, secondSurveyServer, true, changeURLCheck
+                                                )}
+                                                {TextFieldMain(
+                                                    '2nd Survey ID', 'e.g. 347491',
+                                                    setSecondSurveyID, secondSurveyID, true, changeURLCheck
+                                                )}
+                                                {confirmCheck(langPass, setLangPass, true)}
+                                            </div>
+                                            <div className="main-content-card-end-url">
+                                                {changeURLCheck ?
+                                                    <React.Fragment>
+                                                        {TextFieldMain(
+                                                            'Start URL for the second survey', 'Change URL',
+                                                            setEndURL, endURL, true, false
+                                                        )}
+                                                        <div className={'buttons-change-end-url-container'}>
+                                                            <button
+                                                                className="button-change-end-url"
+                                                                onClick={() => {
+                                                                    setChangeURLCheck(false)
+                                                                }}
+                                                            >
+                                                                Change
+                                                            </button>
+                                                            <button
+                                                                className="button-change-end-url"
+                                                                onClick={() => {
+                                                                    setEndURL([secondSurveyServer, '/index.php/', secondSurveyID].join(''))
+                                                                    setChangeURLCheck(false)
+                                                                }}
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                        </div>
+                                                    </React.Fragment>
                                                     :
-                                                        <React.Fragment>
+                                                    <React.Fragment>
                                                         <h2 data-heading='true' class='settings-content-item-title'>
                                                             2nd Survey Start-URL
                                                         </h2>
                                                         <h3 className="card-end-url-title">
                                                             {endURL}
                                                         </h3>
-                                                        <button 
+                                                        <button
                                                             className="button-change-end-url"
                                                             onClick={() => {
                                                                 setChangeURLCheck(true)
@@ -148,10 +151,10 @@ export default function SettingsPageSecond() {
                                                         >
                                                             Change Start-URL
                                                         </button>
-                                                        </React.Fragment>
-                                                    }
-                                                </div>
+                                                    </React.Fragment>
+                                                }
                                             </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -160,73 +163,49 @@ export default function SettingsPageSecond() {
                 </div>
             </div>
             <div className="settings-second-next-button">
-                {!location.state.endURL ? 
-                <Button 
-                    variant="contained" 
-                    endIcon={<SaveOutlinedIcon />} 
-                    color='inherit'
-                    onClick={()=>{
-                        const requestOptions = {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
+                {!location.state.endURL ?
+                    <Button
+                        variant="contained"
+                        endIcon={<SaveOutlinedIcon />}
+                        color='inherit'
+                        onClick={() => {
+                            createSettingsSecondSurvey({
                                 surveyID: surveyID,
                                 username: username,
                                 secondSurveyID: secondSurveyID,
                                 secondSurveyServer: secondSurveyServer,
                                 secondSurveyLanguage: '', //Out of date
-                                passLang:langPass,
+                                passLang: langPass,
                                 endURL: endURL,
                                 data: {}
-                            }),
-                          };
-                          fetch("/api/create-settings-second-survey", requestOptions)
-                            .then((response) => {
-                              if (!response.ok) {
-                            } else {
-                              return response.json();
-                            }
-                          })
-                          .then((data) => {
-                            navigate('/user/settings2')
-                          })
-                    }}
-                    disabled={endURL == 'https://surveys.ak.tu-berlin.de/index.php/' || endURL == '' ? true : false}
-                >
-                    Save
-                </Button> : 
-                <Button
-                    variant="contained" 
-                    endIcon={<SaveOutlinedIcon />} 
-                    color='inherit'
-                    onClick={()=>{
-                        const requestOptions = {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
+                            }).then(() => {
+                                navigate('/user/settings2')
+                            })
+                        }}
+                        disabled={endURL == 'https://surveys.ak.tu-berlin.de/index.php/' || endURL == '' ? true : false}
+                    >
+                        Save
+                    </Button> :
+                    <Button
+                        variant="contained"
+                        endIcon={<SaveOutlinedIcon />}
+                        color='inherit'
+                        onClick={() => {
+                            updateSettingsSecondSurveyEndUrl({
                                 surveyID: surveyID,
                                 username: username,
                                 secondSurveyID: secondSurveyID,
                                 secondSurveyServer: secondSurveyServer,
                                 secondSurveyLanguage: '',//Out of date
-                                passLang:langPass,
+                                passLang: langPass,
                                 endURL: endURL,
-                            }),
-                        };
-                        fetch("/api/update-settings-second-survey-end-url", requestOptions)
-                            .then((response) => {
-                              if (!response.ok) {
-                            } else {
-                              return response.json();
-                            }
-                        })
-                        .then((data) => {
-                            navigate('/user/settings2')
-                        }) 
-                    }}
-                >
-                    Edit End URL
-                </Button>
+                            }).then(() => {
+                                navigate('/user/settings2')
+                            })
+                        }}
+                    >
+                        Edit End URL
+                    </Button>
                 }
             </div>
         </React.Fragment>
