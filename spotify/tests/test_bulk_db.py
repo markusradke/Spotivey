@@ -23,8 +23,7 @@ class BulkOperationsTest(TestCase):
         tracks = [
             SavedTrack(
                 participant=self.participant,
-                data={'track_name': f'Track {i}', 'spotify_id': f'id{i}'},
-                confirm=False
+                spotify_id=f'id{i}',
             )
             for i in range(10)
         ]

@@ -11,7 +11,7 @@ import string
 from spotify.credentials import REDIRECT_URI, CLIENT_SECRET, CLIENT_ID, REDIRECT_URI2
 from spotify.utils.spotify_api import update_or_create_user_tokens, is_spotify_authenticated
 from api.models import RetrievalSetting
-import numpy as np
+from api.utils.retrieval_settings_mapping import build_retrieval_settings_payload
 
 
 def get_random_string(length):
@@ -33,8 +33,17 @@ class AuthURL(APIView):
         if surveyID is not None:
             settings = RetrievalSetting.objects.filter(umfrageID=surveyID)
             if len(settings) > 0:
-                settingslistdata = np.array(settings.values_list("data"))
+                payload = build_retrieval_settings_payload(settings[0])
 
+                checks = [
+                    payload["saved_tracks"]["check"],
+                    payload["profile"]["check"],
+                    payload["top_tracks"]["check"],
+                    payload["top_artists"]["check"],
+                    payload["followed_artists"]["check"],
+                    payload["current_playlists"]["check"],
+                    payload["recently_played"]["check"],
+                ]
                 tempCheck = [False, False, False, False, False, False, False]
 
                 scope1 = "user-library-read"  # saved Tracks
@@ -58,7 +67,7 @@ class AuthURL(APIView):
                 scopeTemp = ""
 
                 for j in range(7):
-                    if settingslistdata[0][0].get("dataCheck").get(str(j)):
+                    if checks[j]:
                         tempCheck[j] = True
                         if not (j == 3 and tempCheck[j - 1]):
                             scopeTemp = scopeTemp + scopeArrayDefault[j] + " "

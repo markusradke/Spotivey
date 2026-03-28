@@ -2,6 +2,7 @@ from spotify.models import SpotifyToken
 from django.utils import timezone
 from datetime import timedelta
 from spotify.credentials import CLIENT_ID, CLIENT_SECRET
+import os
 from requests import post, put, get, Session
 from requests.adapters import HTTPAdapter, Retry
 
@@ -62,6 +63,13 @@ def refresh_spotify_token(session_id):
 
 
 def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
+    if os.environ.get("SPOTIVEY_TEST_MODE") == "1":
+        from spotify.utils.spotify_fixtures import get_fixture_for_endpoint
+
+        fixture = get_fixture_for_endpoint(endpoint)
+        if fixture is not None:
+            return fixture.payload
+
     tokens = get_user_tokens(session_id)
 
     headers = {'Content-Type': 'application/json',

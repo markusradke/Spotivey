@@ -31,6 +31,42 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie den 
     umfrageID = models.TextField(max_length=50, default='', unique=True)
     umfrageURL = models.TextField(default='')
     data = models.JSONField(null=True)
+
+    saved_tracks_enabled = models.BooleanField(default=False)
+    saved_tracks_confirm = models.BooleanField(default=True)
+    saved_tracks_limit = models.PositiveIntegerField(default=10)
+    saved_tracks_market_code = models.CharField(max_length=10, default="", blank=True)
+
+    profile_enabled = models.BooleanField(default=False)
+    profile_confirm = models.BooleanField(default=False)
+
+    top_tracks_enabled = models.BooleanField(default=False)
+    top_tracks_confirm = models.BooleanField(default=True)
+    top_tracks_limit = models.PositiveIntegerField(default=20)
+    top_tracks_time_range = models.CharField(
+        max_length=20, default="medium_term", blank=True
+    )
+
+    top_artists_enabled = models.BooleanField(default=False)
+    top_artists_confirm = models.BooleanField(default=True)
+    top_artists_limit = models.PositiveIntegerField(default=20)
+    top_artists_time_range = models.CharField(
+        max_length=20, default="medium_term", blank=True
+    )
+
+    followed_artists_enabled = models.BooleanField(default=False)
+    followed_artists_confirm = models.BooleanField(default=True)
+    followed_artists_limit = models.PositiveIntegerField(default=20)
+
+    current_playlists_enabled = models.BooleanField(default=False)
+    current_playlists_confirm = models.BooleanField(default=True)
+    current_playlists_limit = models.PositiveIntegerField(default=20)
+    current_playlists_public = models.BooleanField(default=True)
+
+    recent_tracks_enabled = models.BooleanField(default=False)
+    recent_tracks_confirm = models.BooleanField(default=True)
+    recent_tracks_limit = models.PositiveIntegerField(default=20)
+    
     confirmTextSTEng = models.TextField(default=defaultConfirmTextEng)
     confirmTextTTEng = models.TextField(default=defaultConfirmTextEng)
     confirmTextRTEng = models.TextField(default=defaultConfirmTextEng)

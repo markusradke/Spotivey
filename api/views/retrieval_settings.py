@@ -8,6 +8,12 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 import numpy as np
 from spotify.models import *
+from ..utils.retrieval_settings_mapping import (
+    build_retrieval_settings_payload,
+)
+from ..utils.retrieval_settings_write import (
+    extract_explicit_settings_update,
+)
 
 
 class CreateSettings(APIView):
@@ -34,8 +40,18 @@ class CreateSettings(APIView):
                     'error': 'duplicate_survey_ID',
                     'surveyID': umfrageID
                 }, status=status.HTTP_400_BAD_REQUEST)  
-            settings = RetrievalSetting(data=data, nameUmfrage=nameUmfrage, umfrageID=umfrageID,
-                            umfrageURL=umfrageURL)
+            settings = RetrievalSetting(
+                data=data,
+                nameUmfrage=nameUmfrage,
+                umfrageID=umfrageID,
+                umfrageURL=umfrageURL,
+            )
+
+            explicit_update = extract_explicit_settings_update(request.data)
+
+            for field_name, value in explicit_update.items():
+                setattr(settings, field_name, value)
+
             settings.save()
             settings.user.add(user.values()[0].get('id'))
 
@@ -77,31 +93,7 @@ class getSettingsListView(APIView):
                 settingslistdata = np.array(settings.values_list('data'))
                 
                 for i in range (len(settingslist)):
-                    tempCheckPublic = ''
-                    tempCheck = [False, False, False, False, False, False, False]
-                    tempConfirmCheck = [True, False, True, True, True, True, True]
-                    tempLimit = [0, None, 0, 0, 0, 0, 0]
-                    tempMarket = ['', None, None, None, None, None, None]
-                    tempTimeRange = [None, None, '', '', None, None, None]
-                    zaehler = -1
-                    
-                    for j in range(7):
-                        if (settingslistdata[i][0].get('dataCheck').get(str(j))):
-                            tempConfirmCheck[j] = settingslistdata[0][0].get('confirmCheck').get(str(j))
-                            zaehler = zaehler + 1
-                            tempCheck[j] = True
-                            if j == 0:
-                                tempMarket[j] = settingslistdata[i][0].get('dropdown').get('valueSettings')[zaehler].get('market')
-                                if tempMarket[j] != '':
-                                    tempMarket[j]=tempMarket[j].get('Name')
-                            if j != 1:
-                                tempLimit[j] = settingslistdata[i][0].get('dropdown').get('valueSettings')[zaehler].get('limit')
-                            if j == 2 or j == 3:
-                                tempTimeRange[j] = settingslistdata[i][0].get('dropdown').get('valueSettings')[zaehler].get('time_range')
-                                if tempTimeRange[j] != 'medium_term':
-                                    tempTimeRange[j] = tempTimeRange[j].get('name')
-                            if j == 5:
-                                tempCheckPublic = settingslistdata[i][0].get('dropdown').get('valueSettings')[zaehler].get('public')
+                    payload = build_retrieval_settings_payload(settings[i])
 
                     rows.append({
                         'id': i+1, 
@@ -113,43 +105,13 @@ class getSettingsListView(APIView):
                             [confirmTextList[0][8], confirmTextList[0][2]], [confirmTextList[0][9], confirmTextList[0][3]], 
                             [confirmTextList[0][10], confirmTextList[0][4]], [confirmTextList[0][11], confirmTextList[0][5]]
                         ],
-                        'text1': {
-                            'check': tempCheck[0],
-                            'limit': tempLimit[0],
-                            'market': tempMarket[0],
-                            'confirmCheck': tempConfirmCheck[0],
-                        },
-                        'text2': {
-                            'check': tempCheck[1],
-                        },
-                        'text3': {
-                            'check': tempCheck[2],
-                            'limit': tempLimit[2],
-                            'timeRange': tempTimeRange[2],
-                            'confirmCheck': tempConfirmCheck[2],
-                        },
-                        'text4': {
-                            'check': tempCheck[3],
-                            'limit': tempLimit[3],
-                            'timeRange': tempTimeRange[3],
-                            'confirmCheck': tempConfirmCheck[3],
-                        },
-                        'text5': {
-                            'check': tempCheck[4],
-                            'limit': tempLimit[4],
-                            'confirmCheck': tempConfirmCheck[4],
-                        },
-                        'text6': {
-                            'check': tempCheck[5],
-                            'limit': tempLimit[5],
-                            'confirmCheck': tempConfirmCheck[5],
-                            'public': tempCheckPublic
-                        },
-                        'text7': {
-                            'check': tempCheck[6],
-                            'limit': tempLimit[6],
-                            'confirmCheck': tempConfirmCheck[6],
-                        },
+                        'saved_tracks': payload['saved_tracks'],
+                        'profile': payload['profile'],
+                        'top_tracks': payload['top_tracks'],
+                        'top_artists': payload['top_artists'],
+                        'followed_artists': payload['followed_artists'],
+                        'current_playlists': payload['current_playlists'],
+                        'recently_played': payload['recently_played'],
                     })
 
                 return Response({'data': rows, 'json:': settingslistdata}, status=status.HTTP_200_OK)
@@ -202,35 +164,7 @@ class getSettingsFromIDView(APIView):
                     'confirmTextTAEng', 'confirmTextFAEng', 'confirmTextCPEng', 'confirmTextSTDe', 'confirmTextTTDe', 
                     'confirmTextRTDe', 'confirmTextTADe', 'confirmTextFADe', 'confirmTextCPDe'))
 
-                tempCheckPublic = ''
-
-                tempCheck = [False, False, False, False, False, False, False]
-                tempConfirmCheck = [True, False, True, True, True, True, True]
-                tempLimit = [10, None, 20, 20, 20, 20, 20]
-                tempMarket = ['', None, None, None, None, None, None]
-                tempTimeRange = [None, None, '', '', None, None, None]
-                tempText = []
-                zaehler = -1
-                marketCode = ''
-                for j in range(7):
-                    if (settingslistdata[0][0].get('dataCheck').get(str(j))):
-                        tempConfirmCheck[j] = settingslistdata[0][0].get('confirmCheck').get(str(j))
-                        zaehler = zaehler + 1
-                        tempCheck[j] = True
-                        tempText.append(settingslistdata[0][0].get('dropdown').get('valueSettings')[zaehler].get('text'))
-                        if j == 0:
-                            tempMarket[j] = settingslistdata[0][0].get('dropdown').get('valueSettings')[zaehler].get('market')
-                            if tempMarket[j] != '':
-                                marketCode=tempMarket[j].get('Code')
-                                tempMarket[j]=tempMarket[j].get('Name')
-                        if j != 1:
-                            tempLimit[j] = settingslistdata[0][0].get('dropdown').get('valueSettings')[zaehler].get('limit')
-                        if j == 2 or j == 3:
-                            tempTimeRange[j] = settingslistdata[0][0].get('dropdown').get('valueSettings')[zaehler].get('time_range')
-                            if tempTimeRange[j] != 'medium_term':
-                                tempTimeRange[j] = tempTimeRange[j].get('name')
-                        if j == 5:
-                            tempCheckPublic = settingslistdata[0][0].get('dropdown').get('valueSettings')[zaehler].get('public')
+                payload = build_retrieval_settings_payload(settings[0])
                 
 
                 confirmTextAll = [
@@ -239,52 +173,28 @@ class getSettingsFromIDView(APIView):
                             [confirmTextList[0][10], confirmTextList[0][4]], [confirmTextList[0][11], confirmTextList[0][5]]
                         ]
 
-                checkArrayWithoutTwo = np.array([tempCheck[0], tempCheck[2], tempCheck[6], tempCheck[3], tempCheck[4], tempCheck[5]])
+                checkArrayWithoutTwo = np.array([
+                    payload['saved_tracks']['check'],
+                    payload['top_tracks']['check'],
+                    payload['recently_played']['check'],
+                    payload['top_artists']['check'],
+                    payload['followed_artists']['check'],
+                    payload['current_playlists']['check'],
+                ])
 
                 rows = [{
                     'nameUmfrage': settingslist[0][1], 
                     'umfrageID': settingslist[0][2], 
                     'confirmText': confirmTextAll,
                     'confirmTextOnlyCheck': np.array(confirmTextAll)[checkArrayWithoutTwo],
-                    'textAllg': tempText,
-                    'text1': {
-                        'check': tempCheck[0],
-                        'limit': tempLimit[0],
-                        'market': tempMarket[0],
-                        'marketCode': marketCode,
-                        'confirmCheck': tempConfirmCheck[0],
-                    },
-                    'text2': {
-                        'check': tempCheck[1],
-                    },
-                    'text3': {
-                        'check': tempCheck[2],
-                        'limit': tempLimit[2],
-                        'timeRange': tempTimeRange[2],
-                        'confirmCheck': tempConfirmCheck[2],
-                    },
-                    'text4': {
-                        'check': tempCheck[3],
-                        'limit': tempLimit[3],
-                        'timeRange': tempTimeRange[3],
-                        'confirmCheck': tempConfirmCheck[3],
-                    },
-                    'text5': {
-                        'check': tempCheck[4],
-                        'limit': tempLimit[4],
-                        'confirmCheck': tempConfirmCheck[4],
-                    },
-                    'text6': {
-                        'check': tempCheck[5],
-                        'limit': tempLimit[5],
-                        'confirmCheck': tempConfirmCheck[5],
-                        'public': tempCheckPublic
-                    },
-                    'text7': {
-                        'check': tempCheck[6],
-                        'limit': tempLimit[6],
-                        'confirmCheck': tempConfirmCheck[6],
-                    },
+                    'textAllg': payload['textAllg'],
+                    'saved_tracks': payload['saved_tracks'],
+                    'profile': payload['profile'],
+                    'top_tracks': payload['top_tracks'],
+                    'top_artists': payload['top_artists'],
+                    'followed_artists': payload['followed_artists'],
+                    'current_playlists': payload['current_playlists'],
+                    'recently_played': payload['recently_played'],
                     'secondEndUrl': secondEndUrl,
                     'selectedOption': selectedOption,
                     'questionTypeCheck': questionTypeCheck,
@@ -352,9 +262,20 @@ class UpdateSettings(APIView):
             return Response({'msg': 'Neu anmelden...'}, status=status.HTTP_404_NOT_FOUND)
         else:
 
-            settings = RetrievalSetting.objects.filter(umfrageID=updateID)
-            if settings.exists():
-                settings.update(data=data, nameUmfrage=nameUmfrage, umfrageID=umfrageID, umfrageURL=umfrageURL)
+            setting = RetrievalSetting.objects.filter(umfrageID=updateID).first()
+            if setting is not None:
+                if 'data' in request.data:
+                    setting.data = data
+                setting.nameUmfrage = nameUmfrage
+                setting.umfrageID = umfrageID
+                setting.umfrageURL = umfrageURL
+
+                explicit_update = extract_explicit_settings_update(request.data)
+
+                for field_name, value in explicit_update.items():
+                    setattr(setting, field_name, value)
+
+                setting.save()
                 return Response({'msg': 'Settings updated'}, status=status.HTTP_200_OK)
             return Response({'msg': 'No settings found...'}, status=status.HTTP_404_NOT_FOUND)
 

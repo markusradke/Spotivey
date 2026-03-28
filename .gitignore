@@ -1,6 +1,7 @@
 # node modules
 frontend/node_modules
-
+frontend/static/frontend
+frontend/cypress/screenshots 
 # local credentials
 spotify/credentials.py
 
