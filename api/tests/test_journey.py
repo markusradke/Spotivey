@@ -72,7 +72,7 @@ class SpotiveyBackendJourneyTests(TestCase):
             "recent_tracks_limit": 10,
         }
         resp = self.client.post("/api/create-settings", payload, format="json")
-        self.assertEqual(resp.status_code, 200, resp.data)
+        self.assertEqual(resp.status_code, 201, resp.data)
         self.assertTrue(RetrievalSetting.objects.filter(umfrageID=self.survey_id).exists())
 
     def _update_settings_saved_tracks_only(self):

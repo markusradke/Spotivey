@@ -298,6 +298,18 @@ function deleteProfileExpectSuccess(surveyId) {
     });
 }
 
+function acceptPrivacyNotice(expectedLang) {
+    const titleRegex = expectedLang === "de" ? /^datenschutzhinweis$/i : /^privacy notice$/i;
+
+    cy.contains("h1.settings-title", titleRegex, { timeout: 10000 })
+        .should("be.visible");
+
+    cy.get('.speicher-button')
+        .contains('button', /^ok$/i, { timeout: 10000 })
+        .should('be.visible')
+        .click({ force: true });
+}
+
 describe("Spotivey critical journey", () => {
     let surveyIdForCleanup;
 
@@ -390,8 +402,8 @@ describe("Spotivey critical journey", () => {
         // 2. Participant retrieves all data (backend runs in SPOTIVEY_TEST_MODE)
         cy.visit(`/?surveyID=${encodeURIComponent(surveyId)}&participant=1&lang=en`);
 
-        // Accept privacy policy
-        cy.get('.speicher-button').contains('button', /^ok$/i).click({ force: true });
+        // Accept privacy policy (must always be shown)
+        acceptPrivacyNotice("en");
 
         // Step through confirmations (MUI Stepper primary button)
         completeConfirmStepper("en");
@@ -419,9 +431,8 @@ describe("Spotivey critical journey", () => {
         cy.visit(`/?surveyID=${encodeURIComponent(surveyId)}&participant=1&lang=en`);
         cy.wait(1000); // Wait for potential loading states
 
-        // Accept privacy policy 
-        // TODO: Should be there always
-        // cy.get('.speicher-button').contains('button', /^ok$/i).click({ force: true });
+        // Accept privacy policy again (must always be shown)
+        acceptPrivacyNotice("en");
 
 
         // 8. Results and CSV / Delete again

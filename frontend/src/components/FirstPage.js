@@ -84,7 +84,7 @@ function AppRoutes() {
             setLanguage(data.language);
             setRoomCode(data.roomCode);
             setParticipant(data.participant);
-            setWelcomePageOK(data.privacy_accepted);
+            setWelcomePageOK(true);
             setParamsObjectSession(data.paramsObject);
             setCreateRoom(true);
             window.history.replaceState({}, "", "/");
@@ -137,7 +137,6 @@ function AppRoutes() {
           setLanguage(data.language);
           setRoomCode(data.roomCode);
           setParticipant(data.participant);
-          setWelcomePageOK(data.privacy_accepted);
           setParamsObjectSession(data.paramsObject);
         });
     }

@@ -101,8 +101,6 @@ export default function WelcomePage(props) {
                             props.setWelcomePageOK(true)
                         })
                         .catch((error) => {
-                            console.log("Privacy policy data:", data);
-                            console.log("Setting welcomePageOK to true");
                             console.error("Error accepting privacy policy:", error);
                         })
 
