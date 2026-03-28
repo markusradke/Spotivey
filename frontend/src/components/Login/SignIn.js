@@ -102,7 +102,6 @@ export default function LoginPage() {
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
                   onClick={handleLoginButtonPressed}
-                  component={Link}
                 >
                   Sign In
                 </Button>

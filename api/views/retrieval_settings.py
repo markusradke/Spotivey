@@ -55,7 +55,7 @@ class CreateSettings(APIView):
             settings.save()
             settings.user.add(user.values()[0].get('id'))
 
-            return Response({'msg': 'Settings created'}, status=status.HTTP_200_OK)
+            return Response({'msg': 'Settings created'}, status=status.HTTP_201_CREATED)
         
 class CheckSurveyIDExists(APIView): 
     # check if a survey ID already exists when creating new retrieval settings

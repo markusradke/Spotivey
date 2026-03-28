@@ -54,15 +54,6 @@ export const columns = [
     width: 200,
     height: 100,
     headerName: 'Get User\'s Saved Tracks',
-    /* renderHeader: () => {
-      return(
-      <Tooltip title="Get User's Saved Tracks" placement="top">
-        <Typography>
-          <subtitle1>Spotify Tracks </subtitle1>
-          <h6>Get User's Saved Tracks</h6>
-        </Typography>
-      </Tooltip>
-    )}, */
     renderCell: (params) => renderCellSpotifyText(params),
   },
   {

@@ -1,25 +1,6 @@
 from django.db import models
-import random
-import string
 from django.contrib.auth.models import User
 
-def generate_unique_code():
-    """Generate unique 6-character code for UserCode"""
-    length = 6
-    
-    while True:
-        code = ''.join(random.choices(string.ascii_uppercase, k=length))
-        if UserCode.objects.filter(code=code).count() == 0:
-            break
-    
-    return code
-
-class UserCode(models.Model):
-    code = models.CharField(max_length=8, default='', unique=True)
-    host = models.CharField(max_length=50)
-    user = models.ManyToManyField(User, default='')
-
-    
 class RetrievalSetting(models.Model):
     defaultConfirmTextEng = """Please confirm the results.
 If some results are unfamiliar or uncomfortable to you, please feel free to contradict the results."""

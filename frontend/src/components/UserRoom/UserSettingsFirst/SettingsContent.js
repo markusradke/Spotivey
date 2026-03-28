@@ -27,7 +27,6 @@ export default function SettingsContent(props) {
     const [openTooltipCopy, setOpenTooltipCopy] = React.useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [deleteDialogMessage, setDeleteDialogMessage] = useState('');
-    const [participantCount, setParticipantCount] = useState(0);
     const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
     const [updateDialogMessage, setUpdateDialogMessage] = useState('');
 
@@ -80,7 +79,6 @@ export default function SettingsContent(props) {
 
             if (hasData) {
                 // Show info dialog - cannot delete
-                setParticipantCount(totalParticipants);
                 setDeleteDialogMessage(
                     `${totalParticipants} participant(s) have contributed ${totalRecords} data record(s). ` +
                     `Please delete the results data first if you wish to remove this survey setting.`

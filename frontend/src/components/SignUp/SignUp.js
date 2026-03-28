@@ -8,7 +8,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { createSettingsUser } from "../../api/surveyApi";
 
 export default function SignUpPage() {
-    const [name, setName] = useState('')
     const [vorname, setVorname] = useState('')
     const [nachname, setNachname] = useState('')
     const [username, setUsername] = useState('')
@@ -20,19 +19,9 @@ export default function SignUpPage() {
     const navigate = useNavigate();
 
     function handleSignUpButtonPressed() {
-        const requestOptions = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                email: emailAddress,
-                password: password,
-                first_name: vorname,
-                last_name: nachname,
-                name: name,
-                username: username,
-            }),
-        };
         createSettingsUser({
+            first_name: vorname,
+            last_name: nachname,
             username: username,
             email: emailAddress,
             password: password,
@@ -41,23 +30,11 @@ export default function SignUpPage() {
                 setError(true);
                 return;
             }
-            if (data.error === true) {
-                setErrorUsername(data.errorUsername);
-                setErrorEmail(data.errorEmail);
-                setErrorPW(data.errorPW);
-            } else {
+            else {
                 navigate('/login');
             }
         });
     }
-
-    function Name() {
-        setName(vorname + ' ' + nachname)
-    }
-
-    useEffect(() => {
-        Name()
-    }, [vorname, nachname])
 
     function handleUsername(e) {
         setUsername(e.target.value)

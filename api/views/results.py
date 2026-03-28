@@ -59,12 +59,12 @@ class SaveCheckData(APIView):
     
     # Map index to (model_class, identifier_field, identifier_key_in_request)
     DATA_TYPE_MAP = {
-        0: (SavedTrack, 'isrc', 'isrc'),
-        1: (TopTrack, 'isrc', 'isrc'),
-        2: (RecentTrack, 'isrc', 'isrc'),
-        3: (TopArtist, 'data__id', 'id'),
-        4: (FollowedArtist, 'data__id', 'id'),
-        5: (CurrentPlaylist, 'playlist_id', 'playlist_id'),
+        0: (SavedTrack, "spotify_id", "spotify_id"),
+        1: (TopTrack, "spotify_id", "spotify_id"),
+        2: (RecentTrack, "spotify_id", "spotify_id"),
+        3: (TopArtist, "spotify_id", "id"),
+        4: (FollowedArtist, "spotify_id", "id"),
+        5: (CurrentPlaylist, "playlist_id", "playlist_id"),
     }
 
     def post(self, request, format=None):

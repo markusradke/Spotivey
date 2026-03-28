@@ -9,7 +9,6 @@ from django.contrib.auth.models import User
 from django.http.response import JsonResponse
 
 
-from ..models import UserCode
 from ..serializers import CreateSettingsUserSerializer, LoginUserSerializerEins, LoginUserSerializerZwei    
 
 regexString = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
@@ -36,7 +35,6 @@ class GetUserSession(APIView):
 
         data = {
             'username': self.request.session.get('username'),
-            'code': self.request.session.get('code'),
             'fullName': fullName,
         }
         return JsonResponse(data, status=status.HTTP_200_OK)
@@ -93,24 +91,16 @@ class CreateSettingsUser(APIView):
 
             if serializer.is_valid():
                 password = serializer.data.get('password')
-                email_address = request.data.get('email').lower()
-                vorname = serializer.data.get('first_name')
-                nachname = serializer.data.get('last_name')
-                name = vorname + ' ' + nachname
+                email_address = serializer.data.get('email').lower()
+                first_name = serializer.data.get('first_name')
+                last_name = serializer.data.get('last_name')
                 username = serializer.data.get('username')
 
-                user = User(first_name=vorname, last_name=nachname, username=username,
+                user = User(first_name=first_name, last_name=last_name, username=username,
                             email=email_address, password=password)
                 user.save()
                 user.set_password(user.password)
                 user.save()
-
-                host = self.request.session.session_key
-
-                room = UserCode(host=host)
-                room.save()
-                self.request.session['room_code'] = room.code
-                room.user.add(user)
 
                 self.request.session['username'] = user.username
                 self.request.session['fullname'] = user.first_name.title() + ' ' + user.last_name.title()
@@ -206,11 +196,8 @@ class LoginSettingsUser(APIView):
             user = authenticate(username=caseSensitiveUsername, password=password)
             
         if user is not None:
-            code = UserCode.objects.filter(user=user.id)
-
             self.request.session['username'] = user.username
             self.request.session['fullname'] = user.first_name.title() + ' ' + user.last_name.title()
-            self.request.session['code'] = list(code.values_list('code'))[0][0]
 
             msg = {
 		        'username': user.username,

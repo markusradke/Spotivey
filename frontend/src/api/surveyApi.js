@@ -154,6 +154,7 @@ export async function loginSettingsUser(payload) {
 }
 
 export async function createSettingsUser(payload) {
+  console.log("Creating settings user with payload:", payload);
   const response = await fetch(
     "/api/create-settings-user",
     buildPostOptions(payload)
