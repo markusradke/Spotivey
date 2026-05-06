@@ -45,7 +45,6 @@ export default function SettingsContent(props) {
     }, [props.username]);
 
     function checkAndDelete() {
-        // Check participant count for all selected settings
         let promises = [];
         for (let zaehler = 0; zaehler < selectedRowSettings.length; zaehler++) {
             promises.push(
@@ -60,7 +59,6 @@ export default function SettingsContent(props) {
         }
 
         Promise.all(promises).then(results => {
-            // Sum up all participants and records
             let totalParticipants = 0;
             let totalRecords = 0;
             let hasData = false;
@@ -78,14 +76,12 @@ export default function SettingsContent(props) {
             console.log('Participant count results:', results);
 
             if (hasData) {
-                // Show info dialog - cannot delete
                 setDeleteDialogMessage(
-                    `${totalParticipants} participant(s) have contributed ${totalRecords} data record(s). ` +
+                    `${totalParticipants} participant(s) have contributed ${totalRecords} data record(s) (including incomplete). ` +
                     `Please delete the results data first if you wish to remove this survey setting.`
                 );
                 setOpenDeleteDialog(true);
             } else {
-                // No data - delete immediately
                 deleteSettings(selectedRowSettings);
             }
         });
@@ -112,7 +108,7 @@ export default function SettingsContent(props) {
                 }
                 if (data.hasData) {
                     setUpdateDialogMessage(
-                        `${data.participantCount} participant(s) have contributed ${data.totalRecords} data record(s). ` +
+                        `${data.participantCount} participant(s) have contributed ${data.totalRecords} data record(s) (including incomplete). ` +
                         `Settings cannot be modified after data collection has started.`
                     );
                     setOpenUpdateDialog(true);
@@ -143,7 +139,7 @@ export default function SettingsContent(props) {
                 }
                 if (data.hasData) {
                     setUpdateDialogMessage(
-                        `${data.participantCount} participant(s) have contributed ${data.totalRecords} data record(s). ` +
+                        `${data.participantCount} participant(s) have contributed ${data.totalRecords} data record(s) (including incomplete). ` +
                         `Settings cannot be modified after data collection has started.`
                     );
                     setOpenUpdateDialog(true);

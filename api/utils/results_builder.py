@@ -212,7 +212,9 @@ def getResultDict(surveyID):
     settings = RetrievalSetting.objects.filter(umfrageID=surveyID)
     
     data_types = []
-    all_participants = set()
+    all_participants = set(
+        p.participant for p in Participant.objects.filter(settings__in=settings)
+    )
     
     # Build results for each track type
     track_configs = [
@@ -224,9 +226,7 @@ def getResultDict(surveyID):
     for model_class, title, data_id in track_configs:
         result = _build_track_results(model_class, title, data_id, settings)
         data_types.append(result)
-        all_participants.update(row['participant'] for row in result['data'])
     
-    # Build results for each artist type
     artist_configs = [
         (TopArtist, 'Top Artists', 'topArtists'),
         (FollowedArtist, 'Followed Artists', 'followedArtists'),
@@ -235,19 +235,22 @@ def getResultDict(surveyID):
     for model_class, title, data_id in artist_configs:
         result = _build_artist_results(model_class, title, data_id, settings)
         data_types.append(result)
-        all_participants.update(row['participant'] for row in result['data'])
     
-    # Build profile results
     profile_result = _build_profile_results(settings)
     data_types.append(profile_result)
-    all_participants.update(row['participant'] for row in profile_result['data'])
 
-    # Build playlist results
     playlist_result = _build_playlist_results(settings)
     data_types.append(playlist_result)
-    all_participants.update(row['participant'] for row in playlist_result['data'])
-    
+
+    max_complete_participants = 0
+    for dt in data_types:
+        if dt['participantCount'] > max_complete_participants:
+            max_complete_participants = dt['participantCount']
+    total_participants = len(all_participants)
+    incomplete_participants = total_participants - max_complete_participants
+
     return {
         'dataTypes': data_types,
-        'participantList': list(all_participants)
+        'incompleteParticipants': incomplete_participants,
+        'totalNumberOfParticipants': total_participants,
     }

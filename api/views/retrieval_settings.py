@@ -209,8 +209,6 @@ class getSettingsFromIDView(APIView):
 
 
 class DeleteSettings(APIView):
-    # Retrieval profile is deleted - only if no participant data exists
-    
     lookup_url_kwarg = 'surveyid'
 
     def get(self, request):
@@ -222,18 +220,14 @@ class DeleteSettings(APIView):
                 return Response({'error': 'Survey ID not found'}, status=status.HTTP_404_NOT_FOUND)
             
             try:
-                # Delete follow-up survey settings first (not protected)
+                settings.delete()
+                
                 settingsTwo = FollowupSurvey.objects.filter(settings__in=settings)
                 settingsTwo.delete()
-                
-                # Try to delete the settings - will fail if protected data exists
-                settings.delete()
                 
                 return Response({'message': 'Settings deleted successfully'}, status=status.HTTP_200_OK)
                 
             except models.ProtectedError:
-                # This should rarely happen - frontend checks first
-                # Only occurs in race conditions or if frontend bypassed
                 return Response({
                     'error': 'Cannot delete settings with existing participant data',
                     'message': 'Participant data exists. Please delete the results data first.'

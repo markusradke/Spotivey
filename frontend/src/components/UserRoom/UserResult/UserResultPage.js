@@ -3,17 +3,19 @@ import headerSettings from '../Header/headerSettings';
 import { useNavigate } from "react-router";
 import { useState, useEffect } from 'react';
 import ResultContent from "./ResultContentUserPageComponent";
-import { CircularProgress, IconButton, Divider } from "@mui/material";
+import { Button, CircularProgress, IconButton, Divider, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+
 
 import {
+    deleteOnlyResults,
     fetchResultList,
     fetchSettingsList,
     fetchUserSession,
     spotifyGetAuthUrl2,
     spotifyIsAuthenticated,
 } from "../../../api/surveyApi";
-
 
 export default function UserResultPage(props) {
 
@@ -31,6 +33,10 @@ export default function UserResultPage(props) {
     const [checkThereAreData, setCheckThereAreData] = useState([])
 
     const [firstPage, setFirstPage] = useState(true)
+
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [surveyIdToDelete, setSurveyIdToDelete] = useState(null);
+
 
     const [indexResultsCard, setIndexResultsCard] = useState(-1)
 
@@ -89,7 +95,6 @@ export default function UserResultPage(props) {
                             return;
                         }
                         setResultsData(resultsData => [...resultsData, data])
-                        // Check which data types have results
                         const hasData = data.dataTypes.map(dt => dt.hasData)
                         setCheckThereAreData(checkThereAreData => [...checkThereAreData, hasData])
                         setResultsID(resultID => [...resultID, surveyIDRows[zaehler].umfrageID])
@@ -189,9 +194,24 @@ export default function UserResultPage(props) {
                                             <h5 class={'card-content-survey-name'}>
                                                 {resultsName[index]}
                                             </h5>
-                                            <p className={'card-content-survey-id'}>
-                                                {item}
+                                            <p className={'card-content-survey-info'}>
+                                                {item}, {resultsData[index].totalNumberOfParticipants} participants ({resultsData[index].incompleteParticipants} incomplete)
                                             </p>
+                                            {resultsData[index].totalNumberOfParticipants > 0 && !checkThereAreData[index].includes(true) && (
+                                                <Button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setSurveyIdToDelete(item);
+                                                        setOpenDeleteDialog(true);
+                                                    }}
+                                                    variant={'outlined'}
+                                                    startIcon={<DeleteOutlinedIcon />}
+                                                    size="small"
+                                                    style={{ marginTop: '10px' }}
+                                                >
+                                                    Delete Incomplete Only Results
+                                                </Button>
+                                            )}
                                         </div>
                                         <div style={{ display: 'flex' }}>
                                             {resultsData[index]?.dataTypes?.map((dataType, dtIndex) => {
@@ -216,6 +236,17 @@ export default function UserResultPage(props) {
         )
     }
 
+    function handleCloseDialog() {
+        setOpenDeleteDialog(false);
+        setSurveyIdToDelete(null);
+    }
+
+    function deleteResults(surveyID) {
+        deleteOnlyResults(surveyID).then(() => {
+            location.reload();
+        });
+    }
+
     function resultHeadline() {
         return (
             <React.Fragment>
@@ -233,7 +264,7 @@ export default function UserResultPage(props) {
                         Select a data field to view the related results.
                     </h2> :
                     <h2 className="user-result-subtitle">
-                        There are no results yet, start a survey and use Spotivey to get results.
+                        There are no complete results yet. You can delete incomplete results in order to delete the retrieval settings.
                     </h2>
                 }
             </React.Fragment>
@@ -293,6 +324,26 @@ export default function UserResultPage(props) {
                     </div>
                 </div>
             </div>
+            <Dialog
+                open={openDeleteDialog}
+                onClose={handleCloseDialog}
+            >
+                <DialogTitle>
+                    {"Delete Incomplete Results?"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Do you really want to delete all results for the survey with ID {surveyIdToDelete}?
+                        All results will be removed and you will not be able to get them back.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog}>Disagree</Button>
+                    <Button onClick={() => { deleteResults(surveyIdToDelete) }}>
+                        Agree
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </React.Fragment>
 
     )

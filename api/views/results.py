@@ -23,8 +23,8 @@ class getResultListView(APIView):
     def get(self, request):
         surveyID = request.GET.get(self.lookup_url_kwarg)
         if surveyID is not None:
-            settings = getResultDict(surveyID)
-            return Response(settings, status=status.HTTP_200_OK)
+            results = getResultDict(surveyID)
+            return Response(results, status=status.HTTP_200_OK)
         return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -156,7 +156,6 @@ class SaveCheckData(APIView):
 
            
 class GetParticipantCountForSurvey(APIView):
-    # Get count of participants and data records for a survey ID
     lookup_url_kwarg = 'surveyID'
 
     def get(self, request): 
@@ -166,8 +165,10 @@ class GetParticipantCountForSurvey(APIView):
             if not settings.exists():
                 return Response({'error': 'Survey ID not found'}, status=status.HTTP_404_NOT_FOUND)
 
-            # count participants across all data types
-            participants = set()
+            participants = set(
+                p.participant for p in Participant.objects.filter(settings__in=settings)
+            )
+            total_participants = len(participants)
             total_records = 0
 
             for model in [SavedTrack, TopTrack, TopArtist, 
@@ -178,10 +179,11 @@ class GetParticipantCountForSurvey(APIView):
                 for record in records: 
                     if record.participant: 
                         participants.add(record.participant.participant)
+
             return Response({
                 'surveyID': surveyID, 
-                'participantCount': len(participants), 
+                'participantCount': total_participants, 
                 'totalRecords': total_records, 
-                'hasData': total_records > 0
+                'hasData': total_participants > 0
             }, status=status.HTTP_200_OK)
         return Response({'error': 'Survey ID parameter missing'}, status=status.HTTP_400_BAD_REQUEST)
