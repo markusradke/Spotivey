@@ -220,3 +220,6 @@ class SpotiveyBackendJourneyTests(TestCase):
         # delete settings
         del_settings2 = self.client.get(f"/api/delete-settings?surveyid={self.survey_id}")
         self.assertEqual(del_settings2.status_code, 200)
+
+        os.environ["SPOTIVEY_TEST_MODE"] = "0"
+        print("SPOTIVEY_TEST_MODE disabled after test completion.")

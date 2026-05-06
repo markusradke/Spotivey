@@ -219,7 +219,7 @@ export default function SettingsDialog(props) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleCloseDialog}>
-                    Change
+                    Cancel
                 </Button>
                 <Button onClick={handleOkayDialog}>
                     Okay

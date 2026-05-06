@@ -75,6 +75,7 @@ function normalizeSettings(rawSettings) {
     normalized[DATA_TYPES.TOP_ARTISTS] = {
         check: topArtists.check || false,
         limit: topArtists.limit || 20,
+        timeRange: topArtists.timeRange || "",
         confirmCheck: topArtists.confirmCheck || false,
     };
 

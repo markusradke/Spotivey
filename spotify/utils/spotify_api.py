@@ -64,6 +64,7 @@ def refresh_spotify_token(session_id):
 
 def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
     if os.environ.get("SPOTIVEY_TEST_MODE") == "1":
+        print("SPOTIVEY_TEST_MODE is enabled. Returning fixture data for endpoint:", endpoint)
         from spotify.utils.spotify_fixtures import get_fixture_for_endpoint
 
         fixture = get_fixture_for_endpoint(endpoint)
@@ -80,6 +81,7 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
     if put_:
         put(BASE_URL + endpoint, headers=headers)
 
+
     s = Session()
 
     retries = Retry(total=5,
@@ -89,6 +91,7 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
     s.mount(BASE_URL + endpoint, HTTPAdapter(max_retries=retries))
 
     response = s.get(BASE_URL + endpoint, headers=headers)
+    print(f"Spotify API request to {BASE_URL + endpoint} returned status code {response.status_code}")
 
     try:
         return response.json()
