@@ -6,7 +6,6 @@ from .spotify_api import (
     is_spotify_authenticated,
     refresh_spotify_token,
     execute_spotify_api_request,
-    getAudioFeatures
 )
 
 from .batch_operations import (
@@ -38,7 +37,6 @@ __all__ = [
     'is_spotify_authenticated',
     'refresh_spotify_token',
     'execute_spotify_api_request',
-    'getAudioFeatures',
     # Batch operations
     'batch_fetch_albums',
     'batch_fetch_artists',

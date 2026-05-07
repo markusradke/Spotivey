@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useState, useEffect, useRef } from 'react';
 import { Button, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import AudioFeaturesDashboard from './AudioFeaturesDashboard.js';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { CSVLink } from "react-csv";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -16,14 +15,11 @@ import {
     deleteOnlyResults,
     fetchUserSession,
     saveToCsvFile,
-    spotifyAudioFeatures,
 } from "../../../api/surveyApi";
 
 export default function ResultContent(props) {
 
     const chartRef = useRef(null);
-
-    const [dataAudioFeatures, setDataAudioFeatures] = useState([])
 
     const [fileData, setFileData] = useState(null);
 
@@ -38,16 +34,6 @@ export default function ResultContent(props) {
 
     function handleCloseDialog() {
         setOpenDeleteDialog(false);
-    }
-
-    function getSpotifyAudioFeautures(dataString) {
-        spotifyAudioFeatures(dataString, props.surveyID)
-            .then(({ ok, data }) => {
-                if (!ok || !data || data.error) {
-                    return;
-                }
-                setDataAudioFeatures(data)
-            })
     }
 
     const handleDataFetch = async () => {
@@ -185,13 +171,6 @@ export default function ResultContent(props) {
 
         return (
             <React.Fragment>
-                {type === 'Tracks' ?
-                    <Button
-                        onClick={() => { getSpotifyAudioFeautures(dataString) }}
-                        variant="outlined"
-                    >
-                        Get Spotify Audio Features Results
-                    </Button> : null}
                 {renderPagination()}
                 <table id={'tableResultParticipant'}>
                     <tr>
@@ -277,8 +256,8 @@ export default function ResultContent(props) {
                     Results - {title}
                 </h1>
                 <h1 className="user-result-headline-subtitle">
-                    Survey Name: {props.surveyName} <br></br>
-                    Survey ID: {props.surveyID}
+                    Survey: {props.surveyName} <br></br>
+                    ID: {props.surveyID}
                 </h1>
                 <h2>
                     {resultCount} results from {participantCount} participants
@@ -319,92 +298,88 @@ export default function ResultContent(props) {
 
     return (
         <React.Fragment>
-            {dataAudioFeatures.length === 0 ?
-                <React.Fragment>
-                    <div className='buttons-result-wrapper'>
-                        {fileData ?
-                            <div className={'button-result-user-container'}>
-                                <CSVLink
-                                    className={'csv-link-export-file'}
-                                    data={fileData}
-                                    filename={"Spotivey_Result_" + props.surveyID + "_Data.csv"}
-                                    target="_blank"
-                                    separator={";"}
-                                >
-                                    <div className={'button-csv-inner-container'}>
-                                        <div className={'button-csv-title'}>
-                                            Export CSV-File
-                                        </div>
-                                        <div className={'button-csv-icon'}>
-                                            <FileDownloadIcon />
-                                        </div>
-                                    </div>
-                                </CSVLink>
-                                <Button
-                                    onClick={() => { setOpenDeleteDialog(true) }}
-                                    variant={'outlined'}
-                                    startIcon={<DeleteOutlinedIcon />}
-                                >
-                                    Delete Results
-                                </Button>
-                            </div> : null
-                        }
-                    </div>
-                    {props.firstPage ?
-                        <div className={'render-result-card-container'}>
-                            {props.data.dataTypes?.map((dataType, index) => {
-                                return (
-                                    <React.Fragment key={index}>
-                                        {dataType.hasData ?
-                                            <div
-                                                className={'render-result-card'}
-                                                onClick={() => {
-                                                    clickListEntryCard(dataType)
-                                                }}
-                                            >
-                                                {renderResultsCard(dataType.title)}
-                                            </div> : null}
-                                    </React.Fragment>
-                                )
-                            })}
-                        </div> :
-                        <div>
-                            {(() => {
-                                const activeIndex = listEntriesShow.indexOf(true)
-                                const activeDataType = props.data.dataTypes[activeIndex]
-                                return renderListEntriesData(
-                                    activeDataType.data.sort((a, b) => parseFloat(a.id) - parseFloat(b.id)),
-                                    activeDataType.title,
-                                    activeDataType.resultCount,
-                                    activeDataType.participantCount,
-                                    activeDataType.type,
-                                    activeIndex
-                                )
-                            })()}
-                        </div>
-                    }
-                    <Dialog
-                        open={openDeleteDialog}
-                        onClose={handleCloseDialog}
-                    >
-                        <DialogTitle>
-                            {"Delete Results?"}
-                        </DialogTitle>
-                        <DialogContent>
-                            <DialogContentText>
-                                Do you really want to delete all results for the survey with ID {props.surveyID}?
-                                All results will be removed and you will not be able to get them back.
-                            </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleCloseDialog}>Disagree</Button>
-                            <Button onClick={() => { deleteResults(props.surveyID) }}>
-                                Agree
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                </React.Fragment> :
-                AudioFeaturesDashboard(dataAudioFeatures, setDataAudioFeatures, chartRef)}
+            <div className='buttons-result-wrapper'>
+                {fileData ?
+                    <div className={'button-result-user-container'}>
+                        <CSVLink
+                            className={'csv-link-export-file'}
+                            data={fileData}
+                            filename={"Spotivey_Result_" + props.surveyID + "_Data.csv"}
+                            target="_blank"
+                            separator={";"}
+                        >
+                            <div className={'button-csv-inner-container'}>
+                                <div className={'button-csv-title'}>
+                                    Export CSV-File
+                                </div>
+                                <div className={'button-csv-icon'}>
+                                    <FileDownloadIcon />
+                                </div>
+                            </div>
+                        </CSVLink>
+                        <Button
+                            onClick={() => { setOpenDeleteDialog(true) }}
+                            variant={'outlined'}
+                            startIcon={<DeleteOutlinedIcon />}
+                        >
+                            Delete Results
+                        </Button>
+                    </div> : null
+                }
+            </div>
+            {props.firstPage ?
+                <div className={'render-result-card-container'}>
+                    {props.data.dataTypes?.map((dataType, index) => {
+                        return (
+                            <React.Fragment key={index}>
+                                {dataType.hasData ?
+                                    <div
+                                        className={'render-result-card'}
+                                        onClick={() => {
+                                            clickListEntryCard(dataType)
+                                        }}
+                                    >
+                                        {renderResultsCard(dataType.title)}
+                                    </div> : null}
+                            </React.Fragment>
+                        )
+                    })}
+                </div> :
+                <div>
+                    {(() => {
+                        const activeIndex = listEntriesShow.indexOf(true)
+                        const activeDataType = props.data.dataTypes[activeIndex]
+                        return renderListEntriesData(
+                            activeDataType.data.sort((a, b) => parseFloat(a.id) - parseFloat(b.id)),
+                            activeDataType.title,
+                            activeDataType.resultCount,
+                            activeDataType.participantCount,
+                            activeDataType.type,
+                            activeIndex
+                        )
+                    })()}
+                </div>
+            }
+            <Dialog
+                open={openDeleteDialog}
+                onClose={handleCloseDialog}
+            >
+                <DialogTitle>
+                    {"Delete Results?"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Do you really want to delete all results for the survey with ID {props.surveyID}?
+                        All results will be removed and you will not be able to get them back.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog}>Disagree</Button>
+                    <Button onClick={() => { deleteResults(props.surveyID) }}>
+                        Agree
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </React.Fragment>
     )
 }

@@ -166,15 +166,6 @@ export async function fetchParticipantSession() {
   return getJson("/api/get-participant-session", true);
 }
 
-export async function spotifyAudioFeatures(dataString, surveyId) {
-  return getJson(
-    "/spotify/audio-features-spotify?dataString=" +
-    encodeURIComponent(dataString) +
-    "&surveyID=" +
-    encodeURIComponent(surveyId)
-  );
-}
-
 export async function updateConfirmText(payload) {
   const response = await fetch(
     "/api/update-confirm-text",

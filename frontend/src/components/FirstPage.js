@@ -39,9 +39,7 @@ const UserTutorialPage = lazy(
 const UserResultPage = lazy(
   () => import("./UserRoom/UserResult/UserResultPage")
 );
-const AudioFeaturesDashboard = lazy(
-  () => import("./UserRoom/UserResult/AudioFeaturesDashboard")
-);
+
 const LoginPage = lazy(() => import("./Login/SignIn"));
 const SignUpPage = lazy(() => import("./SignUp/SignUp"));
 
@@ -184,11 +182,6 @@ function AppRoutes() {
           <Route exact path="/user/results" element={<UserResultPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
-          <Route
-            exact
-            path="/user/results-audio-features"
-            element={<AudioFeaturesDashboard />}
-          />
           <Route path='/end-room/:lang' element={<EndPage />} />
           <Route path={'/privacy'} element={<PrivacyComponent />} />
           <Route path={'/version'} element={<Version />} />

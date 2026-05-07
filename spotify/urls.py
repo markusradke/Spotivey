@@ -16,5 +16,4 @@ urlpatterns = [
     path('followed-artists', GetFollowedArtistsSpotify.as_view()),
     path('current-playlists', GetPlaylistsSpotify.as_view()),
     path('recently-played-tracks', GetRecentlyPlayedTracksSpotify.as_view()),
-    # path('audio-features-spotify', GetAudioFeaturesSpotify.as_view()),
 ]

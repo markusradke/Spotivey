@@ -99,28 +99,6 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
         return {'Error': 'Issue with request'}
 
 
-def getAudioFeatures(session_key, id):
-    endpoint = "audio-features/" + id
-
-    response = execute_spotify_api_request(session_key, endpoint)
-
-    dataAudioFeatures = {
-        'acousticness': response.get('acousticness'),
-        'danceability': response.get('danceability'),
-        'energy': response.get('energy'),
-        'key': response.get('key'),
-        'loudness': response.get('loudness'),
-        'speechiness': response.get('speechiness'),
-        'instrumentalness': response.get('instrumentalness'),
-        'liveness': response.get('liveness'),
-        'valence': response.get('valence'),
-        'tempo': response.get('tempo'),
-        'duration_ms': response.get('duration_ms'),
-        'spotify_id': id,
-    }
-    
-    return dataAudioFeatures
-
 def probe_authentication_scopes(session_id: str) -> bool:
     """
     Returns True only if the stored token can access all endpoints needed
