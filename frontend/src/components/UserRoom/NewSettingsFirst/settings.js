@@ -339,7 +339,7 @@ export default function SettingsPage(props) {
                           Get User's Saved Tracks
                         </li>
                         <li className={"list-new-settings-collapse-item"}>
-                          Get Last Played Tracks
+                          Get RecentlyPlayed Tracks
                         </li>
                       </ul>
                     </Collapse>

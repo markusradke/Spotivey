@@ -1,4 +1,4 @@
-from .auth import AuthURL, AuthURL2, spotify_callback, spotify_callback2, IsAuthenticated
+from .auth import AuthURL, spotify_callback, IsAuthenticated
 # from .audio_features import GetAudioFeaturesSpotify
 from .artists import TopArtists, GetFollowedArtistsSpotify
 from .tracks import GetTopTracks, GetSavedTracksSpotify, GetRecentlyPlayedTracksSpotify
@@ -7,9 +7,7 @@ from .profile import GetUsersProfileSpotify
 
 __all__ = [
     'AuthURL',
-    'AuthURL2', 
     'spotify_callback',
-    'spotify_callback2',
     'IsAuthenticated',
     'GetAudioFeaturesSpotify',
     'TopArtists',

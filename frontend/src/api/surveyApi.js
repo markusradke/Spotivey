@@ -166,14 +166,6 @@ export async function fetchParticipantSession() {
   return getJson("/api/get-participant-session", true);
 }
 
-export async function spotifyIsAuthenticated() {
-  return getJson("/spotify/is-authenticated", true);
-}
-
-export async function spotifyGetAuthUrl2() {
-  return getJson("/spotify/get-auth-url2", true);
-}
-
 export async function spotifyAudioFeatures(dataString, surveyId) {
   return getJson(
     "/spotify/audio-features-spotify?dataString=" +

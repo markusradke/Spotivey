@@ -39,7 +39,7 @@ export default function SettingsDialog(props) {
 
     const textSpotify = ["Get User's Saved Tracks", "Get User's Profile", "Get User's Top Items (Tracks)",
         "Get User's Top Items (Artists)", "Get User's Followed Artists", "Get User's Playlists",
-        "Get Last Played Tracks"]
+        "Get Recently Played Tracks"]
 
     const handleCloseDialog = () => {
         props.props[0][1](false)

@@ -70,7 +70,7 @@ export default function ConfirmStepper({
                         <div className="render-result-explanation-container">
                             <div className="render-result-explanation-inner">
                                 <body1 className="render-result-explanation">
-                                    {language === "de"
+                                    {language === "en"
                                         ? currentConfirmText?.[0]
                                         : currentConfirmText?.[1]}
                                 </body1>

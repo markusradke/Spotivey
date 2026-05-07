@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Checkbox, Slider } from "@mui/material";
 import ISO3166_1 from './Components/iso';
-import { marks} from './Components/settingsConst';
+import { marks } from './Components/settingsConst';
 import { confirmCheck } from "./Components/ConfirmCheck";
 import LimitComponent from "./Components/limitComponent";
 import MarketComponent from "./Components/MarketComponent";
@@ -17,7 +17,7 @@ export function tracksContentSettings(
     confirmRecentlyTracksYes, setConfirmRecentlyTracksYes,
     setStateTextST, stateTextST, setStateTextRT, stateTextRT
 ) {
-    return(
+    return (
         <React.Fragment>
             <React.Fragment>
                 <h2 class='settings-content-item-title'>
@@ -41,13 +41,14 @@ export function tracksContentSettings(
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
                             <LimitComponent />
-                            <Slider 
+                            <Slider
                                 aria-valuetext='saved'
                                 aria-label="SliderSavedTracks"
-                                defaultValue={savedTracksLimit} 
+                                defaultValue={savedTracksLimit}
                                 onChange={(e, newValue) => {
-                                    setSavedTracksLimit(newValue);}}
-                                min={1} 
+                                    setSavedTracksLimit(newValue);
+                                }}
+                                min={1}
                                 max={50}
                                 step={1}
                                 marks={marks}
@@ -56,16 +57,16 @@ export function tracksContentSettings(
                         </div>
                         <MarketComponent />
                         <div className={'autocomplete-container'}>
-                            <ISO3166_1 props={[tracksMarket, setTracksMarket]}/>
+                            <ISO3166_1 props={[tracksMarket, setTracksMarket]} />
                         </div>
                         {confirmCheck(confirmSavedTracksYes, setConfirmSavedTracksYes)}
                     </div>
                 </div>
                 <div className="confirm-check-container-outer">
-                    
+
                 </div>
                 <h2 data-heading='true' class='settings-content-item-title'>
-                    Get Last Played Tracks
+                    Get Recently Played Tracks
                 </h2>
                 <h2 class='figcaption-text'>
                     Get tracks from the current user's recently played tracks. <br></br> Note: Currently doesn't support podcast episodes.
@@ -76,22 +77,23 @@ export function tracksContentSettings(
                             color="primary"
                             checked={recentlyTracksChecked}
                             onChange={(e) => {
-                            setRecentlyTracksChecked(e.target.checked);
+                                setRecentlyTracksChecked(e.target.checked);
                             }}
                             style={{
-                            color: "#C40D1E"
+                                color: "#C40D1E"
                             }}
                         />
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
                             <LimitComponent />
-                            <Slider 
+                            <Slider
                                 aria-label="SliderRecentlyTracks"
-                                defaultValue={recentlyTracksLimit} 
+                                defaultValue={recentlyTracksLimit}
                                 onChange={(e, newValue) => {
-                                setRecentlyTracksLimit(newValue);}}
-                                min={1} 
+                                    setRecentlyTracksLimit(newValue);
+                                }}
+                                min={1}
                                 max={50}
                                 step={1}
                                 marks={marks}

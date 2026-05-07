@@ -48,18 +48,8 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie den 
     recent_tracks_confirm = models.BooleanField(default=True)
     recent_tracks_limit = models.PositiveIntegerField(default=20)
     
-    confirmTextSTEng = models.TextField(default=defaultConfirmTextEng)
-    confirmTextTTEng = models.TextField(default=defaultConfirmTextEng)
-    confirmTextRTEng = models.TextField(default=defaultConfirmTextEng)
-    confirmTextTAEng = models.TextField(default=defaultConfirmTextEng)
-    confirmTextFAEng = models.TextField(default=defaultConfirmTextEng)
-    confirmTextCPEng = models.TextField(default=defaultConfirmTextEng)
-    confirmTextSTDe = models.TextField(default=defaultConfirmTextDe)
-    confirmTextTTDe = models.TextField(default=defaultConfirmTextDe)
-    confirmTextRTDe = models.TextField(default=defaultConfirmTextDe)
-    confirmTextTADe = models.TextField(default=defaultConfirmTextDe)
-    confirmTextFADe = models.TextField(default=defaultConfirmTextDe)
-    confirmTextCPDe = models.TextField(default=defaultConfirmTextDe)
+    confirmTextEng = models.TextField(default=defaultConfirmTextEng)
+    confirmTextDe = models.TextField(default=defaultConfirmTextDe)
 
     def __str__(self):
         return self.nameUmfrage + " (survey ID: " + self.umfrageID + ")"

@@ -59,7 +59,7 @@ export const columns = [
   {
     field: 'recently_played',
     width: 200,
-    headerName: 'Get Last Played Tracks',
+    headerName: 'Get Recently Played Tracks',
     renderCell: (params) => renderCellSpotifyText(params),
   },
   {

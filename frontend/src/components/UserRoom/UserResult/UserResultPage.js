@@ -13,8 +13,6 @@ import {
     fetchResultList,
     fetchSettingsList,
     fetchUserSession,
-    spotifyGetAuthUrl2,
-    spotifyIsAuthenticated,
 } from "../../../api/surveyApi";
 
 export default function UserResultPage(props) {
@@ -63,18 +61,6 @@ export default function UserResultPage(props) {
                 }
 
                 setUsername(data.username)
-
-                spotifyIsAuthenticated().then(({ ok: ok2, data: data2 }) => {
-                    if (!ok2 || !data2 || data2.status) {
-                        return;
-                    }
-                    spotifyGetAuthUrl2().then(({ ok: ok3, data: data3 }) => {
-                        if (!ok3 || !data3) {
-                            return;
-                        }
-                        window.location.replace(data3.url);
-                    });
-                })
             });
         }
         getParticipantSession();

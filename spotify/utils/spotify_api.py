@@ -120,3 +120,32 @@ def getAudioFeatures(session_key, id):
     }
     
     return dataAudioFeatures
+
+def probe_authentication_scopes(session_id: str) -> bool:
+    """
+    Returns True only if the stored token can access all endpoints needed
+    for participant retrieval (i.e., required scopes are actually granted).
+    Relevant for cases where users are logged in but have not granted all required scopes.
+    """
+    probe_endpoints = [
+        "me",  # user-read-private (and usually user-read-email if granted)
+        "me/tracks?limit=1",  # user-library-read
+        "me/top/tracks?time_range=short_term&limit=1",  # user-top-read
+        "me/following?type=artist&limit=1",  # user-follow-read
+        "me/playlists?limit=1",  # playlist-read-private
+        "me/player/recently-played?limit=1",  # user-read-recently-played
+    ]
+
+    for endpoint in probe_endpoints:
+        response: dict = execute_spotify_api_request(session_id, endpoint)
+
+        error = response.get("error")
+        if isinstance(error, dict):
+            status_code = error.get("status")
+            if status_code in (401, 403):
+                return False
+
+        if response.get("Error"):
+            return False
+
+    return True

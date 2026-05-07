@@ -35,7 +35,7 @@ export default function UserTutorialPage(props) {
     setCollapseOpen(items)
   }
 
-  const listItem = ['Get User\'s Saved Tracks', 'Get Last Played Tracks', 'Get User\'s Profile',
+  const listItem = ['Get User\'s Saved Tracks', 'Get Recently Played Tracks', 'Get User\'s Profile',
     'Get User\'s Top Items (Tracks)', 'Get User\'s Top Items (Artists)', 'Get User\'s Followed Artists',
     'Get User\'s Playlists']
 

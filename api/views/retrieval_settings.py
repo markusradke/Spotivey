@@ -86,9 +86,7 @@ class getSettingsListView(APIView):
                 settings = RetrievalSetting.objects.filter(user=id)
 
                 settingslist = np.array(settings.values_list('id', 'nameUmfrage', 'umfrageID', 'umfrageURL'))
-                confirmTextList = np.array(settings.values_list('confirmTextSTEng', 'confirmTextTTEng', 'confirmTextRTEng', 
-                    'confirmTextTAEng', 'confirmTextFAEng', 'confirmTextCPEng', 'confirmTextSTDe', 'confirmTextTTDe', 
-                    'confirmTextRTDe', 'confirmTextTADe', 'confirmTextFADe', 'confirmTextCPDe'))
+                confirmTextList = np.array(settings.values_list('confirmTextDe', 'confirmTextEng'))
 
                 settingslistdata = np.array(settings.values_list('data'))
                 
@@ -101,9 +99,7 @@ class getSettingsListView(APIView):
                         'umfrageID': settingslist[i][2], 
                         'umfrageURL': settingslist[i][3],
                         'confirmText': [
-                            [confirmTextList[0][6], confirmTextList[0][0]], [confirmTextList[0][7], confirmTextList[0][1]], 
-                            [confirmTextList[0][8], confirmTextList[0][2]], [confirmTextList[0][9], confirmTextList[0][3]], 
-                            [confirmTextList[0][10], confirmTextList[0][4]], [confirmTextList[0][11], confirmTextList[0][5]]
+                            [confirmTextList[0][0], confirmTextList[0][1]]
                         ],
                         'saved_tracks': payload['saved_tracks'],
                         'profile': payload['profile'],
@@ -160,18 +156,10 @@ class getSettingsFromIDView(APIView):
                 settingslistdata = np.array(settings.values_list('data'))
 
                 settingslist = np.array(settings.values_list('id', 'nameUmfrage', 'umfrageID', 'umfrageURL'))
-                confirmTextList = np.array(settings.values_list('confirmTextSTEng', 'confirmTextTTEng', 'confirmTextRTEng', 
-                    'confirmTextTAEng', 'confirmTextFAEng', 'confirmTextCPEng', 'confirmTextSTDe', 'confirmTextTTDe', 
-                    'confirmTextRTDe', 'confirmTextTADe', 'confirmTextFADe', 'confirmTextCPDe'))
 
                 payload = build_retrieval_settings_payload(settings[0])
                 
 
-                confirmTextAll = [
-                            [confirmTextList[0][6], confirmTextList[0][0]], [confirmTextList[0][7], confirmTextList[0][1]], 
-                            [confirmTextList[0][8], confirmTextList[0][2]], [confirmTextList[0][9], confirmTextList[0][3]], 
-                            [confirmTextList[0][10], confirmTextList[0][4]], [confirmTextList[0][11], confirmTextList[0][5]]
-                        ]
 
                 checkArrayWithoutTwo = np.array([
                     payload['saved_tracks']['check'],
@@ -181,12 +169,18 @@ class getSettingsFromIDView(APIView):
                     payload['followed_artists']['check'],
                     payload['current_playlists']['check'],
                 ])
+                confirmTextList = np.array(settings.values_list('confirmTextEng', 'confirmTextDe'))
+                print("confirmTextList: ", confirmTextList)
+                confirmTextAll = np.array([
+                            [confirmTextList[0][0], confirmTextList[0][1]]
+                        ]).repeat(len(checkArrayWithoutTwo), axis=0)
+
 
                 rows = [{
                     'nameUmfrage': settingslist[0][1], 
                     'umfrageID': settingslist[0][2], 
                     'confirmText': confirmTextAll,
-                    'confirmTextOnlyCheck': np.array(confirmTextAll)[checkArrayWithoutTwo],
+                    'confirmTextOnlyCheck': confirmTextAll[checkArrayWithoutTwo],
                     'textAllg': payload['textAllg'],
                     'saved_tracks': payload['saved_tracks'],
                     'profile': payload['profile'],
@@ -289,31 +283,13 @@ class UpdateConfirmText(APIView):
 
             if settingsFilter.exists():
                 settings = settingsFilter
+            
+            settings.update(confirmTextEng=confirmTextArray[0], confirmTextDe=confirmTextArray[1])
                 
-                for i, data in enumerate(confirmTextArray):
-                    if i == 0:
-                        settings.update(confirmTextSTDe=data[0])
-                        settings.update(confirmTextSTEng=data[1])
-                    elif i == 1:
-                        settings.update(confirmTextTTDe=data[0])
-                        settings.update(confirmTextTTEng=data[1])
-                    elif i == 3:
-                        settings.update(confirmTextTADe=data[0])
-                        settings.update(confirmTextTAEng=data[1])
-                    elif i == 4:
-                        settings.update(confirmTextFADe=data[0])
-                        settings.update(confirmTextFAEng=data[1])
-                    elif i == 5:
-                        settings.update(confirmTextCPDe=data[0])
-                        settings.update(confirmTextCPEng=data[1])
-                    else:
-                        settings.update(confirmTextRTDe=data[0])
-                        settings.update(confirmTextRTEng=data[1])
 
-                return Response({}, status=status.HTTP_200_OK)
-            else:
-                return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
             
  

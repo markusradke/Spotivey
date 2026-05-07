@@ -436,7 +436,7 @@ export default function SettingsPageSecondTwo(props) {
                                             null
                                         }
                                         {checkRecentlyTracks ?
-                                            TracksSettingsSecondSurvey(limitItemsRecentlyTracks, 'Last Played Tracks',
+                                            TracksSettingsSecondSurvey(limitItemsRecentlyTracks, 'Recently Played Tracks',
                                                 selectedOptionRecentlyTracks, setSelectedOptionRecentlyTracks, 'Tracks', idName[2],
                                                 idTracks, 2, 0) :
                                             null
