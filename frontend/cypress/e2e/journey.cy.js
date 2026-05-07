@@ -115,7 +115,7 @@ function completeConfirmStepper(expectedLang) {
 
 function selectSurveyResultsAndWaitForButtons(surveyId) {
     cy.contains(
-        ".survey-id-check-result-list-container .card-content-survey-id",
+        ".survey-id-check-result-list-container .card-content-survey-info",
         String(surveyId),
         { timeout: 10000 }
     )
@@ -140,7 +140,7 @@ function deleteResultsForSurvey(surveyId) {
         .click({ force: true });
     cy.contains(/select a survey id/i, { timeout: 10000 }).should("be.visible");
     cy.contains(
-        ".survey-id-check-result-list-container .card-content-survey-id",
+        ".survey-id-check-result-list-container .card-content-survey-info",
         String(surveyId),
         { timeout: 10000 }
     ).should("be.visible");
@@ -429,10 +429,11 @@ describe("Spotivey critical journey", () => {
 
         // 7. Participant retrieves saved tracks
         cy.visit(`/?surveyID=${encodeURIComponent(surveyId)}&participant=1&lang=en`);
-        cy.wait(1000); // Wait for potential loading states
+        cy.wait(500); // Wait for potential loading states
 
         // Accept privacy policy again (must always be shown)
         acceptPrivacyNotice("en");
+        cy.wait(500); // Wait for potential loading states
 
 
         // 8. Results and CSV / Delete again
