@@ -44,7 +44,7 @@ export function tracksContentSettings(
                             <Slider
                                 aria-valuetext='saved'
                                 aria-label="SliderSavedTracks"
-                                defaultValue={savedTracksLimit}
+                                value={savedTracksLimit} // changed here
                                 onChange={(e, newValue) => {
                                     setSavedTracksLimit(newValue);
                                 }}
@@ -89,7 +89,7 @@ export function tracksContentSettings(
                             <LimitComponent />
                             <Slider
                                 aria-label="SliderRecentlyTracks"
-                                defaultValue={recentlyTracksLimit}
+                                value={recentlyTracksLimit}
                                 onChange={(e, newValue) => {
                                     setRecentlyTracksLimit(newValue);
                                 }}

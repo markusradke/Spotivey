@@ -230,7 +230,7 @@ function editSettingsToOnlySavedTracksWithoutConfirmation(surveyId) {
         .should('exist');
     setSpotifyOptionEnabled("Get User's Saved Tracks", true);
     setConfirmNoForOption("Get User's Saved Tracks");
-    setSpotifyOptionEnabled('Get Last Played Tracks', false);
+    setSpotifyOptionEnabled('Get Recently Played Tracks', false);
 
     cy.contains('a', /user's/i).click({ force: true });
     uncheckAllCheckboxesInActiveSlide();

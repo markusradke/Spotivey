@@ -170,7 +170,6 @@ class getSettingsFromIDView(APIView):
                     payload['current_playlists']['check'],
                 ])
                 confirmTextList = np.array(settings.values_list('confirmTextEng', 'confirmTextDe'))
-                print("confirmTextList: ", confirmTextList)
                 confirmTextAll = np.array([
                             [confirmTextList[0][0], confirmTextList[0][1]]
                         ]).repeat(len(checkArrayWithoutTwo), axis=0)
