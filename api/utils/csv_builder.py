@@ -4,7 +4,7 @@ import logging
 from spotify.models import (
     SavedTrack, TopTrack, RecentTrack,
     TopArtist, FollowedArtist,
-    ParticipantProfile, CurrentPlaylist
+    ParticipantProfile, CurrentPlaylist, SavedShow, SavedEpisode
 )
 
 
@@ -64,20 +64,6 @@ def _build_base_track_csv_row(track, track_type):
         'artist_names': track.artist_names or '',
         'artist_ids': ', '.join(artist_ids) if artist_ids else '',
         'artist_genres': ', '.join(sorted(set([g for artist in artist_genres for g in artist]))) if artist_genres else '',
-
-        # Audio features
-        # 'danceability': track.danceability if track.danceability is not None else '',
-        # 'energy': track.energy if track.energy is not None else '',
-        # 'key': track.key if track.key is not None else '',
-        # 'loudness': track.loudness if track.loudness is not None else '',
-        # 'mode': track.mode if track.mode is not None else '',
-        # 'speechiness': track.speechiness if track.speechiness is not None else '',
-        # 'acousticness': track.acousticness if track.acousticness is not None else '',
-        # 'instrumentalness': track.instrumentalness if track.instrumentalness is not None else '',
-        # 'liveness': track.liveness if track.liveness is not None else '',
-        # 'valence': track.valence if track.valence is not None else '',
-        # 'tempo': track.tempo if track.tempo is not None else '',
-        # 'time_signature': track.time_signature if track.time_signature is not None else ''
     }
 
 
@@ -300,6 +286,84 @@ def build_playlists_csv(survey_settings):
     return rows
 
 
+def build_shows_csv(survey_settings):
+    """
+    Build CSV rows for SavedShow with all fields.
+    
+    Args:
+        survey_settings: QuerySet or list of RetrievalSetting objects
+    Returns:
+        List of dictionaries ready for CSV export
+    """
+    shows = SavedShow.objects.filter(
+        participant__settings__in=survey_settings,
+    ).select_related('participant').order_by('participant__participant')
+    
+    rows = []
+    for show in shows:
+        rows.append({
+            # Metadata
+            'data_type': 'saved_show',
+            'participant_id': show.participant.participant,
+            'survey_id': show.participant.settings.umfrageID,
+            'survey_name': show.participant.settings.nameUmfrage,
+            'confirmed': show.confirmed,
+            # Show fields
+            'spotify_id': show.spotify_id,
+            'added_at': show.added_at.isoformat() if show.added_at else '',
+            'show_name': show.show_name,
+            'show_languages': show.show_languages,
+            'show_description': show.show_description,
+            'show_image_url': show.show_image_url,
+            'show_total_episodes': show.show_total_episodes,
+            'show_media_type': show.show_media_type,
+            'show_publisher': show.show_publisher,
+        })
+    return rows
+
+def build_episodes_csv(survey_settings):
+    """
+    Build CSV rows for SavedEpisode with all fields.
+    
+    Args:
+        survey_settings: QuerySet or list of RetrievalSetting objects
+    Returns:
+        List of dictionaries ready for CSV export
+    """
+    episodes = SavedEpisode.objects.filter(
+        participant__settings__in=survey_settings,
+    ).select_related('participant').order_by('participant__participant')
+    
+    rows = []
+    for episode in episodes:
+        rows.append({
+            # Metadata
+            'data_type': 'saved_episode',
+            'participant_id': episode.participant.participant,
+            'survey_id': episode.participant.settings.umfrageID,
+            'survey_name': episode.participant.settings.nameUmfrage,
+            'confirmed': episode.confirmed,
+            # Episode fields
+            'spotify_id': episode.spotify_id,
+            'added_at': episode.added_at.isoformat() if episode.added_at else '',
+            'name': episode.name,
+            'description': episode.description,
+            'release_date': episode.release_date or '',
+            'languages': episode.languages or '',
+            'is_fully_played': episode.is_fully_played if episode.is_fully_played is not None else '',
+            'duration_ms': episode.duration_ms if episode.duration_ms is not None else '',
+            'show_id': episode.show_id,
+            'show_name': episode.show_name,
+            'show_languages': episode.show_languages,
+            'show_description': episode.show_description,
+            'show_image_url': episode.show_image_url,
+            'show_total_episodes': episode.show_total_episodes,
+            'show_media_type': episode.show_media_type,
+            'show_publisher': episode.show_publisher,
+        })
+    return rows
+
+
 def build_all_data_types_csv(survey_id):
     """
     Build complete CSV export for all data types in a survey.
@@ -329,6 +393,8 @@ def build_all_data_types_csv(survey_id):
         build_followed_artists_csv,
         build_profiles_csv,
         build_playlists_csv, 
+        build_shows_csv,
+        build_episodes_csv,
     ]
     
     all_rows = []

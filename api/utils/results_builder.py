@@ -4,7 +4,7 @@ from spotify.models import (
     SavedTrack, TopTrack, RecentTrack,
     TopArtist, FollowedArtist,
     CurrentPlaylist, ParticipantProfile,
-    Participant
+    Participant, SavedShow, SavedEpisode
     )
 
 
@@ -195,6 +195,86 @@ def _build_playlist_results(survey_settings):
         'hasData': len(rows) > 0
     }
 
+def _build_show_results(survey_settings):
+    """
+    Build results structure for SavedShow.
+    
+    Args:
+        survey_settings: QuerySet of RetrievalSetting objects
+        
+    Returns:
+        Dictionary with show results metadata and rows
+    """
+    shows = SavedShow.objects.filter(
+        participant__settings__in=survey_settings,
+    ).select_related('participant').order_by('participant__participant')
+    
+    rows = []
+    participants = set()
+    
+    for idx, show in enumerate(shows, start=1):
+        participants.add(show.participant.participant)
+        rows.append({
+            'id': idx,
+            'no': idx,
+            'participant': show.participant.participant,
+            'show_id': show.show_id,
+            'show_name': show.show_name,
+            'show_image_url': show.show_image_url,
+            'show_publisher': show.show_publisher,
+        })
+    
+    return {
+        'id': 'shows',
+        'title': 'Saved Shows',
+        'type': 'Shows',
+        'data': rows,
+        'participantCount': len(participants),
+        'resultCount': len(rows),
+        'hasData': len(rows) > 0
+    }
+
+
+def _build_episode_results(survey_settings):
+    """
+    Build results structure for SavedEpisode.
+    
+    Args:
+        survey_settings: QuerySet of RetrievalSetting objects
+        
+    Returns:
+        Dictionary with episode results metadata and rows
+    """
+    episodes = SavedEpisode.objects.filter(
+        participant__settings__in=survey_settings,
+    ).select_related('participant').order_by('participant__participant')
+    
+    rows = []
+    participants = set()
+    
+    for idx, episode in enumerate(episodes, start=1):
+        participants.add(episode.participant.participant)
+        rows.append({
+            'id': idx,
+            'no': idx,
+            'participant': episode.participant.participant,
+            'episode_id': episode.episode_id,
+            'episode_name': episode.episode_name,
+            'show_name': episode.show_name,
+            'show_image_url': episode.show_image_url,
+            'show_publisher': episode.show_publisher,
+        })
+    
+    return {
+        'id': 'episodes',
+        'title': 'Saved Episodes',
+        'type': 'Episodes',
+        'data': rows,
+        'participantCount': len(participants),
+        'resultCount': len(rows),
+        'hasData': len(rows) > 0
+    }
+
 def getResultDict(surveyID):
     """
     Build results dictionary for researcher dashboard display.
@@ -241,6 +321,12 @@ def getResultDict(surveyID):
 
     playlist_result = _build_playlist_results(settings)
     data_types.append(playlist_result)
+
+    show_result = _build_show_results(settings)
+    data_types.append(show_result)
+
+    episode_result = _build_episode_results(settings)
+    data_types.append(episode_result)
 
     max_complete_participants = 0
     for dt in data_types:

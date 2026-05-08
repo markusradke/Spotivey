@@ -46,5 +46,15 @@ def build_retrieval_settings_payload(setting: RetrievalSetting) -> dict[str, Any
             'limit': setting.recent_tracks_limit,
             'confirmCheck': setting.recent_tracks_confirm,
         },
+        'saved_shows': {
+            'check': setting.saved_shows_enabled,
+            'limit': setting.saved_shows_limit,
+            'confirmCheck': setting.saved_shows_confirm,
+        },
+        'saved_episodes': {
+            'check': setting.save_episodes_enabled,
+            'limit': setting.save_episodes_limit,
+            'confirmCheck': setting.save_episodes_confirm,
+        },
         'textAllg': [],
     }

@@ -108,6 +108,8 @@ class getSettingsListView(APIView):
                         'followed_artists': payload['followed_artists'],
                         'current_playlists': payload['current_playlists'],
                         'recently_played': payload['recently_played'],
+                        'saved_shows': payload['saved_shows'],
+                        'saved_episodes': payload['saved_episodes'],
                     })
 
                 return Response({'data': rows, 'json:': settingslistdata}, status=status.HTTP_200_OK)
@@ -147,6 +149,7 @@ class getSettingsFromIDView(APIView):
                             settingsTwoData[0][0].get('dataFieldsTracksCheck'),
                             settingsTwoData[0][0].get('dataFieldsArtistsCheck'),
                             settingsTwoData[0][0].get('dataFieldsPlaylistsCheck'),
+                            settingsTwoData[0][0].get('dataFieldsShowsCheck'),
                         ]
                     else:
                         selectedOption = None
@@ -168,6 +171,8 @@ class getSettingsFromIDView(APIView):
                     payload['top_artists']['check'],
                     payload['followed_artists']['check'],
                     payload['current_playlists']['check'],
+                    payload['saved_shows']['check'],
+                    payload['saved_episodes']['check'],
                 ])
                 confirmTextList = np.array(settings.values_list('confirmTextEng', 'confirmTextDe'))
                 confirmTextAll = np.array([
@@ -188,6 +193,8 @@ class getSettingsFromIDView(APIView):
                     'followed_artists': payload['followed_artists'],
                     'current_playlists': payload['current_playlists'],
                     'recently_played': payload['recently_played'],
+                    'saved_shows': payload['saved_shows'],
+                    'saved_episodes': payload['saved_episodes'],
                     'secondEndUrl': secondEndUrl,
                     'selectedOption': selectedOption,
                     'questionTypeCheck': questionTypeCheck,
