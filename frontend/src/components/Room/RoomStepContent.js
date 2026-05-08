@@ -2,7 +2,7 @@ import React from "react";
 
 import { DATA_TYPE_ORDER } from "../../constants/dataTypes";
 
-import LoadingPanel from "./LoadingPanel";
+import CircularLoading from "./CircularLoading";
 import TrackResultList from "./resultList";
 import ArtistResultList from "./resultListArtists";
 import PlaylistResultList from "./resultListPlaylists";
@@ -34,7 +34,7 @@ export default function RoomStepContent({
                                 categoryIndex={index}
                             />
                         ) : (
-                            <LoadingPanel language={language} />
+                            <CircularLoading language={language} />
                         )
                     ) : null}
 
@@ -47,7 +47,7 @@ export default function RoomStepContent({
                                 categoryIndex={index}
                             />
                         ) : (
-                            <LoadingPanel language={language} />
+                            <CircularLoading language={language} />
                         )
                     ) : null}
 
@@ -60,7 +60,7 @@ export default function RoomStepContent({
                                 categoryIndex={index}
                             />
                         ) : (
-                            <LoadingPanel language={language} />
+                            <CircularLoading language={language} />
                         )
                     ) : null}
                 </div>

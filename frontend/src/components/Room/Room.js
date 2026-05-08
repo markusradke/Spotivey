@@ -10,7 +10,7 @@ import { useSpotifyData } from "../../hooks/useSpotifyData";
 
 import WelcomePage from "./WelcomePage";
 import ConfirmStepper from "./ConfirmStepper";
-import LoadingPanel from "./LoadingPanel";
+import LinearRetrievalProgress from "./LinearRetrievalProgress";
 import RoomHeader from "./RoomHeader";
 import RoomStepContent from "./RoomStepContent";
 import { useRoomFinalize } from "./useRoomFinalize";
@@ -35,7 +35,7 @@ export default function Room(props) {
 
     const { isAuthenticated, isAuthChecking, authenticateSpotify } = useSpotifyAuth();
 
-    const { data: spotifyData, isLoading: isSpotifyLoading } = useSpotifyData(
+    const { data: spotifyData, isLoading: isSpotifyLoading, progress } = useSpotifyData(
         settings,
         isAuthenticated,
         props.welcomePageOK
@@ -136,7 +136,7 @@ export default function Room(props) {
                 ) : (
                     <React.Fragment>
                         {isLoading ? (
-                            <LoadingPanel language={language} />
+                            <LinearRetrievalProgress language={language} progress={progress} />
                         ) : (
                             <div className="room-content-main">
                                 <div className="render-result-container-outer">

@@ -28,6 +28,13 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
 
     const [isLoading, setIsLoading] = useState(false);
 
+    const [progress, setProgress] = useState({
+        percent: 0,
+        currentType: null,
+        completedSteps: 0,
+        totalSteps: 0,
+    });
+
     useEffect(() => {
         if (!settings || !isAuthenticated || !welcomePageOK) return;
 
@@ -40,123 +47,163 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
         let isCancelled = false;
 
         async function fetchAllData() {
-            setIsLoading(true);
-            const fetchPromises = [];
+            const steps = [];
+
+            if (settings[DATA_TYPES.PARTICIPANT_PROFILE]?.check) {
+                steps.push({
+                    type: DATA_TYPES.PARTICIPANT_PROFILE,
+                    run: () => fetchParticipantProfile(participant, surveyID, roomCode),
+                });
+            }
 
             if (
                 settings[DATA_TYPES.SAVED_TRACKS]?.check &&
                 settings[DATA_TYPES.SAVED_TRACKS]?.limit > 0
             ) {
-                fetchPromises.push(
-                    fetchSavedTracks(
-                        participant,
-                        surveyID,
-                        roomCode,
-                        settings[DATA_TYPES.SAVED_TRACKS].limit,
-                        settings[DATA_TYPES.SAVED_TRACKS].marketCode,
-                        settings[DATA_TYPES.SAVED_TRACKS].confirmCheck
-                    ).then((result) => ({ type: DATA_TYPES.SAVED_TRACKS, result }))
-                );
-            }
-
-            if (settings[DATA_TYPES.PARTICIPANT_PROFILE]?.check) {
-                fetchPromises.push(
-                    fetchParticipantProfile(participant, surveyID, roomCode).then((result) => ({
-                        type: DATA_TYPES.PARTICIPANT_PROFILE,
-                        result,
-                    }))
-                );
+                steps.push({
+                    type: DATA_TYPES.SAVED_TRACKS,
+                    run: () =>
+                        fetchSavedTracks(
+                            participant,
+                            surveyID,
+                            roomCode,
+                            settings[DATA_TYPES.SAVED_TRACKS].limit,
+                            settings[DATA_TYPES.SAVED_TRACKS].marketCode,
+                            settings[DATA_TYPES.SAVED_TRACKS].confirmCheck
+                        ),
+                });
             }
 
             if (
                 settings[DATA_TYPES.TOP_TRACKS]?.check &&
                 settings[DATA_TYPES.TOP_TRACKS]?.limit > 0
             ) {
-                fetchPromises.push(
-                    fetchTopTracks(
-                        participant,
-                        surveyID,
-                        roomCode,
-                        settings[DATA_TYPES.TOP_TRACKS].limit,
-                        settings[DATA_TYPES.TOP_TRACKS].timeRange,
-                        settings[DATA_TYPES.TOP_TRACKS].confirmCheck
-                    ).then((result) => ({ type: DATA_TYPES.TOP_TRACKS, result }))
-                );
-            }
-
-            if (
-                settings[DATA_TYPES.TOP_ARTISTS]?.check &&
-                settings[DATA_TYPES.TOP_ARTISTS]?.limit > 0
-            ) {
-                fetchPromises.push(
-                    fetchTopArtists(
-                        participant,
-                        surveyID,
-                        roomCode,
-                        settings[DATA_TYPES.TOP_ARTISTS].limit,
-                        settings[DATA_TYPES.TOP_ARTISTS].timeRange,
-                        settings[DATA_TYPES.TOP_ARTISTS].confirmCheck
-                    ).then((result) => ({ type: DATA_TYPES.TOP_ARTISTS, result }))
-                );
-            }
-
-            if (
-                settings[DATA_TYPES.FOLLOWED_ARTISTS]?.check &&
-                settings[DATA_TYPES.FOLLOWED_ARTISTS]?.limit > 0
-            ) {
-                fetchPromises.push(
-                    fetchFollowedArtists(
-                        participant,
-                        surveyID,
-                        roomCode,
-                        settings[DATA_TYPES.FOLLOWED_ARTISTS].limit,
-                        settings[DATA_TYPES.FOLLOWED_ARTISTS].confirmCheck
-                    ).then((result) => ({ type: DATA_TYPES.FOLLOWED_ARTISTS, result }))
-                );
-            }
-
-            if (
-                settings[DATA_TYPES.CURRENT_PLAYLISTS]?.check &&
-                settings[DATA_TYPES.CURRENT_PLAYLISTS]?.limit > 0
-            ) {
-                fetchPromises.push(
-                    fetchCurrentPlaylists(
-                        participant,
-                        surveyID,
-                        roomCode,
-                        settings[DATA_TYPES.CURRENT_PLAYLISTS].limit,
-                        settings[DATA_TYPES.CURRENT_PLAYLISTS].public,
-                        settings[DATA_TYPES.CURRENT_PLAYLISTS].confirmCheck
-                    ).then((result) => ({ type: DATA_TYPES.CURRENT_PLAYLISTS, result }))
-                );
+                steps.push({
+                    type: DATA_TYPES.TOP_TRACKS,
+                    run: () =>
+                        fetchTopTracks(
+                            participant,
+                            surveyID,
+                            roomCode,
+                            settings[DATA_TYPES.TOP_TRACKS].limit,
+                            settings[DATA_TYPES.TOP_TRACKS].timeRange,
+                            settings[DATA_TYPES.TOP_TRACKS].confirmCheck
+                        ),
+                });
             }
 
             if (
                 settings[DATA_TYPES.RECENT_TRACKS]?.check &&
                 settings[DATA_TYPES.RECENT_TRACKS]?.limit > 0
             ) {
-                fetchPromises.push(
-                    fetchRecentTracks(
-                        participant,
-                        surveyID,
-                        roomCode,
-                        settings[DATA_TYPES.RECENT_TRACKS].limit,
-                        settings[DATA_TYPES.RECENT_TRACKS].confirmCheck
-                    ).then((result) => ({ type: DATA_TYPES.RECENT_TRACKS, result }))
-                );
+                steps.push({
+                    type: DATA_TYPES.RECENT_TRACKS,
+                    run: () =>
+                        fetchRecentTracks(
+                            participant,
+                            surveyID,
+                            roomCode,
+                            settings[DATA_TYPES.RECENT_TRACKS].limit,
+                            settings[DATA_TYPES.RECENT_TRACKS].confirmCheck
+                        ),
+                });
             }
 
-            try {
-                const results = await Promise.all(fetchPromises);
-                if (isCancelled) return;
-
-                setData((prev) => {
-                    const next = { ...prev };
-                    results.forEach(({ type, result }) => {
-                        next[type] = result;
-                    });
-                    return next;
+            if (
+                settings[DATA_TYPES.TOP_ARTISTS]?.check &&
+                settings[DATA_TYPES.TOP_ARTISTS]?.limit > 0
+            ) {
+                steps.push({
+                    type: DATA_TYPES.TOP_ARTISTS,
+                    run: () =>
+                        fetchTopArtists(
+                            participant,
+                            surveyID,
+                            roomCode,
+                            settings[DATA_TYPES.TOP_ARTISTS].limit,
+                            settings[DATA_TYPES.TOP_ARTISTS].timeRange,
+                            settings[DATA_TYPES.TOP_ARTISTS].confirmCheck
+                        ),
                 });
+            }
+
+            if (
+                settings[DATA_TYPES.FOLLOWED_ARTISTS]?.check &&
+                settings[DATA_TYPES.FOLLOWED_ARTISTS]?.limit > 0
+            ) {
+                steps.push({
+                    type: DATA_TYPES.FOLLOWED_ARTISTS,
+                    run: () =>
+                        fetchFollowedArtists(
+                            participant,
+                            surveyID,
+                            roomCode,
+                            settings[DATA_TYPES.FOLLOWED_ARTISTS].limit,
+                            settings[DATA_TYPES.FOLLOWED_ARTISTS].confirmCheck
+                        ),
+                });
+            }
+
+            if (
+                settings[DATA_TYPES.CURRENT_PLAYLISTS]?.check &&
+                settings[DATA_TYPES.CURRENT_PLAYLISTS]?.limit > 0
+            ) {
+                steps.push({
+                    type: DATA_TYPES.CURRENT_PLAYLISTS,
+                    run: () =>
+                        fetchCurrentPlaylists(
+                            participant,
+                            surveyID,
+                            roomCode,
+                            settings[DATA_TYPES.CURRENT_PLAYLISTS].limit,
+                            settings[DATA_TYPES.CURRENT_PLAYLISTS].public,
+                            settings[DATA_TYPES.CURRENT_PLAYLISTS].confirmCheck
+                        ),
+                });
+            }
+
+            const totalSteps = steps.length + 1; // for the authentication step
+
+            if (totalSteps === 1) {
+                return;
+            }
+
+            setIsLoading(true);
+            setProgress({
+                percent: (1 / totalSteps) * 100,
+                currentType: steps[0].type,
+                completedSteps: 1,
+                totalSteps,
+            });
+
+            try {
+                for (let i = 1; i < totalSteps; i += 1) {
+                    if (isCancelled) return;
+
+                    const step = steps[i - 1];
+                    const percent = (i / totalSteps) * 100;
+
+                    setProgress({
+                        percent,
+                        currentType: step.type,
+                        completedSteps: i,
+                        totalSteps,
+                    });
+
+                    const result = await step.run();
+                    if (isCancelled) return;
+
+                    setData((prev) => ({ ...prev, [step.type]: result }));
+                }
+
+                if (!isCancelled) {
+                    setProgress({
+                        percent: 100,
+                        currentType: null,
+                        completedSteps: totalSteps,
+                        totalSteps,
+                    });
+                }
             } catch (error) {
                 console.error("Error fetching Spotify data:", error);
                 lastFetchKeyRef.current = null;
@@ -174,5 +221,5 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
         };
     }, [settings, isAuthenticated, welcomePageOK, participant, surveyID, roomCode]);
 
-    return { data, isLoading };
+    return { data, isLoading, progress };
 }

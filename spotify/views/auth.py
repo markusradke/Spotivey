@@ -109,7 +109,9 @@ class IsAuthenticated(APIView):
         if not request.session.exists(request.session.session_key):
             request.session.create()
 
-        if os.getenv("SPOTIVEY_TEST_MODE") == "1":
+        test_mode = os.environ.get("SPOTIVEY_TEST_MODE")
+        if test_mode == "1":
+            print("SPOTIVEY_TEST_MODE is enabled. Returning test status.")
             return Response({"status": True}, status=status.HTTP_200_OK)
 
         is_authenticated = is_spotify_authenticated(self.request.session.session_key)

@@ -1,7 +1,7 @@
 import React from "react";
 import { CircularProgress } from "@mui/material";
 
-export default function LoadingPanel({ language }) {
+export default function CircularLoading({ language }) {
     return (
         <div className="loading-container">
             <div className="loading-item">
