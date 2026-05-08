@@ -7,7 +7,7 @@
     "build": "webpack --mode production",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "e2e:run": "npm run build && set SPOTIVEY_TEST_MODE=1&& start /B python ..\\manage.py runserver 8000 && npx wait-on http://127.0.0.1:8000/ && npm run cypress:run"
+    "e2e:run": "npm run build && set SPOTIVEY_TEST_MODE=1 && start /B python ..\\manage.py runserver 8000 && npx wait-on http://127.0.0.1:8000/ && npm run cypress:run & set SPOTIVEY_TEST_MODE=0"
   },
   "keywords": [],
   "author": "",

@@ -60,6 +60,14 @@ export default function Room(props) {
     );
 
     const steps = useMemo(() => buildSteps(settings), [settings]);
+    const [isShowingPrivacy, setIsShowingPrivacy] = useState(false);
+
+    useEffect(() => {
+        if (!props.welcomePageOK) return;
+        if (isAuthChecking || isSpotifyLoading) {
+            setIsShowingPrivacy(false);
+        }
+    }, [props.welcomePageOK, isAuthChecking, isSpotifyLoading]);
 
     useEffect(() => {
         if (props.welcomePageOK && participant) {
@@ -109,7 +117,7 @@ export default function Room(props) {
         return null;
     }
 
-    const isLoading = isSettingsLoading || isAuthChecking || isSpotifyLoading;
+    const isLoading = isShowingPrivacy || isSettingsLoading || isAuthChecking || isSpotifyLoading;
 
     return (
         <React.Fragment>
@@ -122,6 +130,8 @@ export default function Room(props) {
                         welcomeSettingsDeutschArray={welcomeSettings.de}
                         welcomeSettingsEnglishArray={welcomeSettings.en}
                         language={language}
+                        onAcceptStart={() => setIsShowingPrivacy(true)}
+                        onAcceptError={() => setIsShowingPrivacy(false)}
                     />
                 ) : (
                     <React.Fragment>

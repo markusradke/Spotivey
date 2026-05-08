@@ -10,8 +10,10 @@ export function useSpotifyAuth() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isAuthChecking, setIsAuthChecking] = useState(false);
 
+
     const isAuthenticatedRef = useRef(false);
     const authInFlightRef = useRef(false);
+    const isRedirectingRef = useRef(false);
 
     useEffect(() => {
         isAuthenticatedRef.current = isAuthenticated;
@@ -22,6 +24,7 @@ export function useSpotifyAuth() {
         if (isAuthenticatedRef.current) return;
         if (authInFlightRef.current) return;
 
+        isRedirectingRef.current = false;
         authInFlightRef.current = true;
         try {
             setIsAuthChecking(true);
@@ -29,6 +32,7 @@ export function useSpotifyAuth() {
 
             if (!data.status) {
                 const authUrlData = await getAuthUrl(surveyID);
+                isRedirectingRef.current = true;
                 window.location.replace(authUrlData.url);
                 return;
             }
@@ -37,8 +41,10 @@ export function useSpotifyAuth() {
         } catch (error) {
             console.error("Authentication check failed:", error);
         } finally {
-            authInFlightRef.current = false;
-            setIsAuthChecking(false);
+            if (!isRedirectingRef.current) {
+                authInFlightRef.current = false;
+                setIsAuthChecking(false);
+            }
         }
     }, [surveyID]);
 

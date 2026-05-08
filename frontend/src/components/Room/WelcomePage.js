@@ -96,12 +96,14 @@ export default function WelcomePage(props) {
             </div>
             <div class='speicher-button'>
                 <Button variant={'contained'} onClick={() => {
+                    props.onAcceptStart?.();
                     acceptPrivacyPolicy({ accepted: true })
                         .then(() => {
                             props.setWelcomePageOK(true)
                         })
                         .catch((error) => {
                             console.error("Error accepting privacy policy:", error);
+                            props.onAcceptError?.();
                         })
 
                 }}>
