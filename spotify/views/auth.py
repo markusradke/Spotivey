@@ -35,7 +35,7 @@ class AuthURL(APIView):
         if surveyID is not None:
             settings = RetrievalSetting.objects.filter(umfrageID=surveyID)
             if len(settings) > 0:
-                    scope = "user-library-read user-read-private user-read-email user-top-read user-follow-read playlist-read-private user-read-recently-played"
+                    scope = "user-library-read user-read-private user-read-email user-top-read user-follow-read playlist-read-private user-read-playback-position user-read-recently-played"
                     state = get_random_string(16)
 
                     url = (

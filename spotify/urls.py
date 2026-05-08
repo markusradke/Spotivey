@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     AuthURL, spotify_callback, IsAuthenticated, TopArtists, GetFollowedArtistsSpotify,
     GetTopTracks, GetSavedTracksSpotify, GetRecentlyPlayedTracksSpotify,
-    GetPlaylistsSpotify, GetUsersProfileSpotify
+    GetPlaylistsSpotify, GetUsersProfileSpotify, GetSavedShowsSpotify, GetSavedEpisodesSpotify
 )
 
 urlpatterns = [
@@ -16,4 +16,6 @@ urlpatterns = [
     path('followed-artists', GetFollowedArtistsSpotify.as_view()),
     path('current-playlists', GetPlaylistsSpotify.as_view()),
     path('recently-played-tracks', GetRecentlyPlayedTracksSpotify.as_view()),
+    path('saved-shows', GetSavedShowsSpotify.as_view()),
+    path('saved-episodes', GetSavedEpisodesSpotify.as_view()),
 ]

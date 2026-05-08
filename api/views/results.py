@@ -11,7 +11,7 @@ from spotify.models import (
     SavedTrack, TopTrack, RecentTrack,
     TopArtist, FollowedArtist,
     CurrentPlaylist, ParticipantProfile,
-    Participant
+    Participant, SavedShow, SavedEpisode
 )
 
 
@@ -65,6 +65,8 @@ class SaveCheckData(APIView):
         3: (TopArtist, "spotify_id", "id"),
         4: (FollowedArtist, "spotify_id", "id"),
         5: (CurrentPlaylist, "playlist_id", "playlist_id"),
+        6: (SavedShow, "spotify_id", "spotify_id"),
+        7: (SavedEpisode, "spotify_id", "spotify_id"),
     }
 
     def post(self, request, format=None):
@@ -173,7 +175,7 @@ class GetParticipantCountForSurvey(APIView):
 
             for model in [SavedTrack, TopTrack, TopArtist, 
                             ParticipantProfile, FollowedArtist, 
-                            CurrentPlaylist, RecentTrack]:
+                            CurrentPlaylist, RecentTrack, SavedShow, SavedEpisode]:
                 records = model.objects.filter(participant__settings__in=settings)
                 total_records += records.count()
                 for record in records: 

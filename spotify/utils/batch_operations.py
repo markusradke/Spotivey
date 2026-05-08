@@ -100,27 +100,3 @@ def batch_fetch_artists(
         response_key="artists",
         batch_size=batch_size,
     )
-
-
-def batch_fetch_audio_features(
-    session_key: str, track_ids: List[str], batch_size: int = 50
-) -> Dict[str, dict]:
-    """Fetch audio features for multiple tracks in batched requests.
-
-    Spotify allows up to 50 tracks per request via /audio-features endpoint.
-
-    Args:
-        session_key: Django session key for Spotify authentication
-        track_ids: List of Spotify track IDs to fetch audio features for
-        batch_size: Number of tracks per API request (max 50)
-
-    Returns:
-        Dict mapping track_id to audio features: {track_id: {...audio_features...}}
-    """
-    return _batch_fetch(
-        session_key,
-        track_ids,
-        endpoint="audio-features",
-        response_key="audio_features",
-        batch_size=batch_size,
-    )

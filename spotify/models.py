@@ -214,3 +214,80 @@ class FollowedArtist(BaseArtist):
         return self.get_base_dict()
 
 
+class BaseShow(models.Model):
+    """Abstract base model for all show types."""
+    participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
+    confirmed = models.BooleanField(default=False)
+    
+    show_name = models.CharField(max_length=500, default='')
+    show_languages = models.CharField(max_length=50, default='')
+    show_description = models.TextField(default='')
+    show_image_url = models.URLField(max_length=500, default='')
+    show_total_episodes = models.IntegerField(null=True, default=None)
+    show_media_type = models.CharField(max_length=50, default='')
+    show_publisher = models.CharField(max_length=200, default='')
+
+    class Meta:
+        abstract = True
+        indexes = [
+            models.Index(fields=['participant', 'spotify_id']),
+        ]
+
+    def get_base_dict(self):
+        """Return common fields for frontend."""
+        return {
+            'show_name': self.show_name,
+            'show_languages': self.show_languages,
+            'show_description': self.show_description,
+            'show_image_url': self.show_image_url,
+            'show_total_episodes': self.show_total_episodes,
+            'show_media_type': self.show_media_type,
+            'show_publisher': self.show_publisher,
+        }
+    
+class SavedEpisode(BaseShow):
+    """Participant's saved episode."""
+    spotify_id = models.CharField(max_length=50, db_index=True)
+    added_at = models.DateTimeField(null=True, default=None)
+    name = models.CharField(max_length=500, default='')
+    description = models.TextField(default='')
+    duration_ms = models.IntegerField(null=True, default=None)
+    release_date = models.CharField(max_length=20, default='')
+    languages = models.TextField(default='')
+    is_fully_played = models.BooleanField(null=True, default=None)
+    show_id = models.CharField(max_length=50, default='')
+
+    def __str__(self):
+        return f"Saved episode (ID: {self.spotify_id}) for participant {self.participant.participant} (retrieval settings: {self.participant.settings.nameUmfrage})"
+
+    def to_dict(self):
+        data = self.get_base_dict()
+        data.update({
+            'spotify_id': self.spotify_id,
+            'name': self.name,
+            'description': self.description,
+            'added_at': self.added_at,
+            'show_id': self.show_id,
+            'release_date': self.release_date,
+            'languages': self.languages,
+            'is_fully_played': self.is_fully_played,
+            'duration_ms': self.duration_ms,
+        })
+        return data
+    
+
+class SavedShow(BaseShow):
+    """Participant's saved show."""
+    spotify_id = models.CharField(max_length=50, db_index=True)
+    added_at = models.DateTimeField(null=True, default=None)
+
+    def __str__(self):
+        return f"Saved show (ID: {self.spotify_id}) for participant {self.participant.participant} (retrieval settings: {self.participant.settings.nameUmfrage})"
+    
+    def to_dict(self):
+        data = self.get_base_dict()
+        data.update({
+            'spotify_id': self.spotify_id,
+            'added_at': self.added_at,
+        })
+        return data

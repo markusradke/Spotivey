@@ -11,7 +11,6 @@ from .spotify_api import (
 from .batch_operations import (
     batch_fetch_albums,
     batch_fetch_artists,
-    batch_fetch_audio_features
 )
 
 from .bulk_db import (
@@ -40,7 +39,6 @@ __all__ = [
     # Batch operations
     'batch_fetch_albums',
     'batch_fetch_artists',
-    'batch_fetch_audio_features',
     # Bulk DB operations
     'bulk_create_with_retry',
     'bulk_update_fields',

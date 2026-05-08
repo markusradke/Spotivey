@@ -48,6 +48,14 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie den 
     recent_tracks_confirm = models.BooleanField(default=True)
     recent_tracks_limit = models.PositiveIntegerField(default=20)
     
+    saved_shows_enabled = models.BooleanField(default=False)
+    saved_shows_confirm = models.BooleanField(default=True)
+    saved_shows_limit = models.PositiveIntegerField(default=20)
+
+    save_episodes_enabled = models.BooleanField(default=False)
+    save_episodes_confirm = models.BooleanField(default=True)
+    save_episodes_limit = models.PositiveIntegerField(default=20)
+
     confirmTextEng = models.TextField(default=defaultConfirmTextEng)
     confirmTextDe = models.TextField(default=defaultConfirmTextDe)
 

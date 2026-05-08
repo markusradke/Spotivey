@@ -70,6 +70,30 @@ def _playlist(playlist_id: str, owner_id: str) -> Dict[str, Any]:
         "tracks": {"total": 12},
     }
 
+def _show(show_id: str) -> Dict[str, Any]:
+    return {
+        "id": show_id,
+        "name": f"Show {show_id}",
+        "description": f"Description for show {show_id}",
+        "languages": ["en"],
+        "media_type": "audio",
+        "publisher": f"Publisher {show_id}",
+        "total_episodes": 10,
+        "images": [{"url": "https://example.com/show.jpg"}],
+    }
+
+def _episode(episode_id: str, show_id: str) -> Dict[str, Any]:
+    return {
+        "id": episode_id,
+        "name": f"Episode {episode_id}",
+        "description": f"Description for episode {episode_id}",
+        "duration_ms": 3600000,
+        "release_date": "2020-01-01",
+        "languages": ["en"],
+        "resume_point": {"fully_played": False},
+        "show": _show(show_id),
+    }
+
 
 def get_fixture_for_endpoint(endpoint: str) -> Optional[SpotifyFixtureResponse]:
     """Return a deterministic fixture for a Spotify endpoint.
@@ -145,6 +169,18 @@ def get_fixture_for_endpoint(endpoint: str) -> Optional[SpotifyFixtureResponse]:
         ids = endpoint.split("ids=", 1)[-1].split(",") if "ids=" in endpoint else []
         return SpotifyFixtureResponse(
             {"artists": [{"id": artist_id, "genres": ["alt"], "followers": {"total": 1}} for artist_id in ids if artist_id]}
+        )
+
+    if endpoint.startswith("me/shows"):
+        ids = endpoint.split("ids=", 1)[-1].split(",") if "ids=" in endpoint else []
+        return SpotifyFixtureResponse(
+            {"shows": [_show(show_id) for show_id in ids if show_id]}
+        )
+    
+    if endpoint.startswith("me/episodes"):
+        ids = endpoint.split("ids=", 1)[-1].split(",") if "ids=" in endpoint else []
+        return SpotifyFixtureResponse(
+            {"episodes": [_episode(episode_id, show_id="show_1") for episode_id in ids if episode_id]}
         )
 
     return None
