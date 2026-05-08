@@ -1,24 +1,24 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function SpotiveyFooter (props){
-    return(
+export default function SpotiveyFooter(props) {
+    return (
         <React.Fragment>
             <footer class='spotivey-footer'>
                 <nav class='footer-nav-container'>
                     <div className="footer-nav-div">
-                        {!props.participant ? 
+                        {!props.participant ?
                             <ul className="footer-nav-ul">
                                 <li className="footer-nav-li">
                                     <a className="footer-nav-li-item" href={'/privacy'}>
                                         Privacy-Center
                                     </a>
                                 </li>
-                            </ul> : 
-                            null 
+                            </ul> :
+                            null
                         }
                         <a className="footer-name" href={'/version'}>
-                            2022 Spotivey v1.0
+                            2026 Spotivey v1.1
                         </a>
                     </div>
                 </nav>

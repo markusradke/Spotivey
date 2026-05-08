@@ -89,7 +89,7 @@ function completeConfirmStepper(expectedLang) {
                     `Ensure at least one data type has confirmation enabled and limit > 0.`
                 );
             }
-
+            // find a button that shows either an arrow or OK text and click it.
             cy.get(".room-content-main .MuiStepper-root")
                 .should("be.visible")
                 .find(".MuiStepButton-root")
@@ -98,7 +98,14 @@ function completeConfirmStepper(expectedLang) {
                     expect(stepCount).to.be.greaterThan(0);
 
                     Cypress._.times(stepCount, () => {
-                        cy.get(".room-content-main button.MuiButton-contained")
+                        cy.get(".room-content-main")
+                            .find("button.MuiButton-contained")
+                            .filter((index, el) => {
+                                const text = Cypress.$(el).text().toUpperCase();
+                                const hasSvg = Cypress.$(el).find('svg').length > 0;
+                                return text.includes("OK") || hasSvg;
+                            })
+                            .first()
                             .should("be.visible")
                             .click({ force: true });
                         cy.wait(250);

@@ -62,6 +62,8 @@ export default function Room(props) {
     const steps = useMemo(() => buildSteps(settings), [settings]);
     const [isShowingPrivacy, setIsShowingPrivacy] = useState(false);
 
+
+
     useEffect(() => {
         if (!props.welcomePageOK) return;
         if (isAuthChecking || isSpotifyLoading) {
@@ -100,6 +102,20 @@ export default function Room(props) {
         checkArray,
         settings,
     });
+
+    function handleToggleAllCurrentStep(step, checked) {
+        if (!step) return;
+
+        const index = step.index;
+
+        setCheckArray((prev) => {
+            const next = [...prev];
+            const current = prev?.[index] ?? [];
+            next[index] = Array(current.length).fill(checked);
+            return next;
+        });
+    }
+
 
     const renderStepContent = (step) => (
         <RoomStepContent
@@ -147,6 +163,7 @@ export default function Room(props) {
                                             confirmTextArray={confirmTextArray}
                                             renderStepContent={renderStepContent}
                                             onFinish={handleSaveAndFinalize}
+                                            onToggleAllCurrentStep={handleToggleAllCurrentStep}
                                         />
                                     </div>
                                 </div>

@@ -12,6 +12,7 @@ export default function ConfirmStepper({
     confirmTextArray,
     renderStepContent,
     onFinish,
+    onToggleAllCurrentStep,
 }) {
     const [activeStep, setActiveStep] = useState(0);
     const [completed, setCompleted] = useState({});
@@ -58,6 +59,16 @@ export default function ConfirmStepper({
         handleNext();
     }
 
+    async function handleConfirmAllResults() {
+        const nextCompleted = {};
+        steps.forEach((_, i) => {
+            nextCompleted[i] = true;
+        });
+
+        setCompleted(nextCompleted);
+        await onFinish();
+    }
+
     if (steps.length === 0) {
         return null;
     }
@@ -74,6 +85,15 @@ export default function ConfirmStepper({
                                         ? currentConfirmText?.[0]
                                         : currentConfirmText?.[1]}
                                 </body1>
+                                <Box sx={{ display: "flex", justifyContent: "center", pt: 2 }}>
+                                    <Button
+                                        onClick={handleConfirmAllResults}
+                                        variant="contained"
+                                        color="error"
+                                    >
+                                        {language === "en" ? "Confirm all results" : "Bestätige alle Ergebnisse"}
+                                    </Button>
+                                </Box>
                             </div>
                         </div>
                     </div>
@@ -87,6 +107,37 @@ export default function ConfirmStepper({
                             </Step>
                         ))}
                     </Stepper>
+
+                    {typeof onToggleAllCurrentStep === "function" && (
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                gap: 1,
+                                pt: 1,
+                            }}
+                        >
+                            <Button
+                                size="small"
+                                variant="text"
+                                color="inherit"
+                                sx={{ color: "text.secondary" }}
+                                onClick={() => onToggleAllCurrentStep(currentStep, true)}
+                            >
+                                {language === "en" ? "Select all" : "Alle auswählen"}
+                            </Button>
+
+                            <Button
+                                size="small"
+                                variant="text"
+                                color="inherit"
+                                sx={{ color: "text.secondary" }}
+                                onClick={() => onToggleAllCurrentStep(currentStep, false)}
+                            >
+                                {language === "en" ? "Deselect all" : "Keine auswählen"}
+                            </Button>
+                        </Box>
+                    )}
 
                     <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
                         <Box sx={{ flex: "1 1 auto" }} />
