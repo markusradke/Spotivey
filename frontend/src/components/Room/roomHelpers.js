@@ -39,6 +39,8 @@ export function buildWelcomeSettings(rawSettings) {
     const followedArtists = rawSettings.followed_artists;
     const currentPlaylists = rawSettings.current_playlists;
     const recentlyPlayed = rawSettings.recently_played;
+    const savedShows = rawSettings.saved_shows;
+    const savedEpisodes = rawSettings.saved_episodes;
 
     if (savedTracks?.check) {
         de.push([true, "Ihrer gespeicherten Musik (Lieblingssongs)"]);
@@ -86,6 +88,16 @@ export function buildWelcomeSettings(rawSettings) {
     if (recentlyPlayed?.check) {
         de.push([true, "Ihrer kürzlich gehörten Musik"]);
         en.push([true, "Your last heard music"]);
+    }
+
+    if (savedShows?.check) {
+        de.push([true, "Ihren gespeicherten Podcasts"]);
+        en.push([true, "Your saved shows"]);
+    }
+
+    if (savedEpisodes?.check) {
+        de.push([true, "Ihren gespeicherten Podcast-Episoden"]);
+        en.push([true, "Your saved episodes"]);
     }
 
     return { de, en };

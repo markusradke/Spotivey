@@ -6,6 +6,8 @@ export const DATA_TYPES = {
   FOLLOWED_ARTISTS: "followedArtists",
   CURRENT_PLAYLISTS: "currentPlaylists",
   PARTICIPANT_PROFILE: "participantProfile",
+  SAVED_SHOWS: "savedShows",
+  SAVED_EPISODES: "savedEpisodes",
 };
 
 export const DATA_TYPE_ORDER = [
@@ -15,4 +17,7 @@ export const DATA_TYPE_ORDER = [
   DATA_TYPES.TOP_ARTISTS,
   DATA_TYPES.FOLLOWED_ARTISTS,
   DATA_TYPES.CURRENT_PLAYLISTS,
+  DATA_TYPES.PARTICIPANT_PROFILE,
+  DATA_TYPES.SAVED_SHOWS,
+  DATA_TYPES.SAVED_EPISODES,
 ];

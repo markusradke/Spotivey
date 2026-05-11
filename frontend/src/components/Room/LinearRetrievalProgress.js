@@ -17,6 +17,8 @@ function getLoadingText({ language, currentType, isAuthChecking }) {
         followedArtists: "Retrieving followed artists...",
         currentPlaylists: "Retrieving current playlists...",
         participantProfile: "Retrieving participant profile...",
+        savedShows: "Retrieving saved shows...",
+        savedEpisodes: "Retrieving saved episodes...",
     };
 
     const de = {
@@ -27,6 +29,8 @@ function getLoadingText({ language, currentType, isAuthChecking }) {
         followedArtists: "Gefolgte Künstler werden abgerufen...",
         currentPlaylists: "Playlists werden abgerufen...",
         participantProfile: "Profil wird abgerufen...",
+        savedShows: "Gespeicherte Podcasts werden abgerufen...",
+        savedEpisodes: "Gespeicherte Episoden werden abgerufen...",
     };
 
     return (language !== "de" ? en : de)[currentType] ?? "";

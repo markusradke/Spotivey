@@ -86,3 +86,21 @@ export async function fetchCurrentPlaylists(participant, surveyId, roomCode, lim
   );
   return response.json();
 }
+
+export async function fetchSavedShows(participant, surveyId, roomCode, limit, marketCode, confirm) {
+  const url = `/spotify/saved-shows?limit=${limit}&market=${marketCode}`;
+  const response = await fetch(
+    url,
+    buildPostOptions({ participant, surveyID: surveyId, roomCode, confirm })
+  );
+  return response.json();
+}
+
+export async function fetchSavedEpisodes(participant, surveyId, roomCode, limit, marketCode, confirm) {
+  const url = `/spotify/saved-episodes?limit=${limit}&market=${marketCode}`;
+  const response = await fetch(
+    url,
+    buildPostOptions({ participant, surveyID: surveyId, roomCode, confirm })
+  );
+  return response.json();
+}

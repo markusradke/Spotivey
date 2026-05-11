@@ -217,10 +217,10 @@ def _build_show_results(survey_settings):
         rows.append({
             'id': idx,
             'no': idx,
+            'spotifyID': show.spotify_id,
             'participant': show.participant.participant,
-            'show_id': show.show_id,
             'show_name': show.show_name,
-            'show_image_url': show.show_image_url,
+            'cover': show.show_image_url,
             'show_publisher': show.show_publisher,
         })
     
@@ -257,11 +257,11 @@ def _build_episode_results(survey_settings):
         rows.append({
             'id': idx,
             'no': idx,
+            'spotifyID': episode.spotify_id,
             'participant': episode.participant.participant,
-            'episode_id': episode.episode_id,
-            'episode_name': episode.episode_name,
+            'name': episode.name,
             'show_name': episode.show_name,
-            'show_image_url': episode.show_image_url,
+            'cover': episode.show_image_url,
             'show_publisher': episode.show_publisher,
         })
     

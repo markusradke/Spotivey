@@ -14,6 +14,7 @@ import { mainSettingsCard } from './SettingsCard/mainSettingsCard';
 import { tracksSettingsCard } from './SettingsCard/tracksSettingsCard';
 import { usersSettingsCard } from './SettingsCard/usersSettingsCard';
 import { playlistSettingsCard } from './SettingsCard/playlistSettingsCard';
+import { showsSettingsCard } from './SettingsCard/showsSettingsCard';
 import { saveButton } from './Button/openSettingsDialog';
 import {
   checkSurveyId,
@@ -27,14 +28,19 @@ export default function SettingsPage(props) {
   const [topItemsTracksLimit, setTopItemsTracksLimit] = useState(20)
   const [topItemsArtistsLimit, setTopItemsArtistsLimit] = useState(20)
   const [followedArtistsLimit, setFollowedArtistsLimit] = useState(20)
+  const [savedShowsLimit, setSavedShowsLimit] = useState(20);
+  const [savedEpisodesLimit, setSavedEpisodesLimit] = useState(20);
   const [tracksMarket, setTracksMarket] = useState({ Code: "DE", Name: "Germany" })
   const [topTracksTimeRange, setTopTracksTimeRange] = useState({ name: 'medium_term', info: 'approximately last 6 months' })
   const [topArtistsTimeRange, setTopArtistsTimeRange] = useState({ name: 'medium_term', info: 'approximately last 6 months' })
+
   const [savedTracksChecked, setSavedTracksChecked] = useState(false);
   const [topItemsTracksChecked, setTopItemsTracksChecked] = useState(false);
   const [currentUsersChecked, setCurrentUsersChecked] = useState(false);
   const [topItemsArtistsChecked, setTopItemsArtistsChecked] = useState(false);
   const [followedArtistsChecked, setFollowedArtistsChecked] = useState(false);
+  const [savedShowsChecked, setSavedShowsChecked] = useState(false);
+  const [savedEpisodesChecked, setSavedEpisodesChecked] = useState(false);
 
   const [confirmSavedTracksYes, setConfirmSavedTracksYes] = useState(true)
   const [confirmTopItemsTracksYes, setConfirmTopItemsTracksYes] = useState(true)
@@ -42,12 +48,14 @@ export default function SettingsPage(props) {
   const [confirmFollowedArtistsYes, setConfirmFollowedArtistsYes] = useState(true)
   const [confirmCurrentPlaylistsYes, setConfirmCurrentPlaylistsYes] = useState(true)
   const [confirmRecentlyTracksYes, setConfirmRecentlyTracksYes] = useState(true)
+  const [confirmSavedShowsYes, setConfirmSavedShowsYes] = useState(true)
+  const [confirmSavedEpisodesYes, setConfirmSavedEpisodesYes] = useState(true)
 
   const [secondSurveyCheck, setSecondSurveyCheck] = useState(true)
 
-  const [openSettingsListItem, setOpenSettingsListItem] = useState([true, false, false, false, false])
+  const [openSettingsListItem, setOpenSettingsListItem] = useState([true, false, false, false, false, false])
 
-  const [confirmArray, setConfirmArray] = useState([true, false, true, true, true, true, true])
+  const [confirmArray, setConfirmArray] = useState([true, false, true, true, true, true, true, true, true])
 
   const [currentPlaylistsLimit, setCurrentPlaylistsLimit] = useState(20)
   const [currentPlaylistsChecked, setCurrentPlaylistsChecked] = useState(false)
@@ -70,10 +78,10 @@ export default function SettingsPage(props) {
   const [changeTextfield, setChangeTextfield] = useState(false)
   const [countCheckboxen, setCountCheckboxen] = useState(0)
   const [openDialog, setOpenDialog] = useState(false);
-  const [settingsCheckArray, setSettingsCheckArray] = useState([false, false, false, false, false, false, false])
+  const [settingsCheckArray, setSettingsCheckArray] = useState([false, false, false, false, false, false, false, false, false])
   const [settingsLimitArray, setSettingsLimitArray] = useState(
     [[savedTracksLimit, tracksMarket], [], [topItemsTracksLimit, topTracksTimeRange], [topItemsArtistsLimit, topArtistsTimeRange],
-    [followedArtistsLimit], [currentPlaylistsLimit, checkPublic], [recentlyTracksLimit]]
+    [followedArtistsLimit], [currentPlaylistsLimit, checkPublic], [recentlyTracksLimit], [savedShowsLimit], [savedEpisodesLimit]]
   )
   const [settingsTextArray, setSettingsTextArray] = useState(['', '', ''])
 
@@ -86,9 +94,9 @@ export default function SettingsPage(props) {
 
   useEffect(() => {
     setConfirmArray([confirmSavedTracksYes, false, confirmTopItemsTracksYes, confirmTopItemsArtistsYes,
-      confirmFollowedArtistsYes, confirmCurrentPlaylistsYes, confirmRecentlyTracksYes])
+      confirmFollowedArtistsYes, confirmCurrentPlaylistsYes, confirmRecentlyTracksYes, confirmSavedShowsYes, confirmSavedEpisodesYes])
   }, [confirmSavedTracksYes, confirmTopItemsTracksYes, confirmTopItemsArtistsYes, confirmFollowedArtistsYes,
-    confirmCurrentPlaylistsYes, confirmRecentlyTracksYes])
+    confirmCurrentPlaylistsYes, confirmRecentlyTracksYes, confirmSavedShowsYes, confirmSavedEpisodesYes])
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -140,6 +148,8 @@ export default function SettingsPage(props) {
           const followedArtists = raw.followed_artists
           const currentPlaylists = raw.current_playlists
           const recentlyPlayed = raw.recently_played
+          const savedShows = raw.saved_shows
+          const savedEpisodes = raw.saved_episodes
 
           setUmfrageName(data.data[0].nameUmfrage)
           setUmfrageID(data.data[0].umfrageID)
@@ -161,6 +171,8 @@ export default function SettingsPage(props) {
           })
           setCurrentPlaylistsLimit(currentPlaylists.limit)
           setRecentlyTracksLimit(recentlyPlayed.limit)
+          setSavedShowsLimit(savedShows.limit)
+          setSavedEpisodesLimit(savedEpisodes.limit)
 
           setSavedTracksChecked(savedTracks.check)
           setTopItemsTracksChecked(topTracks.check)
@@ -169,6 +181,8 @@ export default function SettingsPage(props) {
           setFollowedArtistsChecked(followedArtists.check)
           setRecentlyTracksChecked(recentlyPlayed.check)
           setCurrentPlaylistsChecked(currentPlaylists.check)
+          setSavedShowsChecked(savedShows.check)
+          setSavedEpisodesChecked(savedEpisodes.check)
 
           setConfirmSavedTracksYes(savedTracks.confirmCheck)
           setConfirmTopItemsTracksYes(topTracks.confirmCheck)
@@ -176,6 +190,8 @@ export default function SettingsPage(props) {
           setConfirmFollowedArtistsYes(followedArtists.confirmCheck)
           setConfirmCurrentPlaylistsYes(currentPlaylists.confirmCheck)
           setConfirmRecentlyTracksYes(recentlyPlayed.confirmCheck)
+          setConfirmSavedShowsYes(savedShows.confirmCheck)
+          setConfirmSavedEpisodesYes(savedEpisodes.confirmCheck)
 
           setCheckPublic(currentPlaylists.public ? currentPlaylists.public : false)
         });
@@ -184,9 +200,10 @@ export default function SettingsPage(props) {
 
   useEffect(() => {
     setSettingsLimitArray([[savedTracksLimit, tracksMarket], [], [topItemsTracksLimit, topTracksTimeRange], [topItemsArtistsLimit, topArtistsTimeRange],
-    [followedArtistsLimit], [currentPlaylistsLimit, checkPublic], [recentlyTracksLimit]])
+    [followedArtistsLimit], [currentPlaylistsLimit, checkPublic], [recentlyTracksLimit], [savedShowsLimit], [savedEpisodesLimit]])
   }, [savedTracksLimit, tracksMarket, topItemsTracksLimit, topTracksTimeRange, topItemsArtistsLimit, topArtistsTimeRange,
-    followedArtistsLimit, currentPlaylistsLimit, recentlyTracksLimit, checkPublic])
+    followedArtistsLimit, currentPlaylistsLimit, recentlyTracksLimit, checkPublic, savedShowsLimit, savedEpisodesLimit])
+
 
   useEffect(() => {
     if (umfrageName !== '' && umfrageID !== '') {
@@ -211,7 +228,7 @@ export default function SettingsPage(props) {
 
   useEffect(() => {
     let arr1 = [savedTracksChecked, currentUsersChecked, topItemsTracksChecked, topItemsArtistsChecked, followedArtistsChecked,
-      currentPlaylistsChecked, recentlyTracksChecked]
+      currentPlaylistsChecked, recentlyTracksChecked, savedShowsChecked, savedEpisodesChecked]
 
     setSettingsCheckArray(arr1)
 
@@ -219,7 +236,7 @@ export default function SettingsPage(props) {
     setCountCheckboxen(count1)
 
   }, [savedTracksChecked, currentPlaylistsChecked, followedArtistsChecked, topItemsArtistsChecked, currentUsersChecked,
-    recentlyTracksChecked, topItemsTracksChecked])
+    recentlyTracksChecked, topItemsTracksChecked, savedShowsChecked, savedEpisodesChecked])
 
   useEffect(() => {
     async function getParticipantSession() {
@@ -383,6 +400,24 @@ export default function SettingsPage(props) {
                       </ul>
                     </Collapse>
                   </list>
+                  <list className='list-new-settings-item-container'>
+                    <a
+                      class={mySwiper?.activeIndex === 4 ? 'list-new-settings-item-bold' : 'list-new-settings-item-regular'}
+                      onClick={() => handleSettingsButtonPressed(4)}
+                    >
+                      Shows
+                    </a>
+                    <Collapse in={openSettingsListItem[4]} timeout="auto" unmountOnExit>
+                      <ul className={"list-new-settings-collapse-inner"}>
+                        <li className={"list-new-settings-collapse-item"}>
+                          Get User's Saved Shows
+                        </li>
+                        <li className={"list-new-settings-collapse-item"}>
+                          Get User's Saved Episodes
+                        </li>
+                      </ul>
+                    </Collapse>
+                  </list>
                 </ul>
               </nav>
             </div>
@@ -454,6 +489,16 @@ export default function SettingsPage(props) {
                         currentPlaylistsLimit, setCurrentPlaylistsLimit,
                         confirmCurrentPlaylistsYes, setConfirmCurrentPlaylistsYes,
                         checkPublic, setCheckPublic, stateTextCP, setStateTextCP
+                      )}
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      {showsSettingsCard(
+                        savedShowsChecked, setSavedShowsChecked,
+                        savedShowsLimit, setSavedShowsLimit,
+                        confirmSavedShowsYes, setConfirmSavedShowsYes,
+                        savedEpisodesChecked, setSavedEpisodesChecked,
+                        savedEpisodesLimit, setSavedEpisodesLimit,
+                        confirmSavedEpisodesYes, setConfirmSavedEpisodesYes
                       )}
                     </SwiperSlide>
                   </Swiper>

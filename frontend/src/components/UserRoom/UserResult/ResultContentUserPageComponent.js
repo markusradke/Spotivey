@@ -183,6 +183,9 @@ export default function ResultContent(props) {
                                 {type === 'Artists' ? <th>Title</th> : null}
                                 {type === 'Playlists' ? <th>Title</th> : null}
                                 {type === 'Tracks' ? <th>Artists Name</th> : null}
+                                {type === 'Episodes' ? <th>Name</th> : null}
+                                {type === 'Episodes' ? <th>Show</th> : null}
+                                {type === 'Shows' ? <th>Name</th> : null}
                                 <th>Spotify ID</th>
                                 {type === 'Tracks' ? <th>ISRC</th> : null}
                                 {type === 'Artists' ? <th>Type</th> : null}
@@ -217,6 +220,9 @@ export default function ResultContent(props) {
                                         {type === 'Tracks' ? <td>{item.trackName}</td> : null}
                                         {type === 'Artists' ? <td>{item.artistName}</td> : null}
                                         {type === 'Playlists' ? <td>{item.playlist_name}</td> : null}
+                                        {type === 'Shows' ? <td>{item.show_name}</td> : null}
+                                        {type === 'Episodes' ? <td>{item.name}</td> : null}
+                                        {type === 'Episodes' ? <td>{item.show_name}</td> : null}
                                         {type === 'Tracks' ? <td>{item.spotify_artist_string}</td> : null}
                                         <td>{type === 'Playlists' ? item.playlist_id : item.spotifyID}</td>
                                         {type === 'Tracks' ? <td>{item.isrc}</td> : null}
@@ -265,7 +271,10 @@ export default function ResultContent(props) {
                 <div className={'saved-tracks-dashboard-outer'}>
                     {type === 'Tracks' ? renderTable(data, 'Tracks', index)
                         : type === 'Artists' ? renderTable(data, 'Artists', index)
-                            : type === 'Playlists' ? renderTable(data, 'Playlists', index) : renderTable(data, 'Profile', index)}
+                            : type === 'Playlists' ? renderTable(data, 'Playlists', index)
+                                : type === 'Shows' ? renderTable(data, 'Shows', index)
+                                    : type === 'Episodes' ? renderTable(data, 'Episodes', index)
+                                        : renderTable(data, 'Profile', index)}
                 </div>
             </div>
         )

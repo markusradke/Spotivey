@@ -39,7 +39,7 @@ export default function SettingsDialog(props) {
 
     const textSpotify = ["Get User's Saved Tracks", "Get User's Profile", "Get User's Top Items (Tracks)",
         "Get User's Top Items (Artists)", "Get User's Followed Artists", "Get User's Playlists",
-        "Get Recently Played Tracks"]
+        "Get Recently Played Tracks", "Get User's Saved Shows", "Get User's Saved Episodes"]
 
     const handleCloseDialog = () => {
         props.props[0][1](false)
@@ -89,6 +89,14 @@ export default function SettingsDialog(props) {
             recent_tracks_enabled: checkArray[6],
             recent_tracks_confirm: confirmArray[6],
             recent_tracks_limit: limitArray[6][0],
+
+            saved_shows_enabled: checkArray[7],
+            saved_shows_confirm: confirmArray[7],
+            saved_shows_limit: limitArray[7][0],
+
+            saved_episodes_enabled: checkArray[8],
+            saved_episodes_confirm: confirmArray[8],
+            saved_episodes_limit: limitArray[8][0],
         };
 
         try {

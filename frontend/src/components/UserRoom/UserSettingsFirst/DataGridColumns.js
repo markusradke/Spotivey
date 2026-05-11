@@ -91,7 +91,20 @@ export const columns = [
     width: 200,
     headerName: "Get User's Playlists",
     renderCell: (params) => renderCellSpotifyText(params),
+  },
+  {
+    field: 'saved_shows',
+    width: 200,
+    headerName: "Get User's Saved Shows",
+    renderCell: (params) => renderCellSpotifyText(params),
+  },
+  {
+    field: 'saved_episodes',
+    width: 200,
+    headerName: "Get User's Saved Episodes",
+    renderCell: (params) => renderCellSpotifyText(params),
   }
+
 ];
 
 export const columnsSecondSurvey = [

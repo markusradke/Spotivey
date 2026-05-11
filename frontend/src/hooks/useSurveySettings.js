@@ -51,6 +51,8 @@ function normalizeSettings(rawSettings) {
     const followedArtists = rawSettings.followed_artists ?? {};
     const currentPlaylists = rawSettings.current_playlists ?? {};
     const recentlyPlayed = rawSettings.recently_played ?? {};
+    const savedShows = rawSettings.saved_shows ?? {};
+    const savedEpisodes = rawSettings.saved_episodes ?? {};
 
     normalized[DATA_TYPES.SAVED_TRACKS] = {
         check: savedTracks.check || false,
@@ -96,6 +98,18 @@ function normalizeSettings(rawSettings) {
         check: recentlyPlayed.check || false,
         limit: recentlyPlayed.limit || 20,
         confirmCheck: recentlyPlayed.confirmCheck || false,
+    };
+
+    normalized[DATA_TYPES.SAVED_SHOWS] = {
+        check: savedShows.check || false,
+        limit: savedShows.limit || 10,
+        confirmCheck: savedShows.confirmCheck || false,
+    };
+
+    normalized[DATA_TYPES.SAVED_EPISODES] = {
+        check: savedEpisodes.check || false,
+        limit: savedEpisodes.limit || 10,
+        confirmCheck: savedEpisodes.confirmCheck || false,
     };
 
     return normalized;

@@ -31,9 +31,9 @@ EXPLICIT_SETTING_FIELDS: tuple[str, ...] = (
     "saved_shows_enabled",
     "saved_shows_confirm",
     "saved_shows_limit",
-    "save_episodes_enabled",
-    "save_episodes_confirm",
-    "save_episodes_limit",
+    "saved_episodes_enabled",
+    "saved_episodes_confirm",
+    "saved_episodes_limit",
 )
 
 

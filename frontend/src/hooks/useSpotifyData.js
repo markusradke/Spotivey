@@ -9,6 +9,8 @@ import {
     fetchSavedTracks,
     fetchTopArtists,
     fetchTopTracks,
+    fetchSavedShows,
+    fetchSavedEpisodes
 } from "../api/spotifyApi";
 
 export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
@@ -24,6 +26,8 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
         [DATA_TYPES.FOLLOWED_ARTISTS]: [],
         [DATA_TYPES.CURRENT_PLAYLISTS]: [],
         [DATA_TYPES.PARTICIPANT_PROFILE]: [],
+        [DATA_TYPES.SAVED_SHOWS]: [],
+        [DATA_TYPES.SAVED_EPISODES]: [],
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -162,6 +166,40 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
                 });
             }
 
+            if (
+                settings[DATA_TYPES.SAVED_SHOWS]?.check &&
+                settings[DATA_TYPES.SAVED_SHOWS]?.limit > 0
+            ) {
+                steps.push({
+                    type: DATA_TYPES.SAVED_SHOWS,
+                    run: () =>
+                        fetchSavedShows(
+                            participant,
+                            surveyID,
+                            roomCode,
+                            settings[DATA_TYPES.SAVED_SHOWS].limit,
+                            settings[DATA_TYPES.SAVED_SHOWS].confirmCheck
+                        ),
+                });
+            }
+
+            if (
+                settings[DATA_TYPES.SAVED_EPISODES]?.check &&
+                settings[DATA_TYPES.SAVED_EPISODES]?.limit > 0
+            ) {
+                steps.push({
+                    type: DATA_TYPES.SAVED_EPISODES,
+                    run: () =>
+                        fetchSavedEpisodes(
+                            participant,
+                            surveyID,
+                            roomCode,
+                            settings[DATA_TYPES.SAVED_EPISODES].limit,
+                            settings[DATA_TYPES.SAVED_EPISODES].confirmCheck
+                        ),
+                });
+            }
+
             const totalSteps = steps.length + 1; // for the authentication step
 
             if (totalSteps === 1) {
@@ -192,7 +230,6 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
 
                     const result = await step.run();
                     if (isCancelled) return;
-
                     setData((prev) => ({ ...prev, [step.type]: result }));
                 }
 

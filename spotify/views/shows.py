@@ -70,8 +70,8 @@ class GetSavedShowsSpotify(APIView):
             shows_to_create.append(SavedShow(**fields))
 
         bulk_create_with_retry(SavedShow, shows_to_create)
-        return Response({'shows': [s.to_dict() for s in shows_to_create]}, status=status.HTTP_201_CREATED)
-    
+        return Response([s.to_dict() for s in shows_to_create], status=status.HTTP_201_CREATED)
+
 
 class GetSavedEpisodesSpotify(APIView):
     def post(self, request, format=None):
@@ -96,4 +96,4 @@ class GetSavedEpisodesSpotify(APIView):
             episodes_to_create.append(SavedEpisode(**fields))
 
         bulk_create_with_retry(SavedEpisode, episodes_to_create)
-        return Response({'episodes': [e.to_dict() for e in episodes_to_create]}, status=status.HTTP_201_CREATED)
+        return Response([e.to_dict() for e in episodes_to_create], status=status.HTTP_201_CREATED)

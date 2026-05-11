@@ -52,9 +52,9 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie den 
     saved_shows_confirm = models.BooleanField(default=True)
     saved_shows_limit = models.PositiveIntegerField(default=20)
 
-    save_episodes_enabled = models.BooleanField(default=False)
-    save_episodes_confirm = models.BooleanField(default=True)
-    save_episodes_limit = models.PositiveIntegerField(default=20)
+    saved_episodes_enabled = models.BooleanField(default=False)
+    saved_episodes_confirm = models.BooleanField(default=True)
+    saved_episodes_limit = models.PositiveIntegerField(default=20)
 
     confirmTextEng = models.TextField(default=defaultConfirmTextEng)
     confirmTextDe = models.TextField(default=defaultConfirmTextDe)
