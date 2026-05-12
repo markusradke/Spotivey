@@ -397,6 +397,8 @@ describe("Spotivey critical journey", () => {
         checkAllCheckboxesInActiveSlide();
         cy.contains('a', /^Playlists$/i).click({ force: true });
         checkAllCheckboxesInActiveSlide();
+        cy.contains('a', /^Shows$/i).click({ force: true });
+        checkAllCheckboxesInActiveSlide();
 
         cy.get('.speicher-button')
             .contains('button', /^save$/i)
