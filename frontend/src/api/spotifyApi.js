@@ -42,8 +42,26 @@ export async function fetchSavedTracks(participant, surveyId, roomCode, limit, m
   return response.json();
 }
 
-export async function fetchTopTracks(participant, surveyId, roomCode, limit, timeRange, confirm) {
-  const url = `/spotify/top-tracks?limit=${limit}&timeRange=${timeRange}`;
+export async function fetchTopTracksShortTerm(participant, surveyId, roomCode, limit, timeRange, confirm) {
+  const url = `/spotify/top-tracks/short-term?limit=${limit}&timeRange=${timeRange}`;
+  const response = await fetch(
+    url,
+    buildPostOptions({ participant, surveyID: surveyId, roomCode, confirm })
+  );
+  return response.json();
+}
+
+export async function fetchTopTracksMediumTerm(participant, surveyId, roomCode, limit, timeRange, confirm) {
+  const url = `/spotify/top-tracks/medium-term?limit=${limit}&timeRange=${timeRange}`;
+  const response = await fetch(
+    url,
+    buildPostOptions({ participant, surveyID: surveyId, roomCode, confirm })
+  );
+  return response.json();
+}
+
+export async function fetchTopTracksLongTerm(participant, surveyId, roomCode, limit, timeRange, confirm) {
+  const url = `/spotify/top-tracks/long-term?limit=${limit}&timeRange=${timeRange}`;
   const response = await fetch(
     url,
     buildPostOptions({ participant, surveyID: surveyId, roomCode, confirm })
@@ -60,8 +78,26 @@ export async function fetchRecentTracks(participant, surveyId, roomCode, limit, 
   return response.json();
 }
 
-export async function fetchTopArtists(participant, surveyId, roomCode, limit, timeRange, confirm) {
-  const url = `/spotify/top-artists?limit=${limit}&timeRange=${timeRange}`;
+export async function fetchTopArtistsShortTermn(participant, surveyId, roomCode, limit, timeRange, confirm) {
+  const url = `/spotify/top-artists/short-term?limit=${limit}&timeRange=${timeRange}`;
+  const response = await fetch(
+    url,
+    buildPostOptions({ participant, surveyID: surveyId, roomCode, confirm })
+  );
+  return response.json();
+}
+
+export async function fetchTopArtistsMediumTerm(participant, surveyId, roomCode, limit, timeRange, confirm) {
+  const url = `/spotify/top-artists/medium-term?limit=${limit}&timeRange=${timeRange}`;
+  const response = await fetch(
+    url,
+    buildPostOptions({ participant, surveyID: surveyId, roomCode, confirm })
+  );
+  return response.json();
+}
+
+export async function fetchTopArtistsLongTerm(participant, surveyId, roomCode, limit, timeRange, confirm) {
+  const url = `/spotify/top-artists/long-term?limit=${limit}&timeRange=${timeRange}`;
   const response = await fetch(
     url,
     buildPostOptions({ participant, surveyID: surveyId, roomCode, confirm })

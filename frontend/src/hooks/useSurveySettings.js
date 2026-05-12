@@ -46,8 +46,12 @@ function normalizeSettings(rawSettings) {
 
     const savedTracks = rawSettings.saved_tracks ?? {};
     const profile = rawSettings.profile ?? {};
-    const topTracks = rawSettings.top_tracks ?? {};
-    const topArtists = rawSettings.top_artists ?? {};
+    const topTracksShortTerm = rawSettings.top_tracks_shortterm ?? {};
+    const topTracksMediumTerm = rawSettings.top_tracks_mediumterm ?? {};
+    const topTracksLongTerm = rawSettings.top_tracks_longterm ?? {};
+    const topArtistsShortTerm = rawSettings.top_artists_shortterm ?? {};
+    const topArtistsMediumTerm = rawSettings.top_artists_mediumterm ?? {};
+    const topArtistsLongTerm = rawSettings.top_artists_longterm ?? {};
     const followedArtists = rawSettings.followed_artists ?? {};
     const currentPlaylists = rawSettings.current_playlists ?? {};
     const recentlyPlayed = rawSettings.recently_played ?? {};
@@ -67,18 +71,43 @@ function normalizeSettings(rawSettings) {
         confirmCheck: profile.confirmCheck || false,
     };
 
-    normalized[DATA_TYPES.TOP_TRACKS] = {
-        check: topTracks.check || false,
-        limit: topTracks.limit || 20,
-        timeRange: topTracks.timeRange || "",
-        confirmCheck: topTracks.confirmCheck || false,
+    normalized[DATA_TYPES.TOP_TRACKS_SHORTTERM] = {
+        check: topTracksShortTerm.check || false,
+        limit: topTracksShortTerm.limit || 20,
+        confirmCheck: topTracksShortTerm.confirmCheck || false,
     };
 
-    normalized[DATA_TYPES.TOP_ARTISTS] = {
-        check: topArtists.check || false,
-        limit: topArtists.limit || 20,
-        timeRange: topArtists.timeRange || "",
-        confirmCheck: topArtists.confirmCheck || false,
+    normalized[DATA_TYPES.TOP_TRACKS_MEDIUMTERM] = {
+        check: topTracksMediumTerm.check || false,
+        limit: topTracksMediumTerm.limit || 20,
+        confirmCheck: topTracksMediumTerm.confirmCheck || false,
+    };
+
+    normalized[DATA_TYPES.TOP_TRACKS_LONGTERM] = {
+        check: topTracksLongTerm.check || false,
+        limit: topTracksLongTerm.limit || 20,
+        confirmCheck: topTracksLongTerm.confirmCheck || false,
+    };
+
+    normalized[DATA_TYPES.TOP_ARTISTS_SHORTTERM] = {
+        check: topArtistsShortTerm.check || false,
+        limit: topArtistsShortTerm.limit || 20,
+        timeRange: topArtistsShortTerm.timeRange || "",
+        confirmCheck: topArtistsShortTerm.confirmCheck || false,
+    };
+
+    normalized[DATA_TYPES.TOP_ARTISTS_MEDIUMTERM] = {
+        check: topArtistsMediumTerm.check || false,
+        limit: topArtistsMediumTerm.limit || 20,
+        timeRange: topArtistsMediumTerm.timeRange || "",
+        confirmCheck: topArtistsMediumTerm.confirmCheck || false,
+    };
+
+    normalized[DATA_TYPES.TOP_ARTISTS_LONGTERM] = {
+        check: topArtistsLongTerm.check || false,
+        limit: topArtistsLongTerm.limit || 20,
+        timeRange: topArtistsLongTerm.timeRange || "",
+        confirmCheck: topArtistsLongTerm.confirmCheck || false,
     };
 
     normalized[DATA_TYPES.FOLLOWED_ARTISTS] = {

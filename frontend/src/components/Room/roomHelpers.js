@@ -34,8 +34,12 @@ export function buildWelcomeSettings(rawSettings) {
 
     const savedTracks = rawSettings.saved_tracks;
     const profile = rawSettings.profile;
-    const topTracks = rawSettings.top_tracks;
-    const topArtists = rawSettings.top_artists;
+    const topTracksShortTerm = rawSettings.top_tracks_shortterm;
+    const topTracksMediumTerm = rawSettings.top_tracks_mediumterm;
+    const topTracksLongTerm = rawSettings.top_tracks_longterm;
+    const topArtistsShortTerm = rawSettings.top_artists_shortterm;
+    const topArtistsMediumTerm = rawSettings.top_artists_mediumterm;
+    const topArtistsLongTerm = rawSettings.top_artists_longterm;
     const followedArtists = rawSettings.followed_artists;
     const currentPlaylists = rawSettings.current_playlists;
     const recentlyPlayed = rawSettings.recently_played;
@@ -58,14 +62,34 @@ export function buildWelcomeSettings(rawSettings) {
         ]);
     }
 
-    if (topTracks?.check) {
-        de.push([true, "Ihrer Top Tracks"]);
-        en.push([true, "Your Top Tracks"]);
+    if (topTracksShortTerm?.check) {
+        de.push([true, "Ihrer Kurzfristigen Top Tracks"]);
+        en.push([true, "Your Short-Term Top Tracks"]);
     }
 
-    if (topArtists?.check) {
-        de.push([true, "Ihrer Top Interpreten"]);
-        en.push([true, "Your Top Artists"]);
+    if (topTracksMediumTerm?.check) {
+        de.push([true, "Ihrer Mittelfristigen Top Tracks"]);
+        en.push([true, "Your Medium-Term Top Tracks"]);
+    }
+
+    if (topTracksLongTerm?.check) {
+        de.push([true, "Ihrer Langfristigen Top Tracks"]);
+        en.push([true, "Your Long-Term Top Tracks"]);
+    }
+
+    if (topArtistsShortTerm?.check) {
+        de.push([true, "Ihrer Kurzfristigen Top Künstler"]);
+        en.push([true, "Your Short-Term Top Artists"]);
+    }
+
+    if (topArtistsMediumTerm?.check) {
+        de.push([true, "Ihrer Mittelfristigen Top Künstler"]);
+        en.push([true, "Your Medium-Term Top Artists"]);
+    }
+
+    if (topArtistsLongTerm?.check) {
+        de.push([true, "Ihrer Langfristigen Top Künstler"]);
+        en.push([true, "Your Long-Term Top Artists"]);
     }
 
     if (followedArtists?.check) {

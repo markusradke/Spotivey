@@ -37,9 +37,9 @@ function getTimeRange(timeRange) {
 
 export default function SettingsDialog(props) {
 
-    const textSpotify = ["Get User's Saved Tracks", "Get User's Profile", "Get User's Top Items (Tracks)",
-        "Get User's Top Items (Artists)", "Get User's Followed Artists", "Get User's Playlists",
-        "Get Recently Played Tracks", "Get User's Saved Shows", "Get User's Saved Episodes"]
+    const textSpotify = ["Saved Tracks", "User Profile", "Top Tracks (Short Term)", "Top Tracks (Medium Term)", "Top Tracks (Long Term)",
+        "Top Artists (Short Term)", "Top Artists (Medium Term)", "Top Artists (Long Term)", "Followed Artists", "Playlists",
+        "Recently Played Tracks", "Saved Shows", "Saved Episodes"]
 
     const handleCloseDialog = () => {
         props.props[0][1](false)
@@ -67,36 +67,56 @@ export default function SettingsDialog(props) {
             profile_enabled: checkArray[1],
             profile_confirm: confirmArray[1],
 
-            top_tracks_enabled: checkArray[2],
-            top_tracks_confirm: confirmArray[2],
-            top_tracks_limit: limitArray[2][0],
-            top_tracks_time_range: getTimeRange(limitArray[2][1]),
+            top_tracks_shortterm_enabled: checkArray[2],
+            top_tracks_shortterm_confirm: confirmArray[2],
+            top_tracks_shortterm_limit: limitArray[2][0],
+            top_tracks_shortterm_time_range: getTimeRange(limitArray[2][1]),
 
-            top_artists_enabled: checkArray[3],
-            top_artists_confirm: confirmArray[3],
-            top_artists_limit: limitArray[3][0],
-            top_artists_time_range: getTimeRange(limitArray[3][1]),
+            top_tracks_mediumterm_enabled: checkArray[3],
+            top_tracks_mediumterm_confirm: confirmArray[3],
+            top_tracks_mediumterm_limit: limitArray[3][0],
+            top_tracks_mediumterm_time_range: getTimeRange(limitArray[3][1]),
 
-            followed_artists_enabled: checkArray[4],
-            followed_artists_confirm: confirmArray[4],
-            followed_artists_limit: limitArray[4][0],
+            top_tracks_longterm_enabled: checkArray[4],
+            top_tracks_longterm_confirm: confirmArray[4],
+            top_tracks_longterm_limit: limitArray[4][0],
+            top_tracks_longterm_time_range: getTimeRange(limitArray[4][1]),
 
-            current_playlists_enabled: checkArray[5],
-            current_playlists_confirm: confirmArray[5],
-            current_playlists_limit: limitArray[5][0],
-            current_playlists_public: limitArray[5][1],
+            top_artists_shortterm_enabled: checkArray[5],
+            top_artists_shortterm_confirm: confirmArray[5],
+            top_artists_shortterm_limit: limitArray[5][0],
+            top_artists_shortterm_time_range: getTimeRange(limitArray[5][1]),
 
-            recent_tracks_enabled: checkArray[6],
-            recent_tracks_confirm: confirmArray[6],
-            recent_tracks_limit: limitArray[6][0],
+            top_artists_mediumterm_enabled: checkArray[6],
+            top_artists_mediumterm_confirm: confirmArray[6],
+            top_artists_mediumterm_limit: limitArray[6][0],
+            top_artists_mediumterm_time_range: getTimeRange(limitArray[6][1]),
 
-            saved_shows_enabled: checkArray[7],
-            saved_shows_confirm: confirmArray[7],
-            saved_shows_limit: limitArray[7][0],
+            top_artists_longterm_enabled: checkArray[7],
+            top_artists_longterm_confirm: confirmArray[7],
+            top_artists_longterm_limit: limitArray[7][0],
+            top_artists_longterm_time_range: getTimeRange(limitArray[7][1]),
 
-            saved_episodes_enabled: checkArray[8],
-            saved_episodes_confirm: confirmArray[8],
-            saved_episodes_limit: limitArray[8][0],
+            followed_artists_enabled: checkArray[8],
+            followed_artists_confirm: confirmArray[8],
+            followed_artists_limit: limitArray[8][0],
+
+            current_playlists_enabled: checkArray[9],
+            current_playlists_confirm: confirmArray[9],
+            current_playlists_limit: limitArray[9][0],
+            current_playlists_public: limitArray[9][1],
+
+            recent_tracks_enabled: checkArray[10],
+            recent_tracks_confirm: confirmArray[10],
+            recent_tracks_limit: limitArray[10][0],
+
+            saved_shows_enabled: checkArray[11],
+            saved_shows_confirm: confirmArray[11],
+            saved_shows_limit: limitArray[11][0],
+
+            saved_episodes_enabled: checkArray[12],
+            saved_episodes_confirm: confirmArray[12],
+            saved_episodes_limit: limitArray[12][0],
         };
 
         try {

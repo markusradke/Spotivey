@@ -25,26 +25,36 @@ import {
 export default function SettingsPage(props) {
 
   const [savedTracksLimit, setSavedTracksLimit] = useState(20)
-  const [topItemsTracksLimit, setTopItemsTracksLimit] = useState(20)
-  const [topItemsArtistsLimit, setTopItemsArtistsLimit] = useState(20)
+  const [topItemsTracksShortTermLimit, setTopItemsTracksShortTermLimit] = useState(20)
+  const [topItemsTracksMediumTermLimit, setTopItemsTracksMediumTermLimit] = useState(20)
+  const [topItemsTracksLongTermLimit, setTopItemsTracksLongTermLimit] = useState(20)
+  const [topItemsArtistsShortTermLimit, setTopItemsArtistsShortTermLimit] = useState(20)
+  const [topItemsArtistsMediumTermLimit, setTopItemsArtistsMediumTermLimit] = useState(20)
+  const [topItemsArtistsLongTermLimit, setTopItemsArtistsLongTermLimit] = useState(20)
   const [followedArtistsLimit, setFollowedArtistsLimit] = useState(20)
   const [savedShowsLimit, setSavedShowsLimit] = useState(20);
   const [savedEpisodesLimit, setSavedEpisodesLimit] = useState(20);
   const [tracksMarket, setTracksMarket] = useState({ Code: "DE", Name: "Germany" })
-  const [topTracksTimeRange, setTopTracksTimeRange] = useState({ name: 'medium_term', info: 'approximately last 6 months' })
-  const [topArtistsTimeRange, setTopArtistsTimeRange] = useState({ name: 'medium_term', info: 'approximately last 6 months' })
 
   const [savedTracksChecked, setSavedTracksChecked] = useState(false);
-  const [topItemsTracksChecked, setTopItemsTracksChecked] = useState(false);
+  const [topItemsTracksShortTermChecked, setTopItemsTracksShortTermChecked] = useState(false);
+  const [topItemsTracksMediumTermChecked, setTopItemsTracksMediumTermChecked] = useState(false);
+  const [topItemsTracksLongTermChecked, setTopItemsTracksLongTermChecked] = useState(false);
   const [currentUsersChecked, setCurrentUsersChecked] = useState(false);
-  const [topItemsArtistsChecked, setTopItemsArtistsChecked] = useState(false);
+  const [topItemsArtistsShortTermChecked, setTopItemsArtistsShortTermChecked] = useState(false);
+  const [topItemsArtistsMediumTermChecked, setTopItemsArtistsMediumTermChecked] = useState(false);
+  const [topItemsArtistsLongTermChecked, setTopItemsArtistsLongTermChecked] = useState(false);
   const [followedArtistsChecked, setFollowedArtistsChecked] = useState(false);
   const [savedShowsChecked, setSavedShowsChecked] = useState(false);
   const [savedEpisodesChecked, setSavedEpisodesChecked] = useState(false);
 
   const [confirmSavedTracksYes, setConfirmSavedTracksYes] = useState(true)
-  const [confirmTopItemsTracksYes, setConfirmTopItemsTracksYes] = useState(true)
-  const [confirmTopItemsArtistsYes, setConfirmTopItemsArtistsYes] = useState(true)
+  const [confirmTopItemsTracksShortTermYes, setConfirmTopItemsTracksShortTermYes] = useState(true)
+  const [confirmTopItemsTracksMediumTermYes, setConfirmTopItemsTracksMediumTermYes] = useState(true)
+  const [confirmTopItemsTracksLongTermYes, setConfirmTopItemsTracksLongTermYes] = useState(true)
+  const [confirmTopItemsArtistsShortTermYes, setConfirmTopItemsArtistsShortTermYes] = useState(true)
+  const [confirmTopItemsArtistsMediumTermYes, setConfirmTopItemsArtistsMediumTermYes] = useState(true)
+  const [confirmTopItemsArtistsLongTermYes, setConfirmTopItemsArtistsLongTermYes] = useState(true)
   const [confirmFollowedArtistsYes, setConfirmFollowedArtistsYes] = useState(true)
   const [confirmCurrentPlaylistsYes, setConfirmCurrentPlaylistsYes] = useState(true)
   const [confirmRecentlyTracksYes, setConfirmRecentlyTracksYes] = useState(true)
@@ -55,7 +65,7 @@ export default function SettingsPage(props) {
 
   const [openSettingsListItem, setOpenSettingsListItem] = useState([true, false, false, false, false, false])
 
-  const [confirmArray, setConfirmArray] = useState([true, false, true, true, true, true, true, true, true])
+  const [confirmArray, setConfirmArray] = useState([true, false, true, true, true, true, true, true, true, true, true, true, true])
 
   const [currentPlaylistsLimit, setCurrentPlaylistsLimit] = useState(20)
   const [currentPlaylistsChecked, setCurrentPlaylistsChecked] = useState(false)
@@ -78,10 +88,11 @@ export default function SettingsPage(props) {
   const [changeTextfield, setChangeTextfield] = useState(false)
   const [countCheckboxen, setCountCheckboxen] = useState(0)
   const [openDialog, setOpenDialog] = useState(false);
-  const [settingsCheckArray, setSettingsCheckArray] = useState([false, false, false, false, false, false, false, false, false])
+  const [settingsCheckArray, setSettingsCheckArray] = useState([false, false, false, false, false, false, false, false, false, false, false, false, false])
   const [settingsLimitArray, setSettingsLimitArray] = useState(
-    [[savedTracksLimit, tracksMarket], [], [topItemsTracksLimit, topTracksTimeRange], [topItemsArtistsLimit, topArtistsTimeRange],
-    [followedArtistsLimit], [currentPlaylistsLimit, checkPublic], [recentlyTracksLimit], [savedShowsLimit], [savedEpisodesLimit]]
+    [[savedTracksLimit, tracksMarket], [], [topItemsTracksShortTermLimit], [topItemsTracksMediumTermLimit], [topItemsTracksLongTermLimit],
+    [topItemsArtistsShortTermLimit], [topItemsArtistsMediumTermLimit], [topItemsArtistsLongTermLimit], [followedArtistsLimit],
+    [currentPlaylistsLimit, checkPublic], [recentlyTracksLimit], [savedShowsLimit], [savedEpisodesLimit]]
   )
   const [settingsTextArray, setSettingsTextArray] = useState(['', '', ''])
 
@@ -93,9 +104,11 @@ export default function SettingsPage(props) {
   const [stateTextCP, setStateTextCP] = useState('')
 
   useEffect(() => {
-    setConfirmArray([confirmSavedTracksYes, false, confirmTopItemsTracksYes, confirmTopItemsArtistsYes,
-      confirmFollowedArtistsYes, confirmCurrentPlaylistsYes, confirmRecentlyTracksYes, confirmSavedShowsYes, confirmSavedEpisodesYes])
-  }, [confirmSavedTracksYes, confirmTopItemsTracksYes, confirmTopItemsArtistsYes, confirmFollowedArtistsYes,
+    setConfirmArray([confirmSavedTracksYes, false, confirmTopItemsTracksShortTermYes, confirmTopItemsTracksMediumTermYes, confirmTopItemsTracksLongTermYes,
+      confirmTopItemsArtistsShortTermYes, confirmTopItemsArtistsMediumTermYes, confirmTopItemsArtistsLongTermYes, confirmFollowedArtistsYes,
+      confirmCurrentPlaylistsYes, confirmRecentlyTracksYes, confirmSavedShowsYes, confirmSavedEpisodesYes])
+  }, [confirmSavedTracksYes, confirmTopItemsTracksShortTermYes, confirmTopItemsTracksMediumTermYes, confirmTopItemsTracksLongTermYes,
+    confirmTopItemsArtistsShortTermYes, confirmTopItemsArtistsMediumTermYes, confirmTopItemsArtistsLongTermYes, confirmFollowedArtistsYes,
     confirmCurrentPlaylistsYes, confirmRecentlyTracksYes, confirmSavedShowsYes, confirmSavedEpisodesYes])
 
   const navigate = useNavigate();
@@ -143,8 +156,12 @@ export default function SettingsPage(props) {
           const raw = data.data[0]
           const savedTracks = raw.saved_tracks
           const profile = raw.profile
-          const topTracks = raw.top_tracks
-          const topArtists = raw.top_artists
+          const topTracksShortTerm = raw.top_tracks_shortterm
+          const topTracksMediumTerm = raw.top_tracks_mediumterm
+          const topTracksLongTerm = raw.top_tracks_longterm
+          const topArtistsShortTerm = raw.top_artists_shortterm
+          const topArtistsMediumTerm = raw.top_artists_mediumterm
+          const topArtistsLongTerm = raw.top_artists_longterm
           const followedArtists = raw.followed_artists
           const currentPlaylists = raw.current_playlists
           const recentlyPlayed = raw.recently_played
@@ -154,20 +171,16 @@ export default function SettingsPage(props) {
           setUmfrageName(data.data[0].nameUmfrage)
           setUmfrageID(data.data[0].umfrageID)
           setSavedTracksLimit(savedTracks.limit)
-          setTopItemsTracksLimit(topTracks.limit)
-          setTopItemsArtistsLimit(topArtists.limit)
+          setTopItemsTracksShortTermLimit(topTracksShortTerm.limit)
+          setTopItemsTracksMediumTermLimit(topTracksMediumTerm.limit)
+          setTopItemsTracksLongTermLimit(topTracksLongTerm.limit)
+          setTopItemsArtistsShortTermLimit(topArtistsShortTerm.limit)
+          setTopItemsArtistsMediumTermLimit(topArtistsMediumTerm.limit)
+          setTopItemsArtistsLongTermLimit(topArtistsLongTerm.limit)
           setFollowedArtistsLimit(followedArtists.limit)
           setTracksMarket({
             Code: savedTracks.marketCode,
             Name: savedTracks.market
-          })
-          setTopTracksTimeRange({
-            name: topTracks.timeRange,
-            info: ''
-          })
-          setTopArtistsTimeRange({
-            name: topArtists.timeRange,
-            info: ''
           })
           setCurrentPlaylistsLimit(currentPlaylists.limit)
           setRecentlyTracksLimit(recentlyPlayed.limit)
@@ -175,9 +188,13 @@ export default function SettingsPage(props) {
           setSavedEpisodesLimit(savedEpisodes.limit)
 
           setSavedTracksChecked(savedTracks.check)
-          setTopItemsTracksChecked(topTracks.check)
+          setTopItemsTracksShortTermChecked(topTracksShortTerm.check)
+          setTopItemsTracksMediumTermChecked(topTracksMediumTerm.check)
+          setTopItemsTracksLongTermChecked(topTracksLongTerm.check)
           setCurrentUsersChecked(profile.check)
-          setTopItemsArtistsChecked(topArtists.check)
+          setTopItemsArtistsShortTermChecked(topArtistsShortTerm.check)
+          setTopItemsArtistsMediumTermChecked(topArtistsMediumTerm.check)
+          setTopItemsArtistsLongTermChecked(topArtistsLongTerm.check)
           setFollowedArtistsChecked(followedArtists.check)
           setRecentlyTracksChecked(recentlyPlayed.check)
           setCurrentPlaylistsChecked(currentPlaylists.check)
@@ -185,8 +202,12 @@ export default function SettingsPage(props) {
           setSavedEpisodesChecked(savedEpisodes.check)
 
           setConfirmSavedTracksYes(savedTracks.confirmCheck)
-          setConfirmTopItemsTracksYes(topTracks.confirmCheck)
-          setConfirmTopItemsArtistsYes(topArtists.confirmCheck)
+          setConfirmTopItemsTracksShortTermYes(topTracksShortTerm.confirmCheck)
+          setConfirmTopItemsTracksMediumTermYes(topTracksMediumTerm.confirmCheck)
+          setConfirmTopItemsTracksLongTermYes(topTracksLongTerm.confirmCheck)
+          setConfirmTopItemsArtistsShortTermYes(topArtistsShortTerm.confirmCheck)
+          setConfirmTopItemsArtistsMediumTermYes(topArtistsMediumTerm.confirmCheck)
+          setConfirmTopItemsArtistsLongTermYes(topArtistsLongTerm.confirmCheck)
           setConfirmFollowedArtistsYes(followedArtists.confirmCheck)
           setConfirmCurrentPlaylistsYes(currentPlaylists.confirmCheck)
           setConfirmRecentlyTracksYes(recentlyPlayed.confirmCheck)
@@ -199,9 +220,11 @@ export default function SettingsPage(props) {
   }, [update])
 
   useEffect(() => {
-    setSettingsLimitArray([[savedTracksLimit, tracksMarket], [], [topItemsTracksLimit, topTracksTimeRange], [topItemsArtistsLimit, topArtistsTimeRange],
+    setSettingsLimitArray([[savedTracksLimit, tracksMarket], [], [topItemsTracksShortTermLimit], [topItemsTracksMediumTermLimit], [topItemsTracksLongTermLimit],
+    [topItemsArtistsShortTermLimit], [topItemsArtistsMediumTermLimit], [topItemsArtistsLongTermLimit],
     [followedArtistsLimit], [currentPlaylistsLimit, checkPublic], [recentlyTracksLimit], [savedShowsLimit], [savedEpisodesLimit]])
-  }, [savedTracksLimit, tracksMarket, topItemsTracksLimit, topTracksTimeRange, topItemsArtistsLimit, topArtistsTimeRange,
+  }, [savedTracksLimit, tracksMarket, topItemsTracksShortTermLimit, topItemsTracksMediumTermLimit, topItemsTracksLongTermLimit,
+    topItemsArtistsShortTermLimit, topItemsArtistsMediumTermLimit, topItemsArtistsLongTermLimit,
     followedArtistsLimit, currentPlaylistsLimit, recentlyTracksLimit, checkPublic, savedShowsLimit, savedEpisodesLimit])
 
 
@@ -227,7 +250,8 @@ export default function SettingsPage(props) {
 
 
   useEffect(() => {
-    let arr1 = [savedTracksChecked, currentUsersChecked, topItemsTracksChecked, topItemsArtistsChecked, followedArtistsChecked,
+    let arr1 = [savedTracksChecked, currentUsersChecked, topItemsTracksShortTermChecked, topItemsTracksMediumTermChecked, topItemsTracksLongTermChecked,
+      topItemsArtistsShortTermChecked, topItemsArtistsMediumTermChecked, topItemsArtistsLongTermChecked, followedArtistsChecked,
       currentPlaylistsChecked, recentlyTracksChecked, savedShowsChecked, savedEpisodesChecked]
 
     setSettingsCheckArray(arr1)
@@ -235,8 +259,9 @@ export default function SettingsPage(props) {
     const count1 = arr1.filter(value => value === true).length;
     setCountCheckboxen(count1)
 
-  }, [savedTracksChecked, currentPlaylistsChecked, followedArtistsChecked, topItemsArtistsChecked, currentUsersChecked,
-    recentlyTracksChecked, topItemsTracksChecked, savedShowsChecked, savedEpisodesChecked])
+  }, [savedTracksChecked, currentPlaylistsChecked, followedArtistsChecked, topItemsArtistsShortTermChecked, topItemsArtistsMediumTermChecked,
+    topItemsArtistsLongTermChecked, currentUsersChecked, recentlyTracksChecked, topItemsTracksShortTermChecked,
+    topItemsTracksMediumTermChecked, topItemsTracksLongTermChecked, savedShowsChecked, savedEpisodesChecked])
 
   useEffect(() => {
     async function getParticipantSession() {
@@ -468,16 +493,26 @@ export default function SettingsPage(props) {
                     <SwiperSlide>
                       {usersSettingsCard(
                         currentUsersChecked, setCurrentUsersChecked,
-                        topItemsTracksChecked, setTopItemsTracksChecked,
-                        topItemsTracksLimit, setTopItemsTracksLimit,
-                        topTracksTimeRange, setTopTracksTimeRange,
-                        topItemsArtistsChecked, setTopItemsArtistsChecked,
-                        topItemsArtistsLimit, setTopItemsArtistsLimit,
-                        topArtistsTimeRange, setTopArtistsTimeRange,
+                        topItemsTracksShortTermChecked, setTopItemsTracksShortTermChecked,
+                        topItemsTracksShortTermLimit, setTopItemsTracksShortTermLimit,
+                        topItemsTracksMediumTermChecked, setTopItemsTracksMediumTermChecked,
+                        topItemsTracksMediumTermLimit, setTopItemsTracksMediumTermLimit,
+                        topItemsTracksLongTermChecked, setTopItemsTracksLongTermChecked,
+                        topItemsTracksLongTermLimit, setTopItemsTracksLongTermLimit,
+                        topItemsArtistsShortTermChecked, setTopItemsArtistsShortTermChecked,
+                        topItemsArtistsShortTermLimit, setTopItemsArtistsShortTermLimit,
+                        topItemsArtistsMediumTermChecked, setTopItemsArtistsMediumTermChecked,
+                        topItemsArtistsMediumTermLimit, setTopItemsArtistsMediumTermLimit,
+                        topItemsArtistsLongTermChecked, setTopItemsArtistsLongTermChecked,
+                        topItemsArtistsLongTermLimit, setTopItemsArtistsLongTermLimit,
                         followedArtistsChecked, setFollowedArtistsChecked,
                         followedArtistsLimit, setFollowedArtistsLimit,
-                        confirmTopItemsTracksYes, setConfirmTopItemsTracksYes,
-                        confirmTopItemsArtistsYes, setConfirmTopItemsArtistsYes,
+                        confirmTopItemsTracksShortTermYes, setConfirmTopItemsTracksShortTermYes,
+                        confirmTopItemsTracksMediumTermYes, setConfirmTopItemsTracksMediumTermYes,
+                        confirmTopItemsTracksLongTermYes, setConfirmTopItemsTracksLongTermYes,
+                        confirmTopItemsArtistsShortTermYes, setConfirmTopItemsArtistsShortTermYes,
+                        confirmTopItemsArtistsMediumTermYes, setConfirmTopItemsArtistsMediumTermYes,
+                        confirmTopItemsArtistsLongTermYes, setConfirmTopItemsArtistsLongTermYes,
                         confirmFollowedArtistsYes, setConfirmFollowedArtistsYes,
                         setStateTextTT, stateTextTT, setStateTextTA, stateTextTA,
                         setStateTextFA, stateTextFA

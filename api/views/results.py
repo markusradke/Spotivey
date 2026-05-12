@@ -177,7 +177,8 @@ class GetParticipantCountForSurvey(APIView):
             total_participants = len(participants)
             total_records = 0
 
-            for model in [SavedTrack, TopTrack, TopArtist, 
+            for model in [SavedTrack, TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm, 
+                          TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm,
                             ParticipantProfile, FollowedArtist, 
                             CurrentPlaylist, RecentTrack, SavedShow, SavedEpisode]:
                 records = model.objects.filter(participant__settings__in=settings)

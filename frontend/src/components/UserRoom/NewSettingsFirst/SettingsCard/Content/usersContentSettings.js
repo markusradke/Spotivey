@@ -1,23 +1,32 @@
 import * as React from "react";
 import { Checkbox, Slider } from "@mui/material";
 import { marks } from './Components/settingsConst';
-import TimeRange from './Components/time_range';
 import { confirmCheck } from "./Components/ConfirmCheck";
 import LimitComponent from "./Components/limitComponent";
 import TimeRangeComponent from "./Components/TimeRangeComponent";
 
 export function usersContentSettings(
     currentUsersChecked, setCurrentUsersChecked,
-    topItemsTracksChecked, setTopItemsTracksChecked,
-    topItemsTracksLimit, setTopItemsTracksLimit,
-    topTracksTimeRange, setTopTracksTimeRange,
-    topItemsArtistsChecked, setTopItemsArtistsChecked,
-    topItemsArtistsLimit, setTopItemsArtistsLimit,
-    topArtistsTimeRange, setTopArtistsTimeRange,
+    topItemsTracksShortTermChecked, setTopItemsTracksShortTermChecked,
+    topItemsTracksShortTermLimit, setTopItemsTracksShortTermLimit,
+    topItemsTracksMediumTermChecked, setTopItemsTracksMediumTermChecked,
+    topItemsTracksMediumTermLimit, setTopItemsTracksMediumTermLimit,
+    topItemsTracksLongTermChecked, setTopItemsTracksLongTermChecked,
+    topItemsTracksLongTermLimit, setTopItemsTracksLongTermLimit,
+    topItemsArtistsShortTermChecked, setTopItemsArtistsShortTermChecked,
+    topItemsArtistsShortTermLimit, setTopItemsArtistsShortTermLimit,
+    topItemsArtistsMediumTermChecked, setTopItemsArtistsMediumTermChecked,
+    topItemsArtistsMediumTermLimit, setTopItemsArtistsMediumTermLimit,
+    topItemsArtistsLongTermChecked, setTopItemsArtistsLongTermChecked,
+    topItemsArtistsLongTermLimit, setTopItemsArtistsLongTermLimit,
     followedArtistsChecked, setFollowedArtistsChecked,
     followedArtistsLimit, setFollowedArtistsLimit,
-    confirmTopItemsTracksYes, setConfirmTopItemsTracksYes,
-    confirmTopItemsArtistsYes, setConfirmTopItemsArtistsYes,
+    confirmTopItemsTracksShortTermYes, setConfirmTopItemsTracksShortTermYes,
+    confirmTopItemsTracksMediumTermYes, setConfirmTopItemsTracksMediumTermYes,
+    confirmTopItemsTracksLongTermYes, setConfirmTopItemsTracksLongTermYes,
+    confirmTopItemsArtistsShortTermYes, setConfirmTopItemsArtistsShortTermYes,
+    confirmTopItemsArtistsMediumTermYes, setConfirmTopItemsArtistsMediumTermYes,
+    confirmTopItemsArtistsLongTermYes, setConfirmTopItemsArtistsLongTermYes,
     confirmFollowedArtistsYes, setConfirmFollowedArtistsYes
 ) {
     return (
@@ -53,15 +62,17 @@ export function usersContentSettings(
                     Get User's Top Items (Tracks)
                 </h2>
                 <h2 class='figcaption-text'>
-                    Select this option to get the current user's top tracks based on calculated affinity.
+                    Select these options to get the current user's top tracks based on calculated affinity.
                 </h2>
+                <br></br>
+                <h3>Short Term</h3>
                 <div class='spotify-container'>
                     <div class='spotify-check'>
                         <Checkbox
                             color="primary"
-                            checked={topItemsTracksChecked}
+                            checked={topItemsTracksShortTermChecked}
                             onChange={(e) => {
-                                setTopItemsTracksChecked(e.target.checked);
+                                setTopItemsTracksShortTermChecked(e.target.checked);
                             }}
                             style={{
                                 color: "#C40D1E"
@@ -73,10 +84,10 @@ export function usersContentSettings(
                             <LimitComponent />
                             <Slider
                                 aria-valuetext='tracks'
-                                aria-label="SliderTopItemsTracks"
-                                value={topItemsTracksLimit}
+                                aria-label="SliderTopItemsShortTermTracks"
+                                value={topItemsTracksShortTermLimit}
                                 onChange={(e, newValue) => {
-                                    setTopItemsTracksLimit(newValue);
+                                    setTopItemsTracksShortTermLimit(newValue);
                                 }}
                                 min={1}
                                 max={50}
@@ -85,28 +96,17 @@ export function usersContentSettings(
                                 valueLabelDisplay='auto'
                             />
                         </div>
-                        <TimeRangeComponent />
-                        <div className="autocomplete-container">
-                            <TimeRange props={[topTracksTimeRange, setTopTracksTimeRange]} />
-                        </div>
-                        {confirmCheck(confirmTopItemsTracksYes, setConfirmTopItemsTracksYes)}
+                        {confirmCheck(confirmTopItemsTracksShortTermYes, setConfirmTopItemsTracksShortTermYes)}
                     </div>
                 </div>
-            </React.Fragment>
-            <React.Fragment>
-                <h2 data-heading='true' class='settings-content-item-title'>
-                    Get User's Top Items (Artists)
-                </h2>
-                <h2 class='figcaption-text'>
-                    Select this option to get the current user's top artists based on calculated affinity.
-                </h2>
+                <h3>Medium Term</h3>
                 <div class='spotify-container'>
                     <div class='spotify-check'>
                         <Checkbox
                             color="primary"
-                            checked={topItemsArtistsChecked}
+                            checked={topItemsTracksMediumTermChecked}
                             onChange={(e) => {
-                                setTopItemsArtistsChecked(e.target.checked);
+                                setTopItemsTracksMediumTermChecked(e.target.checked);
                             }}
                             style={{
                                 color: "#C40D1E"
@@ -117,10 +117,11 @@ export function usersContentSettings(
                         <div class='settings-slider-container'>
                             <LimitComponent />
                             <Slider
-                                aria-label="SliderTopItemsArtist"
-                                value={topItemsArtistsLimit}
+                                aria-valuetext='tracks'
+                                aria-label="SliderTopItemsMediumTermTracks"
+                                value={topItemsTracksMediumTermLimit}
                                 onChange={(e, newValue) => {
-                                    setTopItemsArtistsLimit(newValue);
+                                    setTopItemsTracksMediumTermLimit(newValue);
                                 }}
                                 min={1}
                                 max={50}
@@ -129,11 +130,149 @@ export function usersContentSettings(
                                 valueLabelDisplay='auto'
                             />
                         </div>
-                        <TimeRangeComponent />
-                        <div className="autocomplete-container">
-                            <TimeRange props={[topArtistsTimeRange, setTopArtistsTimeRange]} />
+                        {confirmCheck(confirmTopItemsTracksMediumTermYes, setConfirmTopItemsTracksMediumTermYes)}
+                    </div>
+                </div>
+                <h3>Long Term</h3>
+                <div class='spotify-container'>
+                    <div class='spotify-check'>
+                        <Checkbox
+                            color="primary"
+                            checked={topItemsTracksLongTermChecked}
+                            onChange={(e) => {
+                                setTopItemsTracksLongTermChecked(e.target.checked);
+                            }}
+                            style={{
+                                color: "#C40D1E"
+                            }}
+                        />
+                    </div>
+                    <div class='spotify-items'>
+                        <div class='settings-slider-container'>
+                            <LimitComponent />
+                            <Slider
+                                aria-valuetext='tracks'
+                                aria-label="SliderTopItemsLongTermTracks"
+                                value={topItemsTracksLongTermLimit}
+                                onChange={(e, newValue) => {
+                                    setTopItemsTracksLongTermLimit(newValue);
+                                }}
+                                min={1}
+                                max={50}
+                                step={1}
+                                marks={marks}
+                                valueLabelDisplay='auto'
+                            />
                         </div>
-                        {confirmCheck(confirmTopItemsArtistsYes, setConfirmTopItemsArtistsYes)}
+                        {confirmCheck(confirmTopItemsTracksLongTermYes, setConfirmTopItemsTracksLongTermYes)}
+                    </div>
+                </div>
+            </React.Fragment>
+            <React.Fragment>
+                <h2 data-heading='true' class='settings-content-item-title'>
+                    Get User's Top Items (Artists)
+                </h2>
+                <h2 class='figcaption-text'>
+                    Select these options to get the current user's top artists based on calculated affinity.
+                </h2>
+                <br></br>
+                <h3>Short Term</h3>
+                <div class='spotify-container'>
+                    <div class='spotify-check'>
+                        <Checkbox
+                            color="primary"
+                            checked={topItemsArtistsShortTermChecked}
+                            onChange={(e) => {
+                                setTopItemsArtistsShortTermChecked(e.target.checked);
+                            }}
+                            style={{
+                                color: "#C40D1E"
+                            }}
+                        />
+                    </div>
+                    <div class='spotify-items'>
+                        <div class='settings-slider-container'>
+                            <LimitComponent />
+                            <Slider
+                                aria-label="SliderTopItemsShortTermArtist"
+                                value={topItemsArtistsShortTermLimit}
+                                onChange={(e, newValue) => {
+                                    setTopItemsArtistsShortTermLimit(newValue);
+                                }}
+                                min={1}
+                                max={50}
+                                step={1}
+                                marks={marks}
+                                valueLabelDisplay='auto'
+                            />
+                        </div>
+                        {confirmCheck(confirmTopItemsArtistsShortTermYes, setConfirmTopItemsArtistsShortTermYes)}
+                    </div>
+                </div>
+                <h3>Medium Term</h3>
+                <div class='spotify-container'>
+                    <div class='spotify-check'>
+                        <Checkbox
+                            color="primary"
+                            checked={topItemsArtistsMediumTermChecked}
+                            onChange={(e) => {
+                                setTopItemsArtistsMediumTermChecked(e.target.checked);
+                            }}
+                            style={{
+                                color: "#C40D1E"
+                            }}
+                        />
+                    </div>
+                    <div class='spotify-items'>
+                        <div class='settings-slider-container'>
+                            <LimitComponent />
+                            <Slider
+                                aria-label="SliderTopItemsMediumTermArtist"
+                                value={topItemsArtistsMediumTermLimit}
+                                onChange={(e, newValue) => {
+                                    setTopItemsArtistsMediumTermLimit(newValue);
+                                }}
+                                min={1}
+                                max={50}
+                                step={1}
+                                marks={marks}
+                                valueLabelDisplay='auto'
+                            />
+                        </div>
+                        {confirmCheck(confirmTopItemsArtistsMediumTermYes, setConfirmTopItemsArtistsMediumTermYes)}
+                    </div>
+                </div>
+                <h3>Long Term</h3>
+                <div class='spotify-container'>
+                    <div class='spotify-check'>
+                        <Checkbox
+                            color="primary"
+                            checked={topItemsArtistsLongTermChecked}
+                            onChange={(e) => {
+                                setTopItemsArtistsLongTermChecked(e.target.checked);
+                            }}
+                            style={{
+                                color: "#C40D1E"
+                            }}
+                        />
+                    </div>
+                    <div class='spotify-items'>
+                        <div class='settings-slider-container'>
+                            <LimitComponent />
+                            <Slider
+                                aria-label="SliderTopItemsLongTermArtists"
+                                value={topItemsArtistsLongTermLimit}
+                                onChange={(e, newValue) => {
+                                    setTopItemsArtistsLongTermLimit(newValue);
+                                }}
+                                min={1}
+                                max={50}
+                                step={1}
+                                marks={marks}
+                                valueLabelDisplay='auto'
+                            />
+                        </div>
+                        {confirmCheck(confirmTopItemsArtistsLongTermYes, setConfirmTopItemsArtistsLongTermYes)}
                     </div>
                 </div>
             </React.Fragment>
@@ -161,7 +300,7 @@ export function usersContentSettings(
                         <div class='settings-slider-container'>
                             <LimitComponent />
                             <Slider
-                                aria-label="SliderTopItemsArtist"
+                                aria-label="SliderFollowedArtists"
                                 value={followedArtistsLimit}
                                 onChange={(e, newValue) => {
                                     setFollowedArtistsLimit(newValue);

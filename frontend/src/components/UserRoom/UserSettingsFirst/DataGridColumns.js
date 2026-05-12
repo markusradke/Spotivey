@@ -14,17 +14,13 @@ function renderCellSpotifyText(params) {
                   <Typography>
                     limit: {params.value.limit} <br></br> market: {params.value.market} <br></br> confirm: {params.value.confirmCheck.toString()}
                   </Typography> :
-                  params.field === "top_tracks" || params.field === "top_artists" ?
+                  params.field === "current_playlists" ?
                     <Typography>
-                      limit: {params.value.limit} <br></br> time_range: {params.value.timeRange} <br></br> confirm: {params.value.confirmCheck.toString()}
+                      limit: {params.value.limit} <br></br> {params.value.public ? 'Any Playlists' : 'Public Playlists'} <br></br> confirm: {params.value.confirmCheck.toString()}
                     </Typography> :
-                    params.field === "current_playlists" ?
-                      <Typography>
-                        limit: {params.value.limit} <br></br> {params.value.public ? 'Any Playlists' : 'Public Playlists'} <br></br> confirm: {params.value.confirmCheck.toString()}
-                      </Typography> :
-                      <Typography>
-                        limit: {params.value.limit} <br></br> confirm: {params.value.confirmCheck.toString()}
-                      </Typography>
+                    <Typography>
+                      limit: {params.value.limit} <br></br> confirm: {params.value.confirmCheck.toString()}
+                    </Typography>
               }
               placement="top"
             >
@@ -53,55 +49,80 @@ export const columns = [
     field: 'saved_tracks',
     width: 200,
     height: 100,
-    headerName: 'Get User\'s Saved Tracks',
+    headerName: 'Saved Tracks',
     renderCell: (params) => renderCellSpotifyText(params),
   },
   {
     field: 'recently_played',
     width: 200,
-    headerName: 'Get Recently Played Tracks',
+    headerName: 'Recently Played Tracks',
     renderCell: (params) => renderCellSpotifyText(params),
   },
   {
     field: 'profile',
     width: 150,
-    headerName: 'Get User\'s Profile',
+    headerName: 'User Profile',
     renderCell: (params) => renderCellSpotifyText(params),
   },
   {
-    field: 'top_tracks',
+    field: 'top_tracks_shortterm',
     width: 200,
-    headerName: "Get User's Top Items (Tracks)",
+    headerName: "Top Tracks (Short Term)",
     renderCell: (params) => renderCellSpotifyText(params),
   },
   {
-    field: 'top_artists',
+    field: 'top_tracks_mediumterm',
     width: 200,
-    headerName: "Get User's Top Items (Artists)",
+    headerName: "Top Tracks (Medium Term)",
+    renderCell: (params) => renderCellSpotifyText(params),
+  },
+  {
+    field: 'top_tracks_longterm',
+    width: 200,
+    headerName: "Top Tracks (Long Term)",
+    renderCell: (params) => renderCellSpotifyText(params),
+  },
+
+  {
+    field: 'top_artists_shortterm',
+    width: 200,
+    headerName: "Top Artists (Short Term)",
+    renderCell: (params) => renderCellSpotifyText(params),
+  },
+  {
+    field: 'top_artists_mediumterm',
+    width: 200,
+    headerName: "Top Artists (Medium Term)",
+    renderCell: (params) => renderCellSpotifyText(params),
+  },
+  {
+    field: 'top_artists_longterm',
+    width: 200,
+    headerName: "Top Artists (Long Term)",
     renderCell: (params) => renderCellSpotifyText(params),
   },
   {
     field: 'followed_artists',
     width: 200,
-    headerName: "Get User's Followed Artists",
+    headerName: "Followed Artists",
     renderCell: (params) => renderCellSpotifyText(params),
   },
   {
     field: 'current_playlists',
     width: 200,
-    headerName: "Get User's Playlists",
+    headerName: "Playlists",
     renderCell: (params) => renderCellSpotifyText(params),
   },
   {
     field: 'saved_shows',
     width: 200,
-    headerName: "Get User's Saved Shows",
+    headerName: "Saved Shows",
     renderCell: (params) => renderCellSpotifyText(params),
   },
   {
     field: 'saved_episodes',
     width: 200,
-    headerName: "Get User's Saved Episodes",
+    headerName: "Saved Episodes",
     renderCell: (params) => renderCellSpotifyText(params),
   }
 
