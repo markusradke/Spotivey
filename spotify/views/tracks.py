@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
-from spotify.models import TopTrack, SavedTrack, RecentTrack
+from spotify.models import TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm, SavedTrack, RecentTrack
 from spotify.utils.batch_operations import batch_fetch_albums, batch_fetch_artists
 from spotify.utils.bulk_db import bulk_create_with_retry
 from spotify.utils.retrieval_helpers import get_participant_from_session
@@ -52,7 +52,7 @@ class GetTopTracks(APIView):
             return error
 
         limit = request.GET.get('limit', 50)
-        time_range = request.GET.get('timeRange', 'medium_term')
+        time_range = request.GET.get('timeRange', '')
         endpoint = f"me/top/tracks?time_range={time_range}&limit={limit}"
 
         response = execute_spotify_api_request(request.session.session_key, endpoint)
@@ -65,12 +65,45 @@ class GetTopTracks(APIView):
             request.session.session_key,
             items,
             lambda item: item,
-            TopTrack,
+            self.model_class,
             participant
         )
 
         return Response(response_data, status=status.HTTP_200_OK)
+    
 
+class GetTopTracksShortTerm(GetTopTracks):
+    """Get user's top tracks in the short term from Spotify."""
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.model_class = TopTrackShortTerm
+
+    def post(self, request, format=None):
+        request.GET = request.GET.copy()
+        request.GET['timeRange'] = 'short_term'
+        return super().post(request, format)
+    
+class GetTopTracksMediumTerm(GetTopTracks):
+    """Get user's top tracks in the medium term from Spotify."""
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.model_class = TopTrackMediumTerm
+
+    def post(self, request, format=None):
+        request.GET = request.GET.copy()
+        request.GET['timeRange'] = 'medium_term'
+        return super().post(request, format)
+    
+class GetTopTracksLongTerm(GetTopTracks):
+    """Get user's top tracks in the long term from Spotify."""
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.model_class = TopTrackLongTerm
+
+    def post(self, request, format=None):
+        request.GET = request.GET.copy()
+        request.GET['timeRange'] = 'long_term'
+        return super().post(request, format)
 
 class GetSavedTracksSpotify(APIView):
     """Get user's saved (liked) tracks from Spotify."""

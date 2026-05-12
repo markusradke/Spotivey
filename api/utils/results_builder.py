@@ -1,8 +1,8 @@
 """Results dictionary builder for displaying retrieval data."""
 from ..models import RetrievalSetting
 from spotify.models import (
-    SavedTrack, TopTrack, RecentTrack,
-    TopArtist, FollowedArtist,
+    SavedTrack, TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm, RecentTrack,
+    TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm, FollowedArtist,
     CurrentPlaylist, ParticipantProfile,
     Participant, SavedShow, SavedEpisode
     )

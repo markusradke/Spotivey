@@ -8,8 +8,8 @@ from rest_framework import status
 from ..models import RetrievalSetting
 from ..utils.results_builder import getResultDict
 from spotify.models import (
-    SavedTrack, TopTrack, RecentTrack,
-    TopArtist, FollowedArtist,
+    SavedTrack, TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm, RecentTrack,
+    TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm, FollowedArtist,
     CurrentPlaylist, ParticipantProfile,
     Participant, SavedShow, SavedEpisode
 )
@@ -60,13 +60,17 @@ class SaveCheckData(APIView):
     # Map index to (model_class, identifier_field, identifier_key_in_request)
     DATA_TYPE_MAP = {
         0: (SavedTrack, "spotify_id", "spotify_id"),
-        1: (TopTrack, "spotify_id", "spotify_id"),
-        2: (RecentTrack, "spotify_id", "spotify_id"),
-        3: (TopArtist, "spotify_id", "id"),
-        4: (FollowedArtist, "spotify_id", "id"),
-        5: (CurrentPlaylist, "playlist_id", "playlist_id"),
-        6: (SavedShow, "spotify_id", "spotify_id"),
-        7: (SavedEpisode, "spotify_id", "spotify_id"),
+        1: (TopTrackShortTerm, "spotify_id", "spotify_id"),
+        2: (TopTrackMediumTerm, "spotify_id", "spotify_id"),
+        3: (TopTrackLongTerm, "spotify_id", "spotify_id"),
+        4: (RecentTrack, "spotify_id", "spotify_id"),
+        5: (TopArtistShortTerm, "spotify_id", "id"),
+        6: (TopArtistMediumTerm, "spotify_id", "id"),
+        7: (TopArtistLongTerm, "spotify_id", "id"),
+        8: (FollowedArtist, "spotify_id", "id"),
+        9: (CurrentPlaylist, "playlist_id", "playlist_id"),
+        10: (SavedShow, "spotify_id", "spotify_id"),
+        11: (SavedEpisode, "spotify_id", "spotify_id"),
     }
 
     def post(self, request, format=None):

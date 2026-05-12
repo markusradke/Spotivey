@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
-    AuthURL, spotify_callback, IsAuthenticated, TopArtists, GetFollowedArtistsSpotify,
-    GetTopTracks, GetSavedTracksSpotify, GetRecentlyPlayedTracksSpotify,
+    AuthURL, spotify_callback, IsAuthenticated, GetTopArtistsShortTerm, GetTopArtistsMediumTerm, GetTopArtistsLongTerm, GetFollowedArtistsSpotify,
+    GetTopTracksShortTerm, GetTopTracksMediumTerm, GetTopTracksLongTerm, GetSavedTracksSpotify, GetRecentlyPlayedTracksSpotify,
     GetPlaylistsSpotify, GetUsersProfileSpotify, GetSavedShowsSpotify, GetSavedEpisodesSpotify
 )
 
@@ -9,8 +9,12 @@ urlpatterns = [
     path('get-auth-url', AuthURL.as_view()),
     path('redirect', spotify_callback),
     path('is-authenticated', IsAuthenticated.as_view()),
-    path('top-artists', TopArtists.as_view()),
-    path('top-tracks', GetTopTracks.as_view()),
+    path('top-artists/short-term', GetTopArtistsShortTerm.as_view()),
+    path('top-artists/medium-term', GetTopArtistsMediumTerm.as_view()),
+    path('top-artists/long-term', GetTopArtistsLongTerm.as_view()),
+    path('top-tracks/short-term', GetTopTracksShortTerm.as_view()),
+    path('top-tracks/medium-term', GetTopTracksMediumTerm.as_view()),
+    path('top-tracks/long-term', GetTopTracksLongTerm.as_view()),
     path('saved-tracks', GetSavedTracksSpotify.as_view()),
     path('users-profile', GetUsersProfileSpotify.as_view()),
     path('followed-artists', GetFollowedArtistsSpotify.as_view()),

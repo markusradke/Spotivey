@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
-from spotify.models import Participant, TopArtist, FollowedArtist
+from spotify.models import Participant, TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm, FollowedArtist
 from spotify.utils.bulk_db import bulk_create_with_retry
 from spotify.utils.field_extractors import extract_artist_fields
 from spotify.utils.retrieval_helpers import get_participant_from_session, sample_items
@@ -37,7 +37,7 @@ def _build_and_create_artists(items, model_class, participant, max_sample=50):
     return [artist.to_dict() for artist in artists_to_create]
 
 
-class TopArtists(APIView):
+class GetTopArtists(APIView):
     """Get user's top artists from Spotify."""
 
     def post(self, request, format=None):
@@ -46,7 +46,7 @@ class TopArtists(APIView):
             return error_response
 
         limit = request.GET.get('limit', 50)
-        time_range = request.GET.get('timeRange', 'medium_term')
+        time_range = request.GET.get('timeRange', '')
         endpoint = f"me/top/artists?time_range={time_range}&limit={limit}"
 
         response = execute_spotify_api_request(request.session.session_key, endpoint)
@@ -57,12 +57,45 @@ class TopArtists(APIView):
         items = response.get('items')
         response_data = _build_and_create_artists(
             items, 
-            TopArtist, 
+            self.model_class, 
             participant,
             max_sample=50
         )
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+class GetTopArtistsShortTerm(GetTopArtists):
+    """Get user's top artists in the short term from Spotify."""
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.model_class = TopArtistShortTerm
+
+    def post(self, request, format=None):
+        request.GET = request.GET.copy()
+        request.GET['timeRange'] = 'short_term'
+        return super().post(request, format)
+    
+class GetTopArtistsMediumTerm(GetTopArtists):
+    """Get user's top artists in the medium term from Spotify."""
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.model_class = TopArtistMediumTerm
+
+    def post(self, request, format=None):
+        request.GET = request.GET.copy()
+        request.GET['timeRange'] = 'medium_term'
+        return super().post(request, format)
+    
+class GetTopArtistsLongTerm(GetTopArtists):
+    """Get user's top artists in the long term from Spotify."""
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.model_class = TopArtistLongTerm
+
+    def post(self, request, format=None):
+        request.GET = request.GET.copy()
+        request.GET['timeRange'] = 'long_term'
+        return super().post(request, format)
 
 
 class GetFollowedArtistsSpotify(APIView):

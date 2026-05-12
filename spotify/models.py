@@ -95,9 +95,21 @@ class SavedTrack(BaseTrack):
         return data
 
 
-class TopTrack(BaseTrack):
-    """Participant's top track."""
-
+class TopTrackShortTerm(BaseTrack):
+    """Participant's top track in the short term."""
+    
+    def to_dict(self): 
+        return self.get_base_dict()
+    
+class TopTrackMediumTerm(BaseTrack):
+    """Participant's top track in the medium term."""
+    
+    def to_dict(self): 
+        return self.get_base_dict()
+    
+class TopTrackLongTerm(BaseTrack):
+    """Participant's top track in the long term."""
+    
     def to_dict(self): 
         return self.get_base_dict()
     
@@ -200,9 +212,21 @@ class BaseArtist(models.Model):
         return f"Artist (ID: {self.spotify_id}) for participant {self.participant.participant} (retrieval settings: {self.participant.settings.nameUmfrage})"
 
 
-class TopArtist(BaseArtist):
-    """Participant's top artist."""
+class TopArtistShortTerm(BaseArtist):
+    """Participant's top artist in the short term."""
+
+    def to_dict(self):
+        return self.get_base_dict()
     
+class TopArtistMediumTerm(BaseArtist):
+    """Participant's top artist in the medium term."""
+
+    def to_dict(self):
+        return self.get_base_dict()
+    
+class TopArtistLongTerm(BaseArtist):
+    """Participant's top artist in the long term."""
+
     def to_dict(self):
         return self.get_base_dict()
 

@@ -2,8 +2,8 @@
 import json
 import logging
 from spotify.models import (
-    SavedTrack, TopTrack, RecentTrack,
-    TopArtist, FollowedArtist,
+    SavedTrack, TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm, RecentTrack,
+    TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm, FollowedArtist,
     ParticipantProfile, CurrentPlaylist, SavedShow, SavedEpisode
 )
 
@@ -100,7 +100,7 @@ def build_top_tracks_csv(survey_settings):
     Returns:
         List of dictionaries ready for CSV export
     """
-    tracks = TopTrack.objects.filter(
+    tracks = TopTrackShortTerm.objects.filter(
         participant__settings__in=survey_settings,
     ).select_related('participant').order_by('participant__participant')
     
