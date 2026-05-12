@@ -383,12 +383,12 @@ export default function ResultContent(props) {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseDialog}>Disagree</Button>
-                    <Button onClick={() => { deleteResults(props.surveyID) }}>
+                    <Button variant="outlined" onClick={handleCloseDialog}>Disagree</Button>
+                    <Button onClick={() => { deleteResults(props.surveyID) }} style={{ color: '#414141' }}>
                         Agree
                     </Button>
                 </DialogActions>
             </Dialog>
-        </React.Fragment>
+        </React.Fragment >
     )
 }

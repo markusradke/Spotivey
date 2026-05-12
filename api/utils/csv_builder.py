@@ -424,8 +424,9 @@ def build_all_data_types_csv(survey_id):
         if builder_func == build_top_tracks_csv or builder_func == build_top_artists_csv:
             for time_range in ['shortterm', 'mediumterm', 'longterm']:
                 rows = builder_func(survey_settings, time_range=time_range)
+                all_rows.extend(rows)
         else:
             rows = builder_func(survey_settings)
-        all_rows.extend(rows)
+            all_rows.extend(rows)
     
     return all_rows

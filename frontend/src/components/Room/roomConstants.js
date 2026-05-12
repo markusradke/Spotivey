@@ -1,10 +1,16 @@
 export const PAGE_TITLES_BY_INDEX = [
     "Saved Tracks",
-    "Top Tracks",
-    "Last Tracks",
-    "Top Artists",
+    "Top Tracks (Short Term)",
+    "Top Tracks (Medium Term)",
+    "Top Tracks (Long Term)",
+    "Recent Tracks",
+    "Top Artists (Short Term)",
+    "Top Artists (Medium Term)",
+    "Top Artists (Long Term)",
     "Followed Artists",
     "Current Playlists",
+    "Saved Shows",
+    "Saved Episodes",
 ];
 
 export const ID_NAME = [

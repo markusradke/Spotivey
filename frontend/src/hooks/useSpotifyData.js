@@ -7,8 +7,12 @@ import {
     fetchParticipantProfile,
     fetchRecentTracks,
     fetchSavedTracks,
-    fetchTopArtists,
-    fetchTopTracks,
+    fetchTopArtistsShortTerm,
+    fetchTopArtistsMediumTerm,
+    fetchTopArtistsLongTerm,
+    fetchTopTracksShortTerm,
+    fetchTopTracksMediumTerm,
+    fetchTopTracksLongTerm,
     fetchSavedShows,
     fetchSavedEpisodes
 } from "../api/spotifyApi";
@@ -20,9 +24,13 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
 
     const [data, setData] = useState({
         [DATA_TYPES.SAVED_TRACKS]: [],
-        [DATA_TYPES.TOP_TRACKS]: [],
+        [DATA_TYPES.TOP_TRACKS_SHORTTERM]: [],
+        [DATA_TYPES.TOP_TRACKS_MEDIUMTERM]: [],
+        [DATA_TYPES.TOP_TRACKS_LONGTERM]: [],
         [DATA_TYPES.RECENT_TRACKS]: [],
-        [DATA_TYPES.TOP_ARTISTS]: [],
+        [DATA_TYPES.TOP_ARTISTS_SHORTTERM]: [],
+        [DATA_TYPES.TOP_ARTISTS_MEDIUMTERM]: [],
+        [DATA_TYPES.TOP_ARTISTS_LONGTERM]: [],
         [DATA_TYPES.FOLLOWED_ARTISTS]: [],
         [DATA_TYPES.CURRENT_PLAYLISTS]: [],
         [DATA_TYPES.PARTICIPANT_PROFILE]: [],
@@ -79,19 +87,55 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
             }
 
             if (
-                settings[DATA_TYPES.TOP_TRACKS]?.check &&
-                settings[DATA_TYPES.TOP_TRACKS]?.limit > 0
+                settings[DATA_TYPES.TOP_TRACKS_SHORTTERM]?.check &&
+                settings[DATA_TYPES.TOP_TRACKS_SHORTTERM]?.limit > 0
             ) {
                 steps.push({
-                    type: DATA_TYPES.TOP_TRACKS,
+                    type: DATA_TYPES.TOP_TRACKS_SHORTTERM,
                     run: () =>
-                        fetchTopTracks(
+                        fetchTopTracksShortTerm(
                             participant,
                             surveyID,
                             roomCode,
-                            settings[DATA_TYPES.TOP_TRACKS].limit,
-                            settings[DATA_TYPES.TOP_TRACKS].timeRange,
-                            settings[DATA_TYPES.TOP_TRACKS].confirmCheck
+                            settings[DATA_TYPES.TOP_TRACKS_SHORTTERM].limit,
+                            settings[DATA_TYPES.TOP_TRACKS_SHORTTERM].timeRange,
+                            settings[DATA_TYPES.TOP_TRACKS_SHORTTERM].confirmCheck
+                        ),
+                });
+            }
+
+            if (
+                settings[DATA_TYPES.TOP_TRACKS_MEDIUMTERM]?.check &&
+                settings[DATA_TYPES.TOP_TRACKS_MEDIUMTERM]?.limit > 0
+            ) {
+                steps.push({
+                    type: DATA_TYPES.TOP_TRACKS_MEDIUMTERM,
+                    run: () =>
+                        fetchTopTracksMediumTerm(
+                            participant,
+                            surveyID,
+                            roomCode,
+                            settings[DATA_TYPES.TOP_TRACKS_MEDIUMTERM].limit,
+                            settings[DATA_TYPES.TOP_TRACKS_MEDIUMTERM].timeRange,
+                            settings[DATA_TYPES.TOP_TRACKS_MEDIUMTERM].confirmCheck
+                        ),
+                });
+            }
+
+            if (
+                settings[DATA_TYPES.TOP_TRACKS_LONGTERM]?.check &&
+                settings[DATA_TYPES.TOP_TRACKS_LONGTERM]?.limit > 0
+            ) {
+                steps.push({
+                    type: DATA_TYPES.TOP_TRACKS_LONGTERM,
+                    run: () =>
+                        fetchTopTracksLongTerm(
+                            participant,
+                            surveyID,
+                            roomCode,
+                            settings[DATA_TYPES.TOP_TRACKS_LONGTERM].limit,
+                            settings[DATA_TYPES.TOP_TRACKS_LONGTERM].timeRange,
+                            settings[DATA_TYPES.TOP_TRACKS_LONGTERM].confirmCheck
                         ),
                 });
             }
@@ -114,19 +158,55 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
             }
 
             if (
-                settings[DATA_TYPES.TOP_ARTISTS]?.check &&
-                settings[DATA_TYPES.TOP_ARTISTS]?.limit > 0
+                settings[DATA_TYPES.TOP_ARTISTS_SHORTTERM]?.check &&
+                settings[DATA_TYPES.TOP_ARTISTS_SHORTTERM]?.limit > 0
             ) {
                 steps.push({
-                    type: DATA_TYPES.TOP_ARTISTS,
+                    type: DATA_TYPES.TOP_ARTISTS_SHORTTERM,
                     run: () =>
-                        fetchTopArtists(
+                        fetchTopArtistsShortTerm(
                             participant,
                             surveyID,
                             roomCode,
-                            settings[DATA_TYPES.TOP_ARTISTS].limit,
-                            settings[DATA_TYPES.TOP_ARTISTS].timeRange,
-                            settings[DATA_TYPES.TOP_ARTISTS].confirmCheck
+                            settings[DATA_TYPES.TOP_ARTISTS_SHORTTERM].limit,
+                            settings[DATA_TYPES.TOP_ARTISTS_SHORTTERM].timeRange,
+                            settings[DATA_TYPES.TOP_ARTISTS_SHORTTERM].confirmCheck
+                        ),
+                });
+            }
+
+            if (
+                settings[DATA_TYPES.TOP_ARTISTS_MEDIUMTERM]?.check &&
+                settings[DATA_TYPES.TOP_ARTISTS_MEDIUMTERM]?.limit > 0
+            ) {
+                steps.push({
+                    type: DATA_TYPES.TOP_ARTISTS_MEDIUMTERM,
+                    run: () =>
+                        fetchTopArtistsMediumTerm(
+                            participant,
+                            surveyID,
+                            roomCode,
+                            settings[DATA_TYPES.TOP_ARTISTS_MEDIUMTERM].limit,
+                            settings[DATA_TYPES.TOP_ARTISTS_MEDIUMTERM].timeRange,
+                            settings[DATA_TYPES.TOP_ARTISTS_MEDIUMTERM].confirmCheck
+                        ),
+                });
+            }
+
+            if (
+                settings[DATA_TYPES.TOP_ARTISTS_LONGTERM]?.check &&
+                settings[DATA_TYPES.TOP_ARTISTS_LONGTERM]?.limit > 0
+            ) {
+                steps.push({
+                    type: DATA_TYPES.TOP_ARTISTS_LONGTERM,
+                    run: () =>
+                        fetchTopArtistsLongTerm(
+                            participant,
+                            surveyID,
+                            roomCode,
+                            settings[DATA_TYPES.TOP_ARTISTS_LONGTERM].limit,
+                            settings[DATA_TYPES.TOP_ARTISTS_LONGTERM].timeRange,
+                            settings[DATA_TYPES.TOP_ARTISTS_LONGTERM].confirmCheck
                         ),
                 });
             }

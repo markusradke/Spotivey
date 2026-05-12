@@ -27,7 +27,7 @@ export default function RoomStepContent({
         <div className="render-result-container">
             <div className="render-result-container-inner">
                 <div className="render-result">
-                    {type === DATA_TYPES.SAVED_TRACKS || type === DATA_TYPES.TOP_TRACKS || type === DATA_TYPES.RECENT_TRACKS ? (
+                    {type === DATA_TYPES.SAVED_TRACKS || type === DATA_TYPES.TOP_TRACKS_SHORTTERM || type === DATA_TYPES.TOP_TRACKS_MEDIUMTERM || type === DATA_TYPES.TOP_TRACKS_LONGTERM || type === DATA_TYPES.RECENT_TRACKS ? (
                         list.length > 0 ? (
                             <TrackResultList
                                 items={items}
@@ -40,7 +40,7 @@ export default function RoomStepContent({
                         )
                     ) : null}
 
-                    {type === DATA_TYPES.TOP_ARTISTS || type === DATA_TYPES.FOLLOWED_ARTISTS ? (
+                    {type === DATA_TYPES.TOP_ARTISTS_SHORTTERM || type === DATA_TYPES.TOP_ARTISTS_MEDIUMTERM || type === DATA_TYPES.TOP_ARTISTS_LONGTERM || type === DATA_TYPES.FOLLOWED_ARTISTS ? (
                         list.length > 0 ? (
                             <ArtistResultList
                                 items={items}

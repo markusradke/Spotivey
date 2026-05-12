@@ -78,7 +78,7 @@ export async function fetchRecentTracks(participant, surveyId, roomCode, limit, 
   return response.json();
 }
 
-export async function fetchTopArtistsShortTermn(participant, surveyId, roomCode, limit, timeRange, confirm) {
+export async function fetchTopArtistsShortTerm(participant, surveyId, roomCode, limit, timeRange, confirm) {
   const url = `/spotify/top-artists/short-term?limit=${limit}&timeRange=${timeRange}`;
   const response = await fetch(
     url,

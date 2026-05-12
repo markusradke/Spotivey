@@ -132,7 +132,7 @@ class GetSavedTracksSpotify(APIView):
             }
         )
 
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class GetRecentlyPlayedTracksSpotify(APIView):
@@ -173,4 +173,4 @@ class GetRecentlyPlayedTracksSpotify(APIView):
             extra_fields_fn=_recent_extra
         )
 
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(response_data, status=status.HTTP_200_OK)
