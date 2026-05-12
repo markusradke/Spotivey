@@ -21,19 +21,29 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie den 
     profile_enabled = models.BooleanField(default=False)
     profile_confirm = models.BooleanField(default=False)
 
-    top_tracks_enabled = models.BooleanField(default=False)
-    top_tracks_confirm = models.BooleanField(default=True)
-    top_tracks_limit = models.PositiveIntegerField(default=20)
-    top_tracks_time_range = models.CharField(
-        max_length=20, default="medium_term", blank=True
-    )
+    top_tracks_shortterm_enabled = models.BooleanField(default=False)
+    top_tracks_shortterm_confirm = models.BooleanField(default=True)
+    top_tracks_shortterm_limit = models.PositiveIntegerField(default=20)
 
-    top_artists_enabled = models.BooleanField(default=False)
-    top_artists_confirm = models.BooleanField(default=True)
-    top_artists_limit = models.PositiveIntegerField(default=20)
-    top_artists_time_range = models.CharField(
-        max_length=20, default="medium_term", blank=True
-    )
+    top_tracks_mediumterm_enabled = models.BooleanField(default=False)
+    top_tracks_mediumterm_confirm = models.BooleanField(default=True)
+    top_tracks_mediumterm_limit = models.PositiveIntegerField(default=20)
+
+    top_tracks_longterm_enabled = models.BooleanField(default=False)
+    top_tracks_longterm_confirm = models.BooleanField(default=True)
+    top_tracks_longterm_limit = models.PositiveIntegerField(default=20)
+
+    top_artists_shortterm_enabled = models.BooleanField(default=False)
+    top_artists_shortterm_confirm = models.BooleanField(default=True)
+    top_artists_shortterm_limit = models.PositiveIntegerField(default=20)
+
+    top_artists_mediumterm_enabled = models.BooleanField(default=False)
+    top_artists_mediumterm_confirm = models.BooleanField(default=True)
+    top_artists_mediumterm_limit = models.PositiveIntegerField(default=20)
+
+    top_artists_longterm_enabled = models.BooleanField(default=False)
+    top_artists_longterm_confirm = models.BooleanField(default=True)
+    top_artists_longterm_limit = models.PositiveIntegerField(default=20)
 
     followed_artists_enabled = models.BooleanField(default=False)
     followed_artists_confirm = models.BooleanField(default=True)

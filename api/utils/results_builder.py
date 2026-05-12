@@ -54,10 +54,10 @@ def _build_profile_row(profile, idx):
 
 def _build_track_results(model_class, title, data_type_id, survey_settings):
     """
-    Build results structure for any track model following DRY principles.
+    Build results structure for any track model.
     
     Args:
-        model_class: Django model class (SavedTrack, TopTrack, or RecentTrack)
+        model_class: Django model class (SavedTrack, TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm, or RecentTrack)
         title: Display title for this data type
         data_type_id: Unique identifier for frontend routing
         survey_settings: QuerySet of RetrievalSetting objects
@@ -88,10 +88,10 @@ def _build_track_results(model_class, title, data_type_id, survey_settings):
 
 def _build_artist_results(model_class, title, data_type_id, survey_settings):
     """
-    Build results structure for any artist model following DRY principles.
+    Build results structure for any artist model.
     
     Args:
-        model_class: Django model class (TopArtist or FollowedArtist)
+        model_class: Django model class (TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm, or FollowedArtist)
         title: Display title for this data type
         data_type_id: Unique identifier for frontend routing
         survey_settings: QuerySet of RetrievalSetting objects
@@ -280,7 +280,8 @@ def getResultDict(surveyID):
     Build results dictionary for researcher dashboard display.
     
     Returns clean, self-documenting structure with data from all track types
-    (SavedTrack, TopTrack, RecentTrack), artist types (TopArtist, FollowedArtist),
+    (SavedTrack, TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm, RecentTrack),
+     artist types (TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm, FollowedArtist),
     profiles, and playlists using DRY helper functions.
     
     Args:
@@ -296,10 +297,11 @@ def getResultDict(surveyID):
         p.participant for p in Participant.objects.filter(settings__in=settings)
     )
     
-    # Build results for each track type
     track_configs = [
         (SavedTrack, 'Saved Tracks', 'savedTracks'),
-        (TopTrack, 'Top Tracks', 'topTracks'),
+        (TopTrackShortTerm, 'Top Tracks (Short Term)', 'topTracksShortTerm'),
+        (TopTrackMediumTerm, 'Top Tracks (Medium Term)', 'topTracksMediumTerm'),
+        (TopTrackLongTerm, 'Top Tracks (Long Term)', 'topTracksLongTerm'),
         (RecentTrack, 'Recently Played', 'recentTracks'),
     ]
     
@@ -308,7 +310,9 @@ def getResultDict(surveyID):
         data_types.append(result)
     
     artist_configs = [
-        (TopArtist, 'Top Artists', 'topArtists'),
+        (TopArtistShortTerm, 'Top Artists (Short Term)', 'topArtistsShortTerm'),
+        (TopArtistMediumTerm, 'Top Artists (Medium Term)', 'topArtistsMediumTerm'),
+        (TopArtistLongTerm, 'Top Artists (Long Term)', 'topArtistsLongTerm'),
         (FollowedArtist, 'Followed Artists', 'followedArtists'),
     ]
     

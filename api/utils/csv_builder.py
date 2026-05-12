@@ -90,7 +90,7 @@ def build_saved_tracks_csv(survey_settings):
     return rows
 
 
-def build_top_tracks_csv(survey_settings):
+def build_top_tracks_csv(survey_settings, time_range='shortterm'):
     """
     Build CSV rows for TopTrack with all BaseTrack fields.
     
@@ -100,13 +100,24 @@ def build_top_tracks_csv(survey_settings):
     Returns:
         List of dictionaries ready for CSV export
     """
-    tracks = TopTrackShortTerm.objects.filter(
-        participant__settings__in=survey_settings,
-    ).select_related('participant').order_by('participant__participant')
-    
+    if time_range == 'shortterm':
+        tracks = TopTrackShortTerm.objects.filter(
+            participant__settings__in=survey_settings,
+        ).select_related('participant').order_by('participant__participant')
+    elif time_range == 'mediumterm':
+        tracks = TopTrackMediumTerm.objects.filter(
+            participant__settings__in=survey_settings,
+        ).select_related('participant').order_by('participant__participant')
+    elif time_range == 'longterm':
+        tracks = TopTrackLongTerm.objects.filter(
+            participant__settings__in=survey_settings,
+        ).select_related('participant').order_by('participant__participant')
+    else:
+        raise ValueError("Invalid time_range. Must be 'shortterm', 'mediumterm', or 'longterm'.")
+
     rows = []
     for track in tracks:
-        row = _build_base_track_csv_row(track, 'top_track')
+        row = _build_base_track_csv_row(track, f'top_track_{time_range}')
         rows.append(row)
     
     return rows
@@ -173,7 +184,7 @@ def _build_base_artist_csv_row(artist, artist_type):
     }
 
 
-def build_top_artists_csv(survey_settings):
+def build_top_artists_csv(survey_settings, time_range='shortterm'):
     """
     Build CSV rows for TopArtist with all BaseArtist fields.
     
@@ -183,13 +194,24 @@ def build_top_artists_csv(survey_settings):
     Returns:
         List of dictionaries ready for CSV export
     """
-    artists = TopArtist.objects.filter(
-        participant__settings__in=survey_settings,
-    ).select_related('participant').order_by('participant__participant')
-    
+    if time_range == 'shortterm':
+        artists = TopArtistShortTerm.objects.filter(
+            participant__settings__in=survey_settings,
+        ).select_related('participant').order_by('participant__participant')
+    elif time_range == 'mediumterm':
+        artists = TopArtistMediumTerm.objects.filter(
+            participant__settings__in=survey_settings,
+        ).select_related('participant').order_by('participant__participant')
+    elif time_range == 'longterm':
+        artists = TopArtistLongTerm.objects.filter(
+            participant__settings__in=survey_settings,
+        ).select_related('participant').order_by('participant__participant')
+    else:
+        raise ValueError("Invalid time_range. Must be 'shortterm', 'mediumterm', or 'longterm'.")
+
     rows = []
     for artist in artists:
-        row = _build_base_artist_csv_row(artist, 'top_artist')
+        row = _build_base_artist_csv_row(artist, f'top_artist_{time_range}')
         rows.append(row)
     
     return rows
@@ -399,7 +421,11 @@ def build_all_data_types_csv(survey_id):
     
     all_rows = []
     for builder_func in builders:
-        rows = builder_func(survey_settings)
+        if builder_func == build_top_tracks_csv or builder_func == build_top_artists_csv:
+            for time_range in ['shortterm', 'mediumterm', 'longterm']:
+                rows = builder_func(survey_settings, time_range=time_range)
+        else:
+            rows = builder_func(survey_settings)
         all_rows.extend(rows)
     
     return all_rows

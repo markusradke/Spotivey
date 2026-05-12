@@ -18,17 +18,35 @@ def build_retrieval_settings_payload(setting: RetrievalSetting) -> dict[str, Any
             'check': setting.profile_enabled,
             'confirmCheck': setting.profile_confirm,
         },
-        'top_tracks': {
-            'check': setting.top_tracks_enabled,
-            'limit': setting.top_tracks_limit,
-            'timeRange': setting.top_tracks_time_range or "medium_term",
-            'confirmCheck': setting.top_tracks_confirm,
+        'top_tracks_shortterm': {
+            'check': setting.top_tracks_shortterm_enabled,
+            'limit': setting.top_tracks_shortterm_limit,
+            'confirmCheck': setting.top_tracks_shortterm_confirm,
         },
-        'top_artists': {
-            'check': setting.top_artists_enabled,
-            'limit': setting.top_artists_limit,
-            'timeRange': setting.top_artists_time_range or "medium_term",
-            'confirmCheck': setting.top_artists_confirm,
+        'top_tracks_mediumterm': {
+            'check': setting.top_tracks_mediumterm_enabled,
+            'limit': setting.top_tracks_mediumterm_limit,
+            'confirmCheck': setting.top_tracks_mediumterm_confirm,
+        },
+        'top_tracks_longterm': {
+            'check': setting.top_tracks_longterm_enabled,
+            'limit': setting.top_tracks_longterm_limit,
+            'confirmCheck': setting.top_tracks_longterm_confirm,
+        },
+        'top_artists_shortterm': {
+            'check': setting.top_artists_shortterm_enabled,
+            'limit': setting.top_artists_shortterm_limit,
+            'confirmCheck': setting.top_artists_shortterm_confirm,
+        },
+        'top_artists_mediumterm': {
+            'check': setting.top_artists_mediumterm_enabled,
+            'limit': setting.top_artists_mediumterm_limit,
+            'confirmCheck': setting.top_artists_mediumterm_confirm,
+        },
+        'top_artists_longterm': {
+            'check': setting.top_artists_longterm_enabled,
+            'limit': setting.top_artists_longterm_limit,
+            'confirmCheck': setting.top_artists_longterm_confirm,
         },
         'followed_artists': {
             'check': setting.followed_artists_enabled,
