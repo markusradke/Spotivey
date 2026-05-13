@@ -35,7 +35,6 @@ class Participant(models.Model):
     country = models.CharField(max_length=20, default='')
     followers = models.IntegerField(null=True, default=None)
     product = models.CharField(max_length=50, default='')
-    confirmed = models.BooleanField(default=False)   
     
 
     def __str__(self):

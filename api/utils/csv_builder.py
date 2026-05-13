@@ -260,9 +260,6 @@ def build_profiles_csv(survey_settings):
             'participant_id': participant.participant,
             'survey_id': participant.settings.umfrageID,
             'survey_name': participant.settings.nameUmfrage,
-            'confirmed': participant.confirmed,
-            
-            # Profile fields
             'country': participant.country or '',
             'followers': participant.followers if participant.followers is not None else '',
             'product': participant.product or '',
