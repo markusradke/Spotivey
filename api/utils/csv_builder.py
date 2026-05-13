@@ -238,37 +238,6 @@ def build_followed_artists_csv(survey_settings):
     
     return rows
 
-def build_profiles_csv(survey_settings):
-    """
-    Build CSV rows for Participant with all fields.
-    
-    Args:
-        survey_settings: QuerySet or list of RetrievalSetting objects
-        
-    Returns:
-        List of dictionaries ready for CSV export
-    """
-    participants = Participant.objects.filter(
-        settings__in=survey_settings,
-    ).order_by('participant')
-    
-    rows = []
-    for participant in participants:
-        rows.append({
-            # Metadata
-            'data_type': 'participant_profile',
-            'participant_id': participant.participant,
-            'survey_id': participant.settings.umfrageID,
-            'survey_name': participant.settings.nameUmfrage,
-            'country': participant.country or '',
-            'followers': participant.followers if participant.followers is not None else '',
-            'product': participant.product or '',
-        })
-    
-    return rows
-
-
-
 def build_playlists_csv(survey_settings):
     """
     Build CSV rows for CurrentPlaylist with all fields.
@@ -410,7 +379,6 @@ def build_all_data_types_csv(survey_id):
         build_recent_tracks_csv,
         build_top_artists_csv,
         build_followed_artists_csv,
-        build_profiles_csv,
         build_playlists_csv, 
         build_shows_csv,
         build_episodes_csv,
@@ -427,3 +395,55 @@ def build_all_data_types_csv(survey_id):
             all_rows.extend(rows)
     
     return all_rows
+
+
+def build_participants_csv(survey_settings):
+    """
+    Build CSV rows for Participant with all fields.
+    
+    Args:
+        survey_settings: QuerySet or list of RetrievalSetting objects
+        
+    Returns:
+        List of dictionaries ready for CSV export
+    """
+    participants = Participant.objects.filter(
+        settings__in=survey_settings,
+    ).order_by('participant')
+    
+    rows = []
+    for participant in participants:
+        rows.append({
+            # Metadata
+            'data_type': 'participant_profile',
+            'participant_id': participant.participant,
+            'status': participant.status,
+            'started_at': participant.started_at.isoformat() if participant.started_at else '',
+            'completed_at': participant.completed_at.isoformat() if participant.completed_at else '',
+            'survey_id': participant.settings.umfrageID,
+            'survey_name': participant.settings.nameUmfrage,
+            'country': participant.country or '',
+            'followers': participant.followers if participant.followers is not None else '',
+            'product': participant.product or '',
+            'total_saved_tracks': participant.total_saved_tracks if participant.total_saved_tracks is not None else '',
+            'total_top_tracks_shortterm': participant.total_top_tracks_shortterm if participant.total_top_tracks_shortterm is not None else '',
+            'total_top_tracks_mediumterm': participant.total_top_tracks_mediumterm if participant.total_top_tracks_mediumterm is not None else '',
+            'total_top_tracks_longterm': participant.total_top_tracks_longterm if participant.total_top_tracks_longterm is not None else '',
+            'total_top_artists_shortterm': participant.total_top_artists_shortterm if participant.total_top_artists_shortterm is not None else '',
+            'total_top_artists_mediumterm': participant.total_top_artists_mediumterm if participant.total_top_artists_mediumterm is not None else '',
+            'total_top_artists_longterm': participant.total_top_artists_longterm if participant.total_top_artists_longterm is not None else '',
+            'total_followed_artists': participant.total_followed_artists if participant.total_followed_artists is not None else '',
+            'total_current_playlists': participant.total_current_playlists if participant.total_current_playlists is not None else '',
+            'total_saved_shows': participant.total_saved_shows if participant.total_saved_shows is not None else '',
+            'total_saved_episodes': participant.total_saved_episodes if participant.total_saved_episodes is not None else '',   
+        })
+    
+    # remove all columns that contain only empty values
+    if rows: 
+        all_keys = set().union(*(row.keys() for row in rows))
+        keys_to_remove = {key for key in all_keys if all(not row.get(key) for row in rows)}
+        for row in rows:
+            for key in keys_to_remove:
+                row.pop(key, None)
+    
+    return rows

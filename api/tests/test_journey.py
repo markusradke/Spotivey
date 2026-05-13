@@ -202,7 +202,7 @@ class SpotiveyBackendJourneyTests(TestCase):
         got_titles = {dt.get("title") for dt in data_types}
         self.assertTrue(expect_types.issubset(got_titles))
 
-        csv = self.client.get(f"/api/save-to-csv-file?surveyID={self.survey_id}")
+        csv = self.client.get(f"/api/save-repertoire-to-csv-file?surveyID={self.survey_id}")
         self.assertEqual(csv.status_code, 200)
         csv_payload = csv.json()
         self.assertIsInstance(csv_payload, list)

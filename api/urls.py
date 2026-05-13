@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .views import (
     # Auth views
     CreateSettingsUser, LoginSettingsUser, LogoutUser, GetUserSession,
@@ -12,7 +13,8 @@ from .views import (
     # Results views
     getResultListView, GetParticipantCountForSurvey, DeleteOnlyResultsWithID,
     # CSV export
-    saveToCSVFileView,
+    saveRepertoireToCsvFileView,
+    saveParticipantsToCsvFileView,
 )
 
 urlpatterns = [
@@ -51,5 +53,6 @@ urlpatterns = [
     path('delete-only-results', DeleteOnlyResultsWithID.as_view()),
     
     # CSV export
-    path('save-to-csv-file', saveToCSVFileView.as_view()),
+    path('save-repertoire-to-csv-file', saveRepertoireToCsvFileView.as_view()),
+    path('save-participants-to-csv-file', saveParticipantsToCsvFileView.as_view()),
 ]

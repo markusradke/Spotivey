@@ -130,16 +130,18 @@ function selectSurveyResultsAndWaitForButtons(surveyId) {
         .closest(".survey-id-check-result-list-container")
         .click({ force: true });
 
-    cy.contains(".button-csv-title", /^export csv-file$/i, { timeout: 10000 })
+    cy.contains(".button-csv-title", /^repertoire csv$/i, { timeout: 10000 })
         .should("be.visible");
-    cy.contains("button", /^delete results$/i, { timeout: 10000 }).should(
+    cy.contains(".button-csv-title", /^participants csv$/i, { timeout: 10000 })
+        .should("be.visible");
+    cy.contains("button", /^delete all results$/i, { timeout: 10000 }).should(
         "be.visible"
     );
 }
 
 function deleteResultsForSurvey(surveyId) {
     selectSurveyResultsAndWaitForButtons(surveyId);
-    cy.contains("button", /^delete results$/i)
+    cy.contains("button", /^delete all results$/i)
         .should("be.visible")
         .click({ force: true });
     cy.contains('[role="dialog"] button', /^agree$/i, { timeout: 10000 })

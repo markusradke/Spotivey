@@ -124,7 +124,7 @@ export default function UserResultPage(props) {
                 <img
                     className="result-list-img2"
                     src={listItem.cover}
-                    alt="Cover not found"
+                    alt=""
                 />
             </React.Fragment>
         )

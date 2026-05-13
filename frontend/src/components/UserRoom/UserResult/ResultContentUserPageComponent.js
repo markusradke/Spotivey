@@ -14,14 +14,16 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import {
     deleteOnlyResults,
     fetchUserSession,
-    saveToCsvFile,
+    saveRepertoireToCsvFile,
+    saveParticipantsToCsvFile,
 } from "../../../api/surveyApi";
 
 export default function ResultContent(props) {
 
     const chartRef = useRef(null);
 
-    const [fileData, setFileData] = useState(null);
+    const [repertoireFileData, setRepertoireFileData] = useState(null);
+    const [participantsFileData, setParticipantsFileData] = useState(null);
 
     const [listEntriesShow, setListEntriesShow] = useState([false, false, false, false, false, false, false]);
 
@@ -37,13 +39,22 @@ export default function ResultContent(props) {
     }
 
     const handleDataFetch = async () => {
-        saveToCsvFile(props.surveyID)
+        saveRepertoireToCsvFile(props.surveyID)
             .then(({ ok, data }) => {
                 if (!ok || !data || data.error) {
                     return;
                 }
                 if (data.length !== 0) {
-                    setFileData(data)
+                    setRepertoireFileData(data)
+                }
+            });
+        saveParticipantsToCsvFile(props.surveyID)
+            .then(({ ok, data }) => {
+                if (!ok || !data || data.error) {
+                    return;
+                }
+                if (data.length !== 0) {
+                    setParticipantsFileData(data)
                 }
             });
     };
@@ -308,30 +319,48 @@ export default function ResultContent(props) {
     return (
         <React.Fragment>
             <div className='buttons-result-wrapper'>
-                {fileData ?
+                {repertoireFileData || participantsFileData ?
                     <div className={'button-result-user-container'}>
-                        <CSVLink
-                            className={'csv-link-export-file'}
-                            data={fileData}
-                            filename={"Spotivey_Result_" + props.surveyID + "_Data.csv"}
-                            target="_blank"
-                            separator={";"}
-                        >
-                            <div className={'button-csv-inner-container'}>
-                                <div className={'button-csv-title'}>
-                                    Export CSV-File
+                        {repertoireFileData ?
+                            <CSVLink
+                                className={'csv-link-export-file'}
+                                data={repertoireFileData}
+                                filename={"Spotivey_Repertoire_" + props.surveyID + ".csv"}
+                                target="_blank"
+                                separator={";"}
+                            >
+                                <div className={'button-csv-inner-container'}>
+                                    <div className={'button-csv-title'}>
+                                        Repertoire CSV
+                                    </div>
+                                    <div className={'button-csv-icon'}>
+                                        <FileDownloadIcon />
+                                    </div>
                                 </div>
-                                <div className={'button-csv-icon'}>
-                                    <FileDownloadIcon />
+                            </CSVLink> : null}
+                        {participantsFileData ?
+                            <CSVLink
+                                className={'csv-link-export-file'}
+                                data={participantsFileData}
+                                filename={"Spotivey_Participants_" + props.surveyID + ".csv"}
+                                target="_blank"
+                                separator={";"}
+                            >
+                                <div className={'button-csv-inner-container'}>
+                                    <div className={'button-csv-title'}>
+                                        Participants CSV
+                                    </div>
+                                    <div className={'button-csv-icon'}>
+                                        <FileDownloadIcon />
+                                    </div>
                                 </div>
-                            </div>
-                        </CSVLink>
-                        <Button
+                            </CSVLink> : null}
+                        <Button style={{ color: '#414141' }}
                             onClick={() => { setOpenDeleteDialog(true) }}
-                            variant={'outlined'}
+                            variant={'text'}
                             startIcon={<DeleteOutlinedIcon />}
                         >
-                            Delete Results
+                            Delete All Results
                         </Button>
                     </div> : null
                 }
@@ -383,7 +412,7 @@ export default function ResultContent(props) {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="outlined" onClick={handleCloseDialog}>Disagree</Button>
+                    <Button variant="contained" onClick={handleCloseDialog}>Disagree</Button>
                     <Button onClick={() => { deleteResults(props.surveyID) }} style={{ color: '#414141' }}>
                         Agree
                     </Button>

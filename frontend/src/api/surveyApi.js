@@ -131,9 +131,15 @@ export async function deleteOnlyResults(surveyId) {
   return { ok: response.ok, status: response.status, data: await safeJson(response) };
 }
 
-export async function saveToCsvFile(surveyId) {
+export async function saveRepertoireToCsvFile(surveyId) {
   return getJson(
-    "/api/save-to-csv-file?surveyID=" + encodeURIComponent(surveyId)
+    "/api/save-repertoire-to-csv-file?surveyID=" + encodeURIComponent(surveyId)
+  );
+}
+
+export async function saveParticipantsToCsvFile(surveyId) {
+  return getJson(
+    "/api/save-participants-to-csv-file?surveyID=" + encodeURIComponent(surveyId)
   );
 }
 

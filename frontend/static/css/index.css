@@ -1063,7 +1063,7 @@ input#checkbox-css[type="checkbox"] + span#span-css-second-survey {
 .button-result-user-container {
   display: grid;
   padding: 0 0 50px 0;
-  grid-template-columns: 20% 20%;
+  grid-template-columns: 20% 20% 20%;
   column-gap: 50px;
 }
 
