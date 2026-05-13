@@ -120,6 +120,7 @@ function normalizeSettings(rawSettings) {
         check: currentPlaylists.check || false,
         limit: currentPlaylists.limit || 20,
         public: currentPlaylists.public ?? true,
+        privatetracks: currentPlaylists.privatetracks ?? false,
         confirmCheck: currentPlaylists.confirmCheck || false,
     };
 

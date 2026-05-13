@@ -241,6 +241,7 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
                             roomCode,
                             settings[DATA_TYPES.CURRENT_PLAYLISTS].limit,
                             settings[DATA_TYPES.CURRENT_PLAYLISTS].public,
+                            settings[DATA_TYPES.CURRENT_PLAYLISTS].privatetracks,
                             settings[DATA_TYPES.CURRENT_PLAYLISTS].confirmCheck
                         ),
                 });

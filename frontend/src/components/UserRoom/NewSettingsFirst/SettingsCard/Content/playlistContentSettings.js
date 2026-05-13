@@ -1,15 +1,15 @@
 import * as React from "react";
 import { Checkbox, Slider } from "@mui/material";
 import { marks } from './Components/settingsConst';
-import { confirmCheck } from "./Components/ConfirmCheck";
-import PublicCheck from "./Components/ConfirmCheck";
+import PublicCheck, { PrivateTracksCheck, confirmCheck } from "./Components/ConfirmCheck";
 import LimitComponent from "./Components/limitComponent";
 
 export function playlistContentSettings(
     currentPlaylistsChecked, setCurrentPlaylistsChecked,
     currentPlaylistsLimit, setCurrentPlaylistsLimit,
     confirmCurrentPlaylistsYes, setConfirmCurrentPlaylistsYes,
-    checkPublic, setCheckPublic
+    checkPublic, setCheckPublic,
+    checkPrivateTracks, setCheckPrivateTracks
 ) {
     return (
         <React.Fragment>
@@ -49,6 +49,7 @@ export function playlistContentSettings(
                             />
                             {confirmCheck(confirmCurrentPlaylistsYes, setConfirmCurrentPlaylistsYes)}
                             {PublicCheck(checkPublic, setCheckPublic)}
+                            {checkPublic && PrivateTracksCheck(checkPrivateTracks, setCheckPrivateTracks)}
                         </div>
                     </div>
                 </div>

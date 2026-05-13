@@ -70,6 +70,7 @@ export default function SettingsPage(props) {
   const [currentPlaylistsLimit, setCurrentPlaylistsLimit] = useState(20)
   const [currentPlaylistsChecked, setCurrentPlaylistsChecked] = useState(false)
   const [checkPublic, setCheckPublic] = useState(true)
+  const [checkPrivateTracks, setCheckPrivateTracks] = useState(false)
   const [recentlyTracksLimit, setRecentlyTracksLimit] = useState(20)
   const [recentlyTracksChecked, setRecentlyTracksChecked] = useState(false)
   const [mySwiper, setMySwiper] = useState({})
@@ -92,7 +93,7 @@ export default function SettingsPage(props) {
   const [settingsLimitArray, setSettingsLimitArray] = useState(
     [[savedTracksLimit, tracksMarket], [], [topItemsTracksShortTermLimit], [topItemsTracksMediumTermLimit], [topItemsTracksLongTermLimit],
     [topItemsArtistsShortTermLimit], [topItemsArtistsMediumTermLimit], [topItemsArtistsLongTermLimit], [followedArtistsLimit],
-    [currentPlaylistsLimit, checkPublic], [recentlyTracksLimit], [savedShowsLimit], [savedEpisodesLimit]]
+    [currentPlaylistsLimit, checkPublic, checkPrivateTracks], [recentlyTracksLimit], [savedShowsLimit], [savedEpisodesLimit]]
   )
   const [settingsTextArray, setSettingsTextArray] = useState(['', '', ''])
 
@@ -215,6 +216,7 @@ export default function SettingsPage(props) {
           setConfirmSavedEpisodesYes(savedEpisodes.confirmCheck)
 
           setCheckPublic(currentPlaylists.public ? currentPlaylists.public : false)
+          setCheckPrivateTracks(currentPlaylists.privatetracks ? currentPlaylists.privatetracks : false);
         });
     }
   }, [update])
@@ -222,11 +224,16 @@ export default function SettingsPage(props) {
   useEffect(() => {
     setSettingsLimitArray([[savedTracksLimit, tracksMarket], [], [topItemsTracksShortTermLimit], [topItemsTracksMediumTermLimit], [topItemsTracksLongTermLimit],
     [topItemsArtistsShortTermLimit], [topItemsArtistsMediumTermLimit], [topItemsArtistsLongTermLimit],
-    [followedArtistsLimit], [currentPlaylistsLimit, checkPublic], [recentlyTracksLimit], [savedShowsLimit], [savedEpisodesLimit]])
+    [followedArtistsLimit], [currentPlaylistsLimit, checkPublic, checkPrivateTracks], [recentlyTracksLimit], [savedShowsLimit], [savedEpisodesLimit]]);
   }, [savedTracksLimit, tracksMarket, topItemsTracksShortTermLimit, topItemsTracksMediumTermLimit, topItemsTracksLongTermLimit,
     topItemsArtistsShortTermLimit, topItemsArtistsMediumTermLimit, topItemsArtistsLongTermLimit,
-    followedArtistsLimit, currentPlaylistsLimit, recentlyTracksLimit, checkPublic, savedShowsLimit, savedEpisodesLimit])
+    followedArtistsLimit, currentPlaylistsLimit, checkPublic, checkPrivateTracks, recentlyTracksLimit, savedShowsLimit, savedEpisodesLimit])
 
+  useEffect(() => {
+    if (!checkPublic && checkPrivateTracks) {
+      setCheckPrivateTracks(false);
+    }
+  }, [checkPublic, checkPrivateTracks, setCheckPrivateTracks]);
 
   useEffect(() => {
     if (umfrageName !== '' && umfrageID !== '') {
@@ -523,7 +530,8 @@ export default function SettingsPage(props) {
                         currentPlaylistsChecked, setCurrentPlaylistsChecked,
                         currentPlaylistsLimit, setCurrentPlaylistsLimit,
                         confirmCurrentPlaylistsYes, setConfirmCurrentPlaylistsYes,
-                        checkPublic, setCheckPublic, stateTextCP, setStateTextCP
+                        checkPublic, setCheckPublic, checkPrivateTracks, setCheckPrivateTracks,
+                        stateTextCP, setStateTextCP
                       )}
                     </SwiperSlide>
                     <SwiperSlide>

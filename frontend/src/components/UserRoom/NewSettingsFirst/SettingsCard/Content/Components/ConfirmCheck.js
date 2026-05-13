@@ -4,28 +4,28 @@ export function confirmCheck(
     checkedYes, setCheckedYes, passParams
 ) {
     const handleChange = () => {
-        setCheckedYes(!checkedYes);
+        setCheckedYes(checkedYes);
     };
 
-    const confirmStyle = passParams ? {margin:"2rem auto"} : null
+    const confirmStyle = passParams ? { margin: "2rem auto" } : null
 
-    return(
+    return (
         <React.Fragment>
             <div className={"confirm-container"} style={confirmStyle}>
-                {passParams ? 
-                <h5 className={"confirm-container-title"}>
-                    Would you like to pass on any URL-Parameter from 1st to 2nd Survey? <br></br>
-                    <u>Note:</u> This setting is helpful for example for multilingual studies.
-                </h5> :
-                <h5 className={"confirm-container-title"}>
-                    Would you like to receive confirmation of the results from the test persons? <br></br>
-                    <u>Note:</u> If several people share an account, this setting is helpful to compensate this problem.
-                </h5>}
+                {passParams ?
+                    <h5 className={"confirm-container-title"}>
+                        Would you like to pass on any URL-Parameter from 1st to 2nd Survey? <br></br>
+                        <u>Note:</u> This setting is helpful for example for multilingual studies.
+                    </h5> :
+                    <h5 className={"confirm-container-title"}>
+                        Would you like to receive confirmation of the results from the test persons? <br></br>
+                        <u>Note:</u> If several people share an account, this setting is helpful to compensate this problem.
+                    </h5>}
                 <div className={"confirm-container-checkbox-outer"}>
                     <div className={"confirm-container-checkbox"}>
                         <label className={"confirm-container-title"}>
                             <input id={"checkbox-css"}
-                                type="checkbox" 
+                                type="checkbox"
                                 checked={checkedYes}
                                 onChange={handleChange}
                             />
@@ -36,7 +36,7 @@ export function confirmCheck(
                     <div className={"confirm-container-checkbox"}>
                         <label className={"confirm-container-title"}>
                             <input id={"checkbox-css"}
-                                type="checkbox" 
+                                type="checkbox"
                                 checked={!checkedYes}
                                 onChange={handleChange}
                             />
@@ -57,7 +57,7 @@ export default function PublicCheck(
         setCheckedYes(!checkedYes);
     };
 
-    return(
+    return (
         <React.Fragment>
             <div className={"confirm-container"}>
                 <h5 className={"confirm-container-title"}>
@@ -67,7 +67,7 @@ export default function PublicCheck(
                     <div className={"confirm-container-checkbox"}>
                         <label className={"confirm-container-title"}>
                             <input id={"checkbox-css"}
-                                type="checkbox" 
+                                type="checkbox"
                                 checked={checkedYes}
                                 onChange={handleChange}
                             />
@@ -78,12 +78,54 @@ export default function PublicCheck(
                     <div className={"confirm-container-checkbox"}>
                         <label className={"confirm-container-title"}>
                             <input id={"checkbox-css"}
-                                type="checkbox" 
+                                type="checkbox"
                                 checked={!checkedYes}
                                 onChange={handleChange}
                             />
                             <span id={"span-css"}></span>
                             Public Playlists
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </React.Fragment>
+    )
+}
+
+export function PrivateTracksCheck(
+    checkedYes, setCheckedYes
+) {
+    const handleChange = () => {
+        setCheckedYes(!checkedYes);
+    };
+
+    return (
+        <React.Fragment>
+            <div className={"confirm-container"}>
+                <h5 className={"confirm-container-title"}>
+                    Do you want to retrieve track information for private playlists that can only be accessed with user consent (retrieval might take a little longer)?
+                </h5>
+                <div className={"confirm-container-checkbox-outer"}>
+                    <div className={"confirm-container-checkbox"}>
+                        <label className={"confirm-container-title"}>
+                            <input id={"checkbox-css"}
+                                type="checkbox"
+                                checked={checkedYes}
+                                onChange={handleChange}
+                            />
+                            <span id={"span-css"}></span>
+                            Yes
+                        </label>
+                    </div>
+                    <div className={"confirm-container-checkbox"}>
+                        <label className={"confirm-container-title"}>
+                            <input id={"checkbox-css"}
+                                type="checkbox"
+                                checked={!checkedYes}
+                                onChange={handleChange}
+                            />
+                            <span id={"span-css"}></span>
+                            No
                         </label>
                     </div>
                 </div>

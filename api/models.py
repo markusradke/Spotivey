@@ -53,7 +53,7 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie den 
     current_playlists_confirm = models.BooleanField(default=True)
     current_playlists_limit = models.PositiveIntegerField(default=20)
     current_playlists_public = models.BooleanField(default=True)
-    current_playlists_privatetracks = models.BooleanField(default=True)
+    current_playlists_privatetracks = models.BooleanField(default=False)
 
     recent_tracks_enabled = models.BooleanField(default=False)
     recent_tracks_confirm = models.BooleanField(default=True)
