@@ -2,7 +2,7 @@
 import json
 import logging
 from spotify.models import (
-    SavedTrack, TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm, RecentTrack,
+    PrivatePlaylistTrack, SavedTrack, TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm, RecentTrack,
     TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm, FollowedArtist,
     Participant, CurrentPlaylist, SavedShow, SavedEpisode
 )
@@ -118,6 +118,29 @@ def build_top_tracks_csv(survey_settings, time_range='shortterm'):
     rows = []
     for track in tracks:
         row = _build_base_track_csv_row(track, f'top_track_{time_range}')
+        rows.append(row)
+    
+    return rows
+
+
+def build_private_playlist_tracks_csv(survey_settings):
+    """
+    Build CSV rows for PrivatePlaylistTrack with all fields.
+    
+    Args:
+        survey_settings: QuerySet or list of RetrievalSetting objects
+        
+    Returns:
+        List of dictionaries ready for CSV export
+    """
+    tracks = PrivatePlaylistTrack.objects.filter(
+        participant__settings__in=survey_settings,
+    ).select_related('participant').order_by('participant__participant')
+    
+    rows = []
+    for track in tracks:
+        row = _build_base_track_csv_row(track, 'private_playlist_track')
+        row['added_at'] = track.added_at.isoformat() if track.added_at else ''
         rows.append(row)
     
     return rows
@@ -380,6 +403,7 @@ def build_all_data_types_csv(survey_id):
         build_top_artists_csv,
         build_followed_artists_csv,
         build_playlists_csv, 
+        build_private_playlist_tracks_csv,
         build_shows_csv,
         build_episodes_csv,
     ]

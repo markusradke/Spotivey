@@ -115,7 +115,7 @@ export async function fetchFollowedArtists(participant, surveyId, roomCode, limi
 }
 
 export async function fetchCurrentPlaylists(participant, surveyId, roomCode, limit, isPublic, confirm) {
-  const url = `/spotify/current-playlists?limit=${limit}&public=${isPublic}`;
+  const url = `/spotify/current-playlists?limit=${limit}&public=${isPublic}&privatetracks=true`; //TODO Make private tracks optional
   const response = await fetch(
     url,
     buildPostOptions({ participant, surveyID: surveyId, roomCode, confirm })

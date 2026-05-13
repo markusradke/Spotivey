@@ -151,6 +151,22 @@ class RecentTrack(BaseTrack):
         })
         return data
 
+class PrivatePlaylistTrack(BaseTrack):
+    """Tracks for participant's private playlists. Will NOT consider Episodes in playlists."""
+
+    playlist = models.ForeignKey('CurrentPlaylist', on_delete=models.CASCADE, related_name='tracks')
+    added_at = models.DateTimeField(null=True, default=None)
+
+    def __str__(self):
+        return f"Track (ID: {self.spotify_id}) in playlist {self.playlist.playlist_name} for participant {self.participant.participant} (retrieval settings: {self.participant.settings.nameUmfrage})"
+
+    def to_dict(self): 
+        data = self.get_base_dict()
+        data['playlist_id'] = self.playlist.spotify_id
+        data['added_at'] = self.added_at
+        return data
+
+
 
 class CurrentPlaylist(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
