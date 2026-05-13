@@ -59,10 +59,10 @@ def _artist(artist_id: str) -> Dict[str, Any]:
     }
 
 
-def _playlist(playlist_id: str, owner_id: str) -> Dict[str, Any]:
+def _playlist(spotify_id: str, owner_id: str) -> Dict[str, Any]:
     return {
-        "id": playlist_id,
-        "name": f"Playlist {playlist_id}",
+        "id": spotify_id,
+        "name": f"Playlist {spotify_id}",
         "collaborative": False,
         "public": True,
         "owner": {"id": owner_id},

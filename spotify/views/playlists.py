@@ -17,9 +17,9 @@ def _extract_playlist_fields(playlist_item, current_user_id):
     images = playlist_item.get('images', [])
     
     return {
-        'playlist_id': playlist_item.get('id', ''),
+        'spotify_id': playlist_item.get('id', ''),
         'playlist_name': playlist_item.get('name', ''),
-        'playlist_cover': images[0].get('url', '') if images else '',
+        'image_url': images[0].get('url', '') if images else '',
         'is_collaborative': playlist_item.get('collaborative', False),
         'is_public': playlist_item.get('public', False),
         'is_self_owned': owner_id == current_user_id,
@@ -79,6 +79,10 @@ class GetPlaylistsSpotify(APIView):
         if 'error' in response or 'items' not in response:
             return Response({'error': response}, 
                           status=status.HTTP_204_NO_CONTENT)
+
+        total = response.get('total', 0)
+        participant.total_current_playlists = total
+        participant.save()
 
         items = response.get('items', [])
         

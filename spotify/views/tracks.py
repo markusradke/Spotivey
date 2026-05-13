@@ -60,6 +60,15 @@ class GetTopTracks(APIView):
             return Response({'error': response},
                                             status=status.HTTP_204_NO_CONTENT)
 
+        total = response.get("total", 0)
+        if time_range == 'short_term':
+            participant.total_top_tracks_shortterm = total
+        elif time_range == 'medium_term':
+            participant.total_top_tracks_mediumterm = total
+        elif time_range == 'long_term':
+            participant.total_top_tracks_longterm = total
+        participant.save()  
+
         items = response.get("items")
         response_data = _build_and_create_tracks(
             request.session.session_key,
@@ -119,8 +128,12 @@ class GetSavedTracksSpotify(APIView):
         if 'error' in response:
             return Response({'error': response},
                                             status=status.HTTP_204_NO_CONTENT)
+        
+        total = response.get("total", 0)
+        participant.total_saved_tracks = total
+        participant.save()
+        
         items = response.get("items")
-
         response_data = _build_and_create_tracks(
             request.session.session_key,
             items,

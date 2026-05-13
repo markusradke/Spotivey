@@ -17,7 +17,7 @@ def _build_track_row_from_structured_fields(track, idx):
         'cover': track.image_url,
         'trackName': track.track_name,
         'spotify_artist_string': track.artist_names,
-        'spotifyID': track.spotify_id,
+        'spotify_id': track.spotify_id,
         'isrc': track.isrc,
     }
 
@@ -30,7 +30,7 @@ def _build_artist_row(artist, idx):
         'participant': artist.participant.participant,
         'cover': artist.image_url,
         'artistName': artist.artist_name,
-        'spotifyID': artist.spotify_id,
+        'spotify_id': artist.spotify_id,
         'type': artist.artist_type,
         'popularity': artist.popularity if artist.popularity is not None else 0,
         'followers': artist.followers if artist.followers is not None else 0,
@@ -176,9 +176,9 @@ def _build_playlist_results(survey_settings):
             'id': idx,
             'no': idx,
             'participant': playlist.participant.participant,
-            'playlist_id': playlist.playlist_id,
+            'spotify_id': playlist.spotify_id,
             'playlist_name': playlist.playlist_name,
-            'cover': playlist.playlist_cover,
+            'cover': playlist.image_url,
             'is_collaborative': playlist.is_collaborative,
             'is_public': playlist.is_public,
             'is_self_owned': playlist.is_self_owned,
@@ -217,10 +217,10 @@ def _build_show_results(survey_settings):
         rows.append({
             'id': idx,
             'no': idx,
-            'spotifyID': show.spotify_id,
+            'spotify_id': show.spotify_id,
             'participant': show.participant.participant,
             'show_name': show.show_name,
-            'cover': show.show_image_url,
+            'cover': show.image_url,
             'show_publisher': show.show_publisher,
         })
     
@@ -257,11 +257,11 @@ def _build_episode_results(survey_settings):
         rows.append({
             'id': idx,
             'no': idx,
-            'spotifyID': episode.spotify_id,
+            'spotify_id': episode.spotify_id,
             'participant': episode.participant.participant,
             'name': episode.name,
             'show_name': episode.show_name,
-            'cover': episode.show_image_url,
+            'cover': episode.image_url,
             'show_publisher': episode.show_publisher,
         })
     

@@ -21,6 +21,17 @@ class Participant(models.Model):
     started_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=20, default='in_progress')
+    total_saved_tracks = models.IntegerField(null=True, default=None)
+    total_top_tracks_shortterm = models.IntegerField(null=True, default=None)
+    total_top_tracks_mediumterm = models.IntegerField(null=True, default=None)
+    total_top_tracks_longterm = models.IntegerField(null=True, default=None)
+    total_top_artists_shortterm = models.IntegerField(null=True, default=None)
+    total_top_artists_mediumterm = models.IntegerField(null=True, default=None) 
+    total_top_artists_longterm = models.IntegerField(null=True, default=None)
+    total_followed_artists = models.IntegerField(null=True, default=None)
+    total_current_playlists = models.IntegerField(null=True, default=None)
+    total_saved_shows = models.IntegerField(null=True, default=None)
+    total_saved_episodes = models.IntegerField(null=True, default=None)
 
     def __str__(self):
         return self.participant + " (retrieval settings: " + self.settings.nameUmfrage + ")"
@@ -150,9 +161,9 @@ class ParticipantProfile(models.Model):
 
 class CurrentPlaylist(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    playlist_id = models.CharField(max_length=100, default='')
+    spotify_id = models.CharField(max_length=100, default='')
     playlist_name = models.CharField(max_length=200, default='')
-    playlist_cover = models.URLField(max_length=500, default='')
+    image_url = models.URLField(max_length=500, default='')
     is_collaborative = models.BooleanField(null=True, default=None)
     is_public = models.BooleanField(null=True, default=None)
     is_self_owned = models.BooleanField(null=True, default=None)
@@ -164,9 +175,9 @@ class CurrentPlaylist(models.Model):
 
     def to_dict(self):
         return {
-            'playlist_id': self.playlist_id,
+            'spotify_id': self.spotify_id,
             'playlist_name': self.playlist_name,
-            'playlist_cover': self.playlist_cover,
+            'image_url': self.image_url,
             'is_collaborative': self.is_collaborative,
             'is_public': self.is_public,
             'is_self_owned': self.is_self_owned,
@@ -246,7 +257,7 @@ class BaseShow(models.Model):
     show_name = models.CharField(max_length=500, default='')
     show_languages = models.CharField(max_length=50, default='')
     show_description = models.TextField(default='')
-    show_image_url = models.URLField(max_length=500, default='')
+    image_url = models.URLField(max_length=500, default='')
     show_total_episodes = models.IntegerField(null=True, default=None)
     show_media_type = models.CharField(max_length=50, default='')
     show_publisher = models.CharField(max_length=200, default='')
@@ -263,7 +274,7 @@ class BaseShow(models.Model):
             'show_name': self.show_name,
             'show_languages': self.show_languages,
             'show_description': self.show_description,
-            'show_image_url': self.show_image_url,
+            'image_url': self.image_url,
             'show_total_episodes': self.show_total_episodes,
             'show_media_type': self.show_media_type,
             'show_publisher': self.show_publisher,

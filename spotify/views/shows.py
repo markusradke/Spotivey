@@ -19,7 +19,7 @@ def _extract_show_fields(show_item):
         'show_name': show_item.get('name', ''),
         'show_languages': ', '.join(show_item.get('languages', [])),
         'show_description': show_item.get('description', ''),
-        'show_image_url': get_image_url(images),
+        'image_url': get_image_url(images),
         'show_total_episodes': show_item.get('total_episodes', 0),
         'show_media_type': show_item.get('media_type', ''),
         'show_publisher': show_item.get('publisher', ''),
@@ -40,7 +40,7 @@ def _extract_episode_fields(episode_item):
         'show_name': episode_item.get('show', {}).get('name', ''),
         'show_languages': episode_item.get('show', {}).get('languages', ''),
         'show_description': episode_item.get('show', {}).get('description', ''),
-        'show_image_url': get_image_url(images),
+        'image_url': get_image_url(images),
         'show_total_episodes': episode_item.get('show', {}).get('total_episodes', 0),
         'show_media_type': episode_item.get('show', {}).get('media_type', ''),
         'show_publisher': episode_item.get('show', {}).get('publisher', ''),
@@ -59,6 +59,10 @@ class GetSavedShowsSpotify(APIView):
         response = execute_spotify_api_request(request.session.session_key, endpoint)
         if 'error' in response:
             return Response({'error': response}, status=status.HTTP_400_BAD_REQUEST)
+
+        total = response.get('total', 0)
+        participant.total_saved_shows = total
+        participant.save()
 
         items = response.get('items', [])
         shows_to_create = []
@@ -85,6 +89,10 @@ class GetSavedEpisodesSpotify(APIView):
         response = execute_spotify_api_request(request.session.session_key, endpoint)
         if 'error' in response:
             return Response({'error': response}, status=status.HTTP_400_BAD_REQUEST)
+
+        total = response.get('total', 0)
+        participant.total_saved_episodes = total
+        participant.save()
 
         items = response.get('items', [])
         episodes_to_create = []

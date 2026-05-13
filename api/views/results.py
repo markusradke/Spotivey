@@ -68,7 +68,7 @@ class SaveCheckData(APIView):
         6: (TopArtistMediumTerm, "spotify_id", "id"),
         7: (TopArtistLongTerm, "spotify_id", "id"),
         8: (FollowedArtist, "spotify_id", "id"),
-        9: (CurrentPlaylist, "playlist_id", "playlist_id"),
+        9: (CurrentPlaylist, "spotify_id", "spotify_id"),
         10: (ParticipantProfile, "spotify_id", "spotify_id"),
         11: (SavedShow, "spotify_id", "spotify_id"),
         12: (SavedEpisode, "spotify_id", "spotify_id"),
