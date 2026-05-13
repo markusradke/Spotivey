@@ -3,7 +3,7 @@ from ..models import RetrievalSetting
 from spotify.models import (
     SavedTrack, TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm, RecentTrack,
     TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm, FollowedArtist,
-    CurrentPlaylist, ParticipantProfile,
+    CurrentPlaylist, Participant,
     Participant, SavedShow, SavedEpisode
     )
 
@@ -39,11 +39,11 @@ def _build_artist_row(artist, idx):
 
 
 def _build_profile_row(profile, idx):
-    """Build row dict from ParticipantProfile."""
+    """Build row dict from Participant."""
     return {
         'id': idx,
         'no': idx,
-        'participant': profile.participant.participant,
+        'participant': profile.participant,
         'country': profile.country or '',
         'followers': profile.followers if profile.followers is not None else 0,
         'product': profile.product or '',
@@ -123,7 +123,7 @@ def _build_artist_results(model_class, title, data_type_id, survey_settings):
 
 def _build_profile_results(survey_settings):
     """
-    Build results structure for ParticipantProfile.
+    Build results structure for Participant.
     
     Args:
         survey_settings: QuerySet of RetrievalSetting objects
@@ -131,23 +131,23 @@ def _build_profile_results(survey_settings):
     Returns:
         Dictionary with profile results metadata and rows
     """
-    profiles = ParticipantProfile.objects.filter(
-        participant__settings__in=survey_settings,
-    ).select_related('participant').order_by('participant__participant')
+    participants = Participant.objects.filter(
+        settings__in=survey_settings,
+    ).order_by('participant')
     
     rows = []
-    participants = set()
+    participants_set = set()
     
-    for idx, profile in enumerate(profiles, start=1):
-        participants.add(profile.participant.participant)
-        rows.append(_build_profile_row(profile, idx))
+    for idx, participant in enumerate(participants, start=1):
+        participants_set.add(participant.participant)
+        rows.append(_build_profile_row(participant, idx))
     
     return {
         'id': 'profiles',
         'title': 'User Profiles',
         'type': 'Profile',
         'data': rows,
-        'participantCount': len(participants),
+        'participantCount': len(participants_set),
         'resultCount': len(rows),
         'hasData': len(rows) > 0
     }

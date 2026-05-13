@@ -32,9 +32,21 @@ class Participant(models.Model):
     total_current_playlists = models.IntegerField(null=True, default=None)
     total_saved_shows = models.IntegerField(null=True, default=None)
     total_saved_episodes = models.IntegerField(null=True, default=None)
+    country = models.CharField(max_length=20, default='')
+    followers = models.IntegerField(null=True, default=None)
+    product = models.CharField(max_length=50, default='')
+    confirmed = models.BooleanField(default=False)   
+    
 
     def __str__(self):
         return self.participant + " (retrieval settings: " + self.settings.nameUmfrage + ")"
+    
+    def to_dict(self):
+        return {
+            'country': self.country,
+            'followers': self.followers,
+            'product': self.product,
+        }
 
 class BaseTrack(models.Model):
     """Abstract base model for all track types."""
@@ -139,24 +151,6 @@ class RecentTrack(BaseTrack):
             'context_uri': self.context_uri,
         })
         return data
-
-
-class ParticipantProfile(models.Model):
-    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
-    country = models.CharField(max_length=20, default='')
-    followers = models.IntegerField(null=True, default=None)
-    product = models.CharField(max_length=50, default='')
-    confirmed = models.BooleanField(default=False)   
-    
-    def __str__(self):
-        return "Participant profile for participant " + self.participant.participant + " (retrieval settings: " + self.participant.settings.nameUmfrage + ")"
-    
-    def to_dict(self):
-        return {
-            'country': self.country,
-            'followers': self.followers,
-            'product': self.product,
-        }
 
 
 class CurrentPlaylist(models.Model):

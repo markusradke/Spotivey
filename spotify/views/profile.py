@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
-from spotify.models import Participant, ParticipantProfile
+from spotify.models import Participant
 from spotify.utils.spotify_api import execute_spotify_api_request
 from spotify.utils.retrieval_helpers import get_participant_from_session
 
@@ -26,13 +26,9 @@ class GetUsersProfileSpotify(APIView):
         followers = response.get("followers").get("total")
         product = response.get("product")
 
-        usersProfileSpotify = ParticipantProfile(
-            participant=participant,
-            country=country,
-            followers=followers,
-            product=product,
-            confirmed=False,
-        )
-        usersProfileSpotify.save()
+        participant.country = country
+        participant.followers = followers
+        participant.product = product
+        participant.save()
 
-        return Response(usersProfileSpotify.to_dict(), status=status.HTTP_200_OK)
+        return Response(participant.to_dict(), status=status.HTTP_200_OK)

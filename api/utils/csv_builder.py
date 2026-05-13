@@ -4,7 +4,7 @@ import logging
 from spotify.models import (
     SavedTrack, TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm, RecentTrack,
     TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm, FollowedArtist,
-    ParticipantProfile, CurrentPlaylist, SavedShow, SavedEpisode
+    Participant, CurrentPlaylist, SavedShow, SavedEpisode
 )
 
 
@@ -240,7 +240,7 @@ def build_followed_artists_csv(survey_settings):
 
 def build_profiles_csv(survey_settings):
     """
-    Build CSV rows for ParticipantProfile with all fields.
+    Build CSV rows for Participant with all fields.
     
     Args:
         survey_settings: QuerySet or list of RetrievalSetting objects
@@ -248,24 +248,24 @@ def build_profiles_csv(survey_settings):
     Returns:
         List of dictionaries ready for CSV export
     """
-    profiles = ParticipantProfile.objects.filter(
-        participant__settings__in=survey_settings,
-    ).select_related('participant').order_by('participant__participant')
+    participants = Participant.objects.filter(
+        settings__in=survey_settings,
+    ).order_by('participant')
     
     rows = []
-    for profile in profiles:
+    for participant in participants:
         rows.append({
             # Metadata
-            'data_type': 'profile',
-            'participant_id': profile.participant.participant,
-            'survey_id': profile.participant.settings.umfrageID,
-            'survey_name': profile.participant.settings.nameUmfrage,
-            'confirmed': profile.confirmed,
+            'data_type': 'participant_profile',
+            'participant_id': participant.participant,
+            'survey_id': participant.settings.umfrageID,
+            'survey_name': participant.settings.nameUmfrage,
+            'confirmed': participant.confirmed,
             
             # Profile fields
-            'country': profile.country or '',
-            'followers': profile.followers if profile.followers is not None else '',
-            'product': profile.product or '',
+            'country': participant.country or '',
+            'followers': participant.followers if participant.followers is not None else '',
+            'product': participant.product or '',
         })
     
     return rows

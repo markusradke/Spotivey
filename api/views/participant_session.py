@@ -91,7 +91,7 @@ class AcceptPrivacyPolicy(APIView):
         return Response({'message': 'Privacy policy accepted'}, status=status.HTTP_200_OK)
 
 class GetParticipantSession(APIView):
-    """Get session data for survey participants"""
+    """Get session data for survey participants and clean up any unconfirmed data from previous sessions."""
 
     def get(self, request, format=None):
         if not self.request.session.exists(self.request.session.session_key):
@@ -108,7 +108,6 @@ class GetParticipantSession(APIView):
         TopArtistLongTerm.objects.filter(participant=participant, confirmed=False).delete()
         FollowedArtist.objects.filter(participant=participant, confirmed=False).delete()
         CurrentPlaylist.objects.filter(participant=participant, confirmed=False).delete()
-        ParticipantProfile.objects.filter(participant=participant, confirmed=False).delete()
 
 
         data = {

@@ -10,7 +10,7 @@ from ..utils.results_builder import getResultDict
 from spotify.models import (
     SavedTrack, TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm, RecentTrack,
     TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm, FollowedArtist,
-    CurrentPlaylist, ParticipantProfile,
+    CurrentPlaylist, Participant,
     Participant, SavedShow, SavedEpisode
 )
 
@@ -69,7 +69,7 @@ class SaveCheckData(APIView):
         7: (TopArtistLongTerm, "spotify_id", "id"),
         8: (FollowedArtist, "spotify_id", "id"),
         9: (CurrentPlaylist, "spotify_id", "spotify_id"),
-        10: (ParticipantProfile, "spotify_id", "spotify_id"),
+        10: (Participant, "spotify_id", "spotify_id"),
         11: (SavedShow, "spotify_id", "spotify_id"),
         12: (SavedEpisode, "spotify_id", "spotify_id"),
     }
@@ -180,8 +180,7 @@ class GetParticipantCountForSurvey(APIView):
 
             for model in [SavedTrack, TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm, 
                           TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm,
-                            ParticipantProfile, FollowedArtist, 
-                            CurrentPlaylist, RecentTrack, SavedShow, SavedEpisode]:
+                            FollowedArtist, CurrentPlaylist, RecentTrack, SavedShow, SavedEpisode]:
                 records = model.objects.filter(participant__settings__in=settings)
                 total_records += records.count()
                 for record in records: 
