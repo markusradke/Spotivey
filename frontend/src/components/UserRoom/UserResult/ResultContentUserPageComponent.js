@@ -41,22 +41,21 @@ export default function ResultContent(props) {
     const handleDataFetch = async () => {
         saveRepertoireToCsvFile(props.surveyID)
             .then(({ ok, data }) => {
-                if (!ok || !data || data.error) {
-                    return;
-                }
-                if (data.length !== 0) {
-                    setRepertoireFileData(data)
+                if (ok && data && !data.error) {
+                    if (data.length !== 0) {
+                        setRepertoireFileData(data)
+                    }
                 }
             });
         saveParticipantsToCsvFile(props.surveyID)
             .then(({ ok, data }) => {
-                if (!ok || !data || data.error) {
-                    return;
-                }
-                if (data.length !== 0) {
-                    setParticipantsFileData(data)
+                if (ok && data && !data.error) {
+                    if (data.length !== 0) {
+                        setParticipantsFileData(data)
+                    }
                 }
             });
+
     };
 
     useEffect(() => {

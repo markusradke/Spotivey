@@ -13,11 +13,17 @@ from spotify.utils.field_extractors import get_image_url
 def _extract_show_fields(show_item):
     """Extract show fields from Spotify API response."""
     images = show_item.get('images', [])
+    languages = show_item.get('languages', [])
+    if languages: 
+        if type(languages) == list and all(isinstance(lang, str) for lang in languages):
+            languages = ', '.join(languages)
+        else: 
+            languages = ''
     
     return {
         'spotify_id': show_item.get('id', ''),
         'show_name': show_item.get('name', ''),
-        'show_languages': ', '.join(show_item.get('languages', [])),
+        'show_languages': languages,
         'show_description': show_item.get('description', ''),
         'image_url': get_image_url(images),
         'show_total_episodes': show_item.get('total_episodes', 0),
@@ -28,13 +34,20 @@ def _extract_show_fields(show_item):
 def _extract_episode_fields(episode_item):
     """Extract episode fields from Spotify API response."""
     images = episode_item.get('show', {}).get('images', [])
+    languages = episode_item.get('languages', [])
+    if languages: 
+        if type(languages) == list and all(isinstance(lang, str) for lang in languages):
+            languages = ', '.join(languages)
+        else: 
+            languages = ''
+
     return {
         'spotify_id': episode_item.get('id', ''),
         'name': episode_item.get('name', ''),
         'description': episode_item.get('description', ''),
         'duration_ms': episode_item.get('duration_ms', 0),
         'release_date': episode_item.get('release_date', ''),
-        'languages': ', '.join(episode_item.get('languages', [])),
+        'languages': languages,
         'is_fully_played': episode_item.get('resume_point', {}).get('fully_played', False),
         'show_id': episode_item.get('show', {}).get('id', ''),
         'show_name': episode_item.get('show', {}).get('name', ''),
