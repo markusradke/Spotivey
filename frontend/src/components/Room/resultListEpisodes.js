@@ -26,10 +26,10 @@ export default function EpisodeResultList({
                 >
                     <div className="result-list-card-outer-container">
                         <div className="result-list-card-container">
-                            {episode.show_image_url && (
+                            {episode.image_url && (
                                 <img
                                     className="result-list-img"
-                                    src={episode.show_image_url}
+                                    src={episode.image_url}
                                     alt={episode.show_name}
                                 />
                             )}

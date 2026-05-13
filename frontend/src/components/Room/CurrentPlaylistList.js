@@ -10,8 +10,8 @@ export default function CurrentPlaylistList({
         <>
             {playlists.map((playlist, index) => (
                 <ConfirmableCard
-                    key={playlist.playlist_id}
-                    imageUrl={playlist.playlist_cover}
+                    key={playlist.spotify_id}
+                    imageUrl={playlist.image_url}
                     title={playlist.playlist_name}
                     subtitle={`${playlist.n_tracks} tracks || Owner: ${playlist.is_self_owned ? "You" : "Other"
                         } || Collaborative: ${playlist.is_collaborative ? "Yes" : "No"}`}

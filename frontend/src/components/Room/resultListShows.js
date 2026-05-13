@@ -26,10 +26,10 @@ export default function ShowResultList({
                 >
                     <div className="result-list-card-outer-container">
                         <div className="result-list-card-container">
-                            {show.show_image_url && (
+                            {show.image_url && (
                                 <img
                                     className="result-list-img"
-                                    src={show.show_image_url}
+                                    src={show.image_url}
                                     alt={show.show_name}
                                 />
                             )}

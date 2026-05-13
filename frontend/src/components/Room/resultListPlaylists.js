@@ -26,10 +26,10 @@ export default function PlaylistResultList({
                 >
                     <div className="result-list-card-outer-container">
                         <div className="result-list-card-container">
-                            {playlist.playlist_cover && (
+                            {playlist.image_url && (
                                 <img
                                     className="result-list-img"
-                                    src={playlist.playlist_cover}
+                                    src={playlist.image_url}
                                     alt={playlist.playlist_name}
                                 />
                             )}

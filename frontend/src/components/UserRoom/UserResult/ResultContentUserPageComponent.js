@@ -224,7 +224,7 @@ export default function ResultContent(props) {
                                         {type === 'Episodes' ? <td>{item.name}</td> : null}
                                         {type === 'Episodes' ? <td>{item.show_name}</td> : null}
                                         {type === 'Tracks' ? <td>{item.spotify_artist_string}</td> : null}
-                                        <td>{type === 'Playlists' ? item.playlist_id : item.spotifyID}</td>
+                                        <td>{item.spotify_id}</td>
                                         {type === 'Tracks' ? <td>{item.isrc}</td> : null}
                                         {type === 'Artists' ? <td>{item.type}</td> : null}
                                         {type === 'Artists' ? <td>{item.popularity}</td> : null}
