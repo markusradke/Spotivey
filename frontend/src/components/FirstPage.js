@@ -175,7 +175,7 @@ function AppRoutes() {
           />
           <Route path="/user/settings2/new" element={<SettingsPageSecond />} />
           <Route path="/user/settings2/new2" element={<SettingsPageSecondTwo />} />
-          <Route exact path="/user" element={<UserPage />} />
+          <Route exact path="/user" element={<UserTutorialPage />} />
           <Route exact path="/user/settings" element={<UserSettingsPage />} />
           <Route exact path="/user/settings2" element={<UserSettingsPageSecond />} />
           <Route exact path="/user/tutorial" element={<UserTutorialPage />} />

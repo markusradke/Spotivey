@@ -199,14 +199,82 @@ export default function UserTutorialPage(props) {
     )
   }
 
-  function TutorialContentEnglish() {
+  function TutorialContent() {
     return (
       <React.Fragment>
         <div id='requirements-tutorial'>
           <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
+            <h1>Introduction and Tutorial</h1>
+            In the following, the use of "Spotiveys" is illustrated with the help of a tutorial.
+            A basic prior knowledge of the handling of the Spotify API and
+            the use of an online survey application is assumed.
+            <h2 class='settings-subtitle-text'>
+              Why Spotivey - Motivation
+            </h2>
+            <h3 class='settings-overview-text'>
+              Since music listening nowadays happens increasingly via streaming services such as Spotify,
+              Apple Music or Amazon Music, it would be technically possible to perform research on music
+              actually listened to on basis of 'digital traces' left behind (Greenberg & Rentfrow, 2017),
+              instead of relying on self-reporting in questionnaires, a strategy which suffers from various
+              validity issues (Lepa et al., 2020).
+              In principle, open APIs offered by music service providers could be used for this purpose.
+              For example, by using the Spotify API, it is possible to obtain a wide range of music-related
+              user account information, such as the music tracks most recently listened to,
+              favorite songs or artists, as well as artists followed or playlists created.
+              However, using the Spotify API is normally not possible without technical knowledge of
+              web programming.
+              In addition, purely music-related transaction data without further socio-demographic
+              contextual information is only helpful for academic research to a limited extent.
+              A final problem is that streaming accounts are often used by several people at the same time,
+              which makes it hard to attribute usage data to a specific person.
+            </h3>
+            <h2 class='settings-subtitle-text'>
+              How does Spotivey work?
+            </h2>
+            <h3 class='settings-overview-text'>
+              To address these challenges, the web application Spotivey was developed.
+              It allows to easily integrate most user data retrieval functions of the Spotify API
+              within an online survey (e.g. the open source survey creation tool LimeSurvey) in compliance with
+              EU data protection regulations.
+              In this way, individual music usage data can be fetched without web programming knowledge and
+              linked directly with socio-demographic information from a questionnaire (see Figure 1).
+              Optionally, it is possible to ask survey participants to confirm individual results of
+              Spotify data retrieval via a separate window, for example to exclude transactional
+              data stemming from another person using the same account.
+              Furthermore, Spotify helps to automatically create LimeSurvey questions with reference
+              to the collected music usage data for an optional follow-up online survey to be administered
+              directly following data retrieval.
+              For example, if the participants' last 20 songs listened to were fetched,
+              their perceived emotional expression could then be asked for via rating items and a web music player.
+              In general, results from Spotify API queries may be either displayed in the user area of Spotivey
+              for a quick overview or downloaded together with the survey respondent ID in a
+              CSV file for extended statistical analyses.
+            </h3>
+            <h2 class='settings-subtitle-text'>
+              Development and hosting of Spotivey
+            </h2>
+            <h3 class='settings-overview-text'>
+              Version: 1.0 (2023)
+              <br></br>
+              Spotivey was originally developed as part of a master thesis
+              in audio communication by Matthias Ladleif using Django (backend)
+              and React (frontend). The thesis was supervised by Dr. Steffen Lepa and Prof. Stefan Weinzierl at
+              Audio Communication Group, Technische Universität Berlin, Germany. <br></br>
+
+              Spotivey was then further developed and extended by Markus Radke during the course of his PhD studies as member of the Audio Communication Group.
+
+              Spotivey is hosted on a TU Berlin server as a public service free of
+              charged for academics interested in music research.
+              If you are drawing on Spotivey in your own research, please don't forget
+              to cite the original authors as follows:
+              <div className="cite-version">
+                Radke, M., Lepa, S., & Ladleif, M. (2023). Spotivey: A web application for simplified use of the Spotify application programming interface in online questionnaire studies. <i>Mobile Media & Communication</i>, 20501579231220857. <a href='https://doi.org/10.1177/20501579231220857' target="_blank">https://doi.org/10.1177/20501579231220857</a>
+
+              </div>
+            </h3>
+            <h2 className="tutorial-content-title">
               Requirements
-            </h1>
+            </h2>
           </div>
           <h3 class='settings-overview-text'>
             Using Spotivey requires that you have already created an online survey and
@@ -217,9 +285,9 @@ export default function UserTutorialPage(props) {
         </div>
         <div id='general-tutorial'>
           <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
+            <h2 className="tutorial-content-title">
               General information
-            </h1>
+            </h2>
           </div>
           <h3 class='settings-overview-text'>
             Spotivey, like the LimeSurvey survey system, runs in any internet browser,
@@ -262,9 +330,9 @@ export default function UserTutorialPage(props) {
         </div>
         <div id='retrieval-settings-tutorial'>
           <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
+            <h2 className="tutorial-content-title">
               Retrieval-Settings
-            </h1>
+            </h2>
           </div>
           <h3 class='settings-overview-text'>
             The first step is to create a Retrieval Profile that links to an existing Limesurvey questionnaire
@@ -329,9 +397,9 @@ export default function UserTutorialPage(props) {
         </div>
         <div id='spotify-information-tutorial'>
           <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
+            <h2 className="tutorial-content-title">
               Spotify information that can be configured
-            </h1>
+            </h2>
           </div>
           <h3 class='settings-overview-text'>
             The following Spotify information can be collected:
@@ -360,9 +428,9 @@ export default function UserTutorialPage(props) {
         </div>
         <div id='followup-settings-tutorial'>
           <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
+            <h2 className="tutorial-content-title">
               FollowUp-Settings
-            </h1>
+            </h2>
           </div>
           <h3 class='settings-overview-text'>
             If researchers want respondents to be presented with a follow-up questionnaire
@@ -412,9 +480,9 @@ export default function UserTutorialPage(props) {
         </div>
         <div id='results-tutorial'>
           <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
+            <h2 className="tutorial-content-title">
               Results Page
-            </h1>
+            </h2>
           </div>
           <h3 class='settings-overview-text'>
             On the Results Page of the backend, researchers can finally get an overview of the music data
@@ -438,9 +506,9 @@ export default function UserTutorialPage(props) {
         </div>
         <div id='testphase-tutorial'>
           <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
+            <h2 className="tutorial-content-title">
               Test and field phase
-            </h1>
+            </h2>
           </div>
           <h3 class='settings-overview-text'>
             As soon as at least the initial questionnaire has been generated in LimeSurvey and the corresponding
@@ -468,9 +536,9 @@ export default function UserTutorialPage(props) {
         </div>
         <div id='study-participants-tutorial'>
           <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
+            <h2 className="tutorial-content-title">
               Spotivey workflow from the perspective of study participants
-            </h1>
+            </h2>
           </div>
           <h3 class='settings-overview-text'>
             In order to avoid unnecessary dropouts, we strongly advise researcher to raise awareness
@@ -573,432 +641,33 @@ export default function UserTutorialPage(props) {
         </div>
         <div id='done-tutorial'>
           <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
+            <h2 className="tutorial-content-title">
               Done - You have made it
-            </h1>
+            </h2>
           </div>
           <h3 class='settings-overview-text'>
             You have now finished the tutorial.
             Now you are able to try out any of Spotiveys functions yourself.
             Spotivey wishes you a lot of fun and interesting findings.
           </h3>
-        </div>
-      </React.Fragment>
-    )
-  }
-
-  function TutorialContentGerman() {
-    return (
-      <React.Fragment>
-        <div id='requirements-tutorial'>
-          <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
-              Anforderungen
-            </h1>
+          <div className="settings-overview-literatur-container">
+            <h2 class='settings-subtitle-text'>
+              Literature
+            </h2>
+            <h3 className='settings-overview-literatur-item'>
+              Greenberg, D. M., &amp; Rentfrow, P. J. (2017). Music and big data: A new frontier. Current Opinion in
+              Behavioral Sciences, 18, 50–56. <a href='https://doi.org/10.1016/j.cobeha.2017.07.007' target={'_blank'}>
+                https://doi.org/10.1016/j.cobeha.2017.07.007
+              </a>
+            </h3>
+            <h3 className='settings-overview-literatur-item'>
+              Lepa, S., Steffens, J., Herzog, M., &amp; Egermann, H. (2020). Popular Music as Entertainment
+              Communication: How Perceived Semantic Expression Explains Liking of Previously Unknown Music.
+              Media and Communication, 8(3), 191–204. <a href='https://doi.org/10.17645/mac.v8i3.3153' target={'_blank'}>
+                https://doi.org/10.17645/mac.v8i3.3153
+              </a>
+            </h3>
           </div>
-          <h3 class='settings-overview-text'>
-            Die Verwendung von Spotivey setzt voraus, dass Sie bereits eine Online-Umfrage erstellt haben und
-            dass Sie Zugang zu den Einstellungen der Umfrageverwaltung haben,
-            um die End-URL der Umfrage zu bearbeiten. <br></br>
-            Wir empfehlen, Spotivey zusammen mit LimeSurvey zu verwenden.
-            Die meisten anderen Online-Umfrageanwendungen sollten jedoch ebenfalls funktionieren.
-          </h3>
-        </div>
-        <div id='general-tutorial'>
-          <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
-              Allgemeine Informationen
-            </h1>
-          </div>
-          <h3 class='settings-overview-text'>
-            Spotivey läuft ähnlich wie das LimeSurvey-Befragungssystem in jedem Internetbrowser, und das sowohl
-            auf dem Desktop-PC als auch auf Mobilgeräten. Wie in Abb. 1 ersichtlich, wird Spotivey aus technischer
-            Perspektive von zwei Online Fragebögen umrahmt (allerdings ohne, dass es dabei für User*innen zu
-            einem problematischen ‚Bruch‘ in der Nutzerführung kommt). Dieser technische Trick ermöglicht es
-            Befragenden, den Musikdatenabruf an beliebiger Stelle einer Online-Befragung, anstatt nur am Ende zu
-            implementieren. Ferner ermöglicht er die Bezugnahme auf einzeln abgerufene Daten in Fragebogenabschnitten,
-            welche auf den Musikdatenabruf folgen. Eine einzigartige Proband*innen ID wird dazu über
-            einen URL-Parameter von Limesurvey nach Spotivey und wieder nach Limesurvey ‚durchgereicht‘, sodass
-            jeder Musiktransaktionsdatensatz später zuverlässig mit den beiden Fragebogendatensätzen verbunden
-            werden kann. Ein fest einprogrammierter Datenschutzhinweis vor dem Musikdatenabruf sichert
-            ferner einerseits juristisch die Betreibenden der Befragung und der Serverapplikation ab, anderseits erscheint
-            es ohnehin forschungsethisch geboten, die Proband*innen darauf hinzuweisen, welche Musikdaten
-            genau erfasst, analysiert und gespeichert werden. Der/die Forschende kann optional zusätzlich
-            einstellen, dass Proband*innen alle einzelnen Musiktransaktionsdatensätze (etwa: einzelne Titel,
-            Künstler*innen oder Playlists) direkt nach dem Abruf explizit im Hinblick auf eine bestimmte frei formulierbare
-            Frage bestätigen müssen. Auf diese Weise kann etwa ein typisches Profilmehrfachnutzungsproblem
-            adressiert werden. Generell ist Spotivey ferner so programmiert worden,
-            dass die wenigen personenbezogenen Daten des Nutzeraccounts (im Falle von Spotify: Name,
-            Emailadresse und Geburtsjahr) keinesfalls abgerufen und mit den Fragebogendaten verknüpft werden.
-            Auf diese Weise wird der forschungsethische Anspruch gewahrt, dass in jedem Fall Befragte selbst
-            entscheiden, welche personenbezogenen Daten sie der Forschung zur Verfügung stellen wollen.
-          </h3>
-          <figure class='overview-img'>
-            <img src="../../../static/images/imagesTutorial/Abb1.svg" width='100%' />
-            <figcaption class='figcaption-text'>
-              Fig. 1: Praktischer Funktionsaufbau der Spotivey Applikation
-            </figcaption>
-          </figure>
-          <h3 class='settings-overview-text'>
-            Die Funktionsweise der Spotivey App kann funktional in zwei Aspekte unterteilt werde: Das <i>Backend</i>,
-            also der Bereich welcher Forschenden zur Studienplanung und Verwaltung und Abruf der Ergebnisse
-            dient, sowie das <i>Frontend</i>, der Bereich der für Befragte im Browser sichtbar ist und Ihnen ermöglicht,
-            ihre digitalen Musiknutzungsdaten im Rahmen der Online-Befragung den Forschenden zu spenden.
-          </h3>
-        </div>
-        <div id='retrieval-settings-tutorial'>
-          <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
-              Retrieval-Profil-Einstellungen
-            </h1>
-          </div>
-          <h3 class='settings-overview-text'>
-            Der erste Schritt ist die Erstellung eines Retrieval-Profils welches über den Studienname und die Limesurvey
-            Fragebogen ID eine Verknüpfung mit einem bereits bestehenden Limesurvey-Fragebogen herstellt.
-            Dieser Eingangsfragebogen sollte so gestaltet werden, dass bereit auf der Startseite die Teilnehmenden
-            aufgeklärt werden, dass die Studie neben Befragungsdaten auch Musikdaten aus dem Musikstreamingnutzerkonto
-            abrufen wird und gemäß der europäischen Datenschutzgrundverordnung auch
-            den notwendigen allgemeinen Datenschutzhinweis zu Zwecken und Speicherung der Daten beinhalten.
-            Ferner muss der folgende Link in Limesurvey als End-URL des Fragebogens eingestellt werden:
-          </h3>
-          <h3 class='settings-overview-text'>
-            https://spotivey.users.ak.tu-berlin.de/?surveyID=&#123;SID&#125;&participant=&#123;SAVEDID&#125;&lang=&#123;LANG&#125;
-          </h3>
-          <h3 class='settings-overview-text'>
-            Dies sorgt dafür, dass nach Ausfüllen des Eingangsfragebogens automatisch die Spotivey App gestartet
-            wird und dass alle notwendigen Informationen (Studien-ID, Befragten-ID und Befragungssprache) erst
-            zur Spotivey App und später zum Anschlussfragebogen ‚durchgereicht‘ werden können.
-          </h3>
-          <h3 class='settings-overview-text'>
-            Der zweite Teil der im Backend vorzunehmenden Konfiguration eines Retrieval-Profils betrifft die
-            Frage, welche Art von Informationen die Spotivey-Anwendung aus den Spotify-Profilen der Umfrageteilnehmer*
-            innen konkret abrufen soll (siehe Abb. 2 links) und ob und mit welchem Text diese aufgefordert
-            werden. Diese einzelnen Möglichkeiten und Optionen des Datenabrufs (zuletzt gehörte Musiktracks,
-            die meistgehörten Songs oder Artists, die gefolgten Interpreten*innen oder die erstellten Playlists)
-            werden dabei jeweils möglichst umfassend erklärt. Durch Checkboxen, Slides und Dropdownmenüs
-            lassen sich die einzelnen Funktionen bestätigen und einstellen (siehe Abb. 2 rechts unten). Sobald
-            diese Einstellungen getätigt wurden, kann die Online-Befragungsstudie mit integriertem Musikdatenabruf
-            im Prinzip sofort gestartet werden.
-          </h3>
-          <figure class='overview-img'>
-            <div className="grid-abb2-tutorial">
-              <img src="../../../static/images/imagesTutorial/Abb5_1.svg" width='100%' /*height={'50%'}*/ />
-              <div>
-                <img src="../../../static/images/imagesTutorial/Abb5_2.png" width='40%' />
-                <img src="../../../static/images/imagesTutorial/Abb5_3.png" width='100%' />
-              </div>
-            </div>
-            <figcaption class='figcaption-text'>
-              Fig. 2: Spotivey – Neues Retrieval-Profil mit Einstellmöglichkeiten (links); main Settings (rechts oben); `Get User‘s Saved
-              Tracks`-Beispiel-Einstellung (rechts unten)
-            </figcaption>
-          </figure>
-          <h3 class='settings-overview-text'>
-            Spotivey selbst kann grundsätzlich beliebig viele solcher Studien gleichzeitig durchführen und beliebig
-            viele unterschiedliche Nutzer*innen verwalten, dazu werden eingeloggten Nutzer*innen alle auf dem
-            Server bereits konfigurierten Retrieval-Profile kompakt mit den dazugehörigen Einstellungen in einer
-            Übersichtstabelle dargestellt (siehe Abb. 3 links). Die Profileinstellungen können jederzeit angepasst
-            werden, typischerweise nach einem Pretest mit entsprechenden Rückmeldungen der Befragten, es ist
-            rein technisch allerdings sogar während einer bereits laufenden Studie möglich.
-          </h3>
-          <figure class='overview-img'>
-            <div className="grid-abb3-tutorial">
-              <img src="../../../static/images/imagesTutorial/Abb6_1.svg" width='100%' />
-              <img src="../../../static/images/imagesTutorial/Abb6_2.png" width='100%' />
-            </div>
-            <figcaption class='figcaption-text'>
-              Fig. 3: Spotivey – Retrieval-Profil-Übersicht (links); Bestätigungs-Funktion (rechts)
-            </figcaption>
-          </figure>
-        </div>
-        <div id='spotify-information-tutorial'>
-          <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
-              Spotify Informationen, die konfiguriert werden können
-            </h1>
-          </div>
-          <h3 class='settings-overview-text'>
-            Die folgenden Spotify-Informationen können erfasst werden:
-            <ul class='tutorial-list'>
-              {listItem.map((item, index) => {
-                return (
-                  <React.Fragment>
-                    <div class='tutorial-list-item-container' onClick={(e) => handleCollapseClicked(e, index)}>
-                      <li class='tutorial-list-item'>
-                        {item}
-                      </li>
-                      <div className={'tutorial-list-collapse-icon'}>
-                        {collapseOpen[index] ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
-                      </div>
-                    </div>
-                    {collapseOpen[index] ?
-                      <div className={'tutorial-list-collapse-item'}>
-                        {renderCollapseItem(index)}
-                      </div> :
-                      null}
-                  </React.Fragment>
-                )
-              })}
-            </ul>
-          </h3>
-        </div>
-        <div id='followup-settings-tutorial'>
-          <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
-              FollowUp-Einstellungen
-            </h1>
-          </div>
-          <h3 class='settings-overview-text'>
-            Soll nach dem Musikdatenabruf den Befragten noch ein Anschlussfragebogen präsentiert werden, der
-            gegebenenfalls sogar Fragen mit Bezug auf die abgerufenen Musikdaten stellt, können Forschende dies
-            optional in den FollowUp-Einstellungen von Spotivey konfigurieren. Dazu muss lediglich die Start-URL
-            des Anschlussfragebogens hinterlegt werden. Spotivey leitet dann jede/n Proband*in nach dem Musikdatenabruf
-            an diese URL weiter. Auf diese Weise lässt sich zum Beispiel auch die Nutzung eines kommerzielle
-            Panel Providers zur Befragtenrekrutierung mit der Verwendung von Spotivey kombinieren, da
-            diese technisch meist auf eine dedizierte landing page zur Berechnung der Incentivierung nach Ausfüllen
-            eines Online-Fragebogens angewiesen sind. In den meisten Fällen wird es sich jedoch um die URL
-            eines vorab mit Limesurvey programmierten Anschlussfragebogen handeln, welche von Spotivey automatisch
-            um die ‚durchzureichenden‘ Parameter aus dem Eingangsfragebogen ergänzt wird. Für diesen
-            Anschlussfragebogen sollte die Option „Willkommensseite“ in Limesurvey abgeschaltet werden, damit
-            es für die Befragten zu einem visuell ‚bruchlosen‘ Übergang vom Musikdatenabruf zu den Anschlussfragen
-            kommt.
-          </h3>
-          <h3 class='settings-overview-text'>
-            Wenn nun der Wunsch besteht, im Anschlussfragebogen unmittelbar Fragen zu den abgerufenen Musikdaten
-            (etwa Titeln oder Künstler*innen) zu stellen, so unterstützt dies Spotivey durch weitere Funktionen:
-            Einerseits kann dazu der/die Forschende in Spotivey einstellen, wie viele und welche Typen von
-            Musiktransaktionsdatensätze im Anschlussfragebogen direkt eingebunden werden sollen. Diese werden
-            dann ebenfalls über die URL als Parameter an Limesurvey weitergeleitet, so dass auf diese Informationen
-            bei der Programmierung des Anschlussfragebogens in Form von Variablen zugegriffen werden
-            kann.
-          </h3>
-          <h3 class='settings-overview-text'>
-            Um diese nicht ganz einfache Erstellung von Fragen mit Referenz auf die abgerufenen Musikdaten für
-            Studiendurchführende so einfach wie möglich zu gestalten, erstellt Spotivey auf Wunsch zusätzlich automatisch
-            vorprogrammierte LimeSurvey-Fragen, entweder vom Typ Einzelfrage oder vom Typ Matrixfragen,
-            welche direkt die zur Übertragung konfigurierten Variableninhalte auslesen und in den Fragetext
-            schreiben, entweder in Form von Textbausteinen, oder sogar in Form eines kleinen Webplayers,
-            der die jeweiligen Titel noch einmal abspielbar macht und das Cover des jeweiligen Musikreleases dazu
-            visuell präsentiert. Diese vorkonfektionierten Fragen können dann in Form einer XML-Fragegruppendatei
-            aus Spotivey exportiert, in den LimeSurvey-Anschlussfragebogen importiert und dort dann noch
-            im Hinblick auf spezifischen Bedürfnisse der jeweiligen Befragung anpasst, umgestaltet und erweitert
-            werden (siehe Abb. 4 rechts).
-          </h3>
-          <figure class='overview-img'>
-            <div className="grid-abb3-tutorial">
-              <img src="../../../static/images/imagesTutorial/Abb7_1.svg" width='100%' />
-              <img src="../../../static/images/imagesTutorial/Abb7_2.png" width='100%' />
-            </div>
-            <figcaption class='figcaption-text'>
-              Fig. 4: Spotivey – Retrieval-Profil-Übersicht (links); Bestätigungs-Funktion (rechts)
-            </figcaption>
-          </figure>
-        </div>
-        <div id='results-tutorial'>
-          <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
-              Ergebnisseite
-            </h1>
-          </div>
-          <h3 class='settings-overview-text'>
-            Auf der Ergebnis-Seite des Backends können Forschende schließlich während und nach Ablauf einer
-            Studie zu jedem erstellten Retrieval-Profil eine Übersicht über die bisher erfolgten Musikdatenspenden
-            bekommen, diese löschen (z. B. nach Ablauf eines Pretests) oder aber als CSV-Datei inklusive der Proband*
-            innen-ID zwecks Data Linkage mit den Fragebogendaten aus Limesurvey exportieren (siehe Abb.
-            5). Um Forschenden schnell einen Überblick zu geben, ob und welche Musikdaten bereits erfasst worden
-            sind, wird eine Vorschau aus jeweils 16 Cover-Artworks der einzelnen Spotify-Datenspenden abgebildet.
-            Sobald der/die Forschende sich für eines der Retrieval-Profile entscheidet, werden alle bereits
-            von der jeweiligen Studie gesammelten Daten in einer übersichtlichen Tabelle dargestellt (vgl. Abbildung
-            5). Hier können bis zu 100 Resultate auf einer Seite angezeigt werden und die Studiendurchführende
-            können durch alle Ergebnisse durchblättern. Diese Ergebnisvorschau kann auch über mobile Endgeräte
-            erfolgen, Voraussetzung ist lediglich ein browserbasiertes Login in den Spotivey Backend-Bereich.
-          </h3>
-          <figure class='overview-img'>
-            <img src="../../../static/images/imagesTutorial/Abb8.svg" width='100%' />
-            <figcaption class='figcaption-text'>
-              Fig. 5: Spotivey - Ergebnisseite
-            </figcaption>
-          </figure>
-        </div>
-        <div id='testphase-tutorial'>
-          <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
-              Test- and Feldphase
-            </h1>
-          </div>
-          <h3 class='settings-overview-text'>
-            Sobald zumindest der Eingangsfragebogen in LimeSurvey generiert und das dazugehörige Abrufprofil
-            in Spotivey konfiguriert wurde, können Forschende erste Testversuche durchführen. Dafür muss mindestens
-            der Eingangsfragebogen in Limesurvey aktiviert werden, damit alle notwendigen Parameter an
-            Spotivey weitergeleitet werden (im Testmodus überträgt Limesurvey noch keine URL-Parameter). Soll
-            ebenfalls das ‚Durchreichen‘ der Daten an den Anschlussfragebogen inklusive möglicher Fragen mit
-            Bezugnahme zu einzelnen Datensätzen getestet werden, muss auch dieser dafür zunächst in Limesurvey
-            aktiviert werden. Die in solchen Testläufen generierten Ergebnisse können nach der Testphase über das
-            Nutzer*innenprofil auf der Results-Seite mittels eines Buttons problemlos gelöscht werden. Nach erfolgreicher
-            Testphase können Forschende die eigentliche Feldphase beginnen, typischerweise indem in
-            Limesurvey beide Fragebögen einmal deaktiviert und wieder aktiviert werden, was auch die dort während
-            des Testens angefallenen Befragungsdaten löscht.
-          </h3>
-          <h3 class='settings-overview-text'>
-            Für die Feldphase zu beachten ist, dass die Spotify API von der Spotivey App über einen sogenannten
-            Developer-Account angesteuert wird, der für private Entwickler einem Nutzerlimit unterliegt (zeitgleich
-            maximal 25 User). Diese Limitierung ist beim Universitäts-Account der Autoren dieses Artikels bereits
-            aufgehoben worden, müsste jedoch bei der Installation von Spotivey auf einem eigenem Server mit der
-            Firma Spotify unter Bezugnahme auf Forschungszwecke (falls überhaupt notwendig) noch ausgehandelt
-            werden. In der Praxis stießen wir jedoch auch mit einem gewöhnlichen Developer-Account bislang niemals
-            an dieses Limit, da der API-Datenabruf für eine einzelne Befragtenperson in der Regel nur maximal
-            ca. 10 Sekunden dauert.
-          </h3>
-        </div>
-        <div id='study-participants-tutorial'>
-          <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
-              Spotivey-Workflow aus Sicht von Studienteilnehmer*innen
-            </h1>
-          </div>
-          <h3 class='settings-overview-text'>
-            Um unnötige Abbrüche zu vermeiden raten wir dazu, Teilnehmende von Online-Befragungsstudien die
-            sich Spotivey bedienen bereits während der Rekrutierung auf Webseiten oder per E-Mail darauf aufmerksam
-            zu machen, dass für die Durchführung ein persönlicher Spotify-Account zwingende Voraussetzung
-            ist und die Studie neben der Befragung auch den Abruf bestimmter Informationen aus diesem
-            Account beinhaltet. Ebenso sollte auf der Eingangsseite des Fragebogens auf dieselben Tatsachen hingewiesen
-            werden. Auch die Ausführungen innerhalb der gesetzlich notwendigen, zustimmungspflichtigen
-            Datenschutzerklärung zu Datenerfassung, Datenspeicherung und Datenverwendung sollten sich explizit
-            ebenso auf die abzurufenden Musikdaten erstrecken. Darüber hinaus sollte bei der Fragebogenprogrammierung
-            ein kurzer Texthinweis am Ende des Fragebogens eingebaut werden, welcher den
-            Übergang vom Eingangsfragebogen zu Spotivey möglichst ‚bruchlos‘ für die Befragten gestaltet
-            („Gleich möchten wir wie eingangs angekündigt auf Ihr Spotify-Konto zugreifen, dazu werden wir Sie
-            gleich auf dem nächsten Bildschirm zunächst um Erlaubnis in Form Ihrer Accountdaten bitten.“).
-          </h3>
-          <h3 class='settings-overview-text'>
-            Damit keine Befragtendaten doppelt erfasst werden, vergleicht Spotivey direkt nach dem Start zunächst
-            mittels der per URL übertragenen Befragten-ID ob zu dieser bereits Musiktransaktionsdaten abgerufen
-            wurden. Ist die ID schon vorhanden, funktioniert die Spotify Login-Abfrage nicht und es erscheint eine
-            entsprechende Fehlermeldung – dies verhindert effektiv etwaige Manipulationen des Datensatzes die
-            sonst durch das Drücken des Reload-Buttons im Browser technisch möglich wären.
-          </h3>
-          <h3 class='settings-overview-text'>
-            Nun erscheint ein Bildschirm mit dem Spotivey Logo und es wird mit Hilfe eines fest einprogrammierten
-            Texts in der jeweiligen Befragungssprache im Sinne des Informed Consent transparent darüber aufgeklärt,
-            welche Daten konkret jetzt gleich vom eigenen Spotify-Account abgerufen werden sollen und dass
-            diese Daten mit den restlichen Fragebogendaten (die natürlich auch personenbezogen sein könnten) später
-            fusioniert werden – dabei zeigt die App im Sinne der Transparenz eine Liste genau jener Abrufoptionen
-            an, welche durch die Studienbetreibenden eingestellt wurden (siehe Abb. 6).
-          </h3>
-          <figure class='overview-img'>
-            <img src="../../../static/images/imagesTutorial/Abb9.png" width='100%' />
-            <figcaption class='figcaption-text'>
-              Fig. 6: Spotivey - Datenschutzhinweis (hier: nur Lieblingssongs werden abgerufen)
-            </figcaption>
-          </figure>
-          <h3 class='settings-overview-text'>
-            Daraufhin werden die Befragten zur Autorisation des Vorgangs mit Hilfe des Spotify-Login gebeten.
-            Anschließend beginnt dann der Datenabruf aus dem Spotify-Account, welcher typischerweise einige
-            Sekunden dauert und darum visuell mit einer kleinen Animation visualisiert wird und durch die Bitte
-            begleitet ist, nicht das Browserfenster zu schließen (siehe Abb. 7). Es werden in diesem Moment nur
-            jene Daten von Spotify angefordert, zu denen auch im Zuge des Datenschutzhinweises Einverständnis
-            gegeben wurde, insbesondere werden dabei keine personenbezogenen Daten aus dem Account abgespeichert,
-            obwohl dies rein technisch durchaus möglich wäre.
-          </h3>
-          <figure class='overview-img'>
-            <img src="../../../static/images/imagesTutorial/Abb10.png" width='100%' />
-            <figcaption class='figcaption-text'>
-              Fig. 7: Spotivey - Datenspende der Lieblingssongs aus Sicht der Proband*innen
-            </figcaption>
-          </figure>
-          <h3 class='settings-overview-text'>
-            Wurde dies im Retrieval-Profil entsprechend konfiguriert bekommen die Befragten jetzt direkt im Anschluss
-            die Möglichkeit, jeden einzelnen abgerufenen Musikdatensatz aus ihrem Spotify-Konto im Hinblick
-            auf eine durch die Studiendurchführenden vorher konfigurierte Frage zu bestätigen. Typischerweise
-            wird dies die Bitte sein, nur diejenigen Datensätze zu bestätigen, die man selbst tatsächlich gehört
-            hat. Auf diesem Wege kann das Problem der oft vorkommenden Mehrfachnutzung von Spotify-Accounts
-            durch mehrere Personen gelöst werden. Bei diesem Vorgang abgelehnte Datensätze werden jetzt
-            unmittelbar aus der Spotivey-Datenbank wieder gelöscht, so dass der/die Forschenden zu keinem Zeitpunkt
-            Zugriff darauf haben. Dies erschien eine wichtige Maßnahme, da ansonsten Daten von Dritten,
-            die möglicherweise nicht mit der Analyse einverstanden sind, in die Hände der Forschenden gekommen
-            wären.
-          </h3>
-          <h3 class='settings-overview-text'>
-            Nach diesem Bestätigungsdialog ist nun entweder die Befragung zu Ende und es erscheint ein Hinweis,
-            dass das Browserfenster geschlossen werden kann, oder es erscheint direkt der vorab konfigurierte Anschlussfragebogen,
-            in dem optional detaillierte Fragen zu einzelnen abgerufenen Datensätzen (etwa Musiktiteln)
-            gestellt werden. Zur Gestaltung eines möglichst ‚bruchlosen‘ Übergangs empfehlen wir auch
-            hier das Programmieren eines kurzen Texthinweises („Vielen Dank für Ihre Musikdatenspende, die uns
-            bei der Forschung sehr helfen wird. Jetzt haben wir noch einige Fragen zu Ihrer persönlichen Musiknutzung.“).
-          </h3>
-          <h3 class='settings-overview-text'>
-            Die Anschlussfragen können in unterschiedlicher Weise Bezug auf die abgerufenen Musikdaten nehmen.
-            Einerseits ist es möglich auf einzelne Datenfelder wie Titel, Interpret, Musiklabel, etc. zu referenzieren,
-            andererseits kann aber auch ein kleiner Webplayer integriert werden, der dieselben Informationen
-            anzeigt, aber zusätzlich die Option bietet, den jeweiligen Titel noch einmal kurz anzuspielen. Des
-            Weiteren können die Bezugnahmen entweder in Einzelfragen erfolgen, so dass zu jedem Datensatz
-            (z. B. Künstler*in) eine einzelne Frage gestellt wird (vgl. Abbildung 8), oder aber in Form sogenannter
-            Matrixfragen, bei denen dieselbe Frage zu einer größeren Anzahl Datensätze (z. B. Musiktitel) gestellt
-            wird (vgl. Abbildungen 9). Die weitere Gestaltung des Anschlussfragebogens obliegt den Durchführenden.
-            Wir empfehlen aber am Ende der Befragung erneut einen Hinweis zu geben, dass die gegebene
-            Einwilligung zur Speicherung und Analyse aller gespendeten Musik- und Fragebogendaten jederzeit
-            durch einen Hinweis an den Studienbetreibenden widerrufen werden kann, was dann entsprechend zu
-            einer Datenlöschung führt.
-          </h3>
-          <figure class='overview-img'>
-            <img src="../../../static/images/imagesTutorial/Abb11.png" width='100%' />
-            <figcaption class='figcaption-text'>
-              Fig. 8: Beispiel für eine Einzelfrage im Anschlussfragebogen mit Bezugnahme auf abgerufene Musikdaten
-            </figcaption>
-          </figure>
-          <figure class='overview-img'>
-            <img src="../../../static/images/imagesTutorial/Abb12.png" width='100%' />
-            <figcaption class='figcaption-text'>
-              Fig. 9: Beispiel für eine Matrixfrage im Anschlussfragebogen mit Bezugnahme auf abgerufene Musikdaten
-            </figcaption>
-          </figure>
-        </div>
-        <div id='done-tutorial'>
-          <div className='settings-overview-title'>
-            <h1 className="tutorial-content-title">
-              Erledigt - Sie haben es geschafft
-            </h1>
-          </div>
-          <h3 class='settings-overview-text'>
-            Sie haben nun das Tutorial beendet.
-            Jetzt können Sie jede Funktion von Spotivey selbst ausprobieren.
-            Spotivey wünscht Ihnen viel Spaß und interessante Erkenntnisse.
-          </h3>
-        </div>
-      </React.Fragment>
-    )
-  }
-
-  function languageToggle() {
-    return (
-      <React.Fragment>
-        <div className='language-tutorial'>
-          <ToggleButtonGroup
-            onChange={(event, newLang) => {
-              setLang(newLang)
-            }}
-            value={lang}
-            exclusive
-          >
-            <ToggleButton value='de' size='large'>
-              <img
-                loading="lazy"
-                width="30"
-                src={'https://flagcdn.com/w20/de.png'}
-                srcSet={'https://flagcdn.com/w20/de.png 2x'}
-                alt='german'
-              />
-            </ToggleButton>
-            <ToggleButton value='en' size='large'>
-              <img
-                loading="lazy"
-                width="30"
-                src={'https://flagcdn.com/w20/gb.png'}
-                srcSet={'https://flagcdn.com/w20/gb.png 2x'}
-                alt='german'
-              />
-            </ToggleButton>
-          </ToggleButtonGroup>
         </div>
       </React.Fragment>
     )
@@ -1016,32 +685,13 @@ export default function UserTutorialPage(props) {
         </header>
       </div>
       <div className="tutorial">
-        <div className='tutorial-banner'>
-          <h1 className="tutorial-banner-title">
-            Tutorial
-          </h1>
-          <div className="privacy-banner-subtitle-container">
-            {lang === 'de' ?
-              <h2 className="privacy-banner-subtitle">
-                Im Folgenden wird die Nutzung von "Spotiveys" mit Hilfe eines Tutorials veranschaulicht.
-                Grundlegende Vorkenntnisse im Umgang mit der Spotify-API und der Nutzung einer
-                Online-Umfrageanwendung wird vorausgesetzt.
-              </h2> :
-              <h2 className="privacy-banner-subtitle">
-                In the following, the use of "Spotiveys" is illustrated with the help of a tutorial.
-                A basic prior knowledge with the handling of the Spotify API and
-                the use of an online survey application is assumed.
-              </h2>}
-          </div>
-        </div>
         <div className="tutorial-content-container">
           <div>
-            <TutorialContentNav lang={lang} />
+            <TutorialContentNav />
           </div>
           <div>
-            {lang === 'de' ? TutorialContentGerman() : TutorialContentEnglish()}
+            {TutorialContent()}
           </div>
-          {languageToggle()}
         </div>
       </div>
     </React.Fragment>
