@@ -23,11 +23,9 @@ class CreateSettings(APIView):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
 
-        data = request.data.get('data')
         username = request.data.get('username')
         nameUmfrage = request.data.get('umfrageName')
         umfrageID = request.data.get('umfrageID')
-        umfrageURL = request.data.get('umfrageEndUrl')
 
         user = User.objects.filter(username=username)
 
@@ -41,14 +39,12 @@ class CreateSettings(APIView):
                     'surveyID': umfrageID
                 }, status=status.HTTP_400_BAD_REQUEST)  
             settings = RetrievalSetting(
-                data=data,
                 nameUmfrage=nameUmfrage,
                 umfrageID=umfrageID,
-                umfrageURL=umfrageURL,
             )
 
             explicit_update = extract_explicit_settings_update(request.data)
-
+            
             for field_name, value in explicit_update.items():
                 setattr(settings, field_name, value)
 
@@ -85,10 +81,9 @@ class getSettingsListView(APIView):
                 id = list(User.objects.filter(username=username).values())[0].get('id')
                 settings = RetrievalSetting.objects.filter(user=id)
 
-                settingslist = np.array(settings.values_list('id', 'nameUmfrage', 'umfrageID', 'umfrageURL'))
+                settingslist = np.array(settings.values_list('id', 'nameUmfrage', 'umfrageID'))
                 confirmTextList = np.array(settings.values_list('confirmTextDe', 'confirmTextEng'))
 
-                settingslistdata = np.array(settings.values_list('data'))
                 
                 for i in range (len(settingslist)):
                     payload = build_retrieval_settings_payload(settings[i])
@@ -97,7 +92,6 @@ class getSettingsListView(APIView):
                         'id': i+1, 
                         'nameUmfrage': settingslist[i][1], 
                         'umfrageID': settingslist[i][2], 
-                        'umfrageURL': settingslist[i][3],
                         'confirmText': [
                             [confirmTextList[0][0], confirmTextList[0][1]]
                         ],
@@ -116,7 +110,7 @@ class getSettingsListView(APIView):
                         'saved_episodes': payload['saved_episodes'],
                     })
 
-                return Response({'data': rows, 'json:': settingslistdata}, status=status.HTTP_200_OK)
+                return Response({'data': rows}, status=status.HTTP_200_OK)
             return Response({'Room Not Found': 'Invalid Room Code.'}, status=status.HTTP_404_NOT_FOUND)
 
         return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
@@ -160,9 +154,8 @@ class getSettingsFromIDView(APIView):
                         questionTypeCheck = None
                         dataFieldsCheck = None
 
-                settingslistdata = np.array(settings.values_list('data'))
 
-                settingslist = np.array(settings.values_list('id', 'nameUmfrage', 'umfrageID', 'umfrageURL'))
+                settingslist = np.array(settings.values_list('id', 'nameUmfrage', 'umfrageID'))
 
                 payload = build_retrieval_settings_payload(settings[0])
                 
@@ -212,9 +205,10 @@ class getSettingsFromIDView(APIView):
                     'questionTypeCheck': questionTypeCheck,
                     'dataFieldsCheck': dataFieldsCheck,
                     'passLang':passLang,
+                    'end_options': payload['end_options'],
                 }]
 
-                return Response({'data': rows, 'json:': settingslistdata}, status=status.HTTP_200_OK)
+                return Response({'data': rows}, status=status.HTTP_200_OK)
             return Response({'Room Not Found': 'Invalid Room Code.'}, status=status.HTTP_404_NOT_FOUND)
 
         return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
@@ -255,11 +249,9 @@ class UpdateSettings(APIView):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
 
-        data = request.data.get('data')
         username = request.data.get('username')
         nameUmfrage = request.data.get('umfrageName')
         umfrageID = request.data.get('umfrageID')
-        umfrageURL = request.data.get('umfrageEndUrl')
         updateID = request.data.get('updateID')
 
         user = User.objects.filter(username=username)
@@ -267,19 +259,15 @@ class UpdateSettings(APIView):
         if not user.exists():
             return Response({'msg': 'Neu anmelden...'}, status=status.HTTP_404_NOT_FOUND)
         else:
-
             setting = RetrievalSetting.objects.filter(umfrageID=updateID).first()
             if setting is not None:
-                if 'data' in request.data:
-                    setting.data = data
                 setting.nameUmfrage = nameUmfrage
                 setting.umfrageID = umfrageID
-                setting.umfrageURL = umfrageURL
-
                 explicit_update = extract_explicit_settings_update(request.data)
-
+                
                 for field_name, value in explicit_update.items():
                     setattr(setting, field_name, value)
+                    print(f"Updated {field_name} to {value}")
 
                 setting.save()
                 return Response({'msg': 'Settings updated'}, status=status.HTTP_200_OK)

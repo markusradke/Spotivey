@@ -98,7 +98,6 @@ class SpotiveyBackendJourneyTests(TestCase):
             "username": self.researcher.username,
             "umfrageName": settings.nameUmfrage,
             "umfrageID": self.survey_id,
-            "umfrageEndUrl": settings.umfrageURL,
             "updateID": settings.umfrageID,
             "saved_tracks_enabled": True,
             "saved_tracks_confirm": True,

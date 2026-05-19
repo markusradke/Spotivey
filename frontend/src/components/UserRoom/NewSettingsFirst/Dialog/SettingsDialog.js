@@ -51,6 +51,7 @@ export default function SettingsDialog(props) {
         const checkArray = props.props[1];
         const limitArray = props.props[2];
         const confirmArray = props.props[5];
+        const endSettings = props.props[8];
 
         const body = {
             data: null,
@@ -63,6 +64,7 @@ export default function SettingsDialog(props) {
             saved_tracks_confirm: confirmArray[0],
             saved_tracks_limit: limitArray[0][0],
             saved_tracks_market_code: getMarketCode(limitArray[0][1]),
+            saved_tracks_followup: endSettings.savedTracksFollowUp,
 
             profile_enabled: checkArray[1],
             profile_confirm: confirmArray[1],
@@ -71,55 +73,71 @@ export default function SettingsDialog(props) {
             top_tracks_shortterm_confirm: confirmArray[2],
             top_tracks_shortterm_limit: limitArray[2][0],
             top_tracks_shortterm_time_range: getTimeRange(limitArray[2][1]),
+            top_tracks_shortterm_followup: endSettings.topTracksShortTermFollowUp,
 
             top_tracks_mediumterm_enabled: checkArray[3],
             top_tracks_mediumterm_confirm: confirmArray[3],
             top_tracks_mediumterm_limit: limitArray[3][0],
             top_tracks_mediumterm_time_range: getTimeRange(limitArray[3][1]),
+            top_tracks_mediumterm_followup: endSettings.topTracksMediumTermFollowUp,
 
             top_tracks_longterm_enabled: checkArray[4],
             top_tracks_longterm_confirm: confirmArray[4],
             top_tracks_longterm_limit: limitArray[4][0],
             top_tracks_longterm_time_range: getTimeRange(limitArray[4][1]),
+            top_tracks_longterm_followup: endSettings.topTracksLongTermFollowUp,
 
             top_artists_shortterm_enabled: checkArray[5],
             top_artists_shortterm_confirm: confirmArray[5],
             top_artists_shortterm_limit: limitArray[5][0],
             top_artists_shortterm_time_range: getTimeRange(limitArray[5][1]),
+            top_artists_shortterm_followup: endSettings.topArtistsShortTermFollowUp,
 
             top_artists_mediumterm_enabled: checkArray[6],
             top_artists_mediumterm_confirm: confirmArray[6],
             top_artists_mediumterm_limit: limitArray[6][0],
             top_artists_mediumterm_time_range: getTimeRange(limitArray[6][1]),
+            top_artists_mediumterm_followup: endSettings.topArtistsMediumTermFollowUp,
 
             top_artists_longterm_enabled: checkArray[7],
             top_artists_longterm_confirm: confirmArray[7],
             top_artists_longterm_limit: limitArray[7][0],
             top_artists_longterm_time_range: getTimeRange(limitArray[7][1]),
+            top_artists_longterm_followup: endSettings.topArtistsLongTermFollowUp,
 
             followed_artists_enabled: checkArray[8],
             followed_artists_confirm: confirmArray[8],
             followed_artists_limit: limitArray[8][0],
+            followed_artists_followup: endSettings.followedArtistsFollowUp,
 
             current_playlists_enabled: checkArray[9],
             current_playlists_confirm: confirmArray[9],
             current_playlists_limit: limitArray[9][0],
             current_playlists_public: limitArray[9][1],
             current_playlists_privatetracks: limitArray[9][2],
+            current_playlists_followup: endSettings.currentPlaylistsFollowUp,
 
             recent_tracks_enabled: checkArray[10],
             recent_tracks_confirm: confirmArray[10],
             recent_tracks_limit: limitArray[10][0],
+            recent_tracks_followup: endSettings.recentlyTracksFollowUp,
 
             saved_shows_enabled: checkArray[11],
             saved_shows_confirm: confirmArray[11],
             saved_shows_limit: limitArray[11][0],
+            saved_shows_followup: endSettings.savedShowsFollowUp,
 
             saved_episodes_enabled: checkArray[12],
             saved_episodes_confirm: confirmArray[12],
             saved_episodes_limit: limitArray[12][0],
-        };
+            saved_episodes_followup: endSettings.savedEpisodesFollowUp,
 
+            end_option: endSettings.endOption,
+            end_url: endSettings.endURL,
+            conditional_end_url_parameter: endSettings.conditionalEndURLParameter,
+            conditional_end_url_option: endSettings.conditionalEndURLOption
+
+        };
         try {
             if (props.props[6]) {
                 body.updateID = props.props[7];
@@ -214,10 +232,22 @@ export default function SettingsDialog(props) {
                             {props.props[3][0]}
                         </h3>
                         <h3 className="settings-dialog-text-title" >
-                            Survey ID (1st Survey):
+                            Survey ID:
                         </h3>
                         <h3 className="settings-dialog-text" >
                             {props.props[3][1]}
+                        </h3>
+                        <h3 className="settings-dialog-text-title" >
+                            End Option:
+                        </h3>
+                        <h3 className="settings-dialog-text" >
+                            {props.props[8].endOption === 'plain' ? 'Plain end page' : ''}
+                            {props.props[8].endOption === 'wrapped' ? 'Spotivey wrapped' : ''}
+                            {props.props[8].endOption === 'end_url' ? `Redirect custom URL` : ''}
+                            {props.props[8].endOption === 'conditional_end_url' ? `Conditional redirect custom URL` : ''} <br></br>
+                            {props.props[8].endOption === 'end_url' || props.props[8].endOption === 'conditional_end_url' ? `${props.props[8].endURL}` : ''} <br></br>
+                            {props.props[8].endOption === 'conditional_end_url' ? `Parameter: ${props.props[8].conditionalEndURLParameter}` : ''}  <br></br>
+                            {props.props[8].endOption === 'conditional_end_url' ? `No-redirect option: ${props.props[8].conditionalEndURLOption}` : ''}  <br></br>
                         </h3>
                     </div>
                     <Divider

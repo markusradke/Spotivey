@@ -15,6 +15,7 @@ import { tracksSettingsCard } from './SettingsCard/tracksSettingsCard';
 import { usersSettingsCard } from './SettingsCard/usersSettingsCard';
 import { playlistSettingsCard } from './SettingsCard/playlistSettingsCard';
 import { showsSettingsCard } from './SettingsCard/showsSettingsCard';
+import { endSettingsCard } from "./SettingsCard/endSettingsCard";
 import { saveButton } from './Button/openSettingsDialog';
 import {
   checkSurveyId,
@@ -104,6 +105,42 @@ export default function SettingsPage(props) {
   const [stateTextRT, setStateTextRT] = useState('')
   const [stateTextCP, setStateTextCP] = useState('')
 
+  const [endURL, setEndURL] = useState('')
+  const [endOption, setEndOption] = useState('plain')
+  const [conditionalEndURLParameter, setConditionalEndURLParameter] = useState('')
+  const [conditionalEndURLOption, setConditionalEndURLOption] = useState('plain')
+  const [savedTracksFollowUp, setSavedTracksFollowUp] = useState(0)
+  const [topTracksShortTermFollowUp, setTopTracksShortTermFollowUp] = useState(0)
+  const [topTracksMediumTermFollowUp, setTopTracksMediumTermFollowUp] = useState(0)
+  const [topTracksLongTermFollowUp, setTopTracksLongTermFollowUp] = useState(0)
+  const [topArtistsShortTermFollowUp, setTopArtistsShortTermFollowUp] = useState(0)
+  const [topArtistsMediumTermFollowUp, setTopArtistsMediumTermFollowUp] = useState(0)
+  const [topArtistsLongTermFollowUp, setTopArtistsLongTermFollowUp] = useState(0)
+  const [followedArtistsFollowUp, setFollowedArtistsFollowUp] = useState(0)
+  const [currentPlaylistsFollowUp, setCurrentPlaylistsFollowUp] = useState(0)
+  const [recentlyTracksFollowUp, setRecentlyTracksFollowUp] = useState(0)
+  const [savedShowsFollowUp, setSavedShowsFollowUp] = useState(0)
+  const [savedEpisodesFollowUp, setSavedEpisodesFollowUp] = useState(0)
+  const [endSettings, setEndSettings] = useState({
+    endURL: endURL,
+    endOption: endOption,
+    conditionalEndURLParameter: conditionalEndURLParameter,
+    conditionalEndURLOption: conditionalEndURLOption,
+    savedTracksFollowUp: savedTracksFollowUp,
+    topTracksShortTermFollowUp: topTracksShortTermFollowUp,
+    topTracksMediumTermFollowUp: topTracksMediumTermFollowUp,
+    topTracksLongTermFollowUp: topTracksLongTermFollowUp,
+    topArtistsShortTermFollowUp: topArtistsShortTermFollowUp,
+    topArtistsMediumTermFollowUp: topArtistsMediumTermFollowUp,
+    topArtistsLongTermFollowUp: topArtistsLongTermFollowUp,
+    followedArtistsFollowUp: followedArtistsFollowUp,
+    currentPlaylistsFollowUp: currentPlaylistsFollowUp,
+    recentlyTracksFollowUp: recentlyTracksFollowUp,
+    savedShowsFollowUp: savedShowsFollowUp,
+    savedEpisodesFollowUp: savedEpisodesFollowUp
+  })
+
+
   useEffect(() => {
     setConfirmArray([confirmSavedTracksYes, false, confirmTopItemsTracksShortTermYes, confirmTopItemsTracksMediumTermYes, confirmTopItemsTracksLongTermYes,
       confirmTopItemsArtistsShortTermYes, confirmTopItemsArtistsMediumTermYes, confirmTopItemsArtistsLongTermYes, confirmFollowedArtistsYes,
@@ -111,6 +148,30 @@ export default function SettingsPage(props) {
   }, [confirmSavedTracksYes, confirmTopItemsTracksShortTermYes, confirmTopItemsTracksMediumTermYes, confirmTopItemsTracksLongTermYes,
     confirmTopItemsArtistsShortTermYes, confirmTopItemsArtistsMediumTermYes, confirmTopItemsArtistsLongTermYes, confirmFollowedArtistsYes,
     confirmCurrentPlaylistsYes, confirmRecentlyTracksYes, confirmSavedShowsYes, confirmSavedEpisodesYes])
+
+  useEffect(() => {
+    setEndSettings({
+      endURL: endURL,
+      endOption: endOption,
+      conditionalEndURLParameter: conditionalEndURLParameter,
+      conditionalEndURLOption: conditionalEndURLOption,
+      savedTracksFollowUp: savedTracksFollowUp,
+      topTracksShortTermFollowUp: topTracksShortTermFollowUp,
+      topTracksMediumTermFollowUp: topTracksMediumTermFollowUp,
+      topTracksLongTermFollowUp: topTracksLongTermFollowUp,
+      topArtistsShortTermFollowUp: topArtistsShortTermFollowUp,
+      topArtistsMediumTermFollowUp: topArtistsMediumTermFollowUp,
+      topArtistsLongTermFollowUp: topArtistsLongTermFollowUp,
+      followedArtistsFollowUp: followedArtistsFollowUp,
+      currentPlaylistsFollowUp: currentPlaylistsFollowUp,
+      recentlyTracksFollowUp: recentlyTracksFollowUp,
+      savedShowsFollowUp: savedShowsFollowUp,
+      savedEpisodesFollowUp: savedEpisodesFollowUp
+    });
+  }, [endURL, endOption, conditionalEndURLParameter, conditionalEndURLOption, savedTracksFollowUp, topTracksShortTermFollowUp, topTracksMediumTermFollowUp, topTracksLongTermFollowUp,
+    topArtistsShortTermFollowUp, topArtistsMediumTermFollowUp, topArtistsLongTermFollowUp, followedArtistsFollowUp,
+    currentPlaylistsFollowUp, recentlyTracksFollowUp, savedShowsFollowUp, savedEpisodesFollowUp
+  ])
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -168,6 +229,7 @@ export default function SettingsPage(props) {
           const recentlyPlayed = raw.recently_played
           const savedShows = raw.saved_shows
           const savedEpisodes = raw.saved_episodes
+          const endOptions = raw.end_options
 
           setUmfrageName(data.data[0].nameUmfrage)
           setUmfrageID(data.data[0].umfrageID)
@@ -217,6 +279,24 @@ export default function SettingsPage(props) {
 
           setCheckPublic(currentPlaylists.public ? currentPlaylists.public : false)
           setCheckPrivateTracks(currentPlaylists.privatetracks ? currentPlaylists.privatetracks : false);
+
+          setSavedTracksFollowUp(savedTracks.followUp)
+          setTopTracksShortTermFollowUp(topTracksShortTerm.followUp)
+          setTopTracksMediumTermFollowUp(topTracksMediumTerm.followUp)
+          setTopTracksLongTermFollowUp(topTracksLongTerm.followUp)
+          setTopArtistsShortTermFollowUp(topArtistsShortTerm.followUp)
+          setTopArtistsMediumTermFollowUp(topArtistsMediumTerm.followUp)
+          setTopArtistsLongTermFollowUp(topArtistsLongTerm.followUp)
+          setFollowedArtistsFollowUp(followedArtists.followUp)
+          setCurrentPlaylistsFollowUp(currentPlaylists.followUp)
+          setRecentlyTracksFollowUp(recentlyPlayed.followUp)
+          setSavedShowsFollowUp(savedShows.followUp)
+          setSavedEpisodesFollowUp(savedEpisodes.followUp)
+
+          setEndOption(endOptions.option)
+          setEndURL(endOptions.end_url)
+          setConditionalEndURLParameter(endOptions.conditional_end_url_parameter)
+          setConditionalEndURLOption(endOptions.conditional_end_url_option)
         });
     }
   }, [update])
@@ -228,6 +308,8 @@ export default function SettingsPage(props) {
   }, [savedTracksLimit, tracksMarket, topItemsTracksShortTermLimit, topItemsTracksMediumTermLimit, topItemsTracksLongTermLimit,
     topItemsArtistsShortTermLimit, topItemsArtistsMediumTermLimit, topItemsArtistsLongTermLimit,
     followedArtistsLimit, currentPlaylistsLimit, checkPublic, checkPrivateTracks, recentlyTracksLimit, savedShowsLimit, savedEpisodesLimit])
+
+
 
   useEffect(() => {
     if (!checkPublic && checkPrivateTracks) {
@@ -269,6 +351,7 @@ export default function SettingsPage(props) {
   }, [savedTracksChecked, currentPlaylistsChecked, followedArtistsChecked, topItemsArtistsShortTermChecked, topItemsArtistsMediumTermChecked,
     topItemsArtistsLongTermChecked, currentUsersChecked, recentlyTracksChecked, topItemsTracksShortTermChecked,
     topItemsTracksMediumTermChecked, topItemsTracksLongTermChecked, savedShowsChecked, savedEpisodesChecked])
+
 
   useEffect(() => {
     async function getParticipantSession() {
@@ -325,7 +408,8 @@ export default function SettingsPage(props) {
                     username,
                     confirmArray,
                     update,
-                  location.state?.surveyID]
+                  location.state?.surveyID,
+                    endSettings]
                 }
               />
               : null
@@ -450,6 +534,14 @@ export default function SettingsPage(props) {
                       </ul>
                     </Collapse>
                   </list>
+                  <list className='list-new-settings-item-container'>
+                    <a
+                      class={mySwiper?.activeIndex === 5 ? 'list-new-settings-item-bold' : 'list-new-settings-item-regular'}
+                      onClick={() => handleSettingsButtonPressed(5)}
+                    >
+                      End / Follow-up
+                    </a>
+                  </list>
                 </ul>
               </nav>
             </div>
@@ -543,6 +635,25 @@ export default function SettingsPage(props) {
                         savedEpisodesLimit, setSavedEpisodesLimit,
                         confirmSavedEpisodesYes, setConfirmSavedEpisodesYes
                       )}
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      {endSettingsCard(
+                        endOption, setEndOption,
+                        endURL, setEndURL,
+                        conditionalEndURLParameter, setConditionalEndURLParameter,
+                        conditionalEndURLOption, setConditionalEndURLOption,
+                        savedTracksFollowUp, setSavedTracksFollowUp,
+                        topTracksShortTermFollowUp, setTopTracksShortTermFollowUp,
+                        topTracksMediumTermFollowUp, setTopTracksMediumTermFollowUp,
+                        topTracksLongTermFollowUp, setTopTracksLongTermFollowUp,
+                        topArtistsShortTermFollowUp, setTopArtistsShortTermFollowUp,
+                        topArtistsMediumTermFollowUp, setTopArtistsMediumTermFollowUp,
+                        topArtistsLongTermFollowUp, setTopArtistsLongTermFollowUp,
+                        followedArtistsFollowUp, setFollowedArtistsFollowUp,
+                        currentPlaylistsFollowUp, setCurrentPlaylistsFollowUp,
+                        recentlyTracksFollowUp, setRecentlyTracksFollowUp,
+                        savedShowsFollowUp, setSavedShowsFollowUp,
+                        savedEpisodesFollowUp, setSavedEpisodesFollowUp)}
                     </SwiperSlide>
                   </Swiper>
                 </div>

@@ -3,15 +3,13 @@ from django.contrib.auth.models import User
 
 class RetrievalSetting(models.Model):
     defaultConfirmTextEng = """Please confirm the results.
-If some results are unfamiliar or uncomfortable to you, please feel free to contradict the results."""
+If some results are unfamiliar or uncomfortable to you, please feel free to deselect the results."""
     defaultConfirmTextDe = """Bitte bestätigen Sie die Ergebnisse.
-Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie den Ergebnissen gerne widersprechen."""
+Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie die Ergebnisse gerne abwählen."""
 
     user = models.ManyToManyField(User, default='')
     nameUmfrage = models.TextField(default='')
     umfrageID = models.TextField(max_length=50, default='', unique=True)
-    umfrageURL = models.TextField(default='')
-    data = models.JSONField(null=True)
 
     saved_tracks_enabled = models.BooleanField(default=False)
     saved_tracks_confirm = models.BooleanField(default=True)
@@ -85,10 +83,18 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie den 
     END_CHOICES = [
         ("plain", "Simple end of survey page"),
         ("wrapped", "Statistical summary of participant responses"),
-        ("end_url", "Redirect to custom URL at end of survey (e.g., to a follow-up survey)")
+        ("end_url", "Redirect to custom URL at end of donation (e.g., to a follow-up survey)"), 
+        ("conditional_end_url", "Redirect to custom URL at end of donation based on presence of a URL parameter"),
     ]
-    end_options = models.CharField(max_length=7, choices = END_CHOICES, default="plain")
+    CONDITIONAL_CHOICES = [
+        ("plain", "Simple end of survey page"),
+        ("wrapped", "Statistical summary of participant responses"),
+    ]
+    
+    end_option = models.CharField(max_length=20, choices = END_CHOICES, default="plain")
     end_url = models.URLField(max_length=200, default='', blank=True)
+    conditional_end_url_parameter = models.CharField(max_length=100, default='', blank=True)
+    conditional_end_url_option = models.CharField(max_length=200, choices = CONDITIONAL_CHOICES, default='plain')
 
     def __str__(self):
         return self.nameUmfrage + " (survey ID: " + self.umfrageID + ")"
