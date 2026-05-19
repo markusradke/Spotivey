@@ -8,7 +8,7 @@ import random
 from spotify.models import CurrentPlaylist, PrivatePlaylistTrack
 from spotify.utils.bulk_db import bulk_create_with_retry
 from spotify.utils.retrieval_helpers import get_participant_from_session
-from spotify.utils.spotify_api import execute_spotify_api_request
+from spotify.utils.spotify_api import execute_spotify_api_request, retrieve_spotify_data
 
 
 def _extract_playlist_fields(playlist_item, current_user_id):
@@ -102,15 +102,11 @@ class GetPlaylistsSpotify(APIView):
             public_filter = public_check.lower() == 'false' 
         print(f"Public filter for playlists: {public_filter}")
         
-        endpoint = f"me/playlists?offset=0&limit={limit}"
-        response = execute_spotify_api_request(
-            request.session.session_key, 
-            endpoint
-        )
+        endpoint = f"me/playlists"
+        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, datatype='playlists')
+        if 'error' in response.keys():
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
 
-        if 'error' in response or 'items' not in response:
-            return Response({'error': response}, 
-                          status=status.HTTP_204_NO_CONTENT)
 
         total = response.get('total', 0)
         participant.total_current_playlists = total

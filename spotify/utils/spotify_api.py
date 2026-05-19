@@ -1,8 +1,10 @@
 from spotify.models import SpotifyToken
 from django.utils import timezone
-from datetime import timedelta
+import time
 from spotify.credentials import CLIENT_ID, CLIENT_SECRET
 import os
+from rest_framework.response import Response
+from rest_framework import status
 from requests import post, put, get, Session
 from requests.adapters import HTTPAdapter, Retry
 
@@ -127,3 +129,40 @@ def probe_authentication_scopes(session_id: str) -> bool:
             return False
 
     return True
+
+
+def retrieve_spotify_data(session_key: str, endpoint: str, limit: int, datatype: str  = ''):
+    """
+    Helper function to retrieve Spotify data with pagination support. Returns artificial response with 'items' and 'total' keys.
+    """
+    print(f"Retrieving Spotify data for endpoint: {endpoint} with limit: {limit} and datatype: {datatype}")
+    batch_size_limit = 50  # Spotify API max limit per request
+    
+    limit = int(limit)
+    n_retrieved = 0
+    all_responses = []
+    while n_retrieved < limit:
+        batch_limit = min(batch_size_limit, limit - n_retrieved)
+        if '?' in endpoint:
+            batch_endpoint = f"{endpoint}&limit={batch_limit}&offset={n_retrieved}"
+        else:
+            batch_endpoint = f"{endpoint}?limit={batch_limit}&offset={n_retrieved}"
+        response = execute_spotify_api_request(session_key, batch_endpoint)
+        if 'error' in response or ('items' not in response and 'artists' not in response):
+            print(f"Error occurred while retrieving Spotify data for endpoint: {endpoint}") 
+            return {'error': response}
+
+        if datatype == 'followed_artists': 
+            items = response.get('artists', {}).get('items', [])
+            total = response.get('artists', {}).get('total', 0)  # read from last response, is the same for all pages
+        else:
+            items = response.get('items', [])
+            total = response.get('total', 0)  # read from last response, is the same for all pages; returns 0 if not present
+        all_responses.extend(items)
+        n_retrieved += batch_limit
+
+        if len(items) == 0:
+            break
+        time.sleep(0.1) # to avoid hitting rate limits
+
+    return {'items': all_responses, 'total': total}

@@ -172,15 +172,13 @@ def get_fixture_for_endpoint(endpoint: str) -> Optional[SpotifyFixtureResponse]:
         )
 
     if endpoint.startswith("me/shows"):
-        ids = endpoint.split("ids=", 1)[-1].split(",") if "ids=" in endpoint else []
         return SpotifyFixtureResponse(
-            {"shows": [_show(show_id) for show_id in ids if show_id]}
+            {"items": [{"added_at": "2020-01-02T00:00:00Z", "show": _show("show_1")}]}
         )
     
     if endpoint.startswith("me/episodes"):
-        ids = endpoint.split("ids=", 1)[-1].split(",") if "ids=" in endpoint else []
         return SpotifyFixtureResponse(
-            {"episodes": [_episode(episode_id, show_id="show_1") for episode_id in ids if episode_id]}
+            {"items": [{"added_at": "2020-01-02T00:00:00Z", "episode": _episode("episode_1", "show_1")}]}
         )
 
     return None

@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from spotify.models import SavedShow, SavedEpisode
 from spotify.utils.bulk_db import bulk_create_with_retry
 from spotify.utils.retrieval_helpers import get_participant_from_session
-from spotify.utils.spotify_api import execute_spotify_api_request
+from spotify.utils.spotify_api import retrieve_spotify_data
 from spotify.utils.field_extractors import get_image_url
 
 def _extract_show_fields(show_item):
@@ -67,11 +67,11 @@ class GetSavedShowsSpotify(APIView):
             return error
 
         limit = request.GET.get('limit', 50)
-        endpoint = f"me/shows?limit={limit}"
+        endpoint = f"me/shows"
 
-        response = execute_spotify_api_request(request.session.session_key, endpoint)
-        if 'error' in response:
-            return Response({'error': response}, status=status.HTTP_400_BAD_REQUEST)
+        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, datatype='shows')
+        if 'error' in response.keys():
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
 
         total = response.get('total', 0)
         participant.total_saved_shows = total
@@ -97,11 +97,11 @@ class GetSavedEpisodesSpotify(APIView):
             return error
 
         limit = request.GET.get('limit', 50)
-        endpoint = f"me/episodes?limit={limit}"
+        endpoint = f"me/episodes"
 
-        response = execute_spotify_api_request(request.session.session_key, endpoint)
-        if 'error' in response:
-            return Response({'error': response}, status=status.HTTP_400_BAD_REQUEST)
+        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, datatype='episodes')
+        if 'error' in response.keys():
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
 
         total = response.get('total', 0)
         participant.total_saved_episodes = total

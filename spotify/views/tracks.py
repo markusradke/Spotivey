@@ -8,7 +8,7 @@ from spotify.models import TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTe
 from spotify.utils.batch_operations import batch_fetch_albums, batch_fetch_artists
 from spotify.utils.bulk_db import bulk_create_with_retry
 from spotify.utils.retrieval_helpers import get_participant_from_session
-from spotify.utils.spotify_api import execute_spotify_api_request
+from spotify.utils.spotify_api import execute_spotify_api_request, retrieve_spotify_data
 from spotify.utils.field_extractors import extract_base_track_fields
 
 
@@ -53,12 +53,11 @@ class GetTopTracks(APIView):
 
         limit = request.GET.get('limit', 50)
         time_range = request.GET.get('timeRange', '')
-        endpoint = f"me/top/tracks?time_range={time_range}&limit={limit}"
+        endpoint = f"me/top/tracks?time_range={time_range}"
 
-        response = execute_spotify_api_request(request.session.session_key, endpoint)
-        if 'error' in response:
-            return Response({'error': response},
-                                            status=status.HTTP_204_NO_CONTENT)
+        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, datatype='top_tracks')
+        if 'error' in response.keys():
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
 
         total = response.get("total", 0)
         if time_range == 'short_term':
@@ -122,12 +121,11 @@ class GetSavedTracksSpotify(APIView):
         if participant is None:
             return fail_response
 
+        endpoint = "me/tracks"
         limit = request.GET.get('limit')
-        response = execute_spotify_api_request(request.session.session_key,
-                                                f"me/tracks?limit={limit}")
-        if 'error' in response:
-            return Response({'error': response},
-                                            status=status.HTTP_204_NO_CONTENT)
+        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, datatype='saved_tracks')
+        if 'error' in response.keys():
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
         
         total = response.get("total", 0)
         participant.total_saved_tracks = total
@@ -157,13 +155,11 @@ class GetRecentlyPlayedTracksSpotify(APIView):
             return fail_response
 
         limit = request.GET.get('limit')
-        response = execute_spotify_api_request(
-            request.session.session_key,
-            f"me/player/recently-played?limit={limit}"
-        )
-        if 'error' in response:
-            return Response({'error': response},
-                                            status=status.HTTP_204_NO_CONTENT)
+        endpoint = "me/player/recently-played"
+        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, datatype='recently_played')
+        if 'error' in response.keys():
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
+        
         items = response.get("items")
 
         def _recent_extra(item):
