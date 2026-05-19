@@ -1,8 +1,9 @@
 import * as React from "react";
-import { Checkbox, Slider } from "@mui/material";
+import { Checkbox } from "@mui/material";
 import { marks } from './Components/settingsConst';
 import PublicCheck, { PrivateTracksCheck, confirmCheck } from "./Components/ConfirmCheck";
 import LimitComponent from "./Components/limitComponent";
+import { BoundedNumberField } from "./Components/BoundedNumberField";
 
 export function playlistContentSettings(
     currentPlaylistsChecked, setCurrentPlaylistsChecked,
@@ -36,16 +37,13 @@ export function playlistContentSettings(
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
                             <LimitComponent />
-                            <Slider
-                                aria-label="SliderCurrentPlaylist"
+                            <BoundedNumberField
+                                label="Limit"
                                 value={currentPlaylistsLimit}
-                                onChange={(e, newValue) => {
-                                    setCurrentPlaylistsLimit(newValue);
-                                }}
+                                onChange={setCurrentPlaylistsLimit}
                                 min={1}
-                                max={50}
+                                max={200}
                                 step={1}
-                                marks={marks}
                             />
                             {confirmCheck(confirmCurrentPlaylistsYes, setConfirmCurrentPlaylistsYes)}
                             {PublicCheck(checkPublic, setCheckPublic)}

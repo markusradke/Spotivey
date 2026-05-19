@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Checkbox, Slider } from "@mui/material";
+import { BoundedNumberField } from "./Components/BoundedNumberField";
 import { marks } from './Components/settingsConst';
 import { confirmCheck } from "./Components/ConfirmCheck";
 import PublicCheck from "./Components/ConfirmCheck";
@@ -34,16 +35,13 @@ export function showsContentSettings(
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
                             <LimitComponent />
-                            <Slider
-                                aria-label="SliderSavedShows"
+                            <BoundedNumberField
+                                label="Limit"
                                 value={savedShowsLimit}
-                                onChange={(e, newValue) => {
-                                    setSavedShowsLimit(newValue);
-                                }}
+                                onChange={setSavedShowsLimit}
                                 min={1}
-                                max={50}
+                                max={1000}
                                 step={1}
-                                marks={marks}
                             />
                         </div>
                         {confirmCheck(confirmSavedShowsYes, setConfirmSavedShowsYes)}
@@ -67,16 +65,13 @@ export function showsContentSettings(
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
                             <LimitComponent />
-                            <Slider
-                                aria-label="SliderSavedEpisodes"
+                            <BoundedNumberField
+                                label="Limit"
                                 value={savedEpisodesLimit}
-                                onChange={(e, newValue) => {
-                                    setSavedEpisodesLimit(newValue);
-                                }}
+                                onChange={setSavedEpisodesLimit}
                                 min={1}
-                                max={50}
+                                max={1000}
                                 step={1}
-                                marks={marks}
                             />
                         </div>
                         {confirmCheck(confirmSavedEpisodesYes, setConfirmSavedEpisodesYes)}

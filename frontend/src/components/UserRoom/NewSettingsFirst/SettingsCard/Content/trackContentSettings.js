@@ -5,6 +5,7 @@ import { marks } from './Components/settingsConst';
 import { confirmCheck } from "./Components/ConfirmCheck";
 import LimitComponent from "./Components/limitComponent";
 import MarketComponent from "./Components/MarketComponent";
+import { BoundedNumberField } from "./Components/BoundedNumberField";
 
 
 export function tracksContentSettings(
@@ -40,19 +41,14 @@ export function tracksContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent />
-                            <Slider
-                                aria-valuetext='saved'
-                                aria-label="SliderSavedTracks"
-                                value={savedTracksLimit} // changed here
-                                onChange={(e, newValue) => {
-                                    setSavedTracksLimit(newValue);
-                                }}
+                            <LimitComponent maximum={1000} />
+                            <BoundedNumberField
+                                label="Limit"
+                                value={savedTracksLimit}
+                                onChange={setSavedTracksLimit}
                                 min={1}
-                                max={50}
+                                max={1000}
                                 step={1}
-                                marks={marks}
-                                valueLabelDisplay='auto'
                             />
                         </div>
                         <MarketComponent />
@@ -86,18 +82,14 @@ export function tracksContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent />
-                            <Slider
-                                aria-label="SliderRecentlyTracks"
+                            <LimitComponent maximum={50} />
+                            <BoundedNumberField
+                                label="Limit"
                                 value={recentlyTracksLimit}
-                                onChange={(e, newValue) => {
-                                    setRecentlyTracksLimit(newValue);
-                                }}
+                                onChange={setRecentlyTracksLimit}
                                 min={1}
                                 max={50}
                                 step={1}
-                                marks={marks}
-                                valueLabelDisplay='auto'
                             />
                             {confirmCheck(confirmRecentlyTracksYes, setConfirmRecentlyTracksYes)}
                         </div>

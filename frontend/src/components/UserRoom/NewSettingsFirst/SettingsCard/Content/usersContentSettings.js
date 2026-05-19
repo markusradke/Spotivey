@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Checkbox, Slider } from "@mui/material";
+import { Checkbox } from "@mui/material";
+import { BoundedNumberField } from "./Components/BoundedNumberField";
 import { marks } from './Components/settingsConst';
 import { confirmCheck } from "./Components/ConfirmCheck";
 import LimitComponent from "./Components/limitComponent";
@@ -81,19 +82,14 @@ export function usersContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent />
-                            <Slider
-                                aria-valuetext='tracks'
-                                aria-label="SliderTopItemsShortTermTracks"
+                            <LimitComponent maximum={1000} />
+                            <BoundedNumberField
+                                label="Limit"
                                 value={topItemsTracksShortTermLimit}
-                                onChange={(e, newValue) => {
-                                    setTopItemsTracksShortTermLimit(newValue);
-                                }}
+                                onChange={setTopItemsTracksShortTermLimit}
                                 min={1}
-                                max={50}
+                                max={1000}
                                 step={1}
-                                marks={marks}
-                                valueLabelDisplay='auto'
                             />
                         </div>
                         {confirmCheck(confirmTopItemsTracksShortTermYes, setConfirmTopItemsTracksShortTermYes)}
@@ -115,19 +111,14 @@ export function usersContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent />
-                            <Slider
-                                aria-valuetext='tracks'
-                                aria-label="SliderTopItemsMediumTermTracks"
+                            <LimitComponent maximum={1000} />
+                            <BoundedNumberField
+                                label="Limit"
                                 value={topItemsTracksMediumTermLimit}
-                                onChange={(e, newValue) => {
-                                    setTopItemsTracksMediumTermLimit(newValue);
-                                }}
+                                onChange={setTopItemsTracksMediumTermLimit}
                                 min={1}
-                                max={50}
+                                max={1000}
                                 step={1}
-                                marks={marks}
-                                valueLabelDisplay='auto'
                             />
                         </div>
                         {confirmCheck(confirmTopItemsTracksMediumTermYes, setConfirmTopItemsTracksMediumTermYes)}
@@ -149,19 +140,14 @@ export function usersContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent />
-                            <Slider
-                                aria-valuetext='tracks'
-                                aria-label="SliderTopItemsLongTermTracks"
+                            <LimitComponent maximum={1000} />
+                            <BoundedNumberField
+                                label="Limit"
                                 value={topItemsTracksLongTermLimit}
-                                onChange={(e, newValue) => {
-                                    setTopItemsTracksLongTermLimit(newValue);
-                                }}
+                                onChange={setTopItemsTracksLongTermLimit}
                                 min={1}
-                                max={50}
+                                max={1000}
                                 step={1}
-                                marks={marks}
-                                valueLabelDisplay='auto'
                             />
                         </div>
                         {confirmCheck(confirmTopItemsTracksLongTermYes, setConfirmTopItemsTracksLongTermYes)}
@@ -192,18 +178,14 @@ export function usersContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent />
-                            <Slider
-                                aria-label="SliderTopItemsShortTermArtist"
+                            <LimitComponent maximum={1000} />
+                            <BoundedNumberField
+                                label="Limit"
                                 value={topItemsArtistsShortTermLimit}
-                                onChange={(e, newValue) => {
-                                    setTopItemsArtistsShortTermLimit(newValue);
-                                }}
+                                onChange={setTopItemsArtistsShortTermLimit}
                                 min={1}
-                                max={50}
+                                max={1000}
                                 step={1}
-                                marks={marks}
-                                valueLabelDisplay='auto'
                             />
                         </div>
                         {confirmCheck(confirmTopItemsArtistsShortTermYes, setConfirmTopItemsArtistsShortTermYes)}
@@ -225,18 +207,14 @@ export function usersContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent />
-                            <Slider
-                                aria-label="SliderTopItemsMediumTermArtist"
+                            <LimitComponent maximum={1000} />
+                            <BoundedNumberField
+                                label="Limit"
                                 value={topItemsArtistsMediumTermLimit}
-                                onChange={(e, newValue) => {
-                                    setTopItemsArtistsMediumTermLimit(newValue);
-                                }}
+                                onChange={setTopItemsArtistsMediumTermLimit}
                                 min={1}
-                                max={50}
+                                max={1000}
                                 step={1}
-                                marks={marks}
-                                valueLabelDisplay='auto'
                             />
                         </div>
                         {confirmCheck(confirmTopItemsArtistsMediumTermYes, setConfirmTopItemsArtistsMediumTermYes)}
@@ -258,18 +236,14 @@ export function usersContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent />
-                            <Slider
-                                aria-label="SliderTopItemsLongTermArtists"
+                            <LimitComponent maximum={1000} />
+                            <BoundedNumberField
+                                label="Limit"
                                 value={topItemsArtistsLongTermLimit}
-                                onChange={(e, newValue) => {
-                                    setTopItemsArtistsLongTermLimit(newValue);
-                                }}
+                                onChange={setTopItemsArtistsLongTermLimit}
                                 min={1}
-                                max={50}
+                                max={1000}
                                 step={1}
-                                marks={marks}
-                                valueLabelDisplay='auto'
                             />
                         </div>
                         {confirmCheck(confirmTopItemsArtistsLongTermYes, setConfirmTopItemsArtistsLongTermYes)}
@@ -298,20 +272,15 @@ export function usersContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent />
-                            <Slider
-                                aria-label="SliderFollowedArtists"
+                            <LimitComponent maximum={1000} />
+                            <BoundedNumberField
+                                label="Limit"
                                 value={followedArtistsLimit}
-                                onChange={(e, newValue) => {
-                                    setFollowedArtistsLimit(newValue);
-                                }}
+                                onChange={setFollowedArtistsLimit}
                                 min={1}
-                                max={50}
+                                max={1000}
                                 step={1}
-                                marks={marks}
-                                valueLabelDisplay='auto'
                             />
-                            {confirmCheck(confirmFollowedArtistsYes, setConfirmFollowedArtistsYes)}
                         </div>
                     </div>
                 </div>
