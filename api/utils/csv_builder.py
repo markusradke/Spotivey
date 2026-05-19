@@ -1,6 +1,7 @@
 """CSV export builders for Spotify data models."""
 import json
 import logging
+from api.models import RetrievalSetting
 from spotify.models import (
     PrivatePlaylistTrack, SavedTrack, TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm, RecentTrack,
     TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm, FollowedArtist,
@@ -389,8 +390,6 @@ def build_all_data_types_csv(survey_id):
     Returns:
         List of dictionaries ready for CSV export, or empty list if no data
     """
-    from api.models import RetrievalSetting
-    
     survey_settings = RetrievalSetting.objects.filter(umfrageID=survey_id)
     
     if not survey_settings.exists():
@@ -421,16 +420,17 @@ def build_all_data_types_csv(survey_id):
     return all_rows
 
 
-def build_participants_csv(survey_settings):
+def build_participants_csv(survey_id):
     """
     Build CSV rows for Participant with all fields.
     
     Args:
-        survey_settings: QuerySet or list of RetrievalSetting objects
+        survey_id: Survey identifier
         
     Returns:
         List of dictionaries ready for CSV export
     """
+    survey_settings = RetrievalSetting.objects.filter(umfrageID=survey_id)
     participants = Participant.objects.filter(
         settings__in=survey_settings,
     ).order_by('participant')

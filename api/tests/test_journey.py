@@ -202,11 +202,19 @@ class SpotiveyBackendJourneyTests(TestCase):
         got_titles = {dt.get("title") for dt in data_types}
         self.assertTrue(expect_types.issubset(got_titles))
 
-        csv = self.client.get(f"/api/save-repertoire-to-csv-file?surveyID={self.survey_id}")
-        self.assertEqual(csv.status_code, 200)
-        csv_payload = csv.json()
+        csv_repertoire = self.client.get(f"/api/save-repertoire-to-csv-file?surveyID={self.survey_id}")
+        self.assertEqual(csv_repertoire.status_code, 200)
+        csv_payload = csv_repertoire.json()
         self.assertIsInstance(csv_payload, list)
         self.assertGreater(len(csv_payload), 0)
+
+        csv_participants = self.client.get(f"/api/save-participants-to-csv-file?surveyID={self.survey_id}")
+        self.assertEqual(csv_participants.status_code, 200)
+        csv_participants_payload = csv_participants.json()
+        self.assertIsInstance(csv_participants_payload, list)
+        self.assertGreater(len(csv_participants_payload), 0)
+
+
 
     def test_full_journey(self):
         # Ensure test-mode fixtures are used
