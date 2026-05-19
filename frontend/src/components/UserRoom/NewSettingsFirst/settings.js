@@ -663,7 +663,8 @@ export default function SettingsPage(props) {
         </div>
         {saveButton(
           setOpenDialog,
-          mySwiperActiveIndex, countCheckboxen, changeTextfield, update
+          mySwiperActiveIndex, countCheckboxen, changeTextfield, update,
+          endOption, endURL, conditionalEndURLParameter
         )}
       </React.Fragment>
     );

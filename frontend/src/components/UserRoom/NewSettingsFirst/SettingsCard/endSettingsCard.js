@@ -35,6 +35,18 @@ export function EndSettingsCard({
     savedEpisodesFollowUp,
     setSavedEpisodesFollowUp,
 }) {
+    const trimmed_end_url = (endUrl ?? "").trim();
+    const trimmed_conditional_parameter = (
+        conditionalEndURLParameter ?? ""
+    ).trim();
+    const end_url_required =
+        endOption === "end_url" || endOption === "conditional_end_url";
+    const conditional_parameter_required =
+        endOption === "conditional_end_url";
+    const end_url_missing = end_url_required && trimmed_end_url === "";
+    const conditional_parameter_missing =
+        conditional_parameter_required && trimmed_conditional_parameter === "";
+
     const followUpFields = [
         {
             key: "savedTracksFollowUp",
@@ -256,6 +268,13 @@ export function EndSettingsCard({
                                     onChange={(e) => setEndUrl(e.target.value)}
                                     placeholder="https://example.com"
                                     fullWidth
+                                    required={end_url_required}
+                                    error={end_url_missing}
+                                    helperText={
+                                        end_url_missing
+                                            ? "End URL is required for this option."
+                                            : ""
+                                    }
                                 />
                                 {endOption === "conditional_end_url" && (
                                     <div style={{ marginTop: '1rem' }}>
@@ -267,6 +286,13 @@ export function EndSettingsCard({
                                             placeholder="e.g., 'panelprovider_id'"
                                             fullWidth
                                             style={{ marginTop: '0.75rem' }}
+                                            required={conditional_parameter_required}
+                                            error={conditional_parameter_missing}
+                                            helperText={
+                                                conditional_parameter_missing
+                                                    ? "This field is required for conditional redirect."
+                                                    : ""
+                                            }
                                         />
                                         <br />
                                         <h2
