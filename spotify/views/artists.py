@@ -123,11 +123,11 @@ class GetFollowedArtistsSpotify(APIView):
         if 'error' in response.keys():
             return Response(response, status=status.HTTP_204_NO_CONTENT)
         
-        total = response.get('artists', {}).get('total', 0)
+        total = response.get('total', 0)
         participant.total_followed_artists = total
         participant.save()
 
-        items = response.get('artists', {}).get('items', [])
+        items = response.get('items', [])
         response_data = _build_and_create_artists(
             items, 
             FollowedArtist, 
