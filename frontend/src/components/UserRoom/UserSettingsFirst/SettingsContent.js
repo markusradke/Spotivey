@@ -1,5 +1,6 @@
 import * as React from "react";
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { columns } from './DataGridColumns.js';
@@ -192,6 +193,26 @@ export default function SettingsContent(props) {
         )
     }
 
+    function renderGetSurveyQuestion() {
+        return (
+            <Button
+                startIcon={<GetAppIcon />}
+                // disabled={selectedRowSettings.length === 1 ? false : true}
+                disabled={true} // Temporarily disable this button until the feature is implemented
+                onClick={() => {
+                    navigate('/user/settings2/new2', {
+                        state: {
+                            surveyID: selectedRowSettings[0].umfrageID,
+                            username: props.username,
+                        }
+                    })
+                }}
+            >
+                Generate Question Files
+            </Button>
+        )
+    }
+
     const handleTooltipClose = () => {
         setOpenTooltipCopy(false);
     };
@@ -362,6 +383,9 @@ export default function SettingsContent(props) {
                 </div>
                 <div className="settings-table-button-container-inner">
                     {renderChangeConfirmButton()}
+                </div>
+                <div className="settings-table-button-container-inner">
+                    {renderGetSurveyQuestion()}
                 </div>
             </div>
             {renderSettingsTable()}
