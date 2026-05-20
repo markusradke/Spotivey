@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { ParticipantContext } from "../../context/ParticipantContext";
@@ -20,6 +20,7 @@ export function useRoomFinalize({
 }) {
     const navigate = useNavigate();
     const { participant, surveyID, language } = useContext(ParticipantContext);
+    const [isSaving, setIsSaving] = useState(false);
 
     const didAutoFinalizeRef = useRef(false);
 
@@ -43,6 +44,7 @@ export function useRoomFinalize({
     }, [followup, participant, paramsObjectSession, spotifyData, checkArray]);
 
     const handleSaveAndFinalize = useCallback(async () => {
+        setIsSaving(true);
         try {
             const dataAll = DATA_TYPE_ORDER.map((type) => spotifyData?.[type] ?? []);
 
@@ -63,6 +65,8 @@ export function useRoomFinalize({
         } catch (error) {
             console.error("Error in confirmation process:", error);
             navigate("/error");
+        } finally {
+            setIsSaving(false);
         }
     }, [
         spotifyData,
@@ -94,5 +98,5 @@ export function useRoomFinalize({
         finalize();
     }, [shouldFinalizeWithoutConfirmation, language, navigate, navigateToEndpageOrEndURL]);
 
-    return { handleSaveAndFinalize };
+    return { handleSaveAndFinalize, isSaving };
 }

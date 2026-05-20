@@ -14,6 +14,7 @@ import LinearRetrievalProgress from "./LinearRetrievalProgress";
 import RoomHeader from "./RoomHeader";
 import RoomStepContent from "./RoomStepContent";
 import { useRoomFinalize } from "./useRoomFinalize";
+import CircularSaving from "./CircularSaving";
 import {
     getEndConfig,
     buildInitialCheckArray,
@@ -92,7 +93,7 @@ export default function Room(props) {
         setCheckArray(buildInitialCheckArray(settings));
     }, [settings]);
 
-    const { handleSaveAndFinalize } = useRoomFinalize({
+    const { handleSaveAndFinalize, isSaving } = useRoomFinalize({
         welcomePageOK: props.welcomePageOK,
         isAuthenticated,
         steps,
@@ -172,6 +173,10 @@ export default function Room(props) {
                     </React.Fragment>
                 )}
             </div>
+            {/* TODO UPDATE THE LOADING INDICATOR */}
+            {isSaving && (
+                <CircularSaving language={language} />
+            )}
         </React.Fragment>
     );
 }
