@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Researcher(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE) 
+    institution = models.CharField(max_length=200)
+
+
 class RetrievalSetting(models.Model):
     defaultConfirmTextEng = """Please confirm the results.
 If some results are unfamiliar or uncomfortable to you, please feel free to deselect the results."""

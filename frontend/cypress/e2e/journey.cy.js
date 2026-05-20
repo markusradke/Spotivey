@@ -352,6 +352,7 @@ describe("Spotivey critical journey", () => {
         const runId = surveyId;
         const researcherUsername = `researcher_e2e_${runId}`;
         const researcherEmail = `researcher_e2e_${runId}@example.com`;
+        const researcherInstitution = `researcher_e2e_${runId} Institution`;
         const researcherPassword = "pw12345678";
 
         // Researcher creates account (if UI supports it) and logs in
@@ -362,6 +363,7 @@ describe("Spotivey critical journey", () => {
         fillIfExists('input[name="username"], input#username', researcherUsername);
         fillIfExists('input[name="email"], input#email', researcherEmail);
         fillIfExists('input[name="password"], input#password', researcherPassword);
+        fillIfExists('input[name="institution"], input#institution', researcherInstitution);
 
         cy.contains("button", /^sign up$/i).click({ force: true });
         cy.wait("@createUser").then((interception) => {

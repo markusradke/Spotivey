@@ -168,6 +168,14 @@ export async function createSettingsUser(payload) {
   return { ok: response.ok, status: response.status, data: await safeJson(response) };
 }
 
+export async function checkUsernameAvailability(username) {
+  return getJson("/api/check-username-availability?username=" + encodeURIComponent(username));
+}
+
+export async function checkEmailAvailability(email) {
+  return getJson("/api/check-email-availability?email=" + encodeURIComponent(email));
+}
+
 export async function fetchParticipantSession() {
   return getJson("/api/get-participant-session", true);
 }

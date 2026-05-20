@@ -1,21 +1,19 @@
 import * as React from "react";
 import { useNavigate } from "react-router";
-import { useState, useEffect } from 'react';
-import { Typography, Avatar, TextField, Button, Alert, AlertTitle, Collapse, IconButton, Box } from "@mui/material";
+import { useState } from 'react';
+import { Typography, Avatar, TextField, Button, Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
-import CloseIcon from '@mui/icons-material/Close';
-import { createSettingsUser } from "../../api/surveyApi";
+import { createSettingsUser, checkUsernameAvailability, checkEmailAvailability } from "../../api/surveyApi";
 
 export default function SignUpPage() {
-    const [vorname, setVorname] = useState('')
-    const [nachname, setNachname] = useState('')
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [emailAddress, setEmailAddress] = useState('')
-
-    const [error, setError] = useState(false)
-
+    const [vorname, setVorname] = useState('');
+    const [nachname, setNachname] = useState('');
+    const [username, setUsername] = useState('');
+    const [emailAddress, setEmailAddress] = useState('');
+    const [institution, setInstitution] = useState('');
+    const [password, setPassword] = useState('');
+    const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
     function handleSignUpButtonPressed() {
@@ -24,67 +22,54 @@ export default function SignUpPage() {
             last_name: nachname,
             username: username,
             email: emailAddress,
+            institution: institution,
             password: password,
         }).then(({ ok, data }) => {
             if (!ok || !data) {
-                setError(true);
+                setErrors(data?.errors || {});
                 return;
             }
-            else {
-                navigate('/login');
-            }
+            navigate('/login');
         });
     }
 
-    function handleUsername(e) {
-        setUsername(e.target.value)
+    async function handleUsernameBlur() {
+        if (username.trim()) {
+            const { data } = await checkUsernameAvailability(username);
+            if (data && !data.available) {
+                setErrors({ ...errors, username: 'This username already exists' });
+            }
+        }
     }
 
-    function handlePassword(e) {
-        setPassword(e.target.value)
+    async function handleEmailBlur() {
+        if (emailAddress.trim()) {
+            const { data } = await checkEmailAvailability(emailAddress);
+            if (data && !data.available) {
+                setErrors({ ...errors, email: 'This email address is already in use' });
+            }
+        }
     }
 
-    function handleEmailAddress(e) {
-        setEmailAddress(e.target.value)
-    }
+    const getFieldError = (field) => errors[field] || '';
 
-    function handleVorname(e) {
-        setVorname(e.target.value)
-    }
-
-    function handleNachname(e) {
-        setNachname(e.target.value)
-    }
-
-    function renderSignUpPage() {
-        return (
-            <React.Fragment>
+    return (
+        <React.Fragment>
+            <div className="setting-header">
+                <header className="setting-header-inner">
+                    <div className="setting-header-content-container">
+                        <div className="setting-header-content-container-inner">
+                            <div className="logo-header">
+                                <img src="../../../static/images/SpotiveyLogo2_Schrift.svg" width="100%" height="100%" />
+                            </div>
+                        </div>
+                    </div>
+                </header>
+            </div>
+            <div className='setting-page-main'>
                 <div className="login-container-outer">
                     <div className={'login-container'}>
                         <div className={'login-container-inner'}>
-                            <Box sx={{ width: '100%' }}>
-                                <Collapse in={error}>
-                                    <Alert
-                                        severity="error"
-                                        action={
-                                            <IconButton
-                                                aria-label="close"
-                                                color="inherit"
-                                                size="small"
-                                                onClick={() => {
-                                                    setError(false);
-                                                }}
-                                            >
-                                                <CloseIcon fontSize="inherit" />
-                                            </IconButton>
-                                        }
-                                        sx={{ mb: 2 }}
-                                    >
-                                        <AlertTitle>Error</AlertTitle>
-                                        Incorrect input — <strong>check it out!</strong>
-                                    </Alert>
-                                </Collapse>
-                            </Box>
                             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
                                 <PersonAddAltOutlinedIcon />
                             </Avatar>
@@ -102,7 +87,12 @@ export default function SignUpPage() {
                                             id="firstName"
                                             label="First Name"
                                             autoFocus
-                                            onChange={handleVorname}
+                                            error={!!getFieldError('first_name')}
+                                            helperText={getFieldError('first_name')}
+                                            onChange={(e) => {
+                                                setVorname(e.target.value);
+                                                setErrors({ ...errors, first_name: '' });
+                                            }}
                                         />
                                     </div>
                                     <div className={"signup-container-name-container-textfield"}>
@@ -113,7 +103,12 @@ export default function SignUpPage() {
                                             label="Last Name"
                                             name="lastName"
                                             autoComplete="family-name"
-                                            onChange={handleNachname}
+                                            error={!!getFieldError('last_name')}
+                                            helperText={getFieldError('last_name')}
+                                            onChange={(e) => {
+                                                setNachname(e.target.value);
+                                                setErrors({ ...errors, last_name: '' });
+                                            }}
                                         />
                                     </div>
                                 </div>
@@ -125,7 +120,13 @@ export default function SignUpPage() {
                                     label="Username"
                                     name="username"
                                     autoComplete="username"
-                                    onChange={handleUsername}
+                                    error={!!getFieldError('username')}
+                                    helperText={getFieldError('username')}
+                                    onChange={(e) => {
+                                        setUsername(e.target.value);
+                                        setErrors({ ...errors, username: '' });
+                                    }}
+                                    onBlur={handleUsernameBlur}
                                 />
                                 <TextField
                                     margin="normal"
@@ -135,7 +136,13 @@ export default function SignUpPage() {
                                     label="Email Address"
                                     name="email"
                                     autoComplete="email"
-                                    onChange={handleEmailAddress}
+                                    error={!!getFieldError('email')}
+                                    helperText={getFieldError('email')}
+                                    onChange={(e) => {
+                                        setEmailAddress(e.target.value);
+                                        setErrors({ ...errors, email: '' });
+                                    }}
+                                    onBlur={handleEmailBlur}
                                 />
                                 <TextField
                                     margin="normal"
@@ -146,7 +153,26 @@ export default function SignUpPage() {
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
-                                    onChange={handlePassword}
+                                    error={!!getFieldError('password')}
+                                    helperText={getFieldError('password')}
+                                    onChange={(e) => {
+                                        setPassword(e.target.value);
+                                        setErrors({ ...errors, password: '' });
+                                    }}
+                                />
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    name="institution"
+                                    label="Institution"
+                                    id="institution"
+                                    error={!!getFieldError('institution')}
+                                    helperText={getFieldError('institution')}
+                                    onChange={(e) => {
+                                        setInstitution(e.target.value);
+                                        setErrors({ ...errors, institution: '' });
+                                    }}
                                 />
                                 <Button
                                     fullWidth
@@ -165,34 +191,6 @@ export default function SignUpPage() {
                         </div>
                     </div>
                 </div>
-            </React.Fragment>
-        );
-    }
-
-    return (
-        <React.Fragment>
-            <div class="setting-header">
-                <header class="setting-header-inner">
-                    <div class="setting-header-content-container">
-                        <div class="setting-header-content-container-inner">
-                            <div className="logo-header">
-                                <span class="logo-tu-berlin">
-                                    {/* <a href='https://www.ak.tu-berlin.de/menue/fachgebiet_audiokommunikation' target={'_blank'}>
-                                    <img src="../../static/images/TU-Berlin-Logo.svg" width="81.816" height="60" />
-                                    <img src="../../static/images/logo_grau-schwarz.png" width="61.812" height="60" />
-                                </a> */}
-                                    <img src="../../../static/images/SpotiveyLogo2_Schrift.svg" width="100%" height="100%" />
-                                </span>
-                                <h1 class="setting-header-tu-berlin">
-                                    Spotivey
-                                </h1>
-                            </div>
-                        </div>
-                    </div>
-                </header>
-            </div>
-            <div class='setting-page-main'>
-                {renderSignUpPage()}
             </div>
         </React.Fragment>
     );

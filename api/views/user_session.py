@@ -6,22 +6,49 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from ..models import Researcher
 from django.http.response import JsonResponse
+from ..serializers import CreateSettingsUserSerializer
+
+EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
 
-from ..serializers import CreateSettingsUserSerializer, LoginUserSerializerEins, LoginUserSerializerZwei    
+def is_email(text):
+    """Check if string is a valid email address."""
+    return bool(regex.search(EMAIL_REGEX, text))
 
-regexString = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
-def check_email(usernameString):
-    #Check if string is an email address
+def validate_required_fields(data, fields):
+    """Validate that required fields are not empty."""
+    errors = {}
+    for field in fields:
+        if not data.get(field, '').strip():
+            errors[field] = f"{field.replace('_', ' ').title()} is required"
+    return errors
 
-    if regex.search(regexString, usernameString):
-        check = 0
-    else:
-        check = 1
 
-    return check
+class CheckUsernameAvailability(APIView):
+    """Check if a username is available."""
+
+    def get(self, request):
+        username = request.query_params.get('username', '').lower().strip()
+        if not username:
+            return Response({'available': False}, status=status.HTTP_200_OK)
+        
+        exists = User.objects.filter(username__iexact=username).exists()
+        return Response({'available': not exists}, status=status.HTTP_200_OK)
+
+
+class CheckEmailAvailability(APIView):
+    """Check if an email address is available."""
+
+    def get(self, request):
+        email = request.query_params.get('email', '').lower().strip()
+        if not email:
+            return Response({'available': False}, status=status.HTTP_200_OK)
+        
+        exists = User.objects.filter(email__iexact=email).exists()
+        return Response({'available': not exists}, status=status.HTTP_200_OK)
 
 
 class GetUserSession(APIView):
@@ -53,169 +80,108 @@ class LogoutUser(APIView):
 
 
 class CreateSettingsUser(APIView):
-    # Creates a user who can log in to Spotivey
+    """Create a new researcher user account."""
 
     serializer_class = CreateSettingsUserSerializer
+
     def post(self, request, format=None):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
 
-        check = check_email(request.data.get('email').lower())
+        errors = {}
+        req_data = request.data
 
-        if check == 1:
-            msg = {
-                'error': True,
-                'msg': "Email-Adresse ist nicht gültig",
-            }
-            return Response(msg, status=status.HTTP_400_BAD_REQUEST)
+        # Normalize to lowercase
+        email = req_data.get('email', '').lower().strip()
+        username = req_data.get('username', '').lower().strip()
 
-        request_values = list(request.data.values())
+        # Validate required fields
+        field_errors = validate_required_fields({
+            'first_name': req_data.get('first_name'),
+            'last_name': req_data.get('last_name'),
+            'username': username,
+            'email': email,
+            'institution': req_data.get('institution'),
+            'password': req_data.get('password'),
+        }, ['first_name', 'last_name', 'username', 'email', 'institution', 'password'])
+        if field_errors:
+            return Response({'errors': field_errors}, status=status.HTTP_400_BAD_REQUEST)
 
-        if '' in request_values:
-            msg = {
-                'error': True,
-                'msg': "Bitte füllen Sie alle Felder aus",
-            }
-            return Response(msg, status=status.HTTP_400_BAD_REQUEST)
+        # Validate email format
+        if not is_email(email):
+            return Response({'errors': {'email': 'Invalid email address'}}, status=status.HTTP_400_BAD_REQUEST)
 
-        username_request = request.data.get('username')
-        queryset = User.objects.filter(username=username_request)
-        if queryset.exists():
-            msg = {
-                'error': True,
-                'msg': "'" + username_request + "'" + ' existiert schon, bitte einen anderen eingeben.',
-            }
-            return Response(msg, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            serializer = self.serializer_class(data=request.data)
+        # Check for duplicate username and email
+        if User.objects.filter(username__iexact=username).exists():
+            errors['username'] = 'This username already exists'
+        if User.objects.filter(email__iexact=email).exists():
+            errors['email'] = 'This email address is already in use'
 
-            if serializer.is_valid():
-                password = serializer.data.get('password')
-                email_address = serializer.data.get('email').lower()
-                first_name = serializer.data.get('first_name')
-                last_name = serializer.data.get('last_name')
-                username = serializer.data.get('username')
+        if errors:
+            return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
 
-                user = User(first_name=first_name, last_name=last_name, username=username,
-                            email=email_address, password=password)
-                user.save()
-                user.set_password(user.password)
-                user.save()
+        # Create user with normalized credentials
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=req_data.get('password'),
+            first_name=req_data.get('first_name').title(),
+            last_name=req_data.get('last_name').title()
+        )
+        Researcher.objects.create(user=user, institution=req_data.get('institution'))
 
-                self.request.session['username'] = user.username
-                self.request.session['fullname'] = user.first_name.title() + ' ' + user.last_name.title()
+        self.request.session['username'] = user.username
+        self.request.session['fullname'] = f"{user.first_name} {user.last_name}"
 
-                return Response(CreateSettingsUserSerializer(user).data, status=status.HTTP_201_CREATED)
-            return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(CreateSettingsUserSerializer(user).data, status=status.HTTP_201_CREATED)
 
 
 class LoginSettingsUser(APIView):
-    # Check login entry, errors are returned if necessary
-    # You can log in via email and username
+    """Authenticate user via username or email."""
 
     def post(self, request, format=None):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
 
-        check = check_email(request.data.get('email').lower())
+        email_input = request.data.get('email', '').lower().strip()
+        password = request.data.get('password', '').strip()
 
-        request_values = list(request.data.values())
+        # Validate required fields
+        errors = {}
+        if not email_input:
+            errors['email'] = 'Username or email is required'
+        if not password:
+            errors['password'] = 'Password is required'
+        if errors:
+            return Response({'errors': errors}, status=status.HTTP_200_OK)
 
-        if '' in request_values:
-            errorPW = request_values[1] == ''
-            errorUsername = request_values[0] == ''
-            msgPW = "Please enter your password" if errorPW else ""
-            msgUsername = "Please enter your username" if errorUsername else ""
-            msg = {
-                'error': True,
-                'errorPW': errorPW,
-                'errorUsername':errorUsername,
-                'msgPW': msgPW,
-                'msgUsername': msgUsername,
-                'msg': "Bitte füllen Sie alle Felder aus",
-            }
-            return Response(msg, status=status.HTTP_200_OK)
-
-        password = request.data.get('password')
-        email_address = request.data.get('email')
-
-    
-        if check == 0:
-            user = User.objects.filter(email=email_address)
-            username_list = list(user.values('username'))
-            if len(username_list) > 1:
-                return Response({
-                    'error': True,
-                    'errorPW': False,
-                    'errorUsername': True,
-                    'msgPW': '',
-                    'msgUsername': "There are several users under this email address, please use your username",
-                    'msg': "mehrere User mit der Mail",
-                }, status=status.HTTP_200_OK)
-            elif len(username_list) == 0:
-                return Response({
-                    'error': True,
-                    'errorPW': False,
-                    'errorUsername': True,
-                    'msgPW': '',
-                    'msgUsername': "No profile was found with this username, please check your entry.",
-                    'msg': "no profile",
-                }, status=status.HTTP_200_OK)
-            else:
-                user = authenticate(email=username_list[0], password=password)
-
-                if user is None:
-                   return Response({
-                    'error': True,
-                    'errorPW': True,
-                    'errorUsername': False,
-                    'msgPW': 'Incorrect password',
-                    'msgUsername': "",
-                    'msg': "no profile",
-                }, status=status.HTTP_200_OK) 
-                self.request.session['username'] = user.username
-                self.request.session['fullname'] = user.first_name.title() + ' ' + user.last_name.title()
-        else:
-            caseSensitiveUsername = email_address
+        # Try to authenticate
+        user = None
+        if is_email(email_input):
+            # Find user by email (case-insensitive)
             try:
-                findUser = User._default_manager.get(username__iexact=email_address)
+                user_by_email = User.objects.get(email__iexact=email_input)
+                user = authenticate(username=user_by_email.username, password=password)
             except User.DoesNotExist:
-                findUser = None
-                msg = {
-                    'error': True,
-                    'errorPW': False,
-                    'errorUsername': True,
-                    'msgPW': '',
-                    'msgUsername': "No profile was found with this username, please check your entry.",
-                    'msg': "no profile",
-                }
-                return Response(msg, status=status.HTTP_200_OK)
-            if findUser is not None:
-                caseSensitiveUsername = findUser
-            
-            user = authenticate(username=caseSensitiveUsername, password=password)
-            
-        if user is not None:
-            self.request.session['username'] = user.username
-            self.request.session['fullname'] = user.first_name.title() + ' ' + user.last_name.title()
-
-            msg = {
-		        'username': user.username,
-                'error': False,
-                'errorPW': False,
-                'errorUsername': False,
-                'msgPW': '',
-                'msgUsername': "",
-                'msg': "",
-            }
-            return Response(msg, status=status.HTTP_200_OK)
+                pass
         else:
-            msg = {
-                'error': True,
-                'errorPW': True,
-                'errorUsername': False,
-                'msgPW': 'Incorrect password',
-                'msgUsername': "",
-                'msg': "no profile",
-            }
-            return Response(msg, status=status.HTTP_200_OK)
+            # Authenticate by username (case-insensitive)
+            user = authenticate(username=email_input, password=password)
+            if not user:
+                try:
+                    user_by_name = User.objects.get(username__iexact=email_input)
+                    user = authenticate(username=user_by_name.username, password=password)
+                except User.DoesNotExist:
+                    pass
+
+        if user:
+            self.request.session['username'] = user.username
+            self.request.session['fullname'] = f"{user.first_name} {user.last_name}"
+            return Response({
+                'username': user.username,
+                'errors': {}
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                'errors': {'password': 'Invalid username or password'}
+            }, status=status.HTTP_200_OK)
