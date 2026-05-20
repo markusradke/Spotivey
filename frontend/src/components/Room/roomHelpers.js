@@ -152,25 +152,36 @@ export function buildSteps(settings) {
         .map(({ index }) => ({ index, label: PAGE_TITLES_BY_INDEX[index] }));
 }
 
-export function buildFollowupConfig(rawSettings) {
-    if (!rawSettings) {
+export function buildFollowupConfig(rawSettings, paramsObjectSession) {
+    if (!rawSettings || rawSettings.end_options.option === 'plain' || rawSettings.end_options.option === 'wrapped') {
         return {
             endUrl: null,
             questionTypeCheck: null,
             dataFieldsCheck: null,
             selectedOption: null,
-            passLang: false,
         };
     }
 
-    const endUrl = rawSettings.secondEndUrl !== "" ? rawSettings.secondEndUrl : null;
+    if (rawSettings.end_options.option === 'conditional_end_url') {
+        const mandatory_url_param = rawSettings.end_options.conditional_end_url_parameter;
+        if (!paramsObjectSession?.some(([key]) => key === mandatory_url_param)) {
+            return {
+                endUrl: null,
+                questionTypeCheck: null,
+                dataFieldsCheck: null,
+                selectedOption: null,
+            };
+        }
+    }
+
+
+    const endUrl = rawSettings.end_options.end_url !== "" ? rawSettings.end_options.end_url : null;
 
     return {
         endUrl,
         questionTypeCheck: endUrl ? rawSettings.questionTypeCheck : null,
         dataFieldsCheck: endUrl ? rawSettings.dataFieldsCheck : null,
         selectedOption: endUrl ? rawSettings.selectedOption : null,
-        passLang: endUrl ? rawSettings.passLang : false,
     };
 }
 

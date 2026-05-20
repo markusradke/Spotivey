@@ -12,26 +12,29 @@ export function buildFollowupSurveyUrl({
         return null;
     }
 
-    const paramsURL = followup.selectedOption
-        ? getGetParams(
-            followup.questionTypeCheck,
-            followup.selectedOption,
-            followup.dataFieldsCheck,
-            ID_NAME,
-            ID_TRACKS,
-            ID_ARTISTS,
-            ID_PLAYLISTS,
-            dataAll,
-            followup.endUrl,
-            checkArray
-        )
+    // TODO: Get all the data for follow up survey
+    // const paramsURL = followup.selectedOption
+    //     ? getGetParams(
+    //         followup.questionTypeCheck,
+    //         followup.selectedOption,
+    //         followup.dataFieldsCheck,
+    //         ID_NAME,
+    //         ID_TRACKS,
+    //         ID_ARTISTS,
+    //         ID_PLAYLISTS,
+    //         dataAll,
+    //         followup.endUrl,
+    //         checkArray
+    //     )
+    //     : "";
+
+    const additionalURLParams = paramsObjectSession?.filter(
+        ([key]) => key !== "participant" && key !== "surveyID"
+    ) || [];
+    const additionalURLParamsString = additionalURLParams.length
+        ? "&" + additionalURLParams.map((item) => item.join("=")).join("&")
         : "";
 
-    const allParams = paramsObjectSession?.length
-        ? "&" + paramsObjectSession.map((item) => item.join("=")).join("&")
-        : "";
-
-    return !followup.passLang
-        ? [followup.endUrl, paramsURL, "&partID=", participant].join("")
-        : [followup.endUrl, paramsURL, "&partID=", participant, allParams].join("");
+    // always adds partID and language for LimeSurvey integration
+    return [followup.endUrl, "?partID=", participant, additionalURLParamsString].join("");
 }

@@ -84,8 +84,8 @@ export default function Room(props) {
             mapConfirmTextToIndices(rawSettings.confirmTextOnlyCheck, settings)
         );
 
-        setFollowup(buildFollowupConfig(rawSettings));
-    }, [rawSettings, settings]);
+        setFollowup(buildFollowupConfig(rawSettings, props.paramsObjectSession));
+    }, [rawSettings, settings, props.paramsObjectSession]);
 
     useEffect(() => {
         if (!settings) return;

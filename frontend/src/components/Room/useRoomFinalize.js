@@ -30,7 +30,7 @@ export function useRoomFinalize({
         return (steps?.length ?? 0) === 0;
     }, [welcomePageOK, isAuthenticated, settings, steps]);
 
-    const maybeOpenFollowupSurvey = useCallback(async () => {
+    const navigateToEndpageOrEndURL = useCallback(async () => {
         const dataAll = DATA_TYPE_ORDER.map((type) => spotifyData?.[type] ?? []);
         const url = buildFollowupSurveyUrl({
             followup,
@@ -41,12 +41,9 @@ export function useRoomFinalize({
         });
 
         if (!url) {
-            return;
-        }
-
-        const win = window.open(url, "_blank");
-        if (win) {
-            win.focus();
+            navigate(`/end-room/${language}`);
+        } else {
+            navigate(url);
         }
     }, [followup, participant, paramsObjectSession, spotifyData, checkArray]);
 
@@ -67,8 +64,7 @@ export function useRoomFinalize({
 
             await Promise.all(savePromises.filter(Boolean));
             await finalizeParticipantData();
-            await maybeOpenFollowupSurvey();
-            navigate(`/end-room/${language}`);
+            await navigateToEndpageOrEndURL();
         } catch (error) {
             console.error("Error in confirmation process:", error);
             navigate("/error");
@@ -81,7 +77,7 @@ export function useRoomFinalize({
         surveyID,
         language,
         navigate,
-        maybeOpenFollowupSurvey,
+        navigateToEndpageOrEndURL,
     ]);
 
     useEffect(() => {
@@ -93,8 +89,7 @@ export function useRoomFinalize({
         async function finalize() {
             try {
                 await finalizeParticipantData();
-                await maybeOpenFollowupSurvey();
-                navigate(`/end-room/${language}`);
+                await navigateToEndpageOrEndURL();
             } catch (error) {
                 console.error("Finalize failed (no confirmation):", error);
                 navigate("/error");
@@ -102,7 +97,7 @@ export function useRoomFinalize({
         }
 
         finalize();
-    }, [shouldFinalizeWithoutConfirmation, language, navigate, maybeOpenFollowupSurvey]);
+    }, [shouldFinalizeWithoutConfirmation, language, navigate, navigateToEndpageOrEndURL]);
 
     return { handleSaveAndFinalize };
 }
