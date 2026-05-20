@@ -35,12 +35,9 @@ export default function LoginPage() {
       if (!ok || !data) {
         return;
       }
-      if (data.error === true) {
-        setErrorUsername(data.errorUsername)
-        setErrorPW(data.errorPW)
-
-        setHelperTextUsername(data.msgUsername)
-        setHelperTextPW(data.msgPW)
+      if (data.errors && Object.keys(data.errors).length > 0) {
+        setErrorPW(true)
+        setHelperTextPW(data.errors.password || "Invalid credentials")
         return;
       }
       navigate("/user");
@@ -108,6 +105,11 @@ export default function LoginPage() {
                 <div className={'password-forgot-container'}>
                   <Link to="/sign-up" variant="body2">
                     {"Don't have an account? Sign Up"}
+                  </Link>
+                </div>
+                <div className={'password-forgot-container'} style={{ marginTop: '8px' }}>
+                  <Link to="mailto:marc.voigt@tu-berlin.de" variant="body2">
+                    {"Forgot password? Contact the administrator."}
                   </Link>
                 </div>
               </div>
