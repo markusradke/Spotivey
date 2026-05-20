@@ -241,7 +241,7 @@ class SpotiveyBackendJourneyTests(TestCase):
                 "Top Artists (Long Term)",
                 "Followed Artists",
                 "Current Playlists",
-                "User Profiles",
+                "Participant Profiles",
                 "Saved Shows",
                 "Saved Episodes",
             }

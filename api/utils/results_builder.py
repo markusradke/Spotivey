@@ -45,8 +45,8 @@ def _build_profile_row(profile, idx):
         'no': idx,
         'participant': profile.participant,
         'country': profile.country or '',
-        'followers': profile.followers if profile.followers is not None else 0,
-        'product': profile.product or '',
+        'followers': profile.followers if profile.followers is not None else '-',
+        'product': profile.product or '-',
     }
 
 
@@ -144,7 +144,7 @@ def _build_profile_results(survey_settings):
     
     return {
         'id': 'profiles',
-        'title': 'User Profiles',
+        'title': 'Participant Profiles',
         'type': 'Profile',
         'data': rows,
         'participantCount': len(participants_set),
