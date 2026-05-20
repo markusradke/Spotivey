@@ -77,7 +77,7 @@ export default function ConfirmStepper({
         <React.Fragment>
             {!allCompleted && (
                 <React.Fragment>
-                    <div style={{ padding: "60px 0 0" }}>
+                    <Box sx={{ pt: { xs: 2, sm: 4, md: 7.5 } }}>
                         <div className="render-result-explanation-container">
                             <div className="render-result-explanation-inner">
                                 <body1 className="render-result-explanation">
@@ -96,7 +96,7 @@ export default function ConfirmStepper({
                                 </Box>
                             </div>
                         </div>
-                    </div>
+                    </Box>
 
                     <Stepper activeStep={activeStep}>
                         {steps.map((step, index) => (
