@@ -1,5 +1,5 @@
 import * as React from "react";
-import headerSettings from '../Header/headerSettings';
+import Header from '../Header/Header';
 import { useState, useEffect } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -675,15 +675,7 @@ export default function UserTutorialPage(props) {
 
   return (
     <React.Fragment>
-      <div class="setting-header">
-        <header class="setting-header-inner">
-          <div class="setting-header-content-container">
-            <div class="setting-header-content-container-inner">
-              {headerSettings()}
-            </div>
-          </div>
-        </header>
-      </div>
+      <Header />
       <div className="tutorial">
         <div className="tutorial-content-container">
           <div>

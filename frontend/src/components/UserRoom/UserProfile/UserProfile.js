@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { Typography, Avatar, TextField, Button, Box, Alert } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import { getUserProfile, updateUserProfile, checkEmailAvailability } from "../../../api/surveyApi";
-import HeaderSettings from "../Header/headerSettings";
+import Header from "../Header/Header";
 
 export default function UserProfilePage() {
     const [firstName, setFirstName] = useState('');
@@ -122,15 +122,7 @@ export default function UserProfilePage() {
 
     return (
         <React.Fragment>
-            <div class="setting-header">
-                <header class="setting-header-inner">
-                    <div class="setting-header-content-container">
-                        <div class="setting-header-content-container-inner">
-                            {HeaderSettings()}
-                        </div>
-                    </div>
-                </header>
-            </div>
+            <Header />
             <div className='setting-page-main'>
                 <div className="login-container-outer">
                     <div className={'login-container'}>

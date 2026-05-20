@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { IconButton, Button } from "@mui/material";
-import headerSettings from '../Header/headerSettings';
+import Header from '../Header/Header';
 import TextFieldMain from "../NewSettingsFirst/SettingsCard/Content/Components/TextFieldMain";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
@@ -62,15 +62,7 @@ export default function SettingsPageSecond() {
 
     return (
         <React.Fragment>
-            <div class="setting-header">
-                <header class="setting-header-inner">
-                    <div class="setting-header-content-container">
-                        <div class="setting-header-content-container-inner">
-                            {headerSettings()}
-                        </div>
-                    </div>
-                </header>
-            </div>
+            <Header />
             <div class='setting-page-main'>
                 <div class="setting-navigation">
                     <div class="navbar-setting">

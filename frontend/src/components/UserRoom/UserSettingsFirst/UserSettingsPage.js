@@ -1,5 +1,5 @@
 import * as React from "react";
-import headerSettings from '../Header/headerSettings';
+import Header from '../Header/Header';
 import { useNavigate } from "react-router";
 import { useState, useEffect } from 'react';
 import SettingsContent from './SettingsContent';
@@ -27,15 +27,7 @@ export default function UserSettingsPage(props) {
 
     return (
         <React.Fragment>
-            <div class="setting-header">
-                <header class="setting-header-inner">
-                    <div class="setting-header-content-container">
-                        <div class="setting-header-content-container-inner">
-                            {headerSettings()}
-                        </div>
-                    </div>
-                </header>
-            </div>
+            <Header />
             <div class='setting-page-main'>
                 <div class="setting-content-main">
                     <div class='setting-content-wrapper'>

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router";
-import headerSettings from '../Header/headerSettings';
+import Header from '../Header/Header';
 import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -394,15 +394,7 @@ export default function SettingsPageSecondTwo(props) {
 
     return (
         <React.Fragment>
-            <div class="setting-header">
-                <header class="setting-header-inner">
-                    <div class="setting-header-content-container">
-                        <div class="setting-header-content-container-inner">
-                            {headerSettings()}
-                        </div>
-                    </div>
-                </header>
-            </div>
+            <Header />
             <div class='setting-page-main'>
                 <div class="setting-navigation">
                     <div class="navbar-setting">
