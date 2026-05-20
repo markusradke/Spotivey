@@ -129,7 +129,7 @@ export default function Room(props) {
     );
 
     if (settingsError) {
-        navigate("/error/generic");
+        navigate("/error");
         return null;
     }
 

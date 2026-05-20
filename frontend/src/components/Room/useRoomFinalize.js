@@ -71,7 +71,7 @@ export function useRoomFinalize({
             navigate(`/end-room/${language}`);
         } catch (error) {
             console.error("Error in confirmation process:", error);
-            navigate("/error/generic");
+            navigate("/error");
         }
     }, [
         spotifyData,
@@ -97,7 +97,7 @@ export function useRoomFinalize({
                 navigate(`/end-room/${language}`);
             } catch (error) {
                 console.error("Finalize failed (no confirmation):", error);
-                navigate("/error/generic");
+                navigate("/error");
             }
         }
 

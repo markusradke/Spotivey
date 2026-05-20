@@ -9,7 +9,6 @@ import {
   Routes,
   useNavigate
 } from "react-router-dom";
-import CreateRoom from './CreateRoom.js';
 import EndPage from "./EndRoom/EndPage";
 import ErrorPage from "./ErrorPages/ErrorPage";
 import PrivacyComponent from "./Privacy/PrivacyComponent";
@@ -67,6 +66,20 @@ function AppRoutes() {
     return result;
   }
 
+  function TimeoutRedirect() {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        navigate('/error', { replace: true });
+      }, 2000); // 2 second timeout
+
+      return () => clearTimeout(timer);
+    }, [navigate]);
+
+    return null; // Or show a loading spinner if you prefer
+  }
+
   useEffect(() => {
     const url = new URL(window.location.href)
     const surveyID = url.searchParams.get('surveyID')
@@ -99,15 +112,7 @@ function AppRoutes() {
       })
         .then((response) => {
           if (!response.ok) {
-            if (response.status === 404) {
-              navigate("/error/survey-not-found");
-              return null;
-            }
-            if (response.status === 400) {
-              navigate("/error/missing-params");
-              return null;
-            }
-            navigate("/error/generic");
+            navigate("/error");
             return null;
           }
           return response.json();
@@ -117,7 +122,7 @@ function AppRoutes() {
         })
         .catch((error) => {
           console.error("Session initialization failed:", error);
-          navigate("/error/network-error");
+          navigate("/error");
         });
     }
   }, [createRoom, navigate]);
@@ -149,7 +154,7 @@ function AppRoutes() {
             path="/"
             element={!roomCode && !surveyID && !participant && !language ?
               redirectCheck ? <Navigate to={'/login'} replace /> :
-                <CreateRoom /> :
+                <TimeoutRedirect /> :
               <Navigate to={'/room'} replace />
             }
           />
@@ -185,7 +190,7 @@ function AppRoutes() {
           <Route path='/end-room/:lang' element={<EndPage />} />
           <Route path={'/privacy'} element={<PrivacyComponent />} />
           <Route path={'/version'} element={<Version />} />
-          <Route path="/error/:errorType" element={<ErrorPage />} />
+          <Route path="/error" element={<ErrorPage />} />
         </Routes>
       </Suspense>
       <div className="footer-container">

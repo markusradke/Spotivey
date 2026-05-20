@@ -1,17 +1,18 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { errorMessages } from "./ErrorMessages";
 import Button from '@mui/material/Button';
 
 export default function ErrorPage() {
     const { errorType } = useParams();
     const navigate = useNavigate();
 
-    const currentError = errorMessages[errorType] || errorMessages['generic'];
+    const errorMessages = {
+        titleEN: 'Something Went Wrong',
+        titleDE: 'Etwas Ist Schiefgelaufen',
+        bodyEN: 'An unexpected error occurred. Please retry using your original survey link or contact your study administrator for assistance. If you are a study administrator, please go to the login page.',
+        bodyDE: 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut mit Ihrem ursprünglichen Umfragelink oder wenden Sie sich an Ihren Studienadministrator. Wenn Sie ein Studienadministrator sind, gehen Sie bitte zur Login-Seite.',
+    };
 
-    const handleRetry = () => {
-        window.location.reload();
-    }
 
     const handleBackToLogin = () => {
         navigate('/login');
@@ -38,54 +39,32 @@ export default function ErrorPage() {
                             <div className="room-two-content-outer">
                                 <div className='card-two-content-inner-container'>
                                     <div className='card-content'>
-                                        <h1 className='settings-title'>
-                                            {currentError.titleEN}
+                                        <h1 className='settings-title' style={{ fontSize: '36pt' }}>
+                                            {errorMessages.titleEN}
                                         </h1>
-                                        <h1 className='settings-title' style={{ marginTop: '0.5rem', opacity: 0.6 }}>
-                                            {currentError.titleDE}
+                                        <h1 className='settings-title' style={{ marginTop: '0.5rem', opacity: 0.6, fontSize: '36pt' }}>
+                                            {errorMessages.titleDE}
                                         </h1>
                                         <hr style={{ margin: '2rem 0', opacity: 0.3 }} />
 
-                                        <body1 classname='endPage-Stepper-body'>
-                                            {currentError.bodyEN}
-                                        </body1>
+                                        <p>
+                                            {errorMessages.bodyEN}
+                                        </p>
 
                                         <br /><br />
 
-                                        <body1 className='endPage-Stepper-body' style={{ opacity: 0.5 }}>
-                                            {currentError.bodyDE}
-                                        </body1>
+                                        <p style={{ opacity: 0.5 }}>
+                                            {errorMessages.bodyDE}
+                                        </p>
 
                                         <div style={{ marginTop: '3rem', display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                                            {currentError.showRetry && (
-                                                <Button
-                                                    variant='contained'
-                                                    onClick={handleRetry}
-                                                    style={{ minWidth: '150px' }}
-                                                >
-                                                    Try Again / Erneut versuchen
-                                                </Button>
-                                            )}
-
-                                            {currentError.showLogin && (
-                                                <Button
-                                                    variant='outlined'
-                                                    onClick={handleBackToLogin}
-                                                    style={{ minWidth: '150px' }}
-                                                >
-                                                    Back to Login / Zurück zum Login
-                                                </Button>
-                                            )}
-
-                                            {currentError.showContact && ( //TODO: NEEDS TO BE UPDATED LATER WITH ACTUAL CONTACT METHOD
-                                                <Button
-                                                    variant='outlined'
-                                                    onClick={() => window.open('mailto:contact@spotivey.com', '_blank')}
-                                                    style={{ minWidth: '150px' }}
-                                                >
-                                                    Contact Support / Support kontaktieren
-                                                </Button>
-                                            )}
+                                            <Button
+                                                variant='outlined'
+                                                onClick={handleBackToLogin}
+                                                style={{ minWidth: '150px' }}
+                                            >
+                                                Go to Login / Gehe zum Login
+                                            </Button>
                                         </div>
                                     </div>
                                 </div>
