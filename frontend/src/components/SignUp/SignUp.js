@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 import { createSettingsUser, checkUsernameAvailability, checkEmailAvailability } from "../../api/surveyApi";
 import FooterLinks from "../Footer/FooterLinks";
+import AllLogos from "../AllLogos";
+
 
 export default function SignUpPage() {
     const [vorname, setVorname] = useState('');
@@ -56,17 +58,7 @@ export default function SignUpPage() {
 
     return (
         <React.Fragment>
-            <div className="setting-header">
-                <header className="setting-header-inner">
-                    <div className="setting-header-content-container">
-                        <div className="setting-header-content-container-inner">
-                            <div className="logo-header">
-                                <img src="../../../static/images/SpotiveyLogo2_Schrift.svg" width="100%" height="100%" />
-                            </div>
-                        </div>
-                    </div>
-                </header>
-            </div>
+            <AllLogos />
             <div className='setting-page-main'>
                 <div className="login-container-outer">
                     <div className={'login-container'}>

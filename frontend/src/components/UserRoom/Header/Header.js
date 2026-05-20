@@ -111,7 +111,7 @@ export default function Header() {
                         <img
                             src="../../../static/images/SpotiveyLogo2_Schrift.svg"
                             alt="Spotivey"
-                            style={{ height: "60px", width: "auto" }}
+                            style={{ height: "48px", width: "auto" }}
                             onClick={() => navigate("/user")}
                         />
                     </Box>
@@ -195,7 +195,7 @@ export default function Header() {
                         <img
                             src="../../../static/images/SpotiveyLogo2_Schrift.svg"
                             alt="Spotivey"
-                            style={{ height: "40px", width: "auto" }}
+                            style={{ height: "18px", width: "auto" }}
                             onClick={() => navigate("/user")}
                         />
                     </Box>

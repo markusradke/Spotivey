@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import { Link } from "react-router-dom";
 import { loginSettingsUser } from "../../api/surveyApi";
 import FooterLinks from "../Footer/FooterLinks";
+import AllLogos from "../AllLogos";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -122,23 +123,7 @@ export default function LoginPage() {
   }
   return (
     <React.Fragment>
-      <div class="setting-header">
-        <header class="setting-header-inner">
-          <div class="setting-header-content-container">
-            <div class="setting-header-content-container-inner">
-              <div className="logo-header">
-                <span class="logo-tu-berlin">
-                  {/* <a href='https://www.ak.tu-berlin.de/menue/fachgebiet_audiokommunikation' target={'_blank'}>
-                                <img src="../../static/images/TU-Berlin-Logo.svg" width="81.816" height="60" />
-                                <img src="../../static/images/logo_grau-schwarz.png" width="61.812" height="60" />
-                              </a> */}
-                  <img src="../../../static/images/SpotiveyLogo2_Schrift.svg" width="100%" height="100%" />
-                </span>
-              </div>
-            </div>
-          </div>
-        </header>
-      </div>
+      <AllLogos />
       <div class='setting-page-main'>
         {renderLoginPage()}
       </div>
