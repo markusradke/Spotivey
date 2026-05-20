@@ -221,3 +221,15 @@ export async function updateRetrievalSettings(payload) {
   const data = await response.json();
   return { ok: response.ok, status: response.status, data };
 }
+
+export async function getUserProfile() {
+  return getJson("/api/get-user-profile", true);
+}
+
+export async function updateUserProfile(payload) {
+  const response = await fetch(
+    "/api/update-user-profile",
+    buildPostOptions(payload, true)
+  );
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
+}

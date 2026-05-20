@@ -1,5 +1,5 @@
 # Auth views
-from .user_session import CreateSettingsUser, LoginSettingsUser, LogoutUser, GetUserSession, CheckUsernameAvailability, CheckEmailAvailability
+from .user_session import CreateSettingsUser, LoginSettingsUser, LogoutUser, GetUserSession, CheckUsernameAvailability, CheckEmailAvailability, GetUserProfile, UpdateUserProfile
 
 # Participant session views
 from .participant_session import InitParticipantSession, AcceptPrivacyPolicy, GetParticipantSession, FinalizeParticipantData
@@ -38,6 +38,8 @@ __all__ = [
     'GetUserSession',
     'CheckUsernameAvailability',
     'CheckEmailAvailability',
+    'GetUserProfile',
+    'UpdateUserProfile',
     # Participants
     'InitParticipantSession',
     'AcceptPrivacyPolicy',

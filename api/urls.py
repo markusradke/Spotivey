@@ -3,7 +3,8 @@ from django.urls import path
 from .views import (
     # Auth views
     CreateSettingsUser, LoginSettingsUser, LogoutUser, GetUserSession,
-    CheckUsernameAvailability, CheckEmailAvailability,
+    CheckUsernameAvailability, CheckEmailAvailability, GetUserProfile,
+    UpdateUserProfile,
     # Participant views
     InitParticipantSession, AcceptPrivacyPolicy, GetParticipantSession, FinalizeParticipantData,
     # Settings views
@@ -32,6 +33,8 @@ urlpatterns = [
     path('login-settings-user', LoginSettingsUser.as_view()),
     path('check-username-availability', CheckUsernameAvailability.as_view()),
     path('check-email-availability', CheckEmailAvailability.as_view()),
+    path('get-user-profile', GetUserProfile.as_view()),
+    path('update-user-profile', UpdateUserProfile.as_view()),
     
     # Retrieval settings management
     path('create-settings', CreateSettings.as_view()),
