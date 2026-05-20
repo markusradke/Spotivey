@@ -12,7 +12,6 @@ import {
 import EndPage from "./EndRoom/EndPage";
 import ErrorPage from "./ErrorPages/ErrorPage";
 import PrivacyComponent from "./Privacy/PrivacyComponent";
-import SpotiveyFooter from "./Footer/footerSpotivey";
 import Version from "./Version/version";
 
 const SettingsPage = lazy(() => import("./UserRoom/NewSettingsFirst/settings"));
@@ -199,9 +198,6 @@ function AppRoutes() {
           <Route path="/error" element={<ErrorPage />} />
         </Routes>
       </Suspense>
-      <div className="footer-container">
-        <SpotiveyFooter participant={participant} />
-      </div>
     </ParticipantContext.Provider>
   );
 }

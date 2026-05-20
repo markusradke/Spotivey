@@ -5,6 +5,7 @@ import { Typography, Avatar, TextField, Button, Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 import { createSettingsUser, checkUsernameAvailability, checkEmailAvailability } from "../../api/surveyApi";
+import FooterLinks from "../Footer/FooterLinks";
 
 export default function SignUpPage() {
     const [vorname, setVorname] = useState('');
@@ -192,6 +193,7 @@ export default function SignUpPage() {
                     </div>
                 </div>
             </div>
+            <FooterLinks variant="default" />
         </React.Fragment>
     );
 }

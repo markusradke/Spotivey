@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Link } from "react-router-dom";
 import { loginSettingsUser } from "../../api/surveyApi";
+import FooterLinks from "../Footer/FooterLinks";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -141,6 +142,7 @@ export default function LoginPage() {
       <div class='setting-page-main'>
         {renderLoginPage()}
       </div>
+      <FooterLinks variant="default" />
     </React.Fragment>
   );
 }
