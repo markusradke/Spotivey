@@ -38,6 +38,7 @@ const UserTutorialPage = lazy(
 const UserResultPage = lazy(
   () => import("./UserRoom/UserResult/UserResultPage")
 );
+const WrappedPage = lazy(() => import("./Wrapped/WrappedPage"));
 
 const LoginPage = lazy(() => import("./Login/SignIn"));
 const SignUpPage = lazy(() => import("./SignUp/SignUp"));
@@ -188,6 +189,7 @@ function AppRoutes() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
           <Route path='/end-room/:lang' element={<EndPage />} />
+          <Route path="/user-wrapped/:lang" element={<WrappedPage />} />
           <Route path={'/privacy'} element={<PrivacyComponent />} />
           <Route path={'/version'} element={<Version />} />
           <Route path="/error" element={<ErrorPage />} />

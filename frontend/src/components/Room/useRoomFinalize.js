@@ -5,7 +5,7 @@ import { ParticipantContext } from "../../context/ParticipantContext";
 import { DATA_TYPE_ORDER } from "../../constants/dataTypes";
 import { finalizeParticipantData, saveCheckData } from "../../api/surveyApi";
 
-import { buildFollowupSurveyUrl } from "./followupSurvey";
+import { getCompleteEndURL } from "./followupSurvey";
 import { partitionConfirmedRejected } from "./roomHelpers";
 
 export function useRoomFinalize({
@@ -32,19 +32,14 @@ export function useRoomFinalize({
 
     const navigateToEndpageOrEndURL = useCallback(async () => {
         const dataAll = DATA_TYPE_ORDER.map((type) => spotifyData?.[type] ?? []);
-        const url = buildFollowupSurveyUrl({
+        const url = getCompleteEndURL({
             followup,
             participant,
             paramsObjectSession,
             dataAll,
             checkArray,
         });
-
-        if (!url) {
-            navigate(`/end-room/${language}`);
-        } else {
-            navigate(url);
-        }
+        navigate(url ?? `/end-room/${language}`); // including fallback
     }, [followup, participant, paramsObjectSession, spotifyData, checkArray]);
 
     const handleSaveAndFinalize = useCallback(async () => {

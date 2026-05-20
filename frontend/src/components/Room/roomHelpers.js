@@ -152,25 +152,32 @@ export function buildSteps(settings) {
         .map(({ index }) => ({ index, label: PAGE_TITLES_BY_INDEX[index] }));
 }
 
-export function buildFollowupConfig(rawSettings, paramsObjectSession) {
-    if (!rawSettings || rawSettings.end_options.option === 'plain' || rawSettings.end_options.option === 'wrapped') {
+export function getEndConfig(rawSettings, paramsObjectSession, language) {
+    if (!rawSettings || rawSettings.end_options.option === 'plain') {
         return {
-            endUrl: null,
-            questionTypeCheck: null,
-            dataFieldsCheck: null,
-            selectedOption: null,
+            endUrl: '/end-room' + (language ? `/${language}` : ''),
+        };
+    }
+
+    if (rawSettings.end_options.option === 'wrapped') {
+        return {
+            endUrl: '/user-wrapped' + (language ? `/${language}` : ''),
         };
     }
 
     if (rawSettings.end_options.option === 'conditional_end_url') {
         const mandatory_url_param = rawSettings.end_options.conditional_end_url_parameter;
         if (!paramsObjectSession?.some(([key]) => key === mandatory_url_param)) {
-            return {
-                endUrl: null,
-                questionTypeCheck: null,
-                dataFieldsCheck: null,
-                selectedOption: null,
-            };
+            if (rawSettings.end_options.conditional_end_url_option === 'wrapped') {
+                return {
+                    endUrl: '/user-wrapped' + (language ? `/${language}` : '')
+                };
+            }
+            else {
+                return {
+                    endUrl: '/end-room' + (language ? `/${language}` : ''),
+                };
+            }
         }
     }
 
@@ -178,10 +185,10 @@ export function buildFollowupConfig(rawSettings, paramsObjectSession) {
     const endUrl = rawSettings.end_options.end_url !== "" ? rawSettings.end_options.end_url : null;
 
     return {
-        endUrl,
-        questionTypeCheck: endUrl ? rawSettings.questionTypeCheck : null,
-        dataFieldsCheck: endUrl ? rawSettings.dataFieldsCheck : null,
-        selectedOption: endUrl ? rawSettings.selectedOption : null,
+        endUrl: endUrl,
+        // questionTypeCheck: endUrl ? rawSettings.questionTypeCheck : null,
+        // dataFieldsCheck: endUrl ? rawSettings.dataFieldsCheck : null,
+        // selectedOption: endUrl ? rawSettings.selectedOption : null,
     };
 }
 

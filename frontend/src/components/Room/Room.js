@@ -15,7 +15,7 @@ import RoomHeader from "./RoomHeader";
 import RoomStepContent from "./RoomStepContent";
 import { useRoomFinalize } from "./useRoomFinalize";
 import {
-    buildFollowupConfig,
+    getEndConfig,
     buildInitialCheckArray,
     buildSteps,
     buildWelcomeSettings,
@@ -84,8 +84,8 @@ export default function Room(props) {
             mapConfirmTextToIndices(rawSettings.confirmTextOnlyCheck, settings)
         );
 
-        setFollowup(buildFollowupConfig(rawSettings, props.paramsObjectSession));
-    }, [rawSettings, settings, props.paramsObjectSession]);
+        setFollowup(getEndConfig(rawSettings, props.paramsObjectSession, language));
+    }, [rawSettings, settings, props.paramsObjectSession, language]);
 
     useEffect(() => {
         if (!settings) return;
