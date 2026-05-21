@@ -15,24 +15,19 @@
 }
 
 @font-face {
-  font-family:'Federo';
-  font-weight: 400;
-  src: local('Federo'), local('Federo-Regular'),
-  url(/Fonts/Federo-Regular.ttf) format('truetype'),
-}
-
-/* @font-face {
-  font-family:'Federo';
-  font-weight: 400;
-  src: local('KumbhSans'), local('KumbhSans-Regular'),
-  url(/Fonts/KumbhSans-VariableFont_YOPQ,wght.ttf) format('truetype'),
-} */
-
-@font-face {
   font-family: 'Kumbh Sans';
   src: local('Kumbh Sans'), local('KumbhSans-Regular'),
-       url('/Fonts/KumbhSans-VariableFont_YOPQ,wght.ttf') format('truetype');
+       url('/static/Fonts/KumbhSans-VariableFont.ttf') format('truetype');
   font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Federo';
+  font-weight: 400;
+  src: local('Federo'), local('Federo-Regular'),
+       url('/static/Fonts/Federo-Regular.ttf') format('truetype');
   font-style: normal;
   font-display: swap;
 }
