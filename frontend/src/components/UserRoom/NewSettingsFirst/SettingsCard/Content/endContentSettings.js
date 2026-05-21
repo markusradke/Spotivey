@@ -4,6 +4,7 @@ import { Button, MenuItem, Select, TextField, Checkbox } from "@mui/material";
 export function EndContentSettings({
     endOption, setEndOption,
     endUrl, setEndUrl,
+    shareSurveyUrl, setShareSurveyUrl,
     conditionalEndURLParameter, setConditionalEndURLParameter,
     conditionalEndURLOption, setConditionalEndURLOption,
     savedTracksFollowUp, setSavedTracksFollowUp,
@@ -235,6 +236,20 @@ export function EndContentSettings({
                     <MenuItem value="end_url">Redirect to URL</MenuItem>
                     <MenuItem value="conditional_end_url">Conditional Redirect to URL</MenuItem>
                 </Select>
+            </div>
+
+            <div
+                className="end-url-input-container"
+                style={{ marginTop: '0.75rem' }}
+            >
+                <TextField
+                    label="Share Survey URL (Optional)"
+                    type="url"
+                    value={shareSurveyUrl}
+                    onChange={(e) => setShareSurveyUrl(e.target.value)}
+                    placeholder="https://example.com/survey"
+                    fullWidth
+                />
             </div>
             {endOption !== "end_url" ? (
                 <div

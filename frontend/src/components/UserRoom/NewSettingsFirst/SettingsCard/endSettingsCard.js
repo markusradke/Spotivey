@@ -4,6 +4,7 @@ import { EndContentSettings } from "./Content/endContentSettings";
 export function endSettingsCard(
     endOption, setEndOption,
     endUrl, setEndUrl,
+    shareSurveyUrl, setShareSurveyUrl,
     collectEmails, setCollectEmails,
     emailTextEn, setEmailTextEn,
     emailTextDe, setEmailTextDe,
@@ -47,6 +48,8 @@ export function endSettingsCard(
                         setEndOption={setEndOption}
                         endUrl={endUrl}
                         setEndUrl={setEndUrl}
+                        shareSurveyUrl={shareSurveyUrl}
+                        setShareSurveyUrl={setShareSurveyUrl}
                         conditionalEndURLParameter={conditionalEndURLParameter}
                         setConditionalEndURLParameter={setConditionalEndURLParameter}
                         conditionalEndURLOption={conditionalEndURLOption}

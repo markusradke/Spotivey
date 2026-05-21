@@ -59,6 +59,7 @@ EXPLICIT_SETTING_FIELDS: tuple[str, ...] = (
     "saved_episodes_followup",
     "end_option",
     "end_url",
+    "share_survey_url",
     "conditional_end_url_parameter",
     "conditional_end_url_option",
     "collect_emails",

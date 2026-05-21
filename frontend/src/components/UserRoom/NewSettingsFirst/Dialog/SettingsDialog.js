@@ -134,6 +134,7 @@ export default function SettingsDialog(props) {
 
             end_option: endSettings.endOption,
             end_url: endSettings.endURL,
+            share_survey_url: endSettings.shareSurveyUrl,
             conditional_end_url_parameter: endSettings.conditionalEndURLParameter,
             conditional_end_url_option: endSettings.conditionalEndURLOption,
             collect_emails: endSettings.collectEmails,

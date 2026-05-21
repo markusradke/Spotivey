@@ -90,6 +90,7 @@ def build_retrieval_settings_payload(setting: RetrievalSetting) -> dict[str, Any
         'end_options': {
             'option': setting.end_option,
             'end_url': setting.end_url,
+            'share_survey_url': setting.share_survey_url,
             'conditional_end_url_parameter': setting.conditional_end_url_parameter,
             'conditional_end_url_option': setting.conditional_end_url_option,
             'collect_emails': setting.collect_emails,

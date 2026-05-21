@@ -98,6 +98,7 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie die 
     
     end_option = models.CharField(max_length=20, choices = END_CHOICES, default="plain")
     end_url = models.URLField(max_length=200, default='', blank=True)
+    share_survey_url = models.URLField(max_length=500, default='', blank=True)
     conditional_end_url_parameter = models.CharField(max_length=100, default='', blank=True)
     conditional_end_url_option = models.CharField(max_length=200, choices = CONDITIONAL_CHOICES, default='plain')
     collect_emails = models.BooleanField(default=False)

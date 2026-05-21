@@ -107,6 +107,7 @@ export default function SettingsPage(props) {
   const [stateTextCP, setStateTextCP] = useState('')
 
   const [endURL, setEndURL] = useState('')
+  const [shareSurveyUrl, setShareSurveyUrl] = useState('')
   const [endOption, setEndOption] = useState('plain')
   const [conditionalEndURLParameter, setConditionalEndURLParameter] = useState('')
   const [conditionalEndURLOption, setConditionalEndURLOption] = useState('plain')
@@ -127,6 +128,7 @@ export default function SettingsPage(props) {
   const [emailTextDe, setEmailTextDe] = useState("Wenn Sie an der Verlosung teilnehmen möchten, geben Sie bitte Ihre E-Mail-Adresse unten ein. Ihre E-Mail-Adresse wird nur für die Verlosung verwendet, nicht an Dritte weitergegeben und sofort nach Abschluss der Verlosung gelöscht.")
   const [endSettings, setEndSettings] = useState({
     endURL: endURL,
+    shareSurveyUrl: shareSurveyUrl,
     endOption: endOption,
     conditionalEndURLParameter: conditionalEndURLParameter,
     conditionalEndURLOption: conditionalEndURLOption,
@@ -159,6 +161,7 @@ export default function SettingsPage(props) {
   useEffect(() => {
     setEndSettings({
       endURL: endURL,
+      shareSurveyUrl: shareSurveyUrl,
       endOption: endOption,
       conditionalEndURLParameter: conditionalEndURLParameter,
       conditionalEndURLOption: conditionalEndURLOption,
@@ -178,7 +181,7 @@ export default function SettingsPage(props) {
       emailTextEn: emailTextEn,
       emailTextDe: emailTextDe
     });
-  }, [endURL, endOption, conditionalEndURLParameter, conditionalEndURLOption, savedTracksFollowUp, topTracksShortTermFollowUp, topTracksMediumTermFollowUp, topTracksLongTermFollowUp,
+  }, [endURL, shareSurveyUrl, endOption, conditionalEndURLParameter, conditionalEndURLOption, savedTracksFollowUp, topTracksShortTermFollowUp, topTracksMediumTermFollowUp, topTracksLongTermFollowUp,
     topArtistsShortTermFollowUp, topArtistsMediumTermFollowUp, topArtistsLongTermFollowUp, followedArtistsFollowUp,
     currentPlaylistsFollowUp, recentlyTracksFollowUp, savedShowsFollowUp, savedEpisodesFollowUp, collectEmails, emailTextEn, emailTextDe
   ])
@@ -305,6 +308,7 @@ export default function SettingsPage(props) {
 
           setEndOption(endOptions.option)
           setEndURL(endOptions.end_url)
+          setShareSurveyUrl(endOptions.share_survey_url || '')
           setConditionalEndURLParameter(endOptions.conditional_end_url_parameter)
           setConditionalEndURLOption(endOptions.conditional_end_url_option)
           setCollectEmails(endOptions.collect_emails)
@@ -645,6 +649,7 @@ export default function SettingsPage(props) {
                       {endSettingsCard(
                         endOption, setEndOption,
                         endURL, setEndURL,
+                        shareSurveyUrl, setShareSurveyUrl,
                         collectEmails, setCollectEmails,
                         emailTextEn, setEmailTextEn,
                         emailTextDe, setEmailTextDe,
