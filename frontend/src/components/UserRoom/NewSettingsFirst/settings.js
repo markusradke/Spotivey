@@ -22,6 +22,7 @@ import {
   fetchSurveySettingsById,
   fetchUserSession,
 } from "../../../api/surveyApi";
+import Header from '../Header/Header';
 
 export default function SettingsPage(props) {
 
@@ -422,15 +423,7 @@ export default function SettingsPage(props) {
   function renderSettingsPage() {
     return (
       <React.Fragment>
-        <div class="setting-header">
-          <header class="setting-header-inner">
-            <div class="setting-header-content-container">
-              <div class="setting-header-content-container-inner">
-                {headerSettings()}
-              </div>
-            </div>
-          </header>
-        </div>
+        <Header />
         <div class='setting-page-main'>
           <div class="setting-navigation">
             <div class="navbar-setting">
