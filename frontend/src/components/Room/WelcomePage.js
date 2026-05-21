@@ -1,115 +1,106 @@
 import React from "react";
 import Button from '@mui/material/Button';
+import { Box, Container, Paper, Typography } from "@mui/material";
 import { acceptPrivacyPolicy } from "../../api/surveyApi";
 
-
 export default function WelcomePage(props) {
-
     function renderWelcomeTextGerman() {
         return (
-            <body1 className={'endPage-Stepper-body'}>
-                Hinweis: <br></br>
-                Die Spotivey Applikation der TU Berlin wird im Rahmen einer Datenspende zu Forschungszwecken
-                gemäß der EU-Datenschutz-Grundverordnung (DSGVO) auf Ihr Spotify-Profil zugreifen.
+            <Typography variant="body1" className={'endPage-Stepper-body'} sx={{ color: 'var(--color-black)' }}>
+                Die Spotivey Applikation der TU Berlin wird im Rahmen einer <span style={{ fontWeight: 700 }}>Datenspende zu Forschungszwecken</span> gemäß der EU-Datenschutz-Grundverordnung (DSGVO) auf Ihr Spotify-Profil zugreifen.
+                <br />
+                <br />
                 Dazu bitten wir Sie nun anschließend, sich bei Spotify einzuloggen.
-                Damit erteilen Sie uns explizit Ihre Zustimmung zum Abruf folgender Accountinformationen:
+                Damit erteilen Sie uns explizit <span style={{ fontWeight: 700 }}>Ihre Zustimmung zum  Abruf folgender Accountinformationen</span>:
+                <br />
+                <br />
                 <ol style={{ paddingLeft: '32px' }}>
-                    {props.welcomeSettingsDeutschArray.map((item) => {
-                        return (
-                            <React.Fragment>
-                                {item[0] ?
-                                    <li>
-                                        {item[1]}
-                                    </li> :
-                                    null
-                                }
-                            </React.Fragment>
-                        )
-                    }
-                    )}
+                    {props.welcomeSettingsDeutschArray.map((item, idx) => (
+                        item[0] ? <li key={idx}>{item[1]}</li> : null
+                    ))}
                 </ol>
+                <br />
                 Personenbezogene Profildaten wie Name, Profilbild, Emailadresse und Geburtsdatum werden in keinem Fall
                 von uns abgerufen, gespeichert, oder analysiert, auch wenn wir aus technischen Gründen
                 kurz auf Ihr Spotify-Profil zugreifen müssen, welches diese personenbezogenen Daten enthält.
+                <br />
+                <br />
                 Lediglich die oben aufgelisteten Daten zu Ihrer persönlichen Musiknutzung werden von uns abgerufen
                 und anschließend mit Ihren restlichen Fragebogendaten verknüpft.
                 Sie werden von den Durchführenden der Studie ausschließlich zu Forschungszwecken unter den
                 datenschutzrechtlichen Bedingungen verwendet, denen Sie bereits zu Beginn der Befragung zugestimmt haben.
-            </body1>
+            </Typography>
         )
     }
 
     function renderWelcomeTextEnglish() {
         return (
-            <body1 className={'endPage-Stepper-body'}>
-                Notice: <br></br>
-                The Spotivey application of TU Berlin will access your Spotify profile as part of a data donation
-                for research purposes in accordance with the EU General Data Protection Regulation (GDPR).
-                For this purpose, we now subsequently ask you to log in to Spotify.
-                By doing so, you explicitly give us your consent to retrieve the following account information:
+            <Typography variant="body1" className={'endPage-Stepper-body'} sx={{ color: 'var(--color-black)' }}>
+                The Spotivey application of TU Berlin will access your Spotify profile as part of a <span style={{ fontWeight: 700 }}>data donation
+                    for research purposes</span> in accordance with the EU General Data Protection Regulation (GDPR).
+                <br />
+                <br />
+                For this purpose, we will subsequently ask you to log in to Spotify.
+                By doing so, you explicitly give us your <span style={{ fontWeight: 700 }}>consent to retrieve the following account information</span>:
+                <br />
+                <br />
                 <ol style={{ paddingLeft: '32px' }}>
-                    {props.welcomeSettingsEnglishArray.map((item) => {
-                        return (
-                            <React.Fragment>
-                                {item[0] ?
-                                    <li>
-                                        {item[1]}
-                                    </li> :
-                                    null
-                                }
-                            </React.Fragment>
-                        )
-                    }
-                    )}
+                    {props.welcomeSettingsEnglishArray.map((item, idx) => (
+                        item[0] ? <li key={idx}>{item[1]}</li> : null
+                    ))}
                 </ol>
+                <br />
                 Personal profile data such as name, profile picture, email address and date of birth are never retrieved,
                 stored or analyzed by us, even if we need to briefly access your Spotify profile for technical reasons,
-                which contains this personal data. Only the data listed above regarding your personal music usage will be
+                which contains this personal data.
+                <br />
+                <br />
+                Only the data listed above regarding your personal music usage will be
                 retrieved by us and subsequently linked to the rest of your questionnaire data.
                 They will be used by those conducting the study exclusively for research purposes under the data
                 protection conditions that you already agreed to at the beginning of the survey.
-            </body1>
+            </Typography>
         )
     }
 
     return (
-        <React.Fragment>
-            <div class="room-content-main">
-                <div class='room-content-wrapper'>
-                    <div class="room-content-wrapper-inner">
-                        <div class="room-two-content-outer">
-                            <div class='card-two-content-inner-container'>
-                                <div class='card-content'>
-                                    <h1 class='settings-title'>
-                                        {props.language == 'de' ? 'Datenschutzhinweis' : 'Privacy Notice'}
-                                    </h1>
-                                    <div className="welcome-page-card">
-                                        <div className="welcome-page-card-inner">
-                                            {props.language == 'de' ? renderWelcomeTextGerman() : renderWelcomeTextEnglish()}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class='speicher-button'>
-                <Button variant={'contained'} onClick={() => {
-                    props.onAcceptStart?.();
-                    acceptPrivacyPolicy({ accepted: true })
-                        .then(() => {
-                            props.setWelcomePageOK(true)
-                        })
-                        .catch((error) => {
-                            console.error("Error accepting privacy policy:", error);
-                            props.onAcceptError?.();
-                        })
+        <div style={{ backgroundColor: 'var(--main-bg-color)' }}>
+            <Container maxWidth="md" sx={{ mt: 4 }}>
+                <Paper elevation={2} sx={{ p: 3, backgroundColor: 'var(--main-bg-color)' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <Box
+                            component="img"
+                            src="../../../static/images/SpotiveyLogo2_Schrift.svg"
+                            alt="Spotivey"
+                            sx={{ height: 40, mr: 2 }}
+                        />
+                        <Typography variant="h5" component="h1" sx={{ color: 'var(--color-tu-berlin)' }}>
+                            {props.language == 'de' ? 'Datenschutz' : 'Privacy Notice'}
+                        </Typography>
+                    </Box>
 
-                }}>
-                    OK
-                </Button>
-            </div>
-        </React.Fragment>
+                    <Box sx={{ mt: 2, display: 'flex', justifyContent: 'left' }}>
+                        <Button variant={'contained'} onClick={() => {
+                            props.onAcceptStart?.();
+                            acceptPrivacyPolicy({ accepted: true })
+                                .then(() => {
+                                    props.setWelcomePageOK(true)
+                                })
+                                .catch((error) => {
+                                    console.error("Error accepting privacy policy:", error);
+                                    props.onAcceptError?.();
+                                })
+
+                        }}>
+                            {props.language == 'de' ? 'Akzeptieren und fortfahren' : 'Accept and continue'}
+                        </Button>
+                    </Box>
+                    <Box sx={{ mt: 2 }}>
+                        {props.language == 'de' ? renderWelcomeTextGerman() : renderWelcomeTextEnglish()}
+                    </Box>
+
+                </Paper>
+            </Container>
+        </div>
     )
 }
