@@ -2,7 +2,7 @@
 from .user_session import CreateSettingsUser, LoginSettingsUser, LogoutUser, GetUserSession, CheckUsernameAvailability, CheckEmailAvailability, GetUserProfile, UpdateUserProfile
 
 # Participant session views
-from .participant_session import InitParticipantSession, AcceptPrivacyPolicy, GetParticipantSession, FinalizeParticipantData
+from .participant_session import InitParticipantSession, AcceptPrivacyPolicy, GetParticipantSession, FinalizeParticipantData, SaveParticipantEmail
 
 # Settings views
 from .retrieval_settings import (
@@ -28,7 +28,7 @@ from .followup_settings import (
 from .results import getResultListView, GetParticipantCountForSurvey, DeleteOnlyResultsWithID, SaveCheckData
 
 # CSV export
-from .csv_export import saveRepertoireToCsvFileView, saveParticipantsToCsvFileView
+from .csv_export import saveRepertoireToCsvFileView, saveParticipantsToCsvFileView, saveEmailsToCsvFileView
 
 __all__ = [
     # Auth
@@ -45,6 +45,7 @@ __all__ = [
     'AcceptPrivacyPolicy',
     'GetParticipantSession',
     'FinalizeParticipantData',
+    'SaveParticipantEmail',
     # Settings
     'CreateSettings',
     'CheckSurveyIDExists',
@@ -66,4 +67,5 @@ __all__ = [
     # CSV
     'saveRepertoireToCsvFileView',
     'saveParticipantsToCsvFileView',
+    'saveEmailsToCsvFileView',
 ]

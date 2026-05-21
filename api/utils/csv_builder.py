@@ -1,7 +1,7 @@
 """CSV export builders for Spotify data models."""
 import json
 import logging
-from api.models import RetrievalSetting
+from api.models import RetrievalSetting, ParticipantEmail
 from spotify.models import (
     PrivatePlaylistTrack, SavedTrack, TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm, RecentTrack,
     TopArtistShortTerm, TopArtistMediumTerm, TopArtistLongTerm, FollowedArtist,
@@ -469,5 +469,30 @@ def build_participants_csv(survey_id):
         for row in rows:
             for key in keys_to_remove:
                 row.pop(key, None)
+    
+    return rows
+
+
+def build_emails_csv(survey_id):
+    """
+    Build CSV rows for ParticipantEmail with all fields.
+    
+    Args:
+        survey_id: Survey identifier
+    Returns:
+        List of dictionaries ready for CSV export
+    """ 
+    survey_settings = RetrievalSetting.objects.filter(umfrageID=survey_id)
+    emails = ParticipantEmail.objects.filter(
+        settings__in=survey_settings,
+    ).order_by('email')
+    
+    rows = []
+    for email in emails:
+        rows.append({
+            'data_type': 'participant_email',
+            'email': email.email,
+            'survey_id': email.settings.umfrageID if email.settings else '',
+        })
     
     return rows

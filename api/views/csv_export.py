@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from api.utils.csv_builder import build_all_data_types_csv, build_participants_csv
+from api.utils.csv_builder import build_all_data_types_csv, build_participants_csv, build_emails_csv
 
 
 class saveRepertoireToCsvFileView(APIView):
@@ -44,4 +44,23 @@ class saveParticipantsToCsvFileView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         csv_data = build_participants_csv(survey_id)
+        return Response(csv_data, status=status.HTTP_200_OK)
+    
+class saveEmailsToCsvFileView(APIView):
+    """
+    Export participant emails for a survey to CSV format.
+    
+    Returns JSON array of participant email dictionaries for frontend CSV generation.
+    """
+    
+    def get(self, request, format=None):
+        survey_id = request.GET.get('surveyID')
+        print(f"Received request to export emails CSV for surveyID: {survey_id}")
+        
+        if not survey_id:
+            return Response({
+                'error': 'Survey ID required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        csv_data = build_emails_csv(survey_id)
         return Response(csv_data, status=status.HTTP_200_OK)

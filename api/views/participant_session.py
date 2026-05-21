@@ -8,7 +8,7 @@ from rest_framework import status
 from django.utils import timezone
 from django.http import JsonResponse
 
-from ..models import RetrievalSetting
+from ..models import RetrievalSetting, ParticipantEmail
 from spotify.models import *
 
 class InitParticipantSession(APIView):
@@ -150,3 +150,25 @@ class FinalizeParticipantData(APIView):
         if old_participants.exists():
             old_participants.delete()
         return Response({'message': 'Participant data finalized successfully'}, status=status.HTTP_200_OK)
+
+
+class SaveParticipantEmail(APIView):
+    """Save participant email for, e.g., a lottery."""
+    
+    def post(self, request, format=None):
+        participant_email = request.data.get('email')
+        survey_id = request.data.get('surveyID')
+
+        if not participant_email or not survey_id:
+            return Response({'error': 'Email and survey ID are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        settings = RetrievalSetting.objects.filter(umfrageID=survey_id).first()
+        if not settings:
+            return Response({'error': 'Survey not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        ParticipantEmail.objects.create(
+            email=participant_email,
+            settings=settings
+        )
+
+        return Response({'message': 'Participant email saved successfully'}, status=status.HTTP_200_OK)

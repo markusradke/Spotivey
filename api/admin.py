@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from api.models import RetrievalSetting, Researcher
+from api.models import RetrievalSetting, Researcher, ParticipantEmail
 import csv
 from django.http import HttpResponse
 
@@ -38,3 +38,4 @@ class UserAdmin(BaseUserAdmin):
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(RetrievalSetting)
+admin.site.register(ParticipantEmail)

@@ -6,7 +6,7 @@ from .views import (
     CheckUsernameAvailability, CheckEmailAvailability, GetUserProfile,
     UpdateUserProfile,
     # Participant views
-    InitParticipantSession, AcceptPrivacyPolicy, GetParticipantSession, FinalizeParticipantData,
+    InitParticipantSession, AcceptPrivacyPolicy, GetParticipantSession, FinalizeParticipantData, SaveParticipantEmail,
     # Settings views
     CreateSettings, CheckSurveyIDExists, getSettingsListView, getSettingsFromIDView,
     UpdateSettings, SaveCheckData, DeleteSettings, UpdateConfirmText,
@@ -17,6 +17,7 @@ from .views import (
     # CSV export
     saveRepertoireToCsvFileView,
     saveParticipantsToCsvFileView,
+    saveEmailsToCsvFileView,
 )
 
 urlpatterns = [
@@ -45,6 +46,9 @@ urlpatterns = [
     path('save-check-data', SaveCheckData.as_view()),
     path('delete-settings', DeleteSettings.as_view()),
     path('update-confirm-text', UpdateConfirmText.as_view()),
+
+    # Save participant email
+    path('save-participant-email', SaveParticipantEmail.as_view()),  
     
     # Follow-up survey settings
     path('get-settings-second-survey', GetSettingsSecondSurvey.as_view()),
@@ -61,4 +65,5 @@ urlpatterns = [
     # CSV export
     path('save-repertoire-to-csv-file', saveRepertoireToCsvFileView.as_view()),
     path('save-participants-to-csv-file', saveParticipantsToCsvFileView.as_view()),
+    path('save-emails-to-csv-file', saveEmailsToCsvFileView.as_view()),
 ]
