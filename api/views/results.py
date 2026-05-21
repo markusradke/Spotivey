@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from ..models import RetrievalSetting
+from ..models import RetrievalSetting, ParticipantEmail
 from ..utils.results_builder import getResultDict
 from spotify.models import (
     SavedTrack, TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm, RecentTrack,
@@ -48,6 +48,28 @@ class DeleteOnlyResultsWithID(APIView):
                 'message': f'Deleted {participant_count} participants and all their data'
             }, status=status.HTTP_200_OK)
         return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
+    
+class DeleteEmailsForSurvey(APIView):
+    # Emails of a retrieval profile are deleted
+     
+     lookup_url_kwarg = 'surveyid'
+
+     def get(self, request):
+         surveyID = request.GET.get(self.lookup_url_kwarg)
+         if surveyID is not None:
+             settings = RetrievalSetting.objects.filter(umfrageID=surveyID).first()
+             if not settings: 
+                 return Response({'Bad Request': 'Survey not found'}, status=status.HTTP_404_NOT_FOUND)
+             emails = ParticipantEmail.objects.filter(settings=settings)
+             email_count = emails.count()
+             emails.delete()
+
+             return Response({
+                 'message': f'Deleted {email_count} participant emails'
+             }, status=status.HTTP_200_OK)
+         return Response({'Bad Request': 'Code parameter not found in request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    
 
 
 class SaveCheckData(APIView):

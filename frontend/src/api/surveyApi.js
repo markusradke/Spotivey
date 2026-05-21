@@ -149,6 +149,13 @@ export async function saveEmailsToCsvFile(surveyId) {
   );
 }
 
+export async function deleteEmailsForSurvey(surveyId) {
+  const response = await fetch(
+    "/api/delete-emails-for-survey?surveyid=" + encodeURIComponent(surveyId)
+  );
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
+}
+
 export async function acceptPrivacyPolicy(payload) {
   const response = await fetch(
     "/api/accept-privacy-policy",

@@ -25,7 +25,7 @@ from .followup_settings import (
     
 
 # Results views
-from .results import getResultListView, GetParticipantCountForSurvey, DeleteOnlyResultsWithID, SaveCheckData
+from .results import getResultListView, GetParticipantCountForSurvey, DeleteOnlyResultsWithID, SaveCheckData, DeleteEmailsForSurvey
 
 # CSV export
 from .csv_export import saveRepertoireToCsvFileView, saveParticipantsToCsvFileView, saveEmailsToCsvFileView
@@ -64,6 +64,7 @@ __all__ = [
     'getResultListView',
     'GetParticipantCountForSurvey',
     'DeleteOnlyResultsWithID',
+    'DeleteEmailsForSurvey',
     # CSV
     'saveRepertoireToCsvFileView',
     'saveParticipantsToCsvFileView',

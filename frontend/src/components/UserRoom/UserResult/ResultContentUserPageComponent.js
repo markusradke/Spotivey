@@ -16,7 +16,8 @@ import {
     fetchUserSession,
     saveRepertoireToCsvFile,
     saveParticipantsToCsvFile,
-    saveEmailsToCsvFile
+    saveEmailsToCsvFile,
+    deleteEmailsForSurvey
 } from "../../../api/surveyApi";
 
 export default function ResultContent(props) {
@@ -30,6 +31,7 @@ export default function ResultContent(props) {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [openDeleteEmailsDialog, setOpenDeleteEmailsDialog] = useState(false);
     const dataLimit = 100
     const [pages, setPages] = useState(0)
 
@@ -37,6 +39,17 @@ export default function ResultContent(props) {
 
     function handleCloseDialog() {
         setOpenDeleteDialog(false);
+    }
+
+    function handleCloseEmailsDialog() {
+        setOpenDeleteEmailsDialog(false);
+    }
+
+    function deleteEmails(surveyID) {
+        deleteEmailsForSurvey(surveyID).then(() => {
+            setEmailsFileData(null);
+            setOpenDeleteEmailsDialog(false);
+        });
     }
 
     const handleDataFetch = async () => {
@@ -378,6 +391,15 @@ export default function ResultContent(props) {
                                     </div>
                                 </div>
                             </CSVLink> : null}
+                        {emailsFileData ?
+                            <Button style={{ color: '#414141' }}
+                                onClick={() => { setOpenDeleteEmailsDialog(true) }}
+                                variant={'text'}
+                                startIcon={<DeleteOutlinedIcon />}
+                            >
+                                Delete Emails
+                            </Button> : null}
+
                         <Button style={{ color: '#414141' }}
                             onClick={() => { setOpenDeleteDialog(true) }}
                             variant={'text'}
@@ -437,6 +459,26 @@ export default function ResultContent(props) {
                 <DialogActions>
                     <Button variant="contained" onClick={handleCloseDialog}>Disagree</Button>
                     <Button onClick={() => { deleteResults(props.surveyID) }} style={{ color: '#414141' }}>
+                        Agree
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                open={openDeleteEmailsDialog}
+                onClose={handleCloseEmailsDialog}
+            >
+                <DialogTitle>
+                    {"Delete Emails?"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Do you really want to delete all participant emails for the survey with ID {props.surveyID}?
+                        This will remove the saved emails and cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="contained" onClick={handleCloseEmailsDialog}>Disagree</Button>
+                    <Button onClick={() => { deleteEmails(props.surveyID) }} style={{ color: '#414141' }}>
                         Agree
                     </Button>
                 </DialogActions>

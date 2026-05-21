@@ -13,7 +13,7 @@ from .views import (
     GetSettingsSecondSurvey, CreateSettingsSecondSurvey, UpdateSettingsSecondSurvey,
     UpdateSettingsSecondSurveyEndURL, DeleteSettingsSecondSurvey,
     # Results views
-    getResultListView, GetParticipantCountForSurvey, DeleteOnlyResultsWithID,
+    getResultListView, GetParticipantCountForSurvey, DeleteOnlyResultsWithID, DeleteEmailsForSurvey,
     # CSV export
     saveRepertoireToCsvFileView,
     saveParticipantsToCsvFileView,
@@ -61,6 +61,7 @@ urlpatterns = [
     path('get-resultlist', getResultListView.as_view()),
     path('get-participant-count', GetParticipantCountForSurvey.as_view()),
     path('delete-only-results', DeleteOnlyResultsWithID.as_view()),
+    path('delete-emails-for-survey', DeleteEmailsForSurvey.as_view()),  
     
     # CSV export
     path('save-repertoire-to-csv-file', saveRepertoireToCsvFileView.as_view()),
