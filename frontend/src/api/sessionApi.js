@@ -21,4 +21,9 @@ export async function saveEmail(payload) {
     headers: BASE_HEADERS,
     body: JSON.stringify(payload),
   });
-} 2
+}
+
+export async function checkEmailSubmitted() {
+  const response = await fetch("/api/check-email-submitted");
+  return response.json();
+}

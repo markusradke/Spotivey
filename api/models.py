@@ -109,8 +109,12 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie die 
     
   
 class ParticipantEmail(models.Model):
-    email = models.EmailField(max_length=254, unique=True)
-    settings = models.ForeignKey(RetrievalSetting, on_delete=models.CASCADE, null= True, blank=True)
+    email = models.EmailField(max_length=254)
+    settings = models.ForeignKey(RetrievalSetting, on_delete=models.CASCADE, null=True, blank=True)
+    retrieval_session_key = models.CharField(max_length=100, unique=True, null=True, blank=True)
+
+    class Meta:
+        unique_together = ('email', 'settings')
 
     def __str__(self):
         return self.email + " (associated with survey ID: " + self.settings.umfrageID + ")"

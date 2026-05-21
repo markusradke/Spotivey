@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
-import { saveEmail } from "../../api/sessionApi";
+import { saveEmail, checkEmailSubmitted } from "../../api/sessionApi";
 import { fetchSurveySettingsById } from "../../api/surveyApi";
 
 export default function EnterEmail({ surveyID, language }) {
@@ -10,8 +10,7 @@ export default function EnterEmail({ surveyID, language }) {
     const [email, setEmail] = useState("");
     const [submitted, setSubmitted] = useState(false);
     const [emailText, setEmailText] = useState();
-
-
+    const [isChecking, setIsChecking] = useState(true);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -20,6 +19,23 @@ export default function EnterEmail({ surveyID, language }) {
     };
 
     useEffect(() => {
+        if (!surveyID) return;
+
+        checkEmailSubmitted().then((response) => {
+            const is_submitted = response.submitted;
+            if (is_submitted) {
+                setSubmitted(true);
+            }
+            setIsChecking(false);
+        }).catch(() => {
+            setSubmitted(true); // conservative catch
+            setIsChecking(false);
+        });
+    }, [surveyID]);
+
+    useEffect(() => {
+        if (!surveyID) return;
+
         fetchSurveySettingsById(surveyID).then((response) => {
             if (response.data) {
                 const end_settings = response.data[0].end_options;
@@ -32,6 +48,10 @@ export default function EnterEmail({ surveyID, language }) {
             };
         })
     }, [language, surveyID]);
+
+    if (isChecking) {
+        return null;
+    }
 
     return (
         <Box>

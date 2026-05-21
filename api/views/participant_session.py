@@ -158,17 +158,42 @@ class SaveParticipantEmail(APIView):
     def post(self, request, format=None):
         participant_email = request.data.get('email')
         survey_id = request.data.get('surveyID')
+        retrieval_session_key = self.request.session.get('retrieval_session_key')
 
         if not participant_email or not survey_id:
             return Response({'error': 'Email and survey ID are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not retrieval_session_key:
+            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
 
         settings = RetrievalSetting.objects.filter(umfrageID=survey_id).first()
         if not settings:
             return Response({'error': 'Survey not found'}, status=status.HTTP_404_NOT_FOUND)
 
+        if ParticipantEmail.objects.filter(retrieval_session_key=retrieval_session_key).exists():
+            return Response({'error': 'Email already submitted for this session'}, status=status.HTTP_400_BAD_REQUEST)
+
         ParticipantEmail.objects.create(
             email=participant_email,
-            settings=settings
+            settings=settings,
+            retrieval_session_key=retrieval_session_key
         )
 
         return Response({'message': 'Participant email saved successfully'}, status=status.HTTP_200_OK)
+
+
+class CheckEmailSubmitted(APIView):
+    """Check if email was already submitted for the current session."""
+    
+    def get(self, request, format=None):
+        retrieval_session_key = self.request.session.get('retrieval_session_key')
+
+        # block simple reloading        
+        if not retrieval_session_key:
+            return Response({'submitted': True}, status=status.HTTP_200_OK)
+        
+        already_submitted = ParticipantEmail.objects.filter(
+            retrieval_session_key=retrieval_session_key
+        ).exists()
+        
+        return Response({'submitted': already_submitted}, status=status.HTTP_200_OK)
