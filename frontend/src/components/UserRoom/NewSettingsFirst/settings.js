@@ -122,6 +122,9 @@ export default function SettingsPage(props) {
   const [recentlyTracksFollowUp, setRecentlyTracksFollowUp] = useState(0)
   const [savedShowsFollowUp, setSavedShowsFollowUp] = useState(0)
   const [savedEpisodesFollowUp, setSavedEpisodesFollowUp] = useState(0)
+  const [collectEmails, setCollectEmails] = useState(false)
+  const [emailTextEn, setEmailTextEn] = useState("")
+  const [emailTextDe, setEmailTextDe] = useState("")
   const [endSettings, setEndSettings] = useState({
     endURL: endURL,
     endOption: endOption,
@@ -138,7 +141,10 @@ export default function SettingsPage(props) {
     currentPlaylistsFollowUp: currentPlaylistsFollowUp,
     recentlyTracksFollowUp: recentlyTracksFollowUp,
     savedShowsFollowUp: savedShowsFollowUp,
-    savedEpisodesFollowUp: savedEpisodesFollowUp
+    savedEpisodesFollowUp: savedEpisodesFollowUp,
+    collectEmails: collectEmails,
+    emailTextEn: emailTextEn,
+    emailTextDe: emailTextDe
   })
 
 
@@ -167,11 +173,14 @@ export default function SettingsPage(props) {
       currentPlaylistsFollowUp: currentPlaylistsFollowUp,
       recentlyTracksFollowUp: recentlyTracksFollowUp,
       savedShowsFollowUp: savedShowsFollowUp,
-      savedEpisodesFollowUp: savedEpisodesFollowUp
+      savedEpisodesFollowUp: savedEpisodesFollowUp,
+      collectEmails: collectEmails,
+      emailTextEn: emailTextEn,
+      emailTextDe: emailTextDe
     });
   }, [endURL, endOption, conditionalEndURLParameter, conditionalEndURLOption, savedTracksFollowUp, topTracksShortTermFollowUp, topTracksMediumTermFollowUp, topTracksLongTermFollowUp,
     topArtistsShortTermFollowUp, topArtistsMediumTermFollowUp, topArtistsLongTermFollowUp, followedArtistsFollowUp,
-    currentPlaylistsFollowUp, recentlyTracksFollowUp, savedShowsFollowUp, savedEpisodesFollowUp
+    currentPlaylistsFollowUp, recentlyTracksFollowUp, savedShowsFollowUp, savedEpisodesFollowUp, collectEmails, emailTextEn, emailTextDe
   ])
 
   const navigate = useNavigate();
@@ -298,6 +307,9 @@ export default function SettingsPage(props) {
           setEndURL(endOptions.end_url)
           setConditionalEndURLParameter(endOptions.conditional_end_url_parameter)
           setConditionalEndURLOption(endOptions.conditional_end_url_option)
+          setCollectEmails(endOptions.collect_emails)
+          setEmailTextEn(endOptions.email_text_en)
+          setEmailTextDe(endOptions.email_text_de)
         });
     }
   }, [update])
@@ -633,6 +645,9 @@ export default function SettingsPage(props) {
                       {endSettingsCard(
                         endOption, setEndOption,
                         endURL, setEndURL,
+                        collectEmails, setCollectEmails,
+                        emailTextEn, setEmailTextEn,
+                        emailTextDe, setEmailTextDe,
                         conditionalEndURLParameter, setConditionalEndURLParameter,
                         conditionalEndURLOption, setConditionalEndURLOption,
                         savedTracksFollowUp, setSavedTracksFollowUp,
@@ -646,7 +661,8 @@ export default function SettingsPage(props) {
                         currentPlaylistsFollowUp, setCurrentPlaylistsFollowUp,
                         recentlyTracksFollowUp, setRecentlyTracksFollowUp,
                         savedShowsFollowUp, setSavedShowsFollowUp,
-                        savedEpisodesFollowUp, setSavedEpisodesFollowUp)}
+                        savedEpisodesFollowUp, setSavedEpisodesFollowUp
+                      )}
                     </SwiperSlide>
                   </Swiper>
                 </div>

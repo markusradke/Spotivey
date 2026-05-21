@@ -1,6 +1,6 @@
 import React from "react";
 import { goBackToLogin } from '../NewSettingsFirst/Button/BackButtonFunction';
-import headerSettings from '../Header/headerSettings';
+import Header from "../Header/Header";
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { TextField, Button } from "@mui/material";
@@ -81,15 +81,7 @@ export default function ConfirmTextDesign() {
 
     return (
         <React.Fragment>
-            <div class="setting-header">
-                <header class="setting-header-inner">
-                    <div class="setting-header-content-container">
-                        <div class="setting-header-content-container-inner">
-                            {headerSettings()}
-                        </div>
-                    </div>
-                </header>
-            </div>
+            <Header />
             <div className='confirm-text-page-container'>
                 <div class='card-content-second' style={{ paddingBottom: '70px' }}>
                     <h3 data-heading='true' class='settings-title'>

@@ -61,6 +61,9 @@ EXPLICIT_SETTING_FIELDS: tuple[str, ...] = (
     "end_url",
     "conditional_end_url_parameter",
     "conditional_end_url_option",
+    "collect_emails",
+    "email_text_en",
+    "email_text_de",
 )
 
 

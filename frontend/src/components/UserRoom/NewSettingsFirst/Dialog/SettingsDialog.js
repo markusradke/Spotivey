@@ -135,7 +135,10 @@ export default function SettingsDialog(props) {
             end_option: endSettings.endOption,
             end_url: endSettings.endURL,
             conditional_end_url_parameter: endSettings.conditionalEndURLParameter,
-            conditional_end_url_option: endSettings.conditionalEndURLOption
+            conditional_end_url_option: endSettings.conditionalEndURLOption,
+            collect_emails: endSettings.collectEmails,
+            email_text_en: endSettings.emailTextEn,
+            email_text_de: endSettings.emailTextDe
 
         };
         try {
@@ -248,6 +251,7 @@ export default function SettingsDialog(props) {
                             {props.props[8].endOption === 'end_url' || props.props[8].endOption === 'conditional_end_url' ? `${props.props[8].endURL}` : ''} <br></br>
                             {props.props[8].endOption === 'conditional_end_url' ? `Parameter: ${props.props[8].conditionalEndURLParameter}` : ''}  <br></br>
                             {props.props[8].endOption === 'conditional_end_url' ? `No-redirect option: ${props.props[8].conditionalEndURLOption}` : ''}  <br></br>
+                            {props.props[8].collectEmails ? `Collect Emails: Yes` : `Collect Emails: No`} <br></br>
                         </h3>
                     </div>
                     <Divider
