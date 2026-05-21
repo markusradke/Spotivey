@@ -16,6 +16,7 @@ import {
     fetchUserSession,
     saveRepertoireToCsvFile,
     saveParticipantsToCsvFile,
+    saveEmailsToCsvFile
 } from "../../../api/surveyApi";
 
 export default function ResultContent(props) {
@@ -24,7 +25,7 @@ export default function ResultContent(props) {
 
     const [repertoireFileData, setRepertoireFileData] = useState(null);
     const [participantsFileData, setParticipantsFileData] = useState(null);
-
+    const [emailsFileData, setEmailsFileData] = useState(null);
     const [listEntriesShow, setListEntriesShow] = useState([false, false, false, false, false, false, false]);
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -53,6 +54,12 @@ export default function ResultContent(props) {
                     if (data.length !== 0) {
                         setParticipantsFileData(data)
                     }
+                }
+            });
+        saveEmailsToCsvFile(props.surveyID) // <-- new
+            .then(({ ok, data }) => {
+                if (ok && data && !data.error && data.length !== 0) {
+                    setEmailsFileData(data);
                 }
             });
 
@@ -348,6 +355,23 @@ export default function ResultContent(props) {
                                 <div className={'button-csv-inner-container'}>
                                     <div className={'button-csv-title'}>
                                         Participants CSV
+                                    </div>
+                                    <div className={'button-csv-icon'}>
+                                        <FileDownloadIcon />
+                                    </div>
+                                </div>
+                            </CSVLink> : null}
+                        {emailsFileData ?
+                            <CSVLink
+                                className={'csv-link-export-file'}
+                                data={emailsFileData}
+                                filename={"Spotivey_Emails_" + props.surveyID + ".csv"}
+                                target="_blank"
+                                separator={";"}
+                            >
+                                <div className={'button-csv-inner-container'}>
+                                    <div className={'button-csv-title'}>
+                                        Emails CSV
                                     </div>
                                     <div className={'button-csv-icon'}>
                                         <FileDownloadIcon />

@@ -143,6 +143,12 @@ export async function saveParticipantsToCsvFile(surveyId) {
   );
 }
 
+export async function saveEmailsToCsvFile(surveyId) {
+  return getJson(
+    "/api/save-emails-to-csv-file?surveyID=" + encodeURIComponent(surveyId)
+  );
+}
+
 export async function acceptPrivacyPolicy(payload) {
   const response = await fetch(
     "/api/accept-privacy-policy",
