@@ -14,3 +14,11 @@ export async function initParticipantSession(payload) {
     body: JSON.stringify(payload),
   });
 }
+
+export async function saveEmail(payload) {
+  return fetch("/api/save-participant-email", {
+    method: "POST",
+    headers: BASE_HEADERS,
+    body: JSON.stringify(payload),
+  });
+} 2

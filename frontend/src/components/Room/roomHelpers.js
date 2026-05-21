@@ -155,13 +155,13 @@ export function buildSteps(settings) {
 export function getEndConfig(rawSettings, paramsObjectSession, language) {
     if (!rawSettings || rawSettings.end_options.option === 'plain') {
         return {
-            endUrl: '/end-room' + (language ? `/${language}` : ''),
+            endUrl: '/end-room' + (language ? `?lang=${language}` + (rawSettings.umfrageID ? `&surveyID=${rawSettings.umfrageID}` : '') : ''),
         };
     }
 
     if (rawSettings.end_options.option === 'wrapped') {
         return {
-            endUrl: '/user-wrapped' + (language ? `/${language}` : ''),
+            endUrl: '/user-wrapped' + (language ? `?lang=${language}` + (rawSettings.umfrageID ? `&surveyID=${rawSettings.umfrageID}` : '') : ''),
         };
     }
 
@@ -170,12 +170,12 @@ export function getEndConfig(rawSettings, paramsObjectSession, language) {
         if (!paramsObjectSession?.some(([key]) => key === mandatory_url_param)) {
             if (rawSettings.end_options.conditional_end_url_option === 'wrapped') {
                 return {
-                    endUrl: '/user-wrapped' + (language ? `/${language}` : '')
+                    endUrl: '/user-wrapped' + (language ? `?lang=${language}` + (rawSettings.umfrageID ? `&surveyID=${rawSettings.umfrageID}` : '') : '')
                 };
             }
             else {
                 return {
-                    endUrl: '/end-room' + (language ? `/${language}` : ''),
+                    endUrl: '/end-room' + (language ? `?lang=${language}` + (rawSettings.umfrageID ? `&surveyID=${rawSettings.umfrageID}` : '') : ''),
                 };
             }
         }

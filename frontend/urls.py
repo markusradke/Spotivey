@@ -20,8 +20,9 @@ urlpatterns = [
     path('login', index),
     path('sign-up', index),
     path('user/results-audio-features', index),
-    path('end-room/<str:lang>', index),
+    path('end-room', index),
+    path('user-wrapped', index),
     path('privacy', index),
     path('version', index),
-    path('error/<str:errorType>', index),
+    path('error', index),
 ]

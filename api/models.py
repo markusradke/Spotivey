@@ -101,8 +101,8 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie die 
     conditional_end_url_parameter = models.CharField(max_length=100, default='', blank=True)
     conditional_end_url_option = models.CharField(max_length=200, choices = CONDITIONAL_CHOICES, default='plain')
     collect_emails = models.BooleanField(default=False)
-    email_text_en = models.TextField(default="If you would like to participate in the lottery, please provide your email address below. Your email address will only be used for the purpose of the lottery, will not be shared with any third parties, and will be deleted immediately after the lottery is completed.", blank=True)
-    email_text_de = models.TextField(default="Wenn Sie an der Verlosung teilnehmen möchten, geben Sie bitte Ihre E-Mail-Adresse unten ein. Ihre E-Mail-Adresse wird nur für die Zwecke der Verlosung verwendet, nicht an Dritte weitergegeben und sofort nach Abschluss der Verlosung gelöscht.", blank=True)
+    email_text_en = models.TextField(default="", blank=True)
+    email_text_de = models.TextField(default="", blank=True)
 
     def __str__(self):
         return self.nameUmfrage + " (survey ID: " + self.umfrageID + ")"

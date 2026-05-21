@@ -123,8 +123,8 @@ export default function SettingsPage(props) {
   const [savedShowsFollowUp, setSavedShowsFollowUp] = useState(0)
   const [savedEpisodesFollowUp, setSavedEpisodesFollowUp] = useState(0)
   const [collectEmails, setCollectEmails] = useState(false)
-  const [emailTextEn, setEmailTextEn] = useState("")
-  const [emailTextDe, setEmailTextDe] = useState("")
+  const [emailTextEn, setEmailTextEn] = useState("If you would like to participate in the lottery, please provide your email address below. Your email address will only be used for the purpose of the lottery, will not be shared with any third parties, and will be deleted immediately after the lottery is completed.")
+  const [emailTextDe, setEmailTextDe] = useState("Wenn Sie an der Verlosung teilnehmen möchten, geben Sie bitte Ihre E-Mail-Adresse unten ein. Ihre E-Mail-Adresse wird nur für die Verlosung verwendet, nicht an Dritte weitergegeben und sofort nach Abschluss der Verlosung gelöscht.")
   const [endSettings, setEndSettings] = useState({
     endURL: endURL,
     endOption: endOption,

@@ -11,7 +11,7 @@ export function getCompleteEndURL({
     if (!followup?.endUrl) {
         return null;
     }
-    if ("/end-room" === followup.endUrl.substring(0, 10) || "/user-wrapped" === followup.endUrl.substring(0, 13)) {
+    if ("/end-room" === followup.endUrl.substring(0, 9) || "/user-wrapped" === followup.endUrl.substring(0, 13)) {
         return followup.endUrl
     }
 

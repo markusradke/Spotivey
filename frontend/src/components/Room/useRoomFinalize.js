@@ -40,7 +40,7 @@ export function useRoomFinalize({
             dataAll,
             checkArray,
         });
-        navigate(url ?? `/end-room/${language}`); // including fallback
+        navigate(url ?? `/end-room?lang=${language}&surveyID=${surveyID}`); // including fallback
     }, [followup, participant, paramsObjectSession, spotifyData, checkArray]);
 
     const handleSaveAndFinalize = useCallback(async () => {

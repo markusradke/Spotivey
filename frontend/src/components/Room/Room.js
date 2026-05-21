@@ -173,7 +173,6 @@ export default function Room(props) {
                     </React.Fragment>
                 )}
             </div>
-            {/* TODO UPDATE THE LOADING INDICATOR */}
             {isSaving && (
                 <CircularSaving language={language} />
             )}

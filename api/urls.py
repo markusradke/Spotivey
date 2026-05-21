@@ -26,6 +26,7 @@ urlpatterns = [
     path('get-participant-session', GetParticipantSession.as_view()),
     path('accept-privacy-policy', AcceptPrivacyPolicy.as_view()),
     path('finalize-participant-data', FinalizeParticipantData.as_view()),
+    path('save-participant-email', SaveParticipantEmail.as_view()),  
     
     # Authentication & session
     path('get-user-session', GetUserSession.as_view()),
@@ -47,8 +48,7 @@ urlpatterns = [
     path('delete-settings', DeleteSettings.as_view()),
     path('update-confirm-text', UpdateConfirmText.as_view()),
 
-    # Save participant email
-    path('save-participant-email', SaveParticipantEmail.as_view()),  
+    
     
     # Follow-up survey settings
     path('get-settings-second-survey', GetSettingsSecondSurvey.as_view()),

@@ -191,8 +191,8 @@ function AppRoutes() {
           <Route exact path="/user/profile" element={<UserProfilePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
-          <Route path='/end-room/:lang' element={<EndPage />} />
-          <Route path="/user-wrapped/:lang" element={<WrappedPage />} />
+          <Route path='/end-room' element={<EndPage />} />
+          <Route path="/user-wrapped" element={<WrappedPage />} />
           <Route path={'/privacy'} element={<PrivacyComponent />} />
           <Route path={'/version'} element={<Version />} />
           <Route path="/error" element={<ErrorPage />} />
