@@ -192,6 +192,9 @@ def _build_data_basis(participant, stats: dict[str, Any], release_year_points: i
         "playlist_track_points": playlist_track_points,
         "artist_points": artist_points,
         "release_year_points": release_year_points,
+        "genre_points": sum(stats.get("wrapped_genre_counts", {}).values())
+        if isinstance(stats.get("wrapped_genre_counts"), dict)
+        else 0,
     }
 
 

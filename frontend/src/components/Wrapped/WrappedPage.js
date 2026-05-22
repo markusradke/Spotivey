@@ -106,28 +106,33 @@ export default function WrappedPage() {
         {
             key: 'followers',
             metric: lang === 'de' ? 'Profilfollower' : 'Profile followers',
-            value: summary?.usage?.followers ?? 0,
-            mean: surveyMeanUsage.followers ?? 0,
+            value: summary?.usage?.followers ?? NaN,
+            mean: surveyMeanUsage.followers ?? NaN,
         },
         {
             key: 'saved_tracks',
             metric: lang === 'de' ? 'Gespeicherte Tracks' : 'Saved tracks',
-            value: summary?.usage?.total_saved_tracks ?? 0,
-            mean: surveyMeanUsage.total_saved_tracks ?? 0,
+            value: summary?.usage?.total_saved_tracks ?? NaN,
+            mean: surveyMeanUsage.total_saved_tracks ?? NaN,
         },
         {
             key: 'followed_artists',
             metric: lang === 'de' ? 'Gefolgte Artists' : 'Followed artists',
-            value: summary?.usage?.total_followed_artists ?? 0,
-            mean: surveyMeanUsage.total_followed_artists ?? 0,
+            value: summary?.usage?.total_followed_artists ?? NaN,
+            mean: surveyMeanUsage.total_followed_artists ?? NaN,
         },
         {
             key: 'saved_playlists',
             metric: lang === 'de' ? 'Gespeicherte Playlists' : 'Saved playlists',
-            value: summary?.usage?.total_current_playlists ?? 0,
-            mean: surveyMeanUsage.total_current_playlists ?? 0,
+            value: summary?.usage?.total_current_playlists ?? NaN,
+            mean: surveyMeanUsage.total_current_playlists ?? NaN,
         },
     ]), [lang, summary, surveyMeanUsage]);
+
+    const usageChartData = useMemo(
+        () => usageData.filter((item) => hasMetricValue(item.value) || hasMetricValue(item.mean)),
+        [usageData],
+    );
 
     const playlistDetail = summary?.wrapped ? (
         lang === "de" ? [
@@ -164,6 +169,11 @@ export default function WrappedPage() {
         },
     ]), [lang, summary, surveyMeanWrapped]);
 
+    const mainstreamChartData = useMemo(
+        () => mainstreamData.filter((item) => hasMetricValue(item.value) || hasMetricValue(item.mean)),
+        [mainstreamData],
+    );
+
     const explicitData = useMemo(() => ([
         {
             key: 'saved_tracks',
@@ -185,6 +195,11 @@ export default function WrappedPage() {
         },
     ]), [lang, summary, surveyMeanWrapped]);
 
+    const explicitChartData = useMemo(
+        () => explicitData.filter((item) => hasMetricValue(item.value) || hasMetricValue(item.mean)),
+        [explicitData],
+    );
+
     const releaseYearData = useMemo(() => {
         const binLabels = Object.keys(releaseYearBins).length
             ? Object.keys(releaseYearBins)
@@ -196,6 +211,30 @@ export default function WrappedPage() {
             mean: surveyMeanReleaseYearBins[label] ?? NaN,
         }));
     }, [releaseYearBins, surveyMeanReleaseYearBins]);
+
+    const releaseYearChartData = useMemo(
+        () => releaseYearData.filter((item) => hasMetricValue(item.value) || hasMetricValue(item.mean)),
+        [releaseYearData],
+    );
+
+    const genreWordData = useMemo(() => {
+        const counts = summary?.wrapped?.wrapped_genre_counts;
+        if (!counts || typeof counts !== 'object') {
+            return [];
+        }
+
+        return Object.entries(counts)
+            .map(([text, value]) => ({ text, value: Number(value) }))
+            .filter((word) => Number.isFinite(word.value))
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 100);
+    }, [summary]);
+
+    const showUsageSection = usageChartData.length > 0;
+    const showMainstreamSection = mainstreamChartData.length > 0;
+    const showExplicitSection = explicitChartData.length > 0;
+    const showReleaseYearSection = releaseYearChartData.length > 0;
+    const showGenreSection = genreWordData.length > 0;
 
     const score = summary?.wrapped?.wrapped_mainstream_score ?? NaN;
     const scoreMean = surveyMeanWrapped.wrapped_mainstream_score ?? NaN;
@@ -215,6 +254,10 @@ export default function WrappedPage() {
     const explicitBasisText = lang === 'de'
         ? `Datenbasis: ${dataBasis.saved_track_points || 0} Saved Tracks, ${dataBasis.recent_track_points || 0} Recent Tracks, ${dataBasis.top_track_points || 0} Top Tracks.`
         : `Data basis: ${dataBasis.saved_track_points || 0} saved tracks, ${dataBasis.recent_track_points || 0} recent tracks, ${dataBasis.top_track_points || 0} top tracks.`;
+
+    const genreBasisText = lang === 'de'
+        ? `Datenbasis: ${dataBasis.genre_points || 0} Genre-Nennungen aus bestätigten Tracks.`
+        : `Data basis: ${dataBasis.genre_points || 0} genre mentions from confirmed tracks.`;
 
     async function fetchWrappedPngBlob() {
         const resp = await fetch(`/spotify/wrapped/image?${wrappedQuery}`, {
@@ -377,229 +420,202 @@ export default function WrappedPage() {
 
                                 <Divider sx={{ my: 2 }} />
 
-                                <NoticeCard text={userStatsBasisText} />
-                                <SectionCard
-                                    title={lang === 'de' ? 'Nutzungsstatistiken' : 'Usage Statistics'}
-                                    description={lang === 'de'
-                                        ? 'Ihre Profil-Daten im Vergleich zu anderen Teilnehmenden.'
-                                        : 'Your profile data compared with other participants.'}
-                                >
-                                    <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                                        <LegendKey color={colors.primary} label={lang === 'de' ? 'Sie' : 'You'} />
-                                        <LegendKey color={colors.mean} label={lang === 'de' ? 'Mittel' : 'Mean'} />
-                                    </Box>
-                                    <Box
-                                        sx={{
-                                            display: 'grid',
-                                            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                                            gap: 2,
-                                        }}
-                                    >
-                                        {usageData.map((item) => (
-                                            <UsageChartCard
-                                                key={item.key}
-                                                item={item}
-                                                colors={colors}
-                                                lang={lang}
-                                            />
-                                        ))}
-                                    </Box>
-                                    <Typography variant="body2" sx={{ mt: 1.5, color: colors.text }}>
-                                        {lang === 'de'
-                                            ? `Playlists: ${playlistDetail.join(' · ')}.`
-                                            : `Playlists: ${playlistDetail.join(' · ')}.`}
-                                    </Typography>
-                                </SectionCard>
-
-                                <NoticeCard text={mainstreamBasisText} />
-                                <SectionCard
-                                    title={lang === 'de' ? 'Mainstreaminess' : 'Mainstreaminess'}
-                                    description={lang === 'de'
-                                        ? 'Populärität von Tracks und Artists im Vergleich zu anderen Teilnehmenden.'
-                                        : 'Popularity of tracks and artists, each compared to other participants.'}
-                                >
-                                    <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                                        <LegendKey color={colors.primary} label={lang === 'de' ? 'Sie' : 'You'} />
-                                        <LegendKey color={colors.mean} label={lang === 'de' ? 'Mittel' : 'Mean'} />
-                                    </Box>
-                                    <BarChart
-                                        dataset={mainstreamData}
-                                        layout="horizontal"
-                                        height={260}
-                                        series={[
-                                            { dataKey: 'value', label: lang === 'de' ? 'Sie' : 'You', color: colors.primary },
-                                            { dataKey: 'mean', label: lang === 'de' ? 'Mittel' : 'Mean', color: colors.mean },
-                                        ]}
-                                        yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
-                                        xAxis={[{ min: 0, max: 100 }]}
-                                        margin={{ left: 140, right: 30, top: 20, bottom: 20 }}
-                                        slotProps={{ legend: { hidden: true } }}
-                                    />
-                                    <Box sx={{ mt: 2, p: 2, borderRadius: 3, backgroundColor: colors.panel, border: `1px solid ${colors.border}` }}>
-                                        <Typography variant="overline" sx={{ color: colors.muted }}>
-                                            {lang === 'de' ? 'Mainstreaminess Score' : 'Mainstreaminess score'}
-                                        </Typography>
-                                        <Typography variant="h4" component="div" sx={{ color: colors.primary, fontWeight: 700 }}>
-                                            {formatPercent(score)}
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ color: colors.text }}>
-                                            {lang === 'de'
-                                                ? `Mittelwert der Survey-Antworten: ${formatPercent(scoreMean)}`
-                                                : `Survey mean: ${formatPercent(scoreMean)}`}
-                                        </Typography>
-                                    </Box>
-                                </SectionCard>
-
-                                <NoticeCard text={explicitBasisText} />
-                                <SectionCard
-                                    title={lang === 'de' ? 'Explicitness' : 'Explicitness'}
-                                    description={lang === 'de'
-                                        ? 'Explizite Tracks aus gespeicherten, kürzlich gehörten und Top-Tracks im Vergleich zum Survey-Mittel.'
-                                        : 'Explicit tracks from saved, recent, and top tracks compared with the survey mean.'}
-                                >
-                                    <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                                        <LegendKey color={colors.primary} label={lang === 'de' ? 'Sie' : 'You'} />
-                                        <LegendKey color={colors.mean} label={lang === 'de' ? 'Mittel' : 'Mean'} />
-                                    </Box>
-                                    <BarChart
-                                        dataset={explicitData}
-                                        layout="horizontal"
-                                        height={260}
-                                        series={[
-                                            { dataKey: 'value', label: lang === 'de' ? 'Sie' : 'You', color: colors.primary },
-                                            { dataKey: 'mean', label: lang === 'de' ? 'Mittel' : 'Mean', color: colors.mean },
-                                        ]}
-                                        yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
-                                        xAxis={[{ min: 0, max: 100 }]}
-                                        margin={{ left: 140, right: 30, top: 20, bottom: 20 }}
-                                        slotProps={{ legend: { hidden: true } }}
-                                    />
-                                    <Box sx={{ mt: 2, p: 2, borderRadius: 3, backgroundColor: colors.panel, border: `1px solid ${colors.border}` }}>
-                                        <Typography variant="overline" sx={{ color: colors.muted }}>
-                                            {lang === 'de' ? 'Explicitness Score' : 'Explicitness score'}
-                                        </Typography>
-                                        <Typography variant="h4" component="div" sx={{ color: colors.primary, fontWeight: 700 }}>
-                                            {formatPercent(explicitScore)}
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ color: colors.text }}>
-                                            {lang === 'de'
-                                                ? `Mittelwert der Survey-Antworten: ${formatPercent(explicitScoreMean)}`
-                                                : `Survey mean: ${formatPercent(explicitScoreMean)}`}
-                                        </Typography>
-                                    </Box>
-                                </SectionCard>
-
-                                <NoticeCard
-                                    text={lang === 'de'
-                                        ? `Datenbasis: ${dataBasis.release_year_points || 0} Release-Dates aus bestätigten Saved, Top und Recent Tracks.`
-                                        : `Data basis: ${dataBasis.release_year_points || 0} release dates from confirmed saved, top, and recent tracks.`}
-                                />
-
-                                <SectionCard
-                                    title={lang === 'de' ? 'Release year bins' : 'Release year bins'}
-                                    description={lang === 'de'
-                                        ? 'Anteil der Tracks pro Zeit-Bin im Vergleich zum Survey-Mittel.'
-                                        : 'Share of tracks per time bin compared with the survey mean.'}
-                                >
-                                    <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                                        <LegendKey color={colors.primary} label={lang === 'de' ? 'Sie' : 'You'} />
-                                        <LegendKey color={colors.mean} label={lang === 'de' ? 'Mittel' : 'Mean'} />
-                                    </Box>
-                                    <BarChart
-                                        dataset={releaseYearData}
-                                        height={320}
-                                        series={[
-                                            { dataKey: 'value', label: lang === 'de' ? 'Sie' : 'You', color: colors.primary },
-                                            { dataKey: 'mean', label: lang === 'de' ? 'Mittel' : 'Mean', color: colors.mean },
-                                        ]}
-                                        xAxis={[{ scaleType: 'band', dataKey: 'bin' }]}
-                                        yAxis={[{ min: 0, max: 100 }]}
-                                        margin={{ left: 50, right: 30, top: 20, bottom: 70 }}
-                                        slotProps={{ legend: { hidden: true } }}
-                                    />
-                                    <Box sx={{ mt: 2, p: 2, borderRadius: 3, backgroundColor: colors.panel, border: `1px solid ${colors.border}` }}>
-                                        <Typography variant="overline" sx={{ color: colors.muted }}>
-                                            {lang === 'de' ? 'Median release year' : 'Median release year'}
-                                        </Typography>
-                                        <Typography variant="h4" component="div" sx={{ color: colors.primary, fontWeight: 700 }}>
-                                            {formatYear(releaseYearScore)}
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ color: colors.text }}>
-                                            {lang === 'de'
-                                                ? `Mittelwert der Survey-Antworten: ${formatYear(releaseYearScoreMean)}`
-                                                : `Survey mean: ${formatYear(releaseYearScoreMean)}`}
-                                        </Typography>
-                                    </Box>
-                                </SectionCard>
-
-                                <SectionCard
-                                    title={lang === 'de' ? 'Ihre Genres' : 'Your Genres'}
-                                    description={lang === 'de'
-                                        ? 'Ihre häufigsten Genres (Top 100), Größe entspricht Häufigkeit.'
-                                        : 'Your most frequent genres (Top 100), size corresponds to frequency.'}
-                                >
-                                    <Box sx={{ my: 1 }}>
-                                        {(() => {
-                                            const counts = summary?.wrapped?.wrapped_genre_counts || {};
-                                            const entries = Object.entries(counts || {});
-                                            if (!entries.length) {
-                                                return (
-                                                    <Typography variant="body2" sx={{ color: colors.muted }}>
-                                                        {lang === 'de' ? 'Keine Genre-Daten verfügbar.' : 'No genre data available.'}
-                                                    </Typography>
-                                                );
-                                            }
-
-                                            const sorted = entries
-                                                .map(([text, value]) => ({ text, value }))
-                                                .sort((a, b) => b.value - a.value)
-                                                .slice(0, 100);
-
-                                            const values = sorted.map((d) => d.value);
-                                            const min = Math.min(...values);
-                                            const max = Math.max(...values);
-
-                                            const fontSize = (word) => {
-                                                const minSize = 22;
-                                                const maxSize = 72;
-                                                if (min === max) return (minSize + maxSize) / 2;
-                                                const scaled = minSize + ((word.value - min) / (max - min)) * (maxSize - minSize);
-                                                return Math.max(minSize, Math.min(maxSize, scaled));
-                                            };
-
-                                            //inerpolate between two colors based on a value between 0 and 1, wihtout using interpolateColor from react-native-reanimated
-                                            const getGenreWordFill = (word) => {
-                                                const colors = [
-                                                    '#aaaaaa',
-                                                    '#a57278',
-                                                    '#b95d67',
-                                                    '#be4654',
-                                                    'var(--color-tu-berlin)'
-                                                ];
-                                                if (min === max) return colors[0];
-                                                const scaled = (word.value - min) / (max - min);
-                                                const colorIndex = Math.floor(scaled * (colors.length - 1));
-                                                return colors[colorIndex];
-                                            };
-
-                                            return (
-                                                <Box sx={{ width: '100%', minHeight: 420, overflow: 'hidden' }}>
-                                                    <WordCloud
-                                                        data={sorted}
-                                                        fontSize={fontSize}
-                                                        rotate={getGenreWordRotation}
-                                                        fill={getGenreWordFill}
-                                                        spiral="rectangular"
-                                                        padding={2}
-                                                        fontWeight={700}
-                                                        width={840}
-                                                        height={420}
+                                {showUsageSection ? (
+                                    <>
+                                        <NoticeCard text={userStatsBasisText} />
+                                        <SectionCard
+                                            title={lang === 'de' ? 'Nutzungsstatistiken' : 'Usage Statistics'}
+                                            description={lang === 'de'
+                                                ? 'Ihre Profil-Daten im Vergleich zu anderen Teilnehmenden.'
+                                                : 'Your profile data compared with other participants.'}
+                                        >
+                                            <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                                                <LegendKey color={colors.primary} label={lang === 'de' ? 'Sie' : 'You'} />
+                                                <LegendKey color={colors.mean} label={lang === 'de' ? 'Mittel' : 'Mean'} />
+                                            </Box>
+                                            <Box
+                                                sx={{
+                                                    display: 'grid',
+                                                    gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                                                    gap: 2,
+                                                }}
+                                            >
+                                                {usageChartData.map((item) => (
+                                                    <UsageChartCard
+                                                        key={item.key}
+                                                        item={item}
+                                                        colors={colors}
+                                                        lang={lang}
                                                     />
-                                                </Box>
-                                            );
-                                        })()}
-                                    </Box>
-                                </SectionCard>
+                                                ))}
+                                            </Box>
+                                            <Typography variant="body2" sx={{ mt: 1.5, color: colors.text }}>
+                                                {lang === 'de'
+                                                    ? `Playlists: ${playlistDetail.join(' · ')}.`
+                                                    : `Playlists: ${playlistDetail.join(' · ')}.`}
+                                            </Typography>
+                                        </SectionCard>
+                                    </>
+                                ) : null}
+
+                                {showMainstreamSection ? (
+                                    <>
+                                        <NoticeCard text={mainstreamBasisText} />
+                                        <SectionCard
+                                            title={lang === 'de' ? 'Mainstreaminess' : 'Mainstreaminess'}
+                                            description={lang === 'de'
+                                                ? 'Populärität von Tracks und Artists im Vergleich zu anderen Teilnehmenden.'
+                                                : 'Popularity of tracks and artists, each compared to other participants.'}
+                                        >
+                                            <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                                                <LegendKey color={colors.primary} label={lang === 'de' ? 'Sie' : 'You'} />
+                                                <LegendKey color={colors.mean} label={lang === 'de' ? 'Mittel' : 'Mean'} />
+                                            </Box>
+                                            <BarChart
+                                                dataset={mainstreamChartData}
+                                                layout="horizontal"
+                                                height={260}
+                                                series={[
+                                                    { dataKey: 'value', label: lang === 'de' ? 'Sie' : 'You', color: colors.primary },
+                                                    { dataKey: 'mean', label: lang === 'de' ? 'Mittel' : 'Mean', color: colors.mean },
+                                                ]}
+                                                yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
+                                                xAxis={[{ min: 0, max: 100 }]}
+                                                margin={{ left: 140, right: 30, top: 20, bottom: 20 }}
+                                                slotProps={{ legend: { hidden: true } }}
+                                            />
+                                            <Box sx={{ mt: 2, p: 2, borderRadius: 3, backgroundColor: colors.panel, border: `1px solid ${colors.border}` }}>
+                                                <Typography variant="overline" sx={{ color: colors.muted }}>
+                                                    {lang === 'de' ? 'Mainstreaminess Score' : 'Mainstreaminess score'}
+                                                </Typography>
+                                                <Typography variant="h4" component="div" sx={{ color: colors.primary, fontWeight: 700 }}>
+                                                    {formatPercent(score)}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: colors.text }}>
+                                                    {lang === 'de'
+                                                        ? `Mittelwert der Survey-Antworten: ${formatPercent(scoreMean)}`
+                                                        : `Survey mean: ${formatPercent(scoreMean)}`}
+                                                </Typography>
+                                            </Box>
+                                        </SectionCard>
+                                    </>
+                                ) : null}
+
+                                {showExplicitSection ? (
+                                    <>
+                                        <NoticeCard text={explicitBasisText} />
+                                        <SectionCard
+                                            title={lang === 'de' ? 'Explicitness' : 'Explicitness'}
+                                            description={lang === 'de'
+                                                ? 'Explizite Tracks aus gespeicherten, kürzlich gehörten und Top-Tracks im Vergleich zum Survey-Mittel.'
+                                                : 'Explicit tracks from saved, recent, and top tracks compared with the survey mean.'}
+                                        >
+                                            <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                                                <LegendKey color={colors.primary} label={lang === 'de' ? 'Sie' : 'You'} />
+                                                <LegendKey color={colors.mean} label={lang === 'de' ? 'Mittel' : 'Mean'} />
+                                            </Box>
+                                            <BarChart
+                                                dataset={explicitChartData}
+                                                layout="horizontal"
+                                                height={260}
+                                                series={[
+                                                    { dataKey: 'value', label: lang === 'de' ? 'Sie' : 'You', color: colors.primary },
+                                                    { dataKey: 'mean', label: lang === 'de' ? 'Mittel' : 'Mean', color: colors.mean },
+                                                ]}
+                                                yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
+                                                xAxis={[{ min: 0, max: 100 }]}
+                                                margin={{ left: 140, right: 30, top: 20, bottom: 20 }}
+                                                slotProps={{ legend: { hidden: true } }}
+                                            />
+                                            <Box sx={{ mt: 2, p: 2, borderRadius: 3, backgroundColor: colors.panel, border: `1px solid ${colors.border}` }}>
+                                                <Typography variant="overline" sx={{ color: colors.muted }}>
+                                                    {lang === 'de' ? 'Explicitness Score' : 'Explicitness score'}
+                                                </Typography>
+                                                <Typography variant="h4" component="div" sx={{ color: colors.primary, fontWeight: 700 }}>
+                                                    {formatPercent(explicitScore)}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: colors.text }}>
+                                                    {lang === 'de'
+                                                        ? `Mittelwert der Survey-Antworten: ${formatPercent(explicitScoreMean)}`
+                                                        : `Survey mean: ${formatPercent(explicitScoreMean)}`}
+                                                </Typography>
+                                            </Box>
+                                        </SectionCard>
+                                    </>
+                                ) : null}
+
+                                {showReleaseYearSection ? (
+                                    <>
+                                        <NoticeCard
+                                            text={lang === 'de'
+                                                ? `Datenbasis: ${dataBasis.release_year_points || 0} Release-Dates aus bestätigten Saved, Top und Recent Tracks.`
+                                                : `Data basis: ${dataBasis.release_year_points || 0} release dates from confirmed saved, top, and recent tracks.`}
+                                        />
+
+                                        <SectionCard
+                                            title={lang === 'de' ? 'Release year bins' : 'Release year bins'}
+                                            description={lang === 'de'
+                                                ? 'Anteil der Tracks pro Zeit-Bin im Vergleich zum Survey-Mittel.'
+                                                : 'Share of tracks per time bin compared with the survey mean.'}
+                                        >
+                                            <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                                                <LegendKey color={colors.primary} label={lang === 'de' ? 'Sie' : 'You'} />
+                                                <LegendKey color={colors.mean} label={lang === 'de' ? 'Mittel' : 'Mean'} />
+                                            </Box>
+                                            <BarChart
+                                                dataset={releaseYearChartData}
+                                                height={320}
+                                                series={[
+                                                    { dataKey: 'value', label: lang === 'de' ? 'Sie' : 'You', color: colors.primary },
+                                                    { dataKey: 'mean', label: lang === 'de' ? 'Mittel' : 'Mean', color: colors.mean },
+                                                ]}
+                                                xAxis={[{ scaleType: 'band', dataKey: 'bin' }]}
+                                                yAxis={[{ min: 0, max: 100 }]}
+                                                margin={{ left: 50, right: 30, top: 20, bottom: 70 }}
+                                                slotProps={{ legend: { hidden: true } }}
+                                            />
+                                            <Box sx={{ mt: 2, p: 2, borderRadius: 3, backgroundColor: colors.panel, border: `1px solid ${colors.border}` }}>
+                                                <Typography variant="overline" sx={{ color: colors.muted }}>
+                                                    {lang === 'de' ? 'Median release year' : 'Median release year'}
+                                                </Typography>
+                                                <Typography variant="h4" component="div" sx={{ color: colors.primary, fontWeight: 700 }}>
+                                                    {formatYear(releaseYearScore)}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: colors.text }}>
+                                                    {lang === 'de'
+                                                        ? `Mittelwert der Survey-Antworten: ${formatYear(releaseYearScoreMean)}`
+                                                        : `Survey mean: ${formatYear(releaseYearScoreMean)}`}
+                                                </Typography>
+                                            </Box>
+                                        </SectionCard>
+                                    </>
+                                ) : null}
+
+                                {showGenreSection ? (
+                                    <>
+                                        <NoticeCard text={genreBasisText} />
+                                        <SectionCard
+                                            title={lang === 'de' ? 'Ihre Genres' : 'Your Genres'}
+                                            description={lang === 'de'
+                                                ? 'Ihre häufigsten Genres (Top 100), Größe entspricht Häufigkeit.'
+                                                : 'Your most frequent genres (Top 100), size corresponds to frequency.'}
+                                        >
+                                            <Box sx={{ width: '100%', minHeight: 420, overflow: 'hidden' }}>
+                                                <WordCloud
+                                                    data={genreWordData}
+                                                    fontSize={getGenreWordFontSize(genreWordData)}
+                                                    rotate={getGenreWordRotation}
+                                                    fill={getGenreWordFill}
+                                                    spiral="rectangular"
+                                                    padding={2}
+                                                    fontWeight={700}
+                                                    width={840}
+                                                    height={420}
+                                                />
+                                            </Box>
+                                        </SectionCard>
+                                    </>
+                                ) : null}
                             </Stack>
                         ) : null}
                     </Box>
@@ -651,6 +667,24 @@ function getGenreWordRotation(word) {
     return rotations[getWordHash(word.text) % rotations.length];
 }
 
+function getGenreWordFontSize(words) {
+    const values = words.map((word) => word.value);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+
+    return (word) => {
+        const minSize = 22;
+        const maxSize = 72;
+        if (min === max) return (minSize + maxSize) / 2;
+        const scaled = minSize + ((word.value - min) / (max - min)) * (maxSize - minSize);
+        return Math.max(minSize, Math.min(maxSize, scaled));
+    };
+}
+
+function getGenreWordFill(word) {
+    return genreWordColors[getWordHash(word.text) % genreWordColors.length];
+}
+
 
 function getWordHash(text) {
     let hash = 0;
@@ -658,6 +692,18 @@ function getWordHash(text) {
         hash = (hash * 31 + text.charCodeAt(index)) >>> 0;
     }
     return hash;
+}
+
+function hasMetricValue(value) {
+    return value !== null && value !== undefined && !Number.isNaN(value);
+}
+
+function hasRenderableReleaseYear(bins) {
+    if (!bins || typeof bins !== 'object') {
+        return false;
+    }
+
+    return Object.values(bins).some((value) => hasMetricValue(value));
 }
 
 function UsageChartCard({ item, colors, lang }) {
@@ -686,7 +732,8 @@ function UsageChartCard({ item, colors, lang }) {
 }
 
 function getUsageAxisMax(value, mean) {
-    const maxValue = Math.max(value, mean, 1);
+    const values = [value, mean].filter(hasMetricValue);
+    const maxValue = values.length ? Math.max(...values) : 1;
     return Math.max(1, Math.ceil(maxValue * 1.1));
 }
 
