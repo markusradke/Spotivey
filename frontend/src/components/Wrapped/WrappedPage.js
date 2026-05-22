@@ -158,9 +158,22 @@ export default function WrappedPage() {
 
     const explicitData = useMemo(() => ([
         {
-            metric: lang === 'de' ? 'Explicit tracks' : 'Explicit tracks',
-            value: summary?.wrapped?.wrapped_explicit_pct ?? NaN,
-            mean: surveyMeanWrapped.wrapped_explicit_pct ?? NaN,
+            key: 'saved_tracks',
+            metric: lang === 'de' ? 'Gespeicherte Tracks' : 'Saved tracks',
+            value: summary?.wrapped?.wrapped_saved_track_explicit_pct ?? NaN,
+            mean: surveyMeanWrapped.wrapped_saved_track_explicit_pct ?? NaN,
+        },
+        {
+            key: 'recent_tracks',
+            metric: lang === 'de' ? 'Recent tracks' : 'Recent tracks',
+            value: summary?.wrapped?.wrapped_recent_track_explicit_pct ?? NaN,
+            mean: surveyMeanWrapped.wrapped_recent_track_explicit_pct ?? NaN,
+        },
+        {
+            key: 'top_tracks',
+            metric: lang === 'de' ? 'Top tracks' : 'Top tracks',
+            value: summary?.wrapped?.wrapped_top_tracks_explicit_pct ?? NaN,
+            mean: surveyMeanWrapped.wrapped_top_tracks_explicit_pct ?? NaN,
         },
     ]), [lang, summary, surveyMeanWrapped]);
 
@@ -173,6 +186,8 @@ export default function WrappedPage() {
 
     const score = summary?.wrapped?.wrapped_mainstream_score ?? NaN;
     const scoreMean = surveyMeanWrapped.wrapped_mainstream_score ?? NaN;
+    const explicitScore = summary?.wrapped?.wrapped_explicit_pct ?? NaN;
+    const explicitScoreMean = surveyMeanWrapped.wrapped_explicit_pct ?? NaN;
 
     const userStatsBasisText = lang === 'de'
         ? `Datenbasis: ${respondentCount} Survey-Antworten.`
@@ -183,8 +198,8 @@ export default function WrappedPage() {
         : `Data basis: ${dataBasis.saved_track_points || 0} saved tracks, ${dataBasis.recent_track_points || 0} recent tracks, ${dataBasis.top_track_points || 0} top tracks, ${dataBasis.artist_points || 0} artists.`;
 
     const explicitBasisText = lang === 'de'
-        ? `Datenbasis: ${dataBasis.saved_track_points || 0} Saved Tracks, ${dataBasis.recent_track_points || 0} Recent Tracks, ${dataBasis.top_track_points || 0} Top Tracks, ${dataBasis.playlist_track_points || 0} Playlist Tracks.`
-        : `Data basis: ${dataBasis.saved_track_points || 0} saved tracks, ${dataBasis.recent_track_points || 0} recent tracks, ${dataBasis.top_track_points || 0} top tracks, ${dataBasis.playlist_track_points || 0} playlist tracks.`;
+        ? `Datenbasis: ${dataBasis.saved_track_points || 0} Saved Tracks, ${dataBasis.recent_track_points || 0} Recent Tracks, ${dataBasis.top_track_points || 0} Top Tracks.`
+        : `Data basis: ${dataBasis.saved_track_points || 0} saved tracks, ${dataBasis.recent_track_points || 0} recent tracks, ${dataBasis.top_track_points || 0} top tracks.`;
 
     const releaseBasisText = lang === 'de'
         ? `Datenbasis: ${dataBasis.release_year_points || 0} Release-Dates aus bestätigten Track-Einträgen.`
@@ -428,8 +443,8 @@ export default function WrappedPage() {
                                 <SectionCard
                                     title={lang === 'de' ? 'Explicitness' : 'Explicitness'}
                                     description={lang === 'de'
-                                        ? 'Anteil expliziter Tracks im Vergleich zum Survey-Mittel.'
-                                        : 'Share of explicit tracks compared with the survey mean.'}
+                                        ? 'Explizite Tracks aus gespeicherten, kürzlich gehörten und Top-Tracks im Vergleich zum Survey-Mittel.'
+                                        : 'Explicit tracks from saved, recent, and top tracks compared with the survey mean.'}
                                 >
                                     <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                                         <LegendKey color={colors.primary} label={lang === 'de' ? 'Sie' : 'You'} />
@@ -438,16 +453,29 @@ export default function WrappedPage() {
                                     <BarChart
                                         dataset={explicitData}
                                         layout="horizontal"
-                                        height={180}
+                                        height={260}
                                         series={[
                                             { dataKey: 'value', label: lang === 'de' ? 'Sie' : 'You', color: colors.primary },
                                             { dataKey: 'mean', label: lang === 'de' ? 'Mittel' : 'Mean', color: colors.mean },
                                         ]}
                                         yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
                                         xAxis={[{ min: 0, max: 100 }]}
-                                        margin={{ left: 160, right: 30, top: 20, bottom: 20 }}
+                                        margin={{ left: 140, right: 30, top: 20, bottom: 20 }}
                                         slotProps={{ legend: { hidden: true } }}
                                     />
+                                    <Box sx={{ mt: 2, p: 2, borderRadius: 3, backgroundColor: colors.panel, border: `1px solid ${colors.border}` }}>
+                                        <Typography variant="overline" sx={{ color: colors.muted }}>
+                                            {lang === 'de' ? 'Explicitness Score' : 'Explicitness score'}
+                                        </Typography>
+                                        <Typography variant="h4" component="div" sx={{ color: colors.primary, fontWeight: 700 }}>
+                                            {formatPercent(explicitScore)}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: colors.text }}>
+                                            {lang === 'de'
+                                                ? `Mittelwert der Survey-Antworten: ${formatPercent(explicitScoreMean)}`
+                                                : `Survey mean: ${formatPercent(explicitScoreMean)}`}
+                                        </Typography>
+                                    </Box>
                                 </SectionCard>
 
                                 {/* <NoticeCard

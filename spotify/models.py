@@ -69,6 +69,9 @@ class Participant(models.Model):
     )
     wrapped_mainstream_score = models.FloatField(null=True, blank=True, default=None)
 
+    wrapped_saved_track_explicit_pct = models.FloatField(null=True, blank=True, default=None)
+    wrapped_recent_track_explicit_pct = models.FloatField(null=True, blank=True, default=None)
+    wrapped_top_tracks_explicit_pct = models.FloatField(null=True, blank=True, default=None)
     wrapped_explicit_pct = models.FloatField(null=True, blank=True, default=None)
 
     wrapped_genre_counts = models.JSONField(null=True, blank=True, default=None)

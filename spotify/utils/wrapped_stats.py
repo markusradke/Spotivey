@@ -73,7 +73,17 @@ def compute_wrapped_stats(participant: Participant) -> dict[str, Any]:
         artist_median,
     ])
 
-    explicit_pct = _compute_explicit_pct(participant)
+    saved_track_explicit_pct = _compute_explicit_pct_for_models(participant, [SavedTrack])
+    recent_track_explicit_pct = _compute_explicit_pct_for_models(participant, [RecentTrack])
+    top_tracks_explicit_pct = _compute_explicit_pct_for_models(
+        participant,
+        [TopTrackShortTerm, TopTrackMediumTerm, TopTrackLongTerm],
+    )
+    explicit_pct = _safe_mean([
+        saved_track_explicit_pct,
+        recent_track_explicit_pct,
+        top_tracks_explicit_pct,
+    ])
 
     genre_counts = _compute_genre_counts(participant)
     top_genres = [genre for genre, _count in genre_counts.most_common(TOP_N_GENRES)]
@@ -95,6 +105,9 @@ def compute_wrapped_stats(participant: Participant) -> dict[str, Any]:
         "wrapped_top_tracks_popularity_median": top_track_median,
         "wrapped_mainstream_artist_popularity_median": artist_median,
         "wrapped_mainstream_score": mainstream_score,
+        "wrapped_saved_track_explicit_pct": saved_track_explicit_pct,
+        "wrapped_recent_track_explicit_pct": recent_track_explicit_pct,
+        "wrapped_top_tracks_explicit_pct": top_tracks_explicit_pct,
         "wrapped_explicit_pct": explicit_pct,
         "wrapped_genre_counts": dict(genre_counts),
         "wrapped_top_genres": top_genres,
@@ -211,18 +224,12 @@ def _collect_artist_values(participant: Participant, field: str) -> list[int | f
     return collected
 
 
-def _compute_explicit_pct(participant: Participant) -> float | None:
+def _compute_explicit_pct_for_models(
+    participant: Participant,
+    models: list[type[Any]],
+) -> float | None:
     explicit_values: list[bool] = []
-    track_models = [
-        SavedTrack,
-        TopTrackShortTerm,
-        TopTrackMediumTerm,
-        TopTrackLongTerm,
-        RecentTrack,
-        PrivatePlaylistTrack,
-    ]
-
-    for model in track_models:
+    for model in models:
         explicit_values.extend(
             model.objects.filter(participant=participant, confirmed=True)
             .exclude(explicit__isnull=True)
