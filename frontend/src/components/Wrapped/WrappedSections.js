@@ -90,8 +90,8 @@ export function ExplicitSection({ colors, lang, basisText, chartData, score, sco
             noticeText={basisText}
             title={lang === "de" ? "Explicitness" : "Explicitness"}
             description={lang === "de"
-                ? "Anteil von Tracks mit explizitem Inhalt im Vergleich zum Survey-Mittel."
-                : "Share of explicit tracks compared with the survey mean."}
+                ? "Anteil von Tracks mit explizitem Inhalt im Vergleich zu anderen Teilnehmenden."
+                : "Share of explicit tracks compared with other participants."}
         >
             <Box sx={{ mb: 2, display: "flex", flexWrap: "wrap", gap: 2 }}>
                 <LegendKey color={colors.primary} label={lang === "de" ? "Sie" : "You"} />
@@ -129,8 +129,8 @@ export function ReleaseYearSection({ colors, lang, basisText, chartData, score, 
             noticeText={basisText}
             title={lang === "de" ? "Release year bins" : "Release year bins"}
             description={lang === "de"
-                ? "Anteil der Tracks pro Zeit-Bin im Vergleich zum Survey-Mittel."
-                : "Share of tracks per time bin compared with the survey mean."}
+                ? "Veröffentlichungsjahr Ihrer Musik im Vergleich zu anderen Teilnehmenden."
+                : "Release year of your music compared with other participants."}
         >
             <Box sx={{ mb: 2, display: "flex", flexWrap: "wrap", gap: 2 }}>
                 <LegendKey color={colors.primary} label={lang === "de" ? "Sie" : "You"} />
