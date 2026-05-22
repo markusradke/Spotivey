@@ -1,10 +1,17 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom"
 import { BarChart } from "@mui/x-charts/BarChart";
+import WordCloud from "react-d3-cloud";
 import { Box, Button, Card, CardContent, Container, Divider, Paper, Stack, Typography, IconButton } from "@mui/material";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { WhatsappShareButton, WhatsappIcon, XShareButton, XIcon } from "react-share";
 import EnterEmail from "../Room/enterEmail";
+
+const genreWordColors = [
+    'var(--color-black)',
+    'var(--color-tu-berlin)',
+    'var(--color-tu-berlin-secondary)',
+];
 
 export default function WrappedPage() {
     const [searchParams] = useSearchParams();
@@ -524,6 +531,75 @@ export default function WrappedPage() {
                                         </Typography>
                                     </Box>
                                 </SectionCard>
+
+                                <SectionCard
+                                    title={lang === 'de' ? 'Ihre Genres' : 'Your Genres'}
+                                    description={lang === 'de'
+                                        ? 'Ihre häufigsten Genres (Top 100), Größe entspricht Häufigkeit.'
+                                        : 'Your most frequent genres (Top 100), size corresponds to frequency.'}
+                                >
+                                    <Box sx={{ my: 1 }}>
+                                        {(() => {
+                                            const counts = summary?.wrapped?.wrapped_genre_counts || {};
+                                            const entries = Object.entries(counts || {});
+                                            if (!entries.length) {
+                                                return (
+                                                    <Typography variant="body2" sx={{ color: colors.muted }}>
+                                                        {lang === 'de' ? 'Keine Genre-Daten verfügbar.' : 'No genre data available.'}
+                                                    </Typography>
+                                                );
+                                            }
+
+                                            const sorted = entries
+                                                .map(([text, value]) => ({ text, value }))
+                                                .sort((a, b) => b.value - a.value)
+                                                .slice(0, 100);
+
+                                            const values = sorted.map((d) => d.value);
+                                            const min = Math.min(...values);
+                                            const max = Math.max(...values);
+
+                                            const fontSize = (word) => {
+                                                const minSize = 22;
+                                                const maxSize = 72;
+                                                if (min === max) return (minSize + maxSize) / 2;
+                                                const scaled = minSize + ((word.value - min) / (max - min)) * (maxSize - minSize);
+                                                return Math.max(minSize, Math.min(maxSize, scaled));
+                                            };
+
+                                            //inerpolate between two colors based on a value between 0 and 1, wihtout using interpolateColor from react-native-reanimated
+                                            const getGenreWordFill = (word) => {
+                                                const colors = [
+                                                    '#aaaaaa',
+                                                    '#a57278',
+                                                    '#b95d67',
+                                                    '#be4654',
+                                                    'var(--color-tu-berlin)'
+                                                ];
+                                                if (min === max) return colors[0];
+                                                const scaled = (word.value - min) / (max - min);
+                                                const colorIndex = Math.floor(scaled * (colors.length - 1));
+                                                return colors[colorIndex];
+                                            };
+
+                                            return (
+                                                <Box sx={{ width: '100%', minHeight: 420, overflow: 'hidden' }}>
+                                                    <WordCloud
+                                                        data={sorted}
+                                                        fontSize={fontSize}
+                                                        rotate={getGenreWordRotation}
+                                                        fill={getGenreWordFill}
+                                                        spiral="rectangular"
+                                                        padding={2}
+                                                        fontWeight={700}
+                                                        width={840}
+                                                        height={420}
+                                                    />
+                                                </Box>
+                                            );
+                                        })()}
+                                    </Box>
+                                </SectionCard>
                             </Stack>
                         ) : null}
                     </Box>
@@ -568,6 +644,20 @@ function LegendKey({ color, label }) {
             </Typography>
         </Box>
     );
+}
+
+function getGenreWordRotation(word) {
+    const rotations = [0, -30, 30];
+    return rotations[getWordHash(word.text) % rotations.length];
+}
+
+
+function getWordHash(text) {
+    let hash = 0;
+    for (let index = 0; index < text.length; index += 1) {
+        hash = (hash * 31 + text.charCodeAt(index)) >>> 0;
+    }
+    return hash;
 }
 
 function UsageChartCard({ item, colors, lang }) {
