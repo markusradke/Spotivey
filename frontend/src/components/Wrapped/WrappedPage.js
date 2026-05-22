@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom"
 import { BarChart } from "@mui/x-charts/BarChart";
 import WordCloud from "react-d3-cloud";
 import { Box, Button, Card, CardContent, Container, Divider, Paper, Stack, Typography, IconButton } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { WhatsappShareButton, WhatsappIcon, XShareButton, XIcon } from "react-share";
 import EnterEmail from "../Room/enterEmail";
@@ -29,6 +30,7 @@ export default function WrappedPage() {
 
     const [summary, setSummary] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const isMobileLayout = useMediaQuery("(max-width:600px)");
 
     const colors = {
         primary: "var(--color-tu-berlin)",
@@ -234,6 +236,10 @@ export default function WrappedPage() {
             .sort((a, b) => b.value - a.value)
             .slice(0, 100);
     }, [summary]);
+
+    const genreCloudSize = isMobileLayout
+        ? { width: 340, height: 340 }
+        : { width: 840, height: 420 };
 
     const showUsageSection = usageChartData.length > 0;
     const showMainstreamSection = mainstreamChartData.length > 0;
@@ -609,15 +615,16 @@ export default function WrappedPage() {
                                         >
                                             <Box sx={{ width: '100%', minHeight: 420, overflow: 'hidden' }}>
                                                 <WordCloud
+                                                    key={isMobileLayout ? 'genre-cloud-mobile' : 'genre-cloud-desktop'}
                                                     data={genreWordData}
-                                                    fontSize={getGenreWordFontSize(genreWordData)}
+                                                    fontSize={getGenreWordFontSize(genreWordData, isMobileLayout)}
                                                     rotate={getGenreWordRotation}
                                                     fill={getGenreWordFill(genreWordData)}
                                                     spiral="rectangular"
                                                     padding={2}
                                                     fontWeight={700}
-                                                    width={840}
-                                                    height={420}
+                                                    width={genreCloudSize.width}
+                                                    height={genreCloudSize.height}
                                                 />
                                             </Box>
                                         </SectionCard>
@@ -674,14 +681,14 @@ function getGenreWordRotation(word) {
     return rotations[getWordHash(word.text) % rotations.length];
 }
 
-function getGenreWordFontSize(words) {
+function getGenreWordFontSize(words, isMobileLayout = false) {
     const values = words.map((word) => word.value);
     const min = Math.min(...values);
     const max = Math.max(...values);
 
     return (word) => {
-        const minSize = 22;
-        const maxSize = 72;
+        const minSize = isMobileLayout ? 12 : 22;
+        const maxSize = isMobileLayout ? 34 : 72;
         if (min === max) return (minSize + maxSize) / 2;
         const scaled = minSize + ((word.value - min) / (max - min)) * (maxSize - minSize);
         return Math.max(minSize, Math.min(maxSize, scaled));
