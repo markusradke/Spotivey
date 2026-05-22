@@ -4,6 +4,11 @@ import Button from "@mui/material/Button";
 import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
 import Stepper from "@mui/material/Stepper";
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 export default function ConfirmStepper({
@@ -16,6 +21,8 @@ export default function ConfirmStepper({
 }) {
     const [activeStep, setActiveStep] = useState(0);
     const [completed, setCompleted] = useState({});
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const currentStep = steps[activeStep];
     const currentConfirmText = confirmTextArray?.[currentStep?.index];
@@ -76,79 +83,131 @@ export default function ConfirmStepper({
     return (
         <React.Fragment>
             {!allCompleted && (
-                <React.Fragment>
-                    <Box sx={{ pt: { xs: 2, sm: 4, md: 7.5 } }}>
-                        <div className="render-result-explanation-container">
-                            <div className="render-result-explanation-inner">
-                                <body1 className="render-result-explanation">
+                <Box sx={{ pt: { xs: 2, sm: 4, md: 7.5 }, px: { xs: 1, sm: 0 } }}>
+                    <Paper
+                        elevation={2}
+                        sx={{
+                            mx: "auto",
+                            maxWidth: 900,
+                            px: { xs: 2, sm: 3, md: 4 },
+                            py: { xs: 2.5, sm: 3.5, md: 4 },
+                            backgroundColor: "var(--main-bg-color)",
+                            borderRadius: { xs: 3, sm: 4 },
+                        }}
+                    >
+                        <Stack spacing={2.5}>
+                            <Box sx={{ textAlign: "center" }}>
+                                <Typography
+                                    variant={isMobile ? "h6" : "h5"}
+                                    component="h2"
+                                    sx={{ color: "var(--color-black)", fontWeight: 700 }}
+                                >
+                                    {language === "en"
+                                        ? "Check your selections"
+                                        : "Prüfe deine Auswahl"}
+                                </Typography>
+
+                                <Typography
+                                    variant="body1"
+                                    className="render-result-explanation"
+                                    sx={{ mt: 1, color: "var(--color-black)" }}
+                                >
                                     {language === "en"
                                         ? currentConfirmText?.[0]
                                         : currentConfirmText?.[1]}
-                                </body1>
-                                <Box sx={{ display: "flex", justifyContent: "center", pt: 2 }}>
+                                </Typography>
+                            </Box>
+
+                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                <Button
+                                    onClick={handleConfirmAllResults}
+                                    variant="contained"
+                                    color="error"
+                                    fullWidth={isMobile}
+                                    sx={{ maxWidth: { xs: "100%", sm: 340 } }}
+                                >
+                                    {language === "en"
+                                        ? "Confirm all results"
+                                        : "Bestätige alle Ergebnisse"}
+                                </Button>
+                            </Box>
+
+                            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                                <Button
+                                    onClick={handlePrimaryClick}
+                                    variant="contained"
+                                    fullWidth={isMobile}
+                                    sx={{ minWidth: { sm: 120 } }}
+                                >
+                                    {activeStep !== steps.length - 1 ? <ArrowForwardIcon /> : "OK"}
+                                </Button>
+                            </Box>
+
+                            <Stepper
+                                activeStep={activeStep}
+                                orientation={isMobile ? "vertical" : "horizontal"}
+                                alternativeLabel={!isMobile}
+                                sx={{ width: "100%" }}
+                            >
+                                {steps.map((step, index) => (
+                                    <Step key={step.label} completed={completed[index]}>
+                                        <StepButton
+                                            color="inherit"
+                                            onClick={handleStep(index)}
+                                            sx={{ width: "100%" }}
+                                        >
+                                            {step.label}
+                                        </StepButton>
+                                    </Step>
+                                ))}
+                            </Stepper>
+
+                            {typeof onToggleAllCurrentStep === "function" && (
+                                <Stack
+                                    direction={isMobile ? "column" : "row"}
+                                    spacing={1}
+                                    justifyContent="flex-end"
+                                >
                                     <Button
-                                        onClick={handleConfirmAllResults}
-                                        variant="contained"
-                                        color="error"
+                                        size="small"
+                                        variant="text"
+                                        color="inherit"
+                                        fullWidth={isMobile}
+                                        sx={{ color: "text.secondary" }}
+                                        onClick={() => onToggleAllCurrentStep(currentStep, true)}
                                     >
-                                        {language === "en" ? "Confirm all results" : "Bestätige alle Ergebnisse"}
+                                        {language === "en" ? "Select all" : "Alle auswählen"}
                                     </Button>
-                                </Box>
-                            </div>
-                        </div>
-                    </Box>
 
-                    <Stepper activeStep={activeStep}>
-                        {steps.map((step, index) => (
-                            <Step key={step.label} completed={completed[index]}>
-                                <StepButton color="inherit" onClick={handleStep(index)}>
-                                    {step.label}
-                                </StepButton>
-                            </Step>
-                        ))}
-                    </Stepper>
+                                    <Button
+                                        size="small"
+                                        variant="text"
+                                        color="inherit"
+                                        fullWidth={isMobile}
+                                        sx={{ color: "text.secondary" }}
+                                        onClick={() => onToggleAllCurrentStep(currentStep, false)}
+                                    >
+                                        {language === "en" ? "Deselect all" : "Keine auswählen"}
+                                    </Button>
+                                </Stack>
+                            )}
 
-                    {typeof onToggleAllCurrentStep === "function" && (
-                        <Box
-                            sx={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                                gap: 1,
-                                pt: 1,
-                            }}
-                        >
-                            <Button
-                                size="small"
-                                variant="text"
-                                color="inherit"
-                                sx={{ color: "text.secondary" }}
-                                onClick={() => onToggleAllCurrentStep(currentStep, true)}
-                            >
-                                {language === "en" ? "Select all" : "Alle auswählen"}
-                            </Button>
+                            {renderStepContent(steps[activeStep])}
 
-                            <Button
-                                size="small"
-                                variant="text"
-                                color="inherit"
-                                sx={{ color: "text.secondary" }}
-                                onClick={() => onToggleAllCurrentStep(currentStep, false)}
-                            >
-                                {language === "en" ? "Deselect all" : "Keine auswählen"}
-                            </Button>
-                        </Box>
-                    )}
-
-                    <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                        <Box sx={{ flex: "1 1 auto" }} />
-                        <Button onClick={handlePrimaryClick} variant="contained">
-                            {activeStep !== steps.length - 1 ? <ArrowForwardIcon /> : "OK"}
-                        </Button>
-                    </Box>
-                </React.Fragment>
+                            <Box sx={{ display: "flex", justifyContent: "flex-end", pt: 1 }}>
+                                <Button
+                                    onClick={handlePrimaryClick}
+                                    variant="contained"
+                                    fullWidth={isMobile}
+                                    sx={{ minWidth: { sm: 120 } }}
+                                >
+                                    {activeStep !== steps.length - 1 ? <ArrowForwardIcon /> : "OK"}
+                                </Button>
+                            </Box>
+                        </Stack>
+                    </Paper>
+                </Box>
             )}
-
-            {!allCompleted && renderStepContent(steps[activeStep])}
         </React.Fragment>
     );
 }
