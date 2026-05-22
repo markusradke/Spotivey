@@ -73,6 +73,8 @@ class Participant(models.Model):
     wrapped_recent_track_explicit_pct = models.FloatField(null=True, blank=True, default=None)
     wrapped_top_tracks_explicit_pct = models.FloatField(null=True, blank=True, default=None)
     wrapped_explicit_pct = models.FloatField(null=True, blank=True, default=None)
+    wrapped_release_year_median = models.FloatField(null=True, blank=True, default=None)
+    wrapped_release_year_bins = models.JSONField(null=True, blank=True, default=None)
 
     wrapped_genre_counts = models.JSONField(null=True, blank=True, default=None)
     wrapped_top_genres = models.JSONField(null=True, blank=True, default=None)

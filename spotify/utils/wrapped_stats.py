@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 import json
 from collections import Counter
 from statistics import median
@@ -25,6 +26,7 @@ from spotify.models import (
 )
 
 TOP_N_GENRES = 20
+FIRST_DECADE_BIN_YEAR = 1960
 
 
 def compute_wrapped_stats(participant: Participant) -> dict[str, Any]:
@@ -85,6 +87,9 @@ def compute_wrapped_stats(participant: Participant) -> dict[str, Any]:
         top_tracks_explicit_pct,
     ])
 
+    release_year_median = _compute_release_year_median(participant)
+    release_year_bins = _compute_release_year_bin_percentages(participant)
+
     genre_counts = _compute_genre_counts(participant)
     top_genres = [genre for genre, _count in genre_counts.most_common(TOP_N_GENRES)]
 
@@ -109,6 +114,8 @@ def compute_wrapped_stats(participant: Participant) -> dict[str, Any]:
         "wrapped_recent_track_explicit_pct": recent_track_explicit_pct,
         "wrapped_top_tracks_explicit_pct": top_tracks_explicit_pct,
         "wrapped_explicit_pct": explicit_pct,
+        "wrapped_release_year_median": release_year_median,
+        "wrapped_release_year_bins": release_year_bins,
         "wrapped_genre_counts": dict(genre_counts),
         "wrapped_top_genres": top_genres,
     }
@@ -241,6 +248,92 @@ def _compute_explicit_pct_for_models(
 
     explicit_true = sum(1 for value in explicit_values if value)
     return (explicit_true / len(explicit_values)) * 100.0
+
+
+def get_release_year_bin_labels() -> list[str]:
+    current_decade = (datetime.now().year // 10) * 10
+    labels = ["up to 1960"]
+    labels.extend(f"{decade}s" for decade in range(FIRST_DECADE_BIN_YEAR, current_decade + 1, 10))
+    return labels
+
+
+def _compute_release_year_bin_percentages(participant: Participant) -> dict[str, float]:
+    track_models = [
+        SavedTrack,
+        TopTrackShortTerm,
+        TopTrackMediumTerm,
+        TopTrackLongTerm,
+        RecentTrack,
+    ]
+
+    labels = get_release_year_bin_labels()
+    bin_counts = {label: 0 for label in labels}
+    total_count = 0
+
+    for model in track_models:
+        release_dates = model.objects.filter(participant=participant, confirmed=True).values_list(
+            "release_date", flat=True
+        )
+        for release_date in release_dates:
+            year = _extract_release_year(release_date)
+            if year is None:
+                continue
+            bin_label = _get_release_year_bin_label(year)
+            if bin_label not in bin_counts:
+                continue
+            bin_counts[bin_label] += 1
+            total_count += 1
+
+    if total_count == 0:
+        return {}
+
+    return {
+        label: (count / total_count) * 100.0
+        for label, count in bin_counts.items()
+    }
+
+
+def _compute_release_year_median(participant: Participant) -> float | None:
+    track_models = [
+        SavedTrack,
+        TopTrackShortTerm,
+        TopTrackMediumTerm,
+        TopTrackLongTerm,
+        RecentTrack,
+    ]
+
+    years: list[int] = []
+    for model in track_models:
+        release_dates = model.objects.filter(participant=participant, confirmed=True).values_list(
+            "release_date", flat=True
+        )
+        for release_date in release_dates:
+            year = _extract_release_year(release_date)
+            if year is not None:
+                years.append(year)
+
+    return _safe_median(years)
+
+
+def _extract_release_year(release_date: Any) -> int | None:
+    if not isinstance(release_date, str):
+        return None
+
+    stripped = release_date.strip()
+    if len(stripped) < 4 or not stripped[:4].isdigit():
+        return None
+
+    year = int(stripped[:4])
+    if year < 1900 or year > 2100:
+        return None
+    return year
+
+
+def _get_release_year_bin_label(year: int) -> str:
+    if year <= FIRST_DECADE_BIN_YEAR:
+        return "up to 1960"
+    decade = (year // 10) * 10
+    return f"{decade}s"
 
 
 def _compute_genre_counts(participant: Participant) -> Counter[str]:

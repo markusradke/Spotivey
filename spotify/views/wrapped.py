@@ -16,7 +16,11 @@ from rest_framework.views import APIView
 
 from spotify.models import Participant
 from spotify.utils.retrieval_helpers import get_participant_from_session
-from spotify.utils.wrapped_stats import compute_wrapped_stats, store_wrapped_stats
+from spotify.utils.wrapped_stats import (
+    compute_wrapped_stats,
+    get_release_year_bin_labels,
+    store_wrapped_stats,
+)
 
 WRAPPED_FIELDS = [
     "wrapped_confirmed_playlist_count",
@@ -35,6 +39,8 @@ WRAPPED_FIELDS = [
     "wrapped_recent_track_explicit_pct",
     "wrapped_top_tracks_explicit_pct",
     "wrapped_explicit_pct",
+    "wrapped_release_year_median",
+    "wrapped_release_year_bins",
     "wrapped_genre_counts",
     "wrapped_top_genres",
 ]
@@ -61,9 +67,10 @@ def _safe_float(value: Any) -> float | None:
 def _build_wrapped_summary(participant, *, persist: bool = False) -> dict[str, Any]:
     stats = store_wrapped_stats(participant, save=True) if persist else _get_wrapped_stats(participant)
     settings = participant.settings
-    release_year_histogram = _build_release_year_histogram(participant)
+    release_year_bins = stats.get("wrapped_release_year_bins") or {}
+    release_year_points = _count_release_year_points(participant)
     survey_means = _build_survey_means(settings)
-    data_basis = _build_data_basis(participant, stats, release_year_histogram)
+    data_basis = _build_data_basis(participant, stats, release_year_points)
 
     return {
         "participant": participant.participant,
@@ -75,7 +82,7 @@ def _build_wrapped_summary(participant, *, persist: bool = False) -> dict[str, A
             "total_current_playlists": _safe_int(participant.total_current_playlists),
         },
         "wrapped": stats,
-        "release_year_histogram": release_year_histogram,
+        "release_year_bins": release_year_bins,
         "survey_means": survey_means,
         "data_basis": data_basis,
         "end": {
@@ -121,6 +128,7 @@ def _build_survey_means(settings) -> dict[str, Any]:
         "wrapped_recent_track_explicit_pct",
         "wrapped_top_tracks_explicit_pct",
         "wrapped_explicit_pct",
+        "wrapped_release_year_median",
     ]
 
     agg = qs.aggregate(
@@ -137,10 +145,11 @@ def _build_survey_means(settings) -> dict[str, Any]:
             name: _safe_float(agg.get(f"mean_{name}"))
             for name in wrapped_fields
         },
+        "release_year_bins": _build_release_year_bin_means(qs),
     }
 
 
-def _build_data_basis(participant, stats: dict[str, Any], release_year_histogram: list[dict[str, int]]) -> dict[str, Any]:
+def _build_data_basis(participant, stats: dict[str, Any], release_year_points: int) -> dict[str, Any]:
     from spotify.models import (
         FollowedArtist,
         PrivatePlaylistTrack,
@@ -182,7 +191,7 @@ def _build_data_basis(participant, stats: dict[str, Any], release_year_histogram
         "top_track_points": top_track_points,
         "playlist_track_points": playlist_track_points,
         "artist_points": artist_points,
-        "release_year_points": sum(item.get("count", 0) for item in release_year_histogram),
+        "release_year_points": release_year_points,
     }
 
 
@@ -225,9 +234,8 @@ def _extract_release_year(release_date: Any) -> int | None:
     return year
 
 
-def _build_release_year_histogram(participant) -> list[dict[str, int]]:
+def _count_release_year_points(participant) -> int:
     from spotify.models import (
-        PrivatePlaylistTrack,
         RecentTrack,
         SavedTrack,
         TopTrackLongTerm,
@@ -235,14 +243,13 @@ def _build_release_year_histogram(participant) -> list[dict[str, int]]:
         TopTrackShortTerm,
     )
 
-    year_counts: dict[int, int] = {}
+    valid_points = 0
     track_models = [
         SavedTrack,
         TopTrackShortTerm,
         TopTrackMediumTerm,
         TopTrackLongTerm,
         RecentTrack,
-        PrivatePlaylistTrack,
     ]
 
     for model in track_models:
@@ -253,12 +260,30 @@ def _build_release_year_histogram(participant) -> list[dict[str, int]]:
             year = _extract_release_year(release_date)
             if year is None:
                 continue
-            year_counts[year] = year_counts.get(year, 0) + 1
+            valid_points += 1
 
-    return [
-        {"year": year, "count": count}
-        for year, count in sorted(year_counts.items(), key=lambda item: item[0])
-    ]
+    return valid_points
+
+
+def _build_release_year_bin_means(qs) -> dict[str, float | None]:
+    bin_labels = get_release_year_bin_labels()
+    totals = {label: 0.0 for label in bin_labels}
+    counts = {label: 0 for label in bin_labels}
+
+    for bins in qs.values_list("wrapped_release_year_bins", flat=True):
+        if not isinstance(bins, dict):
+            continue
+        for label in bin_labels:
+            value = _safe_float(bins.get(label))
+            if value is None:
+                continue
+            totals[label] += value
+            counts[label] += 1
+
+    return {
+        label: (totals[label] / counts[label]) if counts[label] > 0 else None
+        for label in bin_labels
+    }
 
 
 def _render_wrapped_png(summary: dict[str, Any]) -> bytes:

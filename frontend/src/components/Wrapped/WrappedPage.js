@@ -90,9 +90,10 @@ export default function WrappedPage() {
     const surveyMeans = summary?.survey_means || {};
     const surveyMeanUsage = surveyMeans.usage || {};
     const surveyMeanWrapped = surveyMeans.wrapped || {};
+    const surveyMeanReleaseYearBins = surveyMeans.release_year_bins || {};
     const dataBasis = summary?.data_basis || {};
     const respondentCount = surveyMeans.respondent_count || 0;
-    const releaseYearHistogram = summary?.release_year_histogram || [];
+    const releaseYearBins = summary?.release_year_bins || {};
 
     const usageData = useMemo(() => ([
         {
@@ -178,16 +179,23 @@ export default function WrappedPage() {
     ]), [lang, summary, surveyMeanWrapped]);
 
     const releaseYearData = useMemo(() => {
-        return releaseYearHistogram.map((item) => ({
-            year: String(item.year),
-            count: item.count,
+        const binLabels = Object.keys(releaseYearBins).length
+            ? Object.keys(releaseYearBins)
+            : Object.keys(surveyMeanReleaseYearBins);
+
+        return binLabels.map((label) => ({
+            bin: label,
+            value: releaseYearBins[label] ?? NaN,
+            mean: surveyMeanReleaseYearBins[label] ?? NaN,
         }));
-    }, [releaseYearHistogram]);
+    }, [releaseYearBins, surveyMeanReleaseYearBins]);
 
     const score = summary?.wrapped?.wrapped_mainstream_score ?? NaN;
     const scoreMean = surveyMeanWrapped.wrapped_mainstream_score ?? NaN;
     const explicitScore = summary?.wrapped?.wrapped_explicit_pct ?? NaN;
     const explicitScoreMean = surveyMeanWrapped.wrapped_explicit_pct ?? NaN;
+    const releaseYearScore = summary?.wrapped?.wrapped_release_year_median ?? NaN;
+    const releaseYearScoreMean = surveyMeanWrapped.wrapped_release_year_median ?? NaN;
 
     const userStatsBasisText = lang === 'de'
         ? `Datenbasis: ${respondentCount} Survey-Antworten.`
@@ -200,10 +208,6 @@ export default function WrappedPage() {
     const explicitBasisText = lang === 'de'
         ? `Datenbasis: ${dataBasis.saved_track_points || 0} Saved Tracks, ${dataBasis.recent_track_points || 0} Recent Tracks, ${dataBasis.top_track_points || 0} Top Tracks.`
         : `Data basis: ${dataBasis.saved_track_points || 0} saved tracks, ${dataBasis.recent_track_points || 0} recent tracks, ${dataBasis.top_track_points || 0} top tracks.`;
-
-    const releaseBasisText = lang === 'de'
-        ? `Datenbasis: ${dataBasis.release_year_points || 0} Release-Dates aus bestätigten Track-Einträgen.`
-        : `Data basis: ${dataBasis.release_year_points || 0} release dates from confirmed track entries.`;
 
     async function fetchWrappedPngBlob() {
         const resp = await fetch(`/spotify/wrapped/image?${wrappedQuery}`, {
@@ -478,27 +482,48 @@ export default function WrappedPage() {
                                     </Box>
                                 </SectionCard>
 
-                                {/* <NoticeCard
+                                <NoticeCard
                                     text={lang === 'de'
-                                        ? 'Datenbasis: bestätigte Release-Dates aus Tracks.'
-                                        : 'Data basis: release dates from confirmed tracks.'}
+                                        ? `Datenbasis: ${dataBasis.release_year_points || 0} Release-Dates aus bestätigten Saved, Top und Recent Tracks.`
+                                        : `Data basis: ${dataBasis.release_year_points || 0} release dates from confirmed saved, top, and recent tracks.`}
                                 />
 
                                 <SectionCard
-                                    title={lang === 'de' ? 'Release year histogram' : 'Release year histogram'}
+                                    title={lang === 'de' ? 'Release year bins' : 'Release year bins'}
                                     description={lang === 'de'
-                                        ? 'Verteilung der Release-Jahre über alle bestätigten Track-Einträge.'
-                                        : 'Distribution of release years across all confirmed track entries.'}
+                                        ? 'Anteil der Tracks pro Zeit-Bin im Vergleich zum Survey-Mittel.'
+                                        : 'Share of tracks per time bin compared with the survey mean.'}
                                 >
+                                    <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                                        <LegendKey color={colors.primary} label={lang === 'de' ? 'Sie' : 'You'} />
+                                        <LegendKey color={colors.mean} label={lang === 'de' ? 'Mittel' : 'Mean'} />
+                                    </Box>
                                     <BarChart
                                         dataset={releaseYearData}
-                                        height={280}
-                                        series={[{ dataKey: 'count', label: lang === 'de' ? 'Tracks' : 'Tracks', color: colors.primary }]}
-                                        xAxis={[{ scaleType: 'band', dataKey: 'year' }]}
-                                        yAxis={[{ min: 0 }]}
-                                        margin={{ left: 50, right: 30, top: 20, bottom: 50 }}
+                                        height={320}
+                                        series={[
+                                            { dataKey: 'value', label: lang === 'de' ? 'Sie' : 'You', color: colors.primary },
+                                            { dataKey: 'mean', label: lang === 'de' ? 'Mittel' : 'Mean', color: colors.mean },
+                                        ]}
+                                        xAxis={[{ scaleType: 'band', dataKey: 'bin' }]}
+                                        yAxis={[{ min: 0, max: 100 }]}
+                                        margin={{ left: 50, right: 30, top: 20, bottom: 70 }}
+                                        slotProps={{ legend: { hidden: true } }}
                                     />
-                                </SectionCard> */}
+                                    <Box sx={{ mt: 2, p: 2, borderRadius: 3, backgroundColor: colors.panel, border: `1px solid ${colors.border}` }}>
+                                        <Typography variant="overline" sx={{ color: colors.muted }}>
+                                            {lang === 'de' ? 'Median release year' : 'Median release year'}
+                                        </Typography>
+                                        <Typography variant="h4" component="div" sx={{ color: colors.primary, fontWeight: 700 }}>
+                                            {formatYear(releaseYearScore)}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: colors.text }}>
+                                            {lang === 'de'
+                                                ? `Mittelwert der Survey-Antworten: ${formatYear(releaseYearScoreMean)}`
+                                                : `Survey mean: ${formatYear(releaseYearScoreMean)}`}
+                                        </Typography>
+                                    </Box>
+                                </SectionCard>
                             </Stack>
                         ) : null}
                     </Box>
@@ -593,4 +618,11 @@ function formatCount(value, lang = 'en') {
     } else {
         return formatted.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
+}
+
+function formatYear(value) {
+    if (value === null || value === undefined || Number.isNaN(value)) {
+        return 'NA';
+    }
+    return String(Math.round(Number(value)));
 }
