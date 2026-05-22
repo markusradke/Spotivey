@@ -61,6 +61,9 @@ class Participant(models.Model):
     wrapped_top_tracks_popularity_median = models.FloatField(
         null=True, blank=True, default=None
     )
+    wrapped_saved_track_popularity_median = models.FloatField(
+        null=True, blank=True, default=None
+    )
     wrapped_mainstream_artist_popularity_median = models.FloatField(
         null=True, blank=True, default=None
     )

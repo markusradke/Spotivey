@@ -135,6 +135,11 @@ export default function WrappedPage() {
 
     const mainstreamData = useMemo(() => ([
         {
+            metric: lang === 'de' ? 'Gespeicherte Tracks' : 'Saved tracks',
+            value: summary?.wrapped?.wrapped_saved_track_popularity_median ?? NaN,
+            mean: surveyMeanWrapped.wrapped_saved_track_popularity_median ?? NaN,
+        },
+        {
             metric: lang === 'de' ? 'Recent tracks' : 'Recent tracks',
             value: summary?.wrapped?.wrapped_recent_track_popularity_median ?? NaN,
             mean: surveyMeanWrapped.wrapped_recent_track_popularity_median ?? NaN,
@@ -174,8 +179,8 @@ export default function WrappedPage() {
         : `Data basis: ${respondentCount} survey responses.`;
 
     const mainstreamBasisText = lang === 'de'
-        ? `Datenbasis: ${dataBasis.recent_track_points || 0} Recent Tracks, ${dataBasis.top_track_points || 0} Top Tracks, ${dataBasis.artist_points || 0} Artists.`
-        : `Data basis: ${dataBasis.recent_track_points || 0} recent tracks, ${dataBasis.top_track_points || 0} top tracks, ${dataBasis.artist_points || 0} artists.`;
+        ? `Datenbasis: ${dataBasis.saved_track_points || 0} Saved Tracks, ${dataBasis.recent_track_points || 0} Recent Tracks, ${dataBasis.top_track_points || 0} Top Tracks, ${dataBasis.artist_points || 0} Artists.`
+        : `Data basis: ${dataBasis.saved_track_points || 0} saved tracks, ${dataBasis.recent_track_points || 0} recent tracks, ${dataBasis.top_track_points || 0} top tracks, ${dataBasis.artist_points || 0} artists.`;
 
     const explicitBasisText = lang === 'de'
         ? `Datenbasis: ${dataBasis.saved_track_points || 0} Saved Tracks, ${dataBasis.recent_track_points || 0} Recent Tracks, ${dataBasis.top_track_points || 0} Top Tracks, ${dataBasis.playlist_track_points || 0} Playlist Tracks.`

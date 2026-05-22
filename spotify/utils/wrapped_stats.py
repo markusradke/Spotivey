@@ -55,16 +55,23 @@ def compute_wrapped_stats(participant: Participant) -> dict[str, Any]:
 
     avg_tracks = playlists.exclude(n_tracks__isnull=True).aggregate(avg=Avg("n_tracks"))["avg"]
 
+    saved_track_popularities = _collect_saved_track_values(participant, "popularity")
     recent_track_popularities = _collect_recent_track_values(participant, "popularity")
     top_track_popularities = _collect_top_track_values(participant, "popularity")
     artist_popularities = _collect_artist_values(participant, "popularity")
 
     track_popularities = recent_track_popularities + top_track_popularities
     track_median = _safe_median(track_popularities)
+    saved_track_median = _safe_median(saved_track_popularities)
     recent_track_median = _safe_median(recent_track_popularities)
     top_track_median = _safe_median(top_track_popularities)
     artist_median = _safe_median(artist_popularities)
-    mainstream_score = _safe_mean([recent_track_median, top_track_median, artist_median])
+    mainstream_score = _safe_mean([
+        saved_track_median,
+        recent_track_median,
+        top_track_median,
+        artist_median,
+    ])
 
     explicit_pct = _compute_explicit_pct(participant)
 
@@ -83,6 +90,7 @@ def compute_wrapped_stats(participant: Participant) -> dict[str, Any]:
         "wrapped_playlists_self_owned_pct": self_owned_pct,
         "wrapped_playlists_avg_tracks": float(avg_tracks) if avg_tracks is not None else None,
         "wrapped_mainstream_track_popularity_median": track_median,
+        "wrapped_saved_track_popularity_median": saved_track_median,
         "wrapped_recent_track_popularity_median": recent_track_median,
         "wrapped_top_tracks_popularity_median": top_track_median,
         "wrapped_mainstream_artist_popularity_median": artist_median,
@@ -159,6 +167,14 @@ def _collect_track_values(participant: Participant, field: str) -> list[int | fl
 def _collect_recent_track_values(participant: Participant, field: str) -> list[int | float]:
     return list(
         RecentTrack.objects.filter(participant=participant, confirmed=True)
+        .exclude(**{f"{field}__isnull": True})
+        .values_list(field, flat=True)
+    )
+
+
+def _collect_saved_track_values(participant: Participant, field: str) -> list[int | float]:
+    return list(
+        SavedTrack.objects.filter(participant=participant, confirmed=True)
         .exclude(**{f"{field}__isnull": True})
         .values_list(field, flat=True)
     )
