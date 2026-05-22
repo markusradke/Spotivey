@@ -253,16 +253,20 @@ export default function WrappedPage() {
         : `Data basis: ${respondentCount} survey responses.`;
 
     const mainstreamBasisText = lang === 'de'
-        ? `Datenbasis: ${dataBasis.saved_track_points || 0} Saved Tracks, ${dataBasis.recent_track_points || 0} Recent Tracks, ${dataBasis.top_track_points || 0} Top Tracks, ${dataBasis.artist_points || 0} Artists.`
-        : `Data basis: ${dataBasis.saved_track_points || 0} saved tracks, ${dataBasis.recent_track_points || 0} recent tracks, ${dataBasis.top_track_points || 0} top tracks, ${dataBasis.artist_points || 0} artists.`;
+        ? `Datenbasis: ${dataBasis.saved_track_points || 0} Saved Tracks, ${dataBasis.recent_track_points || 0} Recent Tracks, ${dataBasis.top_track_points || 0} Top Tracks, ${dataBasis.top_artist_points || 0} Top Artists und ${dataBasis.followed_artist_points || 0} Gefolgte Artists.`
+        : `Data basis: ${dataBasis.saved_track_points || 0} saved tracks, ${dataBasis.recent_track_points || 0} recent tracks, ${dataBasis.top_track_points || 0} top tracks, ${dataBasis.top_artist_points || 0} top artists, and ${dataBasis.followed_artist_points || 0} followed artists.`;
 
     const explicitBasisText = lang === 'de'
         ? `Datenbasis: ${dataBasis.saved_track_points || 0} Saved Tracks, ${dataBasis.recent_track_points || 0} Recent Tracks, ${dataBasis.top_track_points || 0} Top Tracks.`
         : `Data basis: ${dataBasis.saved_track_points || 0} saved tracks, ${dataBasis.recent_track_points || 0} recent tracks, ${dataBasis.top_track_points || 0} top tracks.`;
 
+    const releaseYearBasisText = lang === 'de'
+        ? `Datenbasis: ${dataBasis.release_year_points || 0} Release-Dates aus ${dataBasis.saved_track_points || 0} bestätigten Saved, ${dataBasis.top_track_points || 0} Top und ${dataBasis.recent_track_points || 0} Recent Tracks.`
+        : `Data basis: ${dataBasis.release_year_points || 0} release dates from ${dataBasis.saved_track_points || 0} confirmed saved, ${dataBasis.top_track_points || 0} top, and ${dataBasis.recent_track_points || 0} recent tracks.`;
+
     const genreBasisText = lang === 'de'
-        ? `Datenbasis: ${dataBasis.genre_points || 0} Genre-Nennungen aus bestätigten Tracks.`
-        : `Data basis: ${dataBasis.genre_points || 0} genre mentions from confirmed tracks.`;
+        ? `Datenbasis: ${dataBasis.genre_points || 0} Genre-Nennungen aus ${dataBasis.saved_track_points || 0} gespeicherten, ${dataBasis.recent_track_points || 0} zuletzt gehörten und ${dataBasis.top_track_points || 0} top Tracks sowie ${dataBasis.top_artist_points || 0} top Artists und ${dataBasis.followed_artist_points || 0} gefolgten Artists.`
+        : `Data basis: ${dataBasis.genre_points || 0} genre mentions from ${dataBasis.saved_track_points || 0} saved tracks, ${dataBasis.recent_track_points || 0} recent tracks, ${dataBasis.top_track_points || 0} top tracks, ${dataBasis.top_artist_points || 0} top artists, and ${dataBasis.followed_artist_points || 0} followed artists.`;
 
     async function fetchWrappedPngBlob() {
         const resp = await fetch(`/spotify/wrapped/image?${wrappedQuery}`, {
@@ -552,9 +556,7 @@ export default function WrappedPage() {
                                 {showReleaseYearSection ? (
                                     <>
                                         <NoticeCard
-                                            text={lang === 'de'
-                                                ? `Datenbasis: ${dataBasis.release_year_points || 0} Release-Dates aus bestätigten Saved, Top und Recent Tracks.`
-                                                : `Data basis: ${dataBasis.release_year_points || 0} release dates from confirmed saved, top, and recent tracks.`}
+                                            text={releaseYearBasisText}
                                         />
 
                                         <SectionCard

@@ -356,7 +356,6 @@ def _compute_genre_counts(participant: Participant) -> Counter[str]:
         TopTrackMediumTerm,
         TopTrackLongTerm,
         RecentTrack,
-        PrivatePlaylistTrack,
     ]
 
     for model in track_models:

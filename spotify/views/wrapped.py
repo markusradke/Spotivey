@@ -175,12 +175,13 @@ def _build_data_basis(participant, stats: dict[str, Any], release_year_points: i
     playlist_track_points = PrivatePlaylistTrack.objects.filter(
         participant=participant, confirmed=True, playlist__confirmed=True
     ).count()
-    artist_points = (
+    top_artist_points = (
         TopArtistShortTerm.objects.filter(participant=participant, confirmed=True).count()
         + TopArtistMediumTerm.objects.filter(participant=participant, confirmed=True).count()
         + TopArtistLongTerm.objects.filter(participant=participant, confirmed=True).count()
-        + FollowedArtist.objects.filter(participant=participant, confirmed=True).count()
     )
+    followed_artist_points = FollowedArtist.objects.filter(participant=participant, confirmed=True).count()
+    artist_points = top_artist_points + followed_artist_points
 
     return {
         "confirmed_tracks": _safe_int(stats.get("wrapped_confirmed_track_count")) or 0,
@@ -192,6 +193,8 @@ def _build_data_basis(participant, stats: dict[str, Any], release_year_points: i
         "recent_track_points": recent_track_points,
         "top_track_points": top_track_points,
         "playlist_track_points": playlist_track_points,
+        "top_artist_points": top_artist_points,
+        "followed_artist_points": followed_artist_points,
         "artist_points": artist_points,
         "release_year_points": release_year_points,
         "genre_points": sum(stats.get("wrapped_genre_counts", {}).values())
