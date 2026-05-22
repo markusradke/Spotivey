@@ -70,11 +70,11 @@ export default function WrappedPage() {
     }, [wrappedQuery]);
 
     const wrappedData = useWrappedData(summary, lang, isMobileLayout);
-    const shareTargetUrl = wrappedData.shareSurveyUrl || window.location.href;
+    const shareTargetUrl = window.location.href;
     const heading = "Wrapped";
     const bodyText = lang === "de"
-        ? "Was für ein Typ Musikhörer*in sind Sie?"
-        : "What kind of music listener are you?";
+        ? "Ihre Musik im Vergleich zu anderen Teilnehmenden"
+        : "Your music compared to other participants";
 
     return (
         <div style={{ backgroundColor: "var(--main-bg-color)" }}>
@@ -113,8 +113,6 @@ export default function WrappedPage() {
                                     lang={lang}
                                     shareSurveyUrl={wrappedData.shareSurveyUrl}
                                     shareTargetUrl={shareTargetUrl}
-                                    onSharePng={shareWrappedPng}
-                                    onDownloadPng={downloadWrappedPng}
                                 />
 
                                 {wrappedData.showUsageSection ? (
@@ -180,48 +178,4 @@ export default function WrappedPage() {
         </div>
     );
 
-    async function fetchWrappedPngBlob() {
-        const resp = await fetch(`/spotify/wrapped/image?${wrappedQuery}`, {
-            method: "GET",
-            credentials: "include",
-            headers: { Accept: "image/png" },
-        });
-
-        if (!resp.ok) {
-            throw new Error("Failed to fetch wrapped image");
-        }
-
-        return resp.blob();
-    }
-
-    async function shareWrappedPng() {
-        const blob = await fetchWrappedPngBlob();
-        const file = new File([blob], "spotivey_wrapped.png", { type: "image/png" });
-
-        if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
-            await navigator.share({ files: [file] });
-            return;
-        }
-
-        const url = URL.createObjectURL(blob);
-        const anchor = document.createElement("a");
-        anchor.href = url;
-        anchor.download = "spotivey_wrapped.png";
-        document.body.appendChild(anchor);
-        anchor.click();
-        anchor.remove();
-        URL.revokeObjectURL(url);
-    }
-
-    async function downloadWrappedPng() {
-        const blob = await fetchWrappedPngBlob();
-        const url = URL.createObjectURL(blob);
-        const anchor = document.createElement("a");
-        anchor.href = url;
-        anchor.download = "spotivey_wrapped.png";
-        document.body.appendChild(anchor);
-        anchor.click();
-        anchor.remove();
-        URL.revokeObjectURL(url);
-    }
 }

@@ -3,7 +3,7 @@ from .views import (
     AuthURL, spotify_callback, IsAuthenticated, GetTopArtistsShortTerm, GetTopArtistsMediumTerm, GetTopArtistsLongTerm, GetFollowedArtistsSpotify,
     GetTopTracksShortTerm, GetTopTracksMediumTerm, GetTopTracksLongTerm, GetSavedTracksSpotify, GetRecentlyPlayedTracksSpotify,
     GetPlaylistsSpotify, GetUsersProfileSpotify, GetSavedShowsSpotify, GetSavedEpisodesSpotify,
-    WrappedSummary, WrappedSummarySave, WrappedImage
+    WrappedSummary, WrappedSummarySave
 )
 
 urlpatterns = [
@@ -25,5 +25,4 @@ urlpatterns = [
     path('saved-episodes', GetSavedEpisodesSpotify.as_view()),
     path('wrapped/summary/save', WrappedSummarySave.as_view()),
     path('wrapped/summary', WrappedSummary.as_view()),
-    path('wrapped/image', WrappedImage.as_view()),
 ]

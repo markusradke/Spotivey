@@ -2,72 +2,41 @@ import React from "react";
 import { Box, Button, Card, CardContent, Stack, Typography } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { WhatsappShareButton, WhatsappIcon, XShareButton, XIcon } from "react-share";
 import { formatCount, getUsageAxisMax } from "./wrappedHelpers";
 
 export function WrappedShareActions({
     lang,
     shareSurveyUrl,
     shareTargetUrl,
-    onSharePng,
-    onDownloadPng,
 }) {
     return (
         <Stack spacing={1.5}>
             {shareSurveyUrl ? (
                 <Button
-                    variant="outlined"
+                    variant="contained"
                     size="medium"
                     onClick={() => navigator.clipboard.writeText(shareSurveyUrl)}
                     aria-label={lang === "de" ? "Link zur Befragung kopieren" : "Copy link to survey"}
                     startIcon={<ContentCopyIcon />}
                 >
                     {lang === "de"
-                        ? "Teilen Sie den Link zur Befragung, um Ihre Ergebnisse mit Freund*innen zu vergleichen!"
-                        : "Share the survey link to compare your wrapped with your friends!"}
+                        ? "Teilen Sie den Link zur Befragung, um Ihre Ergenisse mit anderen zu vergleichen"
+                        : "Share the survey link to compare your results with others"}
                 </Button>
             ) : null}
 
-            <Typography variant="body2" sx={{ color: "var(--color-black)" }}>
+            <Button
+                variant="outlined"
+                size="medium"
+                onClick={() => navigator.clipboard.writeText(shareTargetUrl)}
+                aria-label={lang === "de" ? "Link zum Wrapped kopieren" : "Copy link to wrapped"}
+                startIcon={<ContentCopyIcon />}
+            >
                 {lang === "de"
-                    ? "Teilen Sie Ihr Wrapped mit Freund*innen oder laden Sie es herunter!"
-                    : "Share your Wrapped with your friends or download it!"}
-            </Typography>
-
-            <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
-                <XShareButton
-                    url={shareTargetUrl}
-                    openShareDialogOnClick={false}
-                    onClick={() => onSharePng()}
-                    style={shareButtonStyle}
-                >
-                    <Box component="span" sx={shareButtonContentStyle}>
-                        <XIcon size={18} round />
-                        <span>X</span>
-                    </Box>
-                </XShareButton>
-                <WhatsappShareButton
-                    url={shareTargetUrl}
-                    openShareDialogOnClick={false}
-                    onClick={() => onSharePng()}
-                    style={shareButtonStyle}
-                >
-                    <Box component="span" sx={shareButtonContentStyle}>
-                        <WhatsappIcon size={18} round />
-                        <span>WhatsApp</span>
-                    </Box>
-                </WhatsappShareButton>
-                <Button variant="outlined" onClick={onSharePng}>
-                    TikTok
-                </Button>
-                <Button variant="outlined" onClick={onSharePng}>
-                    Instagram
-                </Button>
-                <Button variant="outlined" onClick={onDownloadPng}>
-                    Download
-                </Button>
-            </Stack>
-        </Stack>
+                    ? "Teilen Sie den Link zu Ihrem persönlichen Wrapped oder kommen Sie später wieder, um Ihre Ergebnisse zu sehen (mit mehr Teilnehmenden zum Vergleich)!"
+                    : "Share the link to your personal wrapped or come back later to see your results (with more participants to compare to)!"}
+            </Button>
+        </Stack >
     );
 }
 

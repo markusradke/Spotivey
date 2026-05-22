@@ -37,8 +37,8 @@ export function UsageSection({ colors, lang, basisText, usageChartData, playlist
             {playlistDetail.length > 0 ? (
                 <Typography variant="body2" sx={{ mt: 1.5, color: colors.text }}>
                     {lang === "de"
-                        ? `Playlists: ${playlistDetail.join(" · ")}.`
-                        : `Playlists: ${playlistDetail.join(" · ")}.`}
+                        ? `Gespendete Playlists: ${playlistDetail.join(" · ")}.`
+                        : `Retrieved Playlists: ${playlistDetail.join(" · ")}.`}
                 </Typography>
             ) : null}
         </ComparisonSection>

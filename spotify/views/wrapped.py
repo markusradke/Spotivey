@@ -1,15 +1,11 @@
-"""Wrapped summary + share image endpoints."""
+"""Wrapped summary endpoints."""
 
 from __future__ import annotations
 
-from io import BytesIO
 import re
 from typing import Any
 
-from PIL import Image, ImageDraw, ImageFont
 from django.db.models import Avg
-from django.http import HttpResponse
-from django.views import View
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -294,65 +290,6 @@ def _build_release_year_bin_means(qs) -> dict[str, float | None]:
     }
 
 
-def _render_wrapped_png(summary: dict[str, Any]) -> bytes:
-    width, height = 1080, 1920
-    image = Image.new("RGB", (width, height), (245, 245, 245))
-    draw = ImageDraw.Draw(image)
-
-    title_font = ImageFont.load_default()
-    body_font = ImageFont.load_default()
-
-    x = 60
-    y = 80
-
-    draw.text((x, y), "Spotivey Wrapped", fill=(20, 20, 20), font=title_font)
-    y += 60
-
-    usage = summary.get("usage", {})
-    wrapped = summary.get("wrapped", {})
-
-    lines = [
-        f"Followers: {usage.get('followers', 'NA')}",
-        f"Saved tracks (total): {usage.get('total_saved_tracks', 'NA')}",
-        f"Followed artists (total): {usage.get('total_followed_artists', 'NA')}",
-        f"Playlists (total): {usage.get('total_current_playlists', 'NA')}",
-        "",
-        f"Saved tracks median popularity: {_format_float(wrapped.get('wrapped_saved_track_popularity_median'))}",
-        f"Followed artists median popularity: {_format_float(wrapped.get('wrapped_followed_artist_popularity_median'))}",
-        f"Recent tracks median popularity: {_format_float(wrapped.get('wrapped_recent_track_popularity_median'))}",
-        f"Top tracks median popularity: {_format_float(wrapped.get('wrapped_top_tracks_popularity_median'))}",
-        f"Top artists median popularity: {_format_float(wrapped.get('wrapped_mainstream_artist_popularity_median'))}",
-        "",
-        f"Confirmed playlists: {wrapped.get('wrapped_confirmed_playlist_count', 'NA')}",
-        f"Public playlists: {_format_pct(wrapped.get('wrapped_playlists_public_pct'))}",
-        f"Self-owned playlists: {_format_pct(wrapped.get('wrapped_playlists_self_owned_pct'))}",
-        f"Avg tracks per playlist: {_format_float(wrapped.get('wrapped_playlists_avg_tracks'))}",
-        "",
-        f"Mainstream score: {_format_float(wrapped.get('wrapped_mainstream_score'))}",
-        f"Saved tracks explicitness: {_format_pct(wrapped.get('wrapped_saved_track_explicit_pct'))}",
-        f"Recent tracks explicitness: {_format_pct(wrapped.get('wrapped_recent_track_explicit_pct'))}",
-        f"Top tracks explicitness: {_format_pct(wrapped.get('wrapped_top_tracks_explicit_pct'))}",
-        f"Explicitness score: {_format_pct(wrapped.get('wrapped_explicit_pct'))}",
-        "",
-        f"Based on {wrapped.get('wrapped_confirmed_track_count', 'NA')} confirmed tracks",
-        f"Based on {wrapped.get('wrapped_confirmed_artist_count', 'NA')} confirmed artists",
-    ]
-
-    top_genres = wrapped.get("wrapped_top_genres") or []
-    if isinstance(top_genres, list) and top_genres:
-        lines.append("")
-        lines.append("Top genres:")
-        lines.append(", ".join(top_genres[:10]))
-
-    for line in lines:
-        draw.text((x, y), line, fill=(20, 20, 20), font=body_font)
-        y += 36
-
-    buffer = BytesIO()
-    image.save(buffer, format="PNG")
-    return buffer.getvalue()
-
-
 def _format_pct(value: Any) -> str:
     parsed = _safe_float(value)
     if parsed is None:
@@ -387,19 +324,3 @@ class WrappedSummarySave(APIView):
             return error
 
         return Response(_build_wrapped_summary(participant, persist=True), status=status.HTTP_200_OK)
-
-
-class WrappedImage(View):
-    """Return a PNG share image for the current session participant."""
-
-    def get(self, request):
-        participant, error = _get_participant_from_query(request)
-        if error:
-            return error
-
-        summary = _build_wrapped_summary(participant)
-        png = _render_wrapped_png(summary)
-
-        response = HttpResponse(png, content_type="image/png")
-        response["Content-Disposition"] = "inline; filename=spotivey_wrapped.png"
-        return response
