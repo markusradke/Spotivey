@@ -153,6 +153,11 @@ export default function WrappedPage() {
             mean: surveyMeanWrapped.wrapped_saved_track_popularity_median ?? NaN,
         },
         {
+            metric: lang === 'de' ? 'Gefolgte Artists' : 'Followed artists',
+            value: summary?.wrapped?.wrapped_followed_artist_popularity_median ?? NaN,
+            mean: surveyMeanWrapped.wrapped_followed_artist_popularity_median ?? NaN,
+        },
+        {
             metric: lang === 'de' ? 'Recent tracks' : 'Recent tracks',
             value: summary?.wrapped?.wrapped_recent_track_popularity_median ?? NaN,
             mean: surveyMeanWrapped.wrapped_recent_track_popularity_median ?? NaN,
@@ -595,7 +600,7 @@ export default function WrappedPage() {
                                     <>
                                         <NoticeCard text={genreBasisText} />
                                         <SectionCard
-                                            title={lang === 'de' ? 'Ihre Genres' : 'Your Genres'}
+                                            title={lang === 'de' ? 'Ihre Spotify Genres' : 'Your Spotify Genres'}
                                             description={lang === 'de'
                                                 ? 'Ihre häufigsten Genres (Top 100), Größe entspricht Häufigkeit.'
                                                 : 'Your most frequent genres (Top 100), size corresponds to frequency.'}
@@ -605,7 +610,7 @@ export default function WrappedPage() {
                                                     data={genreWordData}
                                                     fontSize={getGenreWordFontSize(genreWordData)}
                                                     rotate={getGenreWordRotation}
-                                                    fill={getGenreWordFill}
+                                                    fill={getGenreWordFill(genreWordData)}
                                                     spiral="rectangular"
                                                     padding={2}
                                                     fontWeight={700}
@@ -681,9 +686,26 @@ function getGenreWordFontSize(words) {
     };
 }
 
-function getGenreWordFill(word) {
-    return genreWordColors[getWordHash(word.text) % genreWordColors.length];
+
+// make genre word colors from grey to tu color with a distint color picker based on the frequency  the word
+function getGenreWordFill(words) {
+    const values = words.map((word) => word.value);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+
+    const genreWordColors = [
+        'var(--color-tu-berlin)',
+        '#a34c4c',
+        '#a88181',
+        '#b89e9e',
+        '#aaaaaa',
+    ];
+    return (word) => {
+        const chosenColor = genreWordColors[Math.floor((Math.sqrt((words.findIndex((w) => w.text === word.text)) / words.length)) * genreWordColors.length)];
+        return chosenColor;
+    };
 }
+
 
 
 function getWordHash(text) {

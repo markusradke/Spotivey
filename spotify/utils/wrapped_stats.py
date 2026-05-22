@@ -60,19 +60,22 @@ def compute_wrapped_stats(participant: Participant) -> dict[str, Any]:
     saved_track_popularities = _collect_saved_track_values(participant, "popularity")
     recent_track_popularities = _collect_recent_track_values(participant, "popularity")
     top_track_popularities = _collect_top_track_values(participant, "popularity")
-    artist_popularities = _collect_artist_values(participant, "popularity")
+    followed_artist_popularities = _collect_followed_artist_values(participant, "popularity")
+    top_artist_popularities = _collect_top_artist_values(participant, "popularity")
 
     track_popularities = recent_track_popularities + top_track_popularities
     track_median = _safe_median(track_popularities)
     saved_track_median = _safe_median(saved_track_popularities)
     recent_track_median = _safe_median(recent_track_popularities)
     top_track_median = _safe_median(top_track_popularities)
-    artist_median = _safe_median(artist_popularities)
+    followed_artist_median = _safe_median(followed_artist_popularities)
+    top_artist_median = _safe_median(top_artist_popularities)
     mainstream_score = _safe_mean([
         saved_track_median,
         recent_track_median,
         top_track_median,
-        artist_median,
+        top_artist_median,
+        followed_artist_median,
     ])
 
     saved_track_explicit_pct = _compute_explicit_pct_for_models(participant, [SavedTrack])
@@ -106,9 +109,10 @@ def compute_wrapped_stats(participant: Participant) -> dict[str, Any]:
         "wrapped_playlists_avg_tracks": float(avg_tracks) if avg_tracks is not None else None,
         "wrapped_mainstream_track_popularity_median": track_median,
         "wrapped_saved_track_popularity_median": saved_track_median,
+        "wrapped_followed_artist_popularity_median": followed_artist_median,
         "wrapped_recent_track_popularity_median": recent_track_median,
         "wrapped_top_tracks_popularity_median": top_track_median,
-        "wrapped_mainstream_artist_popularity_median": artist_median,
+        "wrapped_mainstream_artist_popularity_median": top_artist_median,
         "wrapped_mainstream_score": mainstream_score,
         "wrapped_saved_track_explicit_pct": saved_track_explicit_pct,
         "wrapped_recent_track_explicit_pct": recent_track_explicit_pct,
@@ -213,12 +217,11 @@ def _collect_top_track_values(participant: Participant, field: str) -> list[int 
     return collected
 
 
-def _collect_artist_values(participant: Participant, field: str) -> list[int | float]:
+def _collect_top_artist_values(participant: Participant, field: str) -> list[int | float]:
     models = [
         TopArtistShortTerm,
         TopArtistMediumTerm,
         TopArtistLongTerm,
-        FollowedArtist,
     ]
 
     collected: list[int | float] = []
@@ -229,6 +232,14 @@ def _collect_artist_values(participant: Participant, field: str) -> list[int | f
             .values_list(field, flat=True)
         )
     return collected
+
+
+def _collect_followed_artist_values(participant: Participant, field: str) -> list[int | float]:
+    return list(
+        FollowedArtist.objects.filter(participant=participant, confirmed=True)
+        .exclude(**{f"{field}__isnull": True})
+        .values_list(field, flat=True)
+    )
 
 
 def _compute_explicit_pct_for_models(
