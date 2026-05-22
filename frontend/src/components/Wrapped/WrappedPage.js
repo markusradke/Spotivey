@@ -136,26 +136,26 @@ export default function WrappedPage() {
     const mainstreamData = useMemo(() => ([
         {
             metric: lang === 'de' ? 'Recent tracks' : 'Recent tracks',
-            value: summary?.wrapped?.wrapped_recent_track_popularity_median ?? 0,
-            mean: surveyMeanWrapped.wrapped_recent_track_popularity_median ?? 0,
+            value: summary?.wrapped?.wrapped_recent_track_popularity_median ?? NaN,
+            mean: surveyMeanWrapped.wrapped_recent_track_popularity_median ?? NaN,
         },
         {
             metric: lang === 'de' ? 'Top tracks' : 'Top tracks',
-            value: summary?.wrapped?.wrapped_top_tracks_popularity_median ?? 0,
-            mean: surveyMeanWrapped.wrapped_top_tracks_popularity_median ?? 0,
+            value: summary?.wrapped?.wrapped_top_tracks_popularity_median ?? NaN,
+            mean: surveyMeanWrapped.wrapped_top_tracks_popularity_median ?? NaN,
         },
         {
             metric: lang === 'de' ? 'Top artists' : 'Top artists',
-            value: summary?.wrapped?.wrapped_mainstream_artist_popularity_median ?? 0,
-            mean: surveyMeanWrapped.wrapped_mainstream_artist_popularity_median ?? 0,
+            value: summary?.wrapped?.wrapped_mainstream_artist_popularity_median ?? NaN,
+            mean: surveyMeanWrapped.wrapped_mainstream_artist_popularity_median ?? NaN,
         },
     ]), [lang, summary, surveyMeanWrapped]);
 
     const explicitData = useMemo(() => ([
         {
             metric: lang === 'de' ? 'Explicit tracks' : 'Explicit tracks',
-            value: summary?.wrapped?.wrapped_explicit_pct ?? 0,
-            mean: surveyMeanWrapped.wrapped_explicit_pct ?? 0,
+            value: summary?.wrapped?.wrapped_explicit_pct ?? NaN,
+            mean: surveyMeanWrapped.wrapped_explicit_pct ?? NaN,
         },
     ]), [lang, summary, surveyMeanWrapped]);
 
@@ -166,8 +166,8 @@ export default function WrappedPage() {
         }));
     }, [releaseYearHistogram]);
 
-    const score = summary?.wrapped?.wrapped_mainstream_score ?? 0;
-    const scoreMean = surveyMeanWrapped.wrapped_mainstream_score ?? 0;
+    const score = summary?.wrapped?.wrapped_mainstream_score ?? NaN;
+    const scoreMean = surveyMeanWrapped.wrapped_mainstream_score ?? NaN;
 
     const userStatsBasisText = lang === 'de'
         ? `Datenbasis: ${respondentCount} Survey-Antworten.`
@@ -384,9 +384,13 @@ export default function WrappedPage() {
                                 <SectionCard
                                     title={lang === 'de' ? 'Mainstreaminess' : 'Mainstreaminess'}
                                     description={lang === 'de'
-                                        ? 'Populärität von Tracks und Artists, jeweils mit Survey-Mittel.'
-                                        : 'Popularity of tracks and artists, each compared with the survey mean.'}
+                                        ? 'Populärität von Tracks und Artists im Vergleich zu anderen Teilnehmenden.'
+                                        : 'Popularity of tracks and artists, each compared to other participants.'}
                                 >
+                                    <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                                        <LegendKey color={colors.primary} label={lang === 'de' ? 'Sie' : 'You'} />
+                                        <LegendKey color={colors.mean} label={lang === 'de' ? 'Mittel' : 'Mean'} />
+                                    </Box>
                                     <BarChart
                                         dataset={mainstreamData}
                                         layout="horizontal"
@@ -398,6 +402,7 @@ export default function WrappedPage() {
                                         yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
                                         xAxis={[{ min: 0, max: 100 }]}
                                         margin={{ left: 140, right: 30, top: 20, bottom: 20 }}
+                                        slotProps={{ legend: { hidden: true } }}
                                     />
                                     <Box sx={{ mt: 2, p: 2, borderRadius: 3, backgroundColor: colors.panel, border: `1px solid ${colors.border}` }}>
                                         <Typography variant="overline" sx={{ color: colors.muted }}>
@@ -421,17 +426,22 @@ export default function WrappedPage() {
                                         ? 'Anteil expliziter Tracks im Vergleich zum Survey-Mittel.'
                                         : 'Share of explicit tracks compared with the survey mean.'}
                                 >
+                                    <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                                        <LegendKey color={colors.primary} label={lang === 'de' ? 'Sie' : 'You'} />
+                                        <LegendKey color={colors.mean} label={lang === 'de' ? 'Mittel' : 'Mean'} />
+                                    </Box>
                                     <BarChart
                                         dataset={explicitData}
                                         layout="horizontal"
                                         height={180}
                                         series={[
-                                            { dataKey: 'value', label: lang === 'de' ? 'Du' : 'You', color: colors.primary },
+                                            { dataKey: 'value', label: lang === 'de' ? 'Sie' : 'You', color: colors.primary },
                                             { dataKey: 'mean', label: lang === 'de' ? 'Mittel' : 'Mean', color: colors.mean },
                                         ]}
                                         yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
                                         xAxis={[{ min: 0, max: 100 }]}
                                         margin={{ left: 160, right: 30, top: 20, bottom: 20 }}
+                                        slotProps={{ legend: { hidden: true } }}
                                     />
                                 </SectionCard>
 
