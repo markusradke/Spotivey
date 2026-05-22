@@ -153,9 +153,7 @@ function ScoreVariantBlock({ variant }) {
                     placeItems: "center",
                 }}
             >
-                <Typography variant="caption" sx={{ color: "#6f6f6f", fontWeight: 700, letterSpacing: 0.5 }}>
-                    {variant.placeholderLabel || "Logo"}
-                </Typography>
+                <img src={variant.image_path} alt={variant.title} style={{ width: "80%", height: "80%", objectFit: "contain" }} />
             </Box>
             <Box sx={{ minWidth: 0 }}>
                 <Typography variant="subtitle1" sx={{ color: "var(--color-tu-berlin)", fontWeight: 700, lineHeight: 1.2 }}>
