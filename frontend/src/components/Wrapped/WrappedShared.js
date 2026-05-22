@@ -3,7 +3,7 @@ import { Box, Button, Card, CardContent, Stack, Typography } from "@mui/material
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { WhatsappShareButton, WhatsappIcon, XShareButton, XIcon } from "react-share";
-import { formatCount, getUsageAxisMax } from "./wrappedData";
+import { formatCount, getUsageAxisMax } from "./wrappedHelpers";
 
 export function WrappedShareActions({
     lang,
@@ -119,7 +119,7 @@ export function LegendKey({ color, label }) {
     );
 }
 
-export function ScoreCard({ color, label, value, meanValue, lang, formatValue }) {
+export function ScoreCard({ color, label, value, meanValue, lang, formatValue, variant }) {
     return (
         <Box sx={{ mt: 2, p: 2, borderRadius: 3, backgroundColor: "rgba(255, 255, 255, 0.72)", border: "1px solid rgba(0, 0, 0, 0.08)" }}>
             <Typography variant="overline" sx={{ color: "#6f6f6f" }}>
@@ -133,6 +133,38 @@ export function ScoreCard({ color, label, value, meanValue, lang, formatValue })
                     ? `Mittelwert der Survey-Antworten: ${formatValue(meanValue)}`
                     : `Survey mean: ${formatValue(meanValue)}`}
             </Typography>
+            {variant ? <ScoreVariantBlock variant={variant} /> : null}
+        </Box>
+    );
+}
+
+function ScoreVariantBlock({ variant }) {
+    return (
+        <Box sx={{ display: "flex", gap: 1.5, alignItems: "flex-start", mt: 2 }}>
+            <Box
+                sx={{
+                    width: 56,
+                    height: 56,
+                    flexShrink: 0,
+                    borderRadius: 2,
+                    border: "1px dashed rgba(0, 0, 0, 0.28)",
+                    background: "linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.68))",
+                    display: "grid",
+                    placeItems: "center",
+                }}
+            >
+                <Typography variant="caption" sx={{ color: "#6f6f6f", fontWeight: 700, letterSpacing: 0.5 }}>
+                    {variant.placeholderLabel || "Logo"}
+                </Typography>
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+                <Typography variant="subtitle1" sx={{ color: "var(--color-tu-berlin)", fontWeight: 700, lineHeight: 1.2 }}>
+                    {variant.title}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "var(--color-black)", mt: 0.4 }}>
+                    {variant.description}
+                </Typography>
+            </Box>
         </Box>
     );
 }

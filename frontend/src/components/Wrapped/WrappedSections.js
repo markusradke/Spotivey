@@ -14,7 +14,7 @@ import {
     getGenreWordFill,
     getGenreWordFontSize,
     getGenreWordRotation,
-} from "./wrappedData";
+} from "./wrappedHelpers";
 
 export function UsageSection({ colors, lang, basisText, usageChartData, playlistDetail }) {
     return (
@@ -45,7 +45,7 @@ export function UsageSection({ colors, lang, basisText, usageChartData, playlist
     );
 }
 
-export function MainstreamSection({ colors, lang, basisText, chartData, score, scoreMean }) {
+export function MainstreamSection({ colors, lang, basisText, chartData, score, scoreMean, variant }) {
     return (
         <ComparisonSection
             noticeText={basisText}
@@ -78,12 +78,13 @@ export function MainstreamSection({ colors, lang, basisText, chartData, score, s
                 meanValue={scoreMean}
                 lang={lang}
                 formatValue={formatPercent}
+                variant={variant}
             />
         </ComparisonSection>
     );
 }
 
-export function ExplicitSection({ colors, lang, basisText, chartData, score, scoreMean }) {
+export function ExplicitSection({ colors, lang, basisText, chartData, score, scoreMean, variant }) {
     return (
         <ComparisonSection
             noticeText={basisText}
@@ -116,6 +117,7 @@ export function ExplicitSection({ colors, lang, basisText, chartData, score, sco
                 meanValue={scoreMean}
                 lang={lang}
                 formatValue={formatPercent}
+                variant={variant}
             />
         </ComparisonSection>
     );

@@ -1,13 +1,13 @@
 import { useMemo } from "react";
-
-export const colors = {
-    primary: "var(--color-tu-berlin)",
-    mean: "#c7c7c7",
-    text: "var(--color-black)",
-    muted: "#6f6f6f",
-    border: "rgba(0, 0, 0, 0.08)",
-    panel: "rgba(255, 255, 255, 0.72)",
-};
+import {
+    buildBasisText,
+    colors,
+    formatCount,
+    formatPercent,
+    getExplicitScoreVariant,
+    getMainstreamScoreVariant,
+    hasMetricValue,
+} from "./wrappedHelpers";
 
 export function useWrappedData(summary, lang, isMobileLayout) {
     const surveyMeans = summary?.survey_means || {};
@@ -186,6 +186,8 @@ export function useWrappedData(summary, lang, isMobileLayout) {
     const explicitScoreMean = surveyMeanWrapped.wrapped_explicit_pct ?? NaN;
     const releaseYearScore = summary?.wrapped?.wrapped_release_year_median ?? NaN;
     const releaseYearScoreMean = surveyMeanWrapped.wrapped_release_year_median ?? NaN;
+    const mainstreamVariant = getMainstreamScoreVariant(score, lang);
+    const explicitVariant = getExplicitScoreVariant(explicitScore, lang);
 
     const userStatsBasisText = lang === "de"
         ? `Datenbasis: ${respondentCount} Survey-Antworten.`
@@ -268,119 +270,12 @@ export function useWrappedData(summary, lang, isMobileLayout) {
         explicitScoreMean,
         releaseYearScore,
         releaseYearScoreMean,
+        mainstreamVariant,
+        explicitVariant,
         userStatsBasisText,
         mainstreamBasisText,
         explicitBasisText,
         releaseYearBasisText,
         genreBasisText,
     };
-}
-
-export function getGenreWordRotation(word) {
-    const rotations = [0, -30, 30];
-    return rotations[getWordHash(word.text) % rotations.length];
-}
-
-export function getGenreWordFontSize(words, isMobileLayout = false) {
-    if (!words.length) {
-        return () => (isMobileLayout ? 12 : 22);
-    }
-
-    const values = words.map((word) => word.value);
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-
-    return (word) => {
-        const minSize = isMobileLayout ? 12 : 22;
-        const maxSize = isMobileLayout ? 34 : 72;
-
-        if (min === max) {
-            return (minSize + maxSize) / 2;
-        }
-
-        const scaled = minSize + ((word.value - min) / (max - min)) * (maxSize - minSize);
-        return Math.max(minSize, Math.min(maxSize, scaled));
-    };
-}
-
-export function getGenreWordFill(words) {
-    const palette = [
-        "var(--color-tu-berlin)",
-        "#a34c4c",
-        "#a88181",
-        "#b89e9e",
-        "#aaaaaa",
-    ];
-    const positions = new Map(words.map((word, index) => [word.text, index]));
-
-    return (word) => {
-        const position = positions.get(word.text) ?? 0;
-        const ratio = words.length > 1 ? position / (words.length - 1) : 0;
-        const paletteIndex = Math.min(palette.length - 1, Math.floor(ratio * palette.length));
-        return palette[paletteIndex];
-    };
-}
-
-export function hasMetricValue(value) {
-    return value !== null && value !== undefined && !Number.isNaN(value);
-}
-
-export function getUsageAxisMax(value, mean) {
-    const values = [value, mean].filter(hasMetricValue);
-    const maxValue = values.length ? Math.max(...values) : 1;
-    return Math.max(1, Math.ceil(maxValue * 1.1));
-}
-
-export function formatPercent(value) {
-    if (value === null || value === undefined || Number.isNaN(value)) {
-        return "NA";
-    }
-
-    return `${Number(value).toFixed(0)}%`;
-}
-
-export function formatCount(value, lang = "en") {
-    if (value === null || value === undefined || Number.isNaN(value)) {
-        return "NA";
-    }
-
-    const formatted = Number(value).toFixed(0);
-    return lang === "de"
-        ? formatted.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-        : formatted.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-export function formatYear(value) {
-    if (value === null || value === undefined || Number.isNaN(value)) {
-        return "NA";
-    }
-
-    return String(Math.round(Number(value)));
-}
-
-export function buildBasisText(entries, prefix) {
-    const parts = entries
-        .filter(([count]) => Number(count) > 1)
-        .map(([count, label]) => `${count} ${label}`);
-
-    if (!parts.length) {
-        return prefix;
-    }
-
-    if (parts.length === 1) {
-        return `${prefix} ${parts[0]}`;
-    }
-
-    const last = parts.pop();
-    return `${prefix} ${parts.join(", ")} and ${last}`;
-}
-
-function getWordHash(text) {
-    let hash = 0;
-
-    for (let index = 0; index < text.length; index += 1) {
-        hash = (hash * 31 + text.charCodeAt(index)) >>> 0;
-    }
-
-    return hash;
 }

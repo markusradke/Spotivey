@@ -135,6 +135,7 @@ export default function WrappedPage() {
                                         chartData={wrappedData.mainstreamChartData}
                                         score={wrappedData.score}
                                         scoreMean={wrappedData.scoreMean}
+                                        variant={wrappedData.mainstreamVariant}
                                     />
                                 ) : null}
 
@@ -146,6 +147,7 @@ export default function WrappedPage() {
                                         chartData={wrappedData.explicitChartData}
                                         score={wrappedData.explicitScore}
                                         scoreMean={wrappedData.explicitScoreMean}
+                                        variant={wrappedData.explicitVariant}
                                     />
                                 ) : null}
 
