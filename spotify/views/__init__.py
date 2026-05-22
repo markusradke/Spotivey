@@ -4,6 +4,7 @@ from .tracks import GetTopTracksShortTerm, GetTopTracksMediumTerm, GetTopTracksL
 from .playlists import GetPlaylistsSpotify
 from .profile import GetUsersProfileSpotify
 from .shows import GetSavedShowsSpotify, GetSavedEpisodesSpotify
+from .wrapped import WrappedSummary, WrappedSummarySave, WrappedImage
 
 __all__ = [
     'AuthURL',
@@ -22,4 +23,7 @@ __all__ = [
     'GetUsersProfileSpotify',
     'GetSavedShowsSpotify',
     'GetSavedEpisodesSpotify',
+    'WrappedSummary',
+    'WrappedSummarySave',
+    'WrappedImage',
 ]

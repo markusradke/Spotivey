@@ -153,7 +153,7 @@ export function buildSteps(settings) {
 }
 
 export function getEndConfig(rawSettings, paramsObjectSession, language) {
-    const participant_id = paramsObjectSession[1][1];
+    const participant = paramsObjectSession[1][1];
     if (!rawSettings || rawSettings.end_options.option === 'plain') {
         return {
             endUrl: '/end-room' + (language ? `?lang=${language}` + (rawSettings.umfrageID ? `&surveyID=${rawSettings.umfrageID}` : '') : ''),
@@ -162,7 +162,7 @@ export function getEndConfig(rawSettings, paramsObjectSession, language) {
 
     if (rawSettings.end_options.option === 'wrapped') {
         return {
-            endUrl: '/user-wrapped' + (language ? `?lang=${language}` + (rawSettings.umfrageID ? `&surveyID=${rawSettings.umfrageID}` : '') + `&participant=${participant_id}` : ''),
+            endUrl: '/user-wrapped' + (language ? `?lang=${language}` + (rawSettings.umfrageID ? `&surveyID=${rawSettings.umfrageID}` : '') + (participant ? `&participant=${participant}` : '') : ''),
         };
     }
 
@@ -171,7 +171,7 @@ export function getEndConfig(rawSettings, paramsObjectSession, language) {
         if (!paramsObjectSession?.some(([key]) => key === mandatory_url_param)) {
             if (rawSettings.end_options.conditional_end_url_option === 'wrapped') {
                 return {
-                    endUrl: '/user-wrapped' + (language ? `?lang=${language}` + (rawSettings.umfrageID ? `&surveyID=${rawSettings.umfrageID}` : '') + `&participant=${participant_id}` : '')
+                    endUrl: '/user-wrapped' + (language ? `?lang=${language}` + (rawSettings.umfrageID ? `&surveyID=${rawSettings.umfrageID}` : '') + (participant ? `&participant=${participant}` : '') : '')
                 };
             }
             else {

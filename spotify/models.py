@@ -35,10 +35,50 @@ class Participant(models.Model):
     country = models.CharField(max_length=20, default='')
     followers = models.IntegerField(null=True, default=None)
     product = models.CharField(max_length=50, default='')
-    
+    wrapped_confirmed_track_count = models.IntegerField(
+        null=True, blank=True, default=None
+    )
+    wrapped_confirmed_artist_count = models.IntegerField(
+        null=True, blank=True, default=None
+    )
+    wrapped_confirmed_playlist_count = models.IntegerField(
+        null=True, blank=True, default=None
+    )
+    wrapped_confirmed_playlist_track_count = models.IntegerField(
+        null=True, blank=True, default=None
+    )
+
+    wrapped_playlists_public_pct = models.FloatField(null=True, blank=True, default=None)
+    wrapped_playlists_self_owned_pct = models.FloatField(null=True, blank=True, default=None)
+    wrapped_playlists_avg_tracks = models.FloatField(null=True, blank=True, default=None)
+
+    wrapped_mainstream_track_popularity_median = models.FloatField(
+        null=True, blank=True, default=None
+    )
+    wrapped_recent_track_popularity_median = models.FloatField(
+        null=True, blank=True, default=None
+    )
+    wrapped_top_tracks_popularity_median = models.FloatField(
+        null=True, blank=True, default=None
+    )
+    wrapped_mainstream_artist_popularity_median = models.FloatField(
+        null=True, blank=True, default=None
+    )
+    wrapped_mainstream_score = models.FloatField(null=True, blank=True, default=None)
+
+    wrapped_explicit_pct = models.FloatField(null=True, blank=True, default=None)
+
+    wrapped_genre_counts = models.JSONField(null=True, blank=True, default=None)
+    wrapped_top_genres = models.JSONField(null=True, blank=True, default=None)
+
 
     def __str__(self):
-        return self.participant + " (retrieval settings: " + self.settings.nameUmfrage + ")"
+        return (
+            self.participant
+            + " (retrieval settings: "
+            + self.settings.nameUmfrage
+            + ")"
+        )
     
     def to_dict(self):
         return {

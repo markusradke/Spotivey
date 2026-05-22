@@ -140,3 +140,11 @@ export async function fetchSavedEpisodes(participant, surveyId, roomCode, limit,
   );
   return response.json();
 }
+
+export async function saveWrappedSummary() {
+  const response = await fetch(
+    "/spotify/wrapped/summary/save",
+    buildPostOptions({})
+  );
+  return response.json();
+}

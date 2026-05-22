@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ParticipantContext } from "../../context/ParticipantContext";
 import { DATA_TYPE_ORDER } from "../../constants/dataTypes";
 import { finalizeParticipantData, saveCheckData } from "../../api/surveyApi";
+import { saveWrappedSummary } from "../../api/spotifyApi";
 
 import { getCompleteEndURL } from "./followupSurvey";
 import { partitionConfirmedRejected } from "./roomHelpers";
@@ -61,6 +62,7 @@ export function useRoomFinalize({
 
             await Promise.all(savePromises.filter(Boolean));
             await finalizeParticipantData();
+            await saveWrappedSummary();
             await navigateToEndpageOrEndURL();
         } catch (error) {
             console.error("Error in confirmation process:", error);
@@ -88,6 +90,7 @@ export function useRoomFinalize({
         async function finalize() {
             try {
                 await finalizeParticipantData();
+                await saveWrappedSummary();
                 await navigateToEndpageOrEndURL();
             } catch (error) {
                 console.error("Finalize failed (no confirmation):", error);

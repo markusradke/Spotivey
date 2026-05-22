@@ -106,6 +106,10 @@ function AppRoutes() {
         });
     }
     else if (!createRoom && surveyID && participant) {
+      const currentPath = window.location.pathname;
+      if (currentPath && (currentPath.includes("/end-room") || currentPath.includes("/user-wrapped"))) {
+        return;
+      }
       const paramsObject = paramsToObject(url.searchParams)
       initParticipantSession({
         surveyID,
