@@ -136,7 +136,7 @@ export default function WrappedPage() {
         [usageData],
     );
 
-    const playlistDetail = summary?.wrapped ? (
+    const playlistDetail = summary?.wrapped?.wrapped_playlists_public_pct ? (
         lang === "de" ? [
             `${formatPercent(summary.wrapped.wrapped_playlists_public_pct)} öffentlich`,
             `${formatPercent(summary.wrapped.wrapped_playlists_self_owned_pct)} selbst erstellt`,
@@ -259,20 +259,60 @@ export default function WrappedPage() {
         : `Data basis: ${respondentCount} survey responses.`;
 
     const mainstreamBasisText = lang === 'de'
-        ? `Datenbasis: ${dataBasis.saved_track_points || 0} Saved Tracks, ${dataBasis.recent_track_points || 0} Recent Tracks, ${dataBasis.top_track_points || 0} Top Tracks, ${dataBasis.top_artist_points || 0} Top Artists und ${dataBasis.followed_artist_points || 0} Gefolgte Artists.`
-        : `Data basis: ${dataBasis.saved_track_points || 0} saved tracks, ${dataBasis.recent_track_points || 0} recent tracks, ${dataBasis.top_track_points || 0} top tracks, ${dataBasis.top_artist_points || 0} top artists, and ${dataBasis.followed_artist_points || 0} followed artists.`;
+        ? buildBasisText([
+            [dataBasis.saved_track_points, 'Saved Tracks'],
+            [dataBasis.recent_track_points, 'Recent Tracks'],
+            [dataBasis.top_track_points, 'Top Tracks'],
+            [dataBasis.top_artist_points, 'Top Artists'],
+            [dataBasis.followed_artist_points, 'Gefolgte Artists'],
+        ], 'Datenbasis')
+        : buildBasisText([
+            [dataBasis.saved_track_points, 'saved tracks'],
+            [dataBasis.recent_track_points, 'recent tracks'],
+            [dataBasis.top_track_points, 'top tracks'],
+            [dataBasis.top_artist_points, 'top artists'],
+            [dataBasis.followed_artist_points, 'followed artists'],
+        ], 'Data basis');
 
     const explicitBasisText = lang === 'de'
-        ? `Datenbasis: ${dataBasis.saved_track_points || 0} Saved Tracks, ${dataBasis.recent_track_points || 0} Recent Tracks, ${dataBasis.top_track_points || 0} Top Tracks.`
-        : `Data basis: ${dataBasis.saved_track_points || 0} saved tracks, ${dataBasis.recent_track_points || 0} recent tracks, ${dataBasis.top_track_points || 0} top tracks.`;
+        ? buildBasisText([
+            [dataBasis.saved_track_points, 'Saved Tracks'],
+            [dataBasis.recent_track_points, 'Recent Tracks'],
+            [dataBasis.top_track_points, 'Top Tracks'],
+        ], 'Datenbasis')
+        : buildBasisText([
+            [dataBasis.saved_track_points, 'saved tracks'],
+            [dataBasis.recent_track_points, 'recent tracks'],
+            [dataBasis.top_track_points, 'top tracks'],
+        ], 'Data basis');
 
     const releaseYearBasisText = lang === 'de'
-        ? `Datenbasis: ${dataBasis.release_year_points || 0} Release-Dates aus ${dataBasis.saved_track_points || 0} bestätigten Saved, ${dataBasis.top_track_points || 0} Top und ${dataBasis.recent_track_points || 0} Recent Tracks.`
-        : `Data basis: ${dataBasis.release_year_points || 0} release dates from ${dataBasis.saved_track_points || 0} confirmed saved, ${dataBasis.top_track_points || 0} top, and ${dataBasis.recent_track_points || 0} recent tracks.`;
+        ? buildBasisText([
+            [dataBasis.saved_track_points, 'bestätigten Saved Tracks'],
+            [dataBasis.top_track_points, 'Top Tracks'],
+            [dataBasis.recent_track_points, 'Recent Tracks'],
+        ], `Datenbasis: ${dataBasis.release_year_points || 0} Release-Dates aus`)
+        : buildBasisText([
+            [dataBasis.saved_track_points, 'confirmed saved tracks'],
+            [dataBasis.top_track_points, 'top tracks'],
+            [dataBasis.recent_track_points, 'recent tracks'],
+        ], `Data basis: ${dataBasis.release_year_points || 0} release dates from`);
 
     const genreBasisText = lang === 'de'
-        ? `Datenbasis: ${dataBasis.genre_points || 0} Genre-Nennungen aus ${dataBasis.saved_track_points || 0} gespeicherten, ${dataBasis.recent_track_points || 0} zuletzt gehörten und ${dataBasis.top_track_points || 0} top Tracks sowie ${dataBasis.top_artist_points || 0} top Artists und ${dataBasis.followed_artist_points || 0} gefolgten Artists.`
-        : `Data basis: ${dataBasis.genre_points || 0} genre mentions from ${dataBasis.saved_track_points || 0} saved tracks, ${dataBasis.recent_track_points || 0} recent tracks, ${dataBasis.top_track_points || 0} top tracks, ${dataBasis.top_artist_points || 0} top artists, and ${dataBasis.followed_artist_points || 0} followed artists.`;
+        ? buildBasisText([
+            [dataBasis.saved_track_points, 'gespeicherten Tracks'],
+            [dataBasis.recent_track_points, 'zuletzt gehörten Tracks'],
+            [dataBasis.top_track_points, 'top Tracks'],
+            [dataBasis.top_artist_points, 'top Artists'],
+            [dataBasis.followed_artist_points, 'gefolgten Artists'],
+        ], `Datenbasis: ${dataBasis.genre_points || 0} Genre-Nennungen aus`)
+        : buildBasisText([
+            [dataBasis.saved_track_points, 'saved tracks'],
+            [dataBasis.recent_track_points, 'recent tracks'],
+            [dataBasis.top_track_points, 'top tracks'],
+            [dataBasis.top_artist_points, 'top artists'],
+            [dataBasis.followed_artist_points, 'followed artists'],
+        ], `Data basis: ${dataBasis.genre_points || 0} genre mentions from`);
 
     async function fetchWrappedPngBlob() {
         const resp = await fetch(`/spotify/wrapped/image?${wrappedQuery}`, {
@@ -464,11 +504,13 @@ export default function WrappedPage() {
                                                     />
                                                 ))}
                                             </Box>
-                                            <Typography variant="body2" sx={{ mt: 1.5, color: colors.text }}>
-                                                {lang === 'de'
-                                                    ? `Playlists: ${playlistDetail.join(' · ')}.`
-                                                    : `Playlists: ${playlistDetail.join(' · ')}.`}
-                                            </Typography>
+                                            {playlistDetail.length > 0 ? (
+                                                <Typography variant="body2" sx={{ mt: 1.5, color: colors.text }}>
+                                                    {lang === 'de'
+                                                        ? `Playlists: ${playlistDetail.join(' · ')}.`
+                                                        : `Playlists: ${playlistDetail.join(' · ')}.`}
+                                                </Typography>
+                                            ) : null}
                                         </SectionCard>
                                     </>
                                 ) : null}
@@ -479,8 +521,8 @@ export default function WrappedPage() {
                                         <SectionCard
                                             title={lang === 'de' ? 'Mainstreaminess' : 'Mainstreaminess'}
                                             description={lang === 'de'
-                                                ? 'Populärität von Tracks und Artists im Vergleich zu anderen Teilnehmenden.'
-                                                : 'Popularity of tracks and artists, each compared to other participants.'}
+                                                ? 'Populärität gehörter Musik im Vergleich zu anderen Teilnehmenden.'
+                                                : 'Popularity of music listened to, compared to other participants.'}
                                         >
                                             <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                                                 <LegendKey color={colors.primary} label={lang === 'de' ? 'Sie' : 'You'} />
@@ -522,8 +564,8 @@ export default function WrappedPage() {
                                         <SectionCard
                                             title={lang === 'de' ? 'Explicitness' : 'Explicitness'}
                                             description={lang === 'de'
-                                                ? 'Explizite Tracks aus gespeicherten, kürzlich gehörten und Top-Tracks im Vergleich zum Survey-Mittel.'
-                                                : 'Explicit tracks from saved, recent, and top tracks compared with the survey mean.'}
+                                                ? 'Anteil von Tracks mit explizitem Inhalt im Vergleich zum Survey-Mittel.'
+                                                : 'Share of explicit tracks compared with the survey mean.'}
                                         >
                                             <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                                                 <LegendKey color={colors.primary} label={lang === 'de' ? 'Sie' : 'You'} />
@@ -793,4 +835,22 @@ function formatYear(value) {
         return 'NA';
     }
     return String(Math.round(Number(value)));
+}
+
+function buildBasisText(entries, prefix) {
+    const parts = entries
+        .filter(([count]) => Number(count) > 1)
+        .map(([count, label]) => `${count} ${label}`);
+
+    if (!parts.length) {
+        return prefix;
+    }
+
+    if (parts.length === 1) {
+        return `${prefix} ${parts[0]}`;
+    }
+
+    const last = parts.pop();
+    const joined = `${parts.join(', ')} and ${last}`;
+    return `${prefix} ${joined}`;
 }
