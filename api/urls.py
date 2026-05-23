@@ -6,7 +6,7 @@ from .views import (
     CheckUsernameAvailability, CheckEmailAvailability, GetUserProfile,
     UpdateUserProfile,
     # Participant views
-    InitParticipantSession, AcceptPrivacyPolicy, GetParticipantSession, FinalizeParticipantData, SaveParticipantEmail, CheckEmailSubmitted,
+    InitParticipantSession, AcceptPrivacyPolicy, GetParticipantSession, FinalizeParticipantData, SaveParticipantEmail, MarkParticipantEmailSaved, CheckParticipantEmailDisplay,
     # Settings views
     CreateSettings, CheckSurveyIDExists, getSettingsListView, getSettingsFromIDView,
     UpdateSettings, SaveCheckData, DeleteSettings, UpdateConfirmText,
@@ -27,7 +27,8 @@ urlpatterns = [
     path('accept-privacy-policy', AcceptPrivacyPolicy.as_view()),
     path('finalize-participant-data', FinalizeParticipantData.as_view()),
     path('save-participant-email', SaveParticipantEmail.as_view()),
-    path('check-email-submitted', CheckEmailSubmitted.as_view()),  
+    path('mark-participant-email-saved', MarkParticipantEmailSaved.as_view()),
+    path('check-participant-email-display', CheckParticipantEmailDisplay.as_view()),  
     
     # Authentication & session
     path('get-user-session', GetUserSession.as_view()),

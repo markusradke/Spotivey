@@ -97,7 +97,7 @@ export default function WrappedPage() {
                     </Typography>
 
                     <Box sx={{ mt: 2 }}>
-                        <EnterEmail surveyID={surveyID} language={lang} />
+                        <EnterEmail surveyID={surveyID} participant={participant} language={lang} />
                     </Box>
 
                     <Box sx={{ mt: 3 }}>

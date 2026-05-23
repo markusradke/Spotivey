@@ -23,7 +23,25 @@ export async function saveEmail(payload) {
   });
 }
 
-export async function checkEmailSubmitted() {
-  const response = await fetch("/api/check-email-submitted");
+export async function markParticipantEmailSaved(payload) {
+  return fetch("/api/mark-participant-email-saved", {
+    method: "POST",
+    headers: BASE_HEADERS,
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function checkParticipantEmailDisplay(participant, surveyID) {
+  const params = new URLSearchParams();
+
+  if (participant) {
+    params.set("participant", participant);
+  }
+
+  if (surveyID) {
+    params.set("surveyID", surveyID);
+  }
+
+  const response = await fetch("/api/check-participant-email-display?" + params.toString());
   return response.json();
 }

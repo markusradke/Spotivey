@@ -21,6 +21,7 @@ class Participant(models.Model):
     started_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=20, default='in_progress')
+    email_saved = models.BooleanField(default=False)
     total_saved_tracks = models.IntegerField(null=True, default=None)
     total_top_tracks_shortterm = models.IntegerField(null=True, default=None)
     total_top_tracks_mediumterm = models.IntegerField(null=True, default=None)

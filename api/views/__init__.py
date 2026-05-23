@@ -2,7 +2,7 @@
 from .user_session import CreateSettingsUser, LoginSettingsUser, LogoutUser, GetUserSession, CheckUsernameAvailability, CheckEmailAvailability, GetUserProfile, UpdateUserProfile
 
 # Participant session views
-from .participant_session import InitParticipantSession, AcceptPrivacyPolicy, GetParticipantSession, FinalizeParticipantData, SaveParticipantEmail, CheckEmailSubmitted
+from .participant_session import InitParticipantSession, AcceptPrivacyPolicy, GetParticipantSession, FinalizeParticipantData, SaveParticipantEmail, MarkParticipantEmailSaved, CheckParticipantEmailDisplay
 
 # Settings views
 from .retrieval_settings import (
@@ -46,7 +46,8 @@ __all__ = [
     'GetParticipantSession',
     'FinalizeParticipantData',
     'SaveParticipantEmail',
-    'CheckEmailSubmitted',
+    'MarkParticipantEmailSaved',
+    'CheckParticipantEmailDisplay',
     # Settings
     'CreateSettings',
     'CheckSurveyIDExists',

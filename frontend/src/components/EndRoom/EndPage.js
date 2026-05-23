@@ -7,6 +7,7 @@ export default function EndPage() {
     const [searchParams] = useSearchParams();
     const lang = searchParams.get("lang");
     const surveyID = searchParams.get("surveyID");
+    const participant = searchParams.get("participant");
 
     const heading = lang === 'de' ? 'Geschafft - Vielen Dank!' : 'Done - Thank you!';
     const bodyText = lang === 'de'
@@ -34,7 +35,7 @@ export default function EndPage() {
                     </Typography>
 
                     <Box sx={{ mt: 2 }}>
-                        <EnterEmail surveyID={surveyID} language={lang} />
+                        <EnterEmail surveyID={surveyID} participant={participant} language={lang} />
                     </Box>
                 </Paper>
             </Container>

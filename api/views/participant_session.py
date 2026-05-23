@@ -157,43 +157,96 @@ class SaveParticipantEmail(APIView):
     
     def post(self, request, format=None):
         participant_email = request.data.get('email')
+        participant_id = request.data.get('participant')
         survey_id = request.data.get('surveyID')
-        retrieval_session_key = self.request.session.get('retrieval_session_key')
 
-        if not participant_email or not survey_id:
-            return Response({'error': 'Email and survey ID are required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        if not retrieval_session_key:
-            return Response({'error': 'No active retrieval session'}, status=status.HTTP_400_BAD_REQUEST)
+        if not participant_email or not participant_id or not survey_id:
+            return Response(
+                {'error': 'Email, participant and survey ID are required'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         settings = RetrievalSetting.objects.filter(umfrageID=survey_id).first()
         if not settings:
             return Response({'error': 'Survey not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        if ParticipantEmail.objects.filter(retrieval_session_key=retrieval_session_key).exists():
-            return Response({'error': 'Email already submitted for this session'}, status=status.HTTP_400_BAD_REQUEST)
+        participant = Participant.objects.filter(
+            participant=participant_id,
+            settings=settings,
+        ).order_by('-started_at').first()
+        if not participant:
+            return Response({'error': 'Participant not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if participant.email_saved:
+            return Response({'error': 'Email already submitted for this participant'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if ParticipantEmail.objects.filter(email=participant_email, settings=settings).exists():
+            return Response({'message': 'Participant email saved successfully'}, status=status.HTTP_200_OK)
 
         ParticipantEmail.objects.create(
             email=participant_email,
             settings=settings,
-            retrieval_session_key=retrieval_session_key
+            retrieval_session_key=participant.retrieval_session_key,
         )
 
         return Response({'message': 'Participant email saved successfully'}, status=status.HTTP_200_OK)
 
 
-class CheckEmailSubmitted(APIView):
-    """Check if email was already submitted for the current session."""
-    
-    def get(self, request, format=None):
-        retrieval_session_key = self.request.session.get('retrieval_session_key')
+class MarkParticipantEmailSaved(APIView):
+    """Mark the participant email flag after a successful submission."""
 
-        # block simple reloading        
-        if not retrieval_session_key:
-            return Response({'submitted': True}, status=status.HTTP_200_OK)
-        
-        already_submitted = ParticipantEmail.objects.filter(
-            retrieval_session_key=retrieval_session_key
-        ).exists()
-        
-        return Response({'submitted': already_submitted}, status=status.HTTP_200_OK)
+    def post(self, request, format=None):
+        participant_id = request.data.get('participant')
+        survey_id = request.data.get('surveyID')
+
+        if not participant_id or not survey_id:
+            return Response(
+                {'error': 'Participant and survey ID are required'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        settings = RetrievalSetting.objects.filter(umfrageID=survey_id).first()
+        if not settings:
+            return Response({'error': 'Survey not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        participant = Participant.objects.filter(
+            participant=participant_id,
+            settings=settings,
+        ).order_by('-started_at').first()
+
+        if not participant:
+            return Response({'error': 'Participant not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if not participant.email_saved:
+            participant.email_saved = True
+            participant.save(update_fields=['email_saved'])
+
+        return Response({'message': 'Participant email flag saved'}, status=status.HTTP_200_OK)
+
+
+class CheckParticipantEmailDisplay(APIView):
+    """Check whether the participant email field should be shown."""
+
+    def get(self, request, format=None):
+        participant_id = request.GET.get('participant')
+        survey_id = request.GET.get('surveyID')
+
+        if not participant_id or not survey_id:
+            return Response({'showEmailField': False}, status=status.HTTP_200_OK)
+
+        settings = RetrievalSetting.objects.filter(umfrageID=survey_id).first()
+        if not settings or not settings.collect_emails:
+            return Response({'showEmailField': False}, status=status.HTTP_200_OK)
+
+        participant = Participant.objects.filter(
+            participant=participant_id,
+            settings=settings,
+        ).order_by('-started_at').first()
+
+        if not participant or participant.email_saved:
+            return Response({'showEmailField': False}, status=status.HTTP_200_OK)
+
+        return Response(
+            {'showEmailField': True},
+            status=status.HTTP_200_OK,
+        )
