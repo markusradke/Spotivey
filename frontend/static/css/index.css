@@ -1799,6 +1799,92 @@ a:hover, a:focus {
   }
 }
 
+  .version-page-shell {
+    min-height: 100vh;
+    background: var(--main-bg-color);
+    padding: 24px 0 40px;
+  }
+
+  .version-page-card {
+    padding: 24px;
+    border-radius: 28px !important;
+    background: var(--main-bg-color) !important;
+  }
+
+  .version-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .version-page-brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .version-page-logo {
+    height: 40px;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .version-page-kicker {
+    display: block;
+    color: var(--color-tu-berlin);
+    line-height: 1.1;
+  }
+
+  .version-page-title {
+    color: var(--color-tu-berlin);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .version-page-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .version-page-text {
+    color: var(--color-black);
+    line-height: 1.75;
+    margin: 0;
+  }
+
+  .version-page-citation {
+    color: var(--color-black);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .cite-version {
+    padding: 16px 18px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.45);
+    border: 1px solid var(--border-color-secondary);
+  }
+
+  @media screen and (max-width: 768px) {
+    .version-page-shell {
+      padding: 16px 0 24px;
+    }
+
+    .version-page-card {
+      padding: 18px;
+      border-radius: 24px !important;
+    }
+
+    .version-page-logo {
+      height: 32px;
+    }
+  }
+
 .privacy-banner, .tutorial-banner{
   background: linear-gradient(45deg, hsla(355, 60%, 82%, 1) 0%, hsla(354, 88%, 41%, 1) 100%);
   display: grid;

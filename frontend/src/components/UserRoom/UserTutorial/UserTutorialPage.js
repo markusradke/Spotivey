@@ -254,7 +254,7 @@ export default function UserTutorialPage(props) {
               Development and hosting of Spotivey
             </h2>
             <h3 class='settings-overview-text'>
-              Version: 1.0 (2023)
+              Version: 1.1 (2026)
               <br></br>
               Spotivey was originally developed as part of a master thesis
               in audio communication by Matthias Ladleif using Django (backend)
