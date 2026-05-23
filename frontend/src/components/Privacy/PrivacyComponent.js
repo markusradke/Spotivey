@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from 'react';
 import LoginIcon from '@mui/icons-material/Login';
-import { Button, IconButton } from "@mui/material";
+import { Box, Button, Container, IconButton, Paper, Typography } from "@mui/material";
 import PrivacyContent from "./PrivacyContent";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import { useNavigate } from "react-router-dom";
@@ -26,42 +26,64 @@ export default function PrivacyComponent() {
     }, [])
 
     return (
-        <React.Fragment>
-            <div class="setting-header">
-                <header class="setting-header-inner">
-                    <div class="setting-header-content-container">
-                        <div class="setting-header-content-container-inner">
-                            <div className="logo-header">
-                                <span class="logo-tu-berlin">
-                                    {/* <a href='https://www.ak.tu-berlin.de/menue/fachgebiet_audiokommunikation' target={'_blank'}>
-                                    <img src="../../static/images/TU-Berlin-Logo.svg" width="81.816" height="60" />
-                                    <img src="../../static/images/logo_grau-schwarz.png" width="61.812" height="60" />
-                                </a> */}
-                                    <img src="../../../static/images/SpotiveyLogo2_Schrift.svg" width="100%" height="100%" />
-                                </span>
-                            </div>
-                        </div>
-                        {getParticipantSessionCheck ?
-                            <div class='header-logout'>
-                                <IconButton
-                                    variant="text"
-                                    onClick={() => {
-                                        navigate(-1)
-                                    }}
+        <Box sx={{ minHeight: '100vh', bgcolor: 'var(--main-bg-color)', py: { xs: 2, sm: 3, md: 4 } }}>
+            <Container maxWidth="lg">
+                <Paper
+                    elevation={2}
+                    sx={{
+                        overflow: 'hidden',
+                        borderRadius: 4,
+                        px: { xs: 2, sm: 3, md: 4 },
+                        py: { xs: 2, sm: 3, md: 4 },
+                        bgcolor: 'var(--main-bg-color)',
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: { xs: 'flex-start', sm: 'center' },
+                            justifyContent: 'space-between',
+                            gap: 2,
+                            flexWrap: 'wrap',
+                            mb: { xs: 2, md: 3 },
+                        }}
+                    >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, minWidth: 0 }}>
+                            <Box
+                                component="img"
+                                src="../../../static/images/SpotiveyLogo2_Schrift.svg"
+                                alt="Spotivey"
+                                sx={{ height: { xs: 32, sm: 40 }, width: 'auto', maxWidth: '100%' }}
+                            />
+                            <Box>
+                                <Typography
+                                    variant="h5"
+                                    component="h1"
+                                    sx={{ color: 'var(--color-tu-berlin)', fontWeight: 700, lineHeight: 1.1 }}
                                 >
-                                    <KeyboardBackspaceIcon />
-                                </IconButton>
-                            </div> :
-                            <div class='header-logout'>
-                                <Button variant="text" startIcon={<LoginIcon />} href={'/login'} >
-                                    Login
-                                </Button>
-                            </div>
+                                    Privacy Center
+                                </Typography>
+                            </Box>
+                        </Box>
+                        {getParticipantSessionCheck ?
+                            <IconButton
+                                variant="text"
+                                aria-label="Go back"
+                                onClick={() => {
+                                    navigate(-1)
+                                }}
+                                sx={{ alignSelf: { xs: 'flex-end', sm: 'center' } }}
+                            >
+                                <KeyboardBackspaceIcon />
+                            </IconButton> :
+                            <Button variant="text" startIcon={<LoginIcon />} href={'/login'}>
+                                Login
+                            </Button>
                         }
-                    </div>
-                </header>
-            </div>
-            <PrivacyContent />
-        </React.Fragment>
+                    </Box>
+                    <PrivacyContent />
+                </Paper>
+            </Container>
+        </Box>
     )
 }
