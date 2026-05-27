@@ -5,28 +5,28 @@ export default function TutorialContentNav() {
         <React.Fragment>
             <ul className="tutorial-nav-container">
                 <li className="tutorial-nav-list">
-                    <a href='#requirements-tutorial' className="tutorial-nav-list-item">
-                        {'Requirements'}
+                    <a href='#introduction-tutorial' className="tutorial-nav-list-item">
+                        {'Introduction'}
                     </a>
                 </li>
                 <li className="tutorial-nav-list">
                     <a href='#general-tutorial' className="tutorial-nav-list-item">
-                        {'General information'}
+                        {'Technical setup and requirements'}
                     </a>
                 </li>
                 <li className="tutorial-nav-list">
                     <a href='#retrieval-settings-tutorial' className="tutorial-nav-list-item">
-                        {'Retrieval-Settings'}
+                        {'Settings Profile'}
                     </a>
                 </li>
                 <li className="tutorial-nav-list">
                     <a href='#spotify-information-tutorial' className="tutorial-nav-list-item">
-                        {'Spotify information that can be configured'}
+                        {'Spotify data that can be retrieved'}
                     </a>
                 </li>
                 <li className="tutorial-nav-list">
-                    <a href='#followup-settings-tutorial' className="tutorial-nav-list-item">
-                        {'FollowUp-Settings'}
+                    <a href='#end-settings-tutorial' className="tutorial-nav-list-item">
+                        {'End-Settings'}
                     </a>
                 </li>
                 <li className="tutorial-nav-list">
@@ -42,6 +42,11 @@ export default function TutorialContentNav() {
                 <li className="tutorial-nav-list">
                     <a href='#study-participants-tutorial' className="tutorial-nav-list-item">
                         {'Spotivey workflow from the perspective of study participants'}
+                    </a>
+                </li>
+                <li className="tutorial-nav-list">
+                    <a href='#references-tutorial' className="tutorial-nav-list-item">
+                        {'References'}
                     </a>
                 </li>
             </ul>

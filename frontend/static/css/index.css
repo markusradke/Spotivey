@@ -551,7 +551,7 @@ html, body {
 .tutorial-list-collapse-item {
   margin: 10px;
   padding: 10px;
-  background-color: rgba(58,3,9,0.72);
+  background-color: var(--main-bg-color);
   border-radius: 3px 15px 5px 30px;
 }
 
@@ -1629,14 +1629,17 @@ a:hover, a:focus {
 
 .privacy .privacy-nav-container {
   position: sticky;
-  top: 132px;
+  top: 24px;
   height: auto;
-  max-height: calc(100vh - 160px);
+  max-height: calc(100vh - 48px);
   padding: 20px;
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(12px);
   box-shadow: 0 12px 32px rgba(20, 20, 40, 0.08);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  align-self: start;
 }
 
 .privacy .privacy-nav-list {
@@ -1798,6 +1801,220 @@ a:hover, a:focus {
     padding: 8px 10px;
   }
 }
+
+  .tutorial-page-shell {
+    min-height: 100vh;
+    background: var(--main-bg-color);
+    padding: 100px 0 40px;
+  }
+
+  .tutorial-page-card {
+    overflow: hidden;
+    border-radius: 28px !important;
+    background: var(--main-bg-color) !important;
+    padding: 24px;
+  }
+
+  .tutorial-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .tutorial-page-brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .tutorial-page-logo {
+    height: 40px;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .tutorial-page-title {
+    color: var(--color-tu-berlin);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .tutorial-page-shell .tutorial-content-container {
+    display: grid;
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+    gap: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px 32px;
+    align-items: start;
+  }
+
+  .tutorial-page-shell .tutorial-content-body {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .tutorial-page-shell .tutorial-content-body > div {
+    padding: 20px 22px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(214, 213, 229, 0.9);
+  }
+
+  .tutorial-page-shell .tutorial-nav-container {
+    position: sticky;
+    top: 132px;
+    height: auto;
+    max-height: calc(100vh - 160px);
+    padding: 20px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 12px 32px rgba(20, 20, 40, 0.08);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    align-self: start;
+  }
+
+  .tutorial-page-shell .tutorial-nav-list {
+    padding-bottom: 16px;
+    font-size: 13px;
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1.45;
+  }
+
+  .tutorial-page-shell .tutorial-nav-list-item {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--border-color-secondary);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .tutorial-page-shell .tutorial-nav-list-item:hover,
+  .tutorial-page-shell .tutorial-nav-list-item:focus {
+    background: rgba(255, 255, 255, 0.85);
+    transform: translateX(2px);
+  }
+
+  .tutorial-page-shell .tutorial-content-title {
+    font-size: clamp(1.45rem, 3vw, 2.2rem);
+    line-height: 1.1;
+  }
+
+  .tutorial-page-shell .settings-subtitle-text {
+    color: var(--color-black);
+    font-family: var(--fontFamily);
+    font-size: 1.1rem;
+    line-height: 1.35;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .tutorial-page-shell .settings-overview-title {
+    margin-bottom: 10px;
+  }
+
+  .tutorial-page-shell .settings-overview-text,
+  .tutorial-page-shell .tutorial-list-collapse-title,
+  .tutorial-page-shell .tutorial-list-collapse-text,
+  .tutorial-page-shell .settings-overview-literatur-item,
+  .tutorial-page-shell .tutorial-list-item {
+    color: var(--color-black);
+  }
+
+  .tutorial-page-shell .settings-overview-text,
+  .tutorial-page-shell .tutorial-list-collapse-text,
+  .tutorial-page-shell .settings-overview-literatur-item {
+    line-height: 1.75;
+  }
+
+  .tutorial-page-shell .settings-overview-text {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .tutorial-page-shell .version-page-text {
+    color: var(--color-black);
+    line-height: 1.75;
+    margin: 0;
+  }
+
+  .tutorial-page-shell .cite-version {
+    padding: 16px 18px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.45);
+    border: 1px solid var(--border-color-secondary);
+  }
+
+  .tutorial-page-shell .version-page-citation {
+    color: var(--color-black);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 900px) {
+    .tutorial-page-shell .tutorial-content-container {
+      grid-template-columns: 1fr;
+    }
+
+    .tutorial-page-shell .tutorial-nav-container {
+      position: relative;
+      top: auto;
+      max-height: none;
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0 0 8px;
+      margin: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .tutorial-page-shell .tutorial-nav-list {
+      flex: 0 0 auto;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+
+    .tutorial-page-shell .tutorial-nav-list-item {
+      white-space: nowrap;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .tutorial-page-shell {
+      padding: 84px 0 24px;
+    }
+
+    .tutorial-page-card {
+      padding: 18px;
+      border-radius: 24px !important;
+    }
+
+    .tutorial-page-logo {
+      height: 32px;
+    }
+
+    .tutorial-page-shell .tutorial-content-container {
+      padding: 0 12px 24px;
+      gap: 24px;
+    }
+
+    .tutorial-page-shell .tutorial-content-body > div {
+      padding: 16px;
+      border-radius: 20px;
+    }
+  }
 
   .version-page-shell {
     min-height: 100vh;
