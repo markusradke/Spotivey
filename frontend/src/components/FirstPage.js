@@ -41,6 +41,7 @@ const UserProfilePage = lazy(
   () => import("./UserRoom/UserProfile/UserProfile")
 );
 const WrappedPage = lazy(() => import("./Wrapped/WrappedPage"));
+const ScreenoutPage = lazy(() => import("./ScreenoutPage/ScreenoutPage"));
 
 const LoginPage = lazy(() => import("./Login/SignIn"));
 const SignUpPage = lazy(() => import("./SignUp/SignUp"));
@@ -200,6 +201,7 @@ function AppRoutes() {
           <Route path={'/privacy'} element={<PrivacyComponent />} />
           <Route path={'/version'} element={<Version />} />
           <Route path="/error" element={<ErrorPage />} />
+          <Route path="/screenout" element={<ScreenoutPage />} />
         </Routes>
       </Suspense>
     </ParticipantContext.Provider>

@@ -25,4 +25,5 @@ urlpatterns = [
     path('privacy', index),
     path('version', index),
     path('error', index),
+    path('screenout', index),
 ]
