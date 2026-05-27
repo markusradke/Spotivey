@@ -108,6 +108,8 @@ class getSettingsListView(APIView):
                         'recently_played': payload['recently_played'],
                         'saved_shows': payload['saved_shows'],
                         'saved_episodes': payload['saved_episodes'],
+                        'end_options': payload['end_options'],
+                        'screenout_options': payload['screenout_options'],
                     })
 
                 return Response({'data': rows}, status=status.HTTP_200_OK)

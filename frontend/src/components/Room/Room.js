@@ -146,7 +146,11 @@ export default function Room(props) {
                         setWelcomePageOK={props.setWelcomePageOK}
                         welcomeSettingsDeutschArray={welcomeSettings.de}
                         welcomeSettingsEnglishArray={welcomeSettings.en}
+                        surveyID={props.surveyID}
+                        participantID={props.participant}
                         language={language}
+                        paramsObjectSession={props.paramsObjectSession}
+                        settings={settings}
                         onAcceptStart={() => setIsShowingPrivacy(true)}
                         onAcceptError={() => setIsShowingPrivacy(false)}
                     />

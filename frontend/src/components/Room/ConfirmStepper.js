@@ -103,8 +103,8 @@ export default function ConfirmStepper({
                                     sx={{ color: "var(--color-black)", fontWeight: 700 }}
                                 >
                                     {language === "en"
-                                        ? "Check your selections"
-                                        : "Prüfe deine Auswahl"}
+                                        ? "Check your results"
+                                        : "Prüfen Sie Ihre Ergebnisse"}
                                 </Typography>
 
                                 <Typography

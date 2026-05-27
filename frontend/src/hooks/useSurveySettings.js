@@ -57,6 +57,7 @@ function normalizeSettings(rawSettings) {
     const recentlyPlayed = rawSettings.recently_played ?? {};
     const savedShows = rawSettings.saved_shows ?? {};
     const savedEpisodes = rawSettings.saved_episodes ?? {};
+    const screenoutOptions = rawSettings.screenout_options ?? {};
 
     normalized[DATA_TYPES.SAVED_TRACKS] = {
         check: savedTracks.check || false,
@@ -140,6 +141,12 @@ function normalizeSettings(rawSettings) {
         check: savedEpisodes.check || false,
         limit: savedEpisodes.limit || 10,
         confirmCheck: savedEpisodes.confirmCheck || false,
+    };
+
+    normalized["screenout_options"] = {
+        option: screenoutOptions.option || 'page',
+        screenout_url: screenoutOptions.screenout_url || '',
+        conditional_screenout_url_parameter: screenoutOptions.conditional_screenout_url_parameter || '',
     };
 
     return normalized;

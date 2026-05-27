@@ -1,9 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Button from '@mui/material/Button';
 import { Box, Container, Paper, Typography } from "@mui/material";
 import { acceptPrivacyPolicy } from "../../api/surveyApi";
 
 export default function WelcomePage(props) {
+    const navigate = useNavigate();
+
     function renderWelcomeTextGerman() {
         return (
             <Typography variant="body1" className={'endPage-Stepper-body'} sx={{ color: 'var(--color-black)' }}>
@@ -63,6 +66,65 @@ export default function WelcomePage(props) {
         )
     }
 
+    function buildParamsString(paramsArray) {
+        const params = new URLSearchParams();
+        if (Array.isArray(paramsArray)) {
+            paramsArray.forEach(([key, value]) => {
+                params.append(key, value);
+            });
+        }
+        return params.toString();
+    }
+
+    function navigateToScreenout(paramsString) {
+        const screenoutOption = props.settings?.screenout_options.option || 'page';
+
+        switch (screenoutOption) {
+            case 'end_url': {
+                const url = props.settings.screenout_options.screenout_url;
+                window.location.href = paramsString
+                    ? `${url}?${paramsString}`
+                    : url;
+                break;
+            }
+            case 'conditional_end_url': {
+                const paramName = props.settings.screenout_options.conditional_screenout_url_parameter;
+                const paramExists = Array.isArray(props.paramsObjectSession) &&
+                    props.paramsObjectSession.some(([key]) => key === paramName);
+
+                if (paramExists) {
+                    const url = props.settings.screenout_options.screenout_url;
+                    window.location.href = paramsString
+                        ? `${url}?${paramsString}`
+                        : url;
+                } else {
+                    navigate('/screenout?' + paramsString);
+                }
+                break;
+            }
+            case 'page':
+            default:
+                navigate('/screenout?' + paramsString);
+                break;
+        }
+    }
+
+    function handleDeclineParticipation() {
+        props.onAcceptStart?.();
+        const paramsString = buildParamsString(props.paramsObjectSession);
+
+        acceptPrivacyPolicy({ accepted: false })
+            .then(() => {
+                props.setWelcomePageOK(false);
+                navigateToScreenout(paramsString);
+            })
+            .catch((error) => {
+                console.error("Error declining privacy policy:", error);
+                props.onAcceptError?.();
+                navigateToScreenout(paramsString);
+            });
+    }
+
     return (
         <div style={{ backgroundColor: 'var(--main-bg-color)' }}>
             <Container maxWidth="md" sx={{ mt: 4 }}>
@@ -74,6 +136,8 @@ export default function WelcomePage(props) {
                             alt="Spotivey"
                             sx={{ height: 40, mr: 2 }}
                         />
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                         <Typography variant="h5" component="h1" sx={{ color: 'var(--color-tu-berlin)' }}>
                             {props.language == 'de' ? 'Datenschutz' : 'Privacy Notice'}
                         </Typography>
@@ -95,6 +159,16 @@ export default function WelcomePage(props) {
                             {props.language == 'de' ? 'Akzeptieren und fortfahren' : 'Accept and continue'}
                         </Button>
                     </Box>
+
+                    <Box sx={{ mt: 2, display: 'flex', justifyContent: 'left' }}>
+                        <Button
+                            variant={'text'}
+                            sx={{ color: '#888' }}
+                            onClick={handleDeclineParticipation}>
+                            {props.language == 'de' ? 'Ablehnen und Teilnahme abbrechen' : 'Decline and Cancel Participation'}
+                        </Button>
+                    </Box>
+
                     <Box sx={{ mt: 2 }}>
                         {props.language == 'de' ? renderWelcomeTextGerman() : renderWelcomeTextEnglish()}
                     </Box>
