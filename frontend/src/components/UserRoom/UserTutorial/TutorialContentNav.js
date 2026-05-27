@@ -30,6 +30,11 @@ export default function TutorialContentNav() {
                     </a>
                 </li>
                 <li className="tutorial-nav-list">
+                    <a href='#screenout-settings-tutorial' className="tutorial-nav-list-item">
+                        {'Screenout-Settings'}
+                    </a>
+                </li>
+                <li className="tutorial-nav-list">
                     <a href='#results-tutorial' className="tutorial-nav-list-item">
                         {'Results Page'}
                     </a>
