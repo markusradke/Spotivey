@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 import { ParticipantContext } from "../../context/ParticipantContext";
 import { DATA_TYPE_ORDER } from "../../constants/dataTypes";
-import { finalizeParticipantData, saveCheckData } from "../../api/surveyApi";
+import { finalizeParticipantData, saveCheckData, deleteParticipantData } from "../../api/surveyApi";
 import { saveWrappedSummary } from "../../api/spotifyApi";
 
 import { getCompleteEndURL } from "./followupSurvey";
-import { partitionConfirmedRejected } from "./roomHelpers";
+import { partitionConfirmedRejected, buildParamsString, navigateToScreenout, calculateTotalDataItems, calculateConfirmedDataItems } from "./roomHelpers";
 
 export function useRoomFinalize({
     welcomePageOK,
@@ -31,6 +31,15 @@ export function useRoomFinalize({
         if (!settings) return false;
         return (steps?.length ?? 0) === 0;
     }, [welcomePageOK, isAuthenticated, settings, steps]);
+
+    const minDataThreshold = useMemo(() => {
+        const rawMinData =
+            settings?.screenout_options?.screenout_min_data ??
+            settings?.screenout_min_data ??
+            0;
+        const parsed = Number(rawMinData);
+        return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+    }, [settings]);
 
     const navigateToEndpageOrEndURL = useCallback(async () => {
         const dataAll = DATA_TYPE_ORDER.map((type) => spotifyData?.[type] ?? []);
@@ -61,6 +70,20 @@ export function useRoomFinalize({
             });
 
             await Promise.all(savePromises.filter(Boolean));
+
+            const totalConfirmedItems = calculateConfirmedDataItems(
+                spotifyData,
+                checkArray,
+                settings
+            );
+
+            if (totalConfirmedItems < minDataThreshold) {
+                await deleteParticipantData();
+                const paramsString = buildParamsString(paramsObjectSession);
+                navigateToScreenout(settings?.screenout_options, paramsString, navigate);
+                return;
+            }
+
             await finalizeParticipantData();
             await saveWrappedSummary();
             await navigateToEndpageOrEndURL();
@@ -79,6 +102,8 @@ export function useRoomFinalize({
         language,
         navigate,
         navigateToEndpageOrEndURL,
+        paramsObjectSession,
+        minDataThreshold,
     ]);
 
     useEffect(() => {
@@ -89,6 +114,15 @@ export function useRoomFinalize({
 
         async function finalize() {
             try {
+                const totalDataItems = calculateTotalDataItems(spotifyData);
+
+                if (totalDataItems < minDataThreshold) {
+                    await deleteParticipantData();
+                    const paramsString = buildParamsString(paramsObjectSession);
+                    navigateToScreenout(settings?.screenout_options, paramsString, navigate);
+                    return;
+                }
+
                 await finalizeParticipantData();
                 await saveWrappedSummary();
                 await navigateToEndpageOrEndURL();
@@ -99,7 +133,7 @@ export function useRoomFinalize({
         }
 
         finalize();
-    }, [shouldFinalizeWithoutConfirmation, language, navigate, navigateToEndpageOrEndURL]);
+    }, [shouldFinalizeWithoutConfirmation, language, navigate, navigateToEndpageOrEndURL, spotifyData, settings, paramsObjectSession, minDataThreshold]);
 
     return { handleSaveAndFinalize, isSaving };
 }

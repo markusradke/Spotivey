@@ -17,26 +17,28 @@ import {
     fetchSavedEpisodes
 } from "../api/spotifyApi";
 
+const EMPTY_DATA = {
+    [DATA_TYPES.SAVED_TRACKS]: [],
+    [DATA_TYPES.TOP_TRACKS_SHORTTERM]: [],
+    [DATA_TYPES.TOP_TRACKS_MEDIUMTERM]: [],
+    [DATA_TYPES.TOP_TRACKS_LONGTERM]: [],
+    [DATA_TYPES.RECENT_TRACKS]: [],
+    [DATA_TYPES.TOP_ARTISTS_SHORTTERM]: [],
+    [DATA_TYPES.TOP_ARTISTS_MEDIUMTERM]: [],
+    [DATA_TYPES.TOP_ARTISTS_LONGTERM]: [],
+    [DATA_TYPES.FOLLOWED_ARTISTS]: [],
+    [DATA_TYPES.CURRENT_PLAYLISTS]: [],
+    [DATA_TYPES.PARTICIPANT_PROFILE]: [],
+    [DATA_TYPES.SAVED_SHOWS]: [],
+    [DATA_TYPES.SAVED_EPISODES]: [],
+};
+
 export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
     const { participant, roomCode, surveyID } = useContext(ParticipantContext);
 
     const lastFetchKeyRef = useRef(null);
 
-    const [data, setData] = useState({
-        [DATA_TYPES.SAVED_TRACKS]: [],
-        [DATA_TYPES.TOP_TRACKS_SHORTTERM]: [],
-        [DATA_TYPES.TOP_TRACKS_MEDIUMTERM]: [],
-        [DATA_TYPES.TOP_TRACKS_LONGTERM]: [],
-        [DATA_TYPES.RECENT_TRACKS]: [],
-        [DATA_TYPES.TOP_ARTISTS_SHORTTERM]: [],
-        [DATA_TYPES.TOP_ARTISTS_MEDIUMTERM]: [],
-        [DATA_TYPES.TOP_ARTISTS_LONGTERM]: [],
-        [DATA_TYPES.FOLLOWED_ARTISTS]: [],
-        [DATA_TYPES.CURRENT_PLAYLISTS]: [],
-        [DATA_TYPES.PARTICIPANT_PROFILE]: [],
-        [DATA_TYPES.SAVED_SHOWS]: [],
-        [DATA_TYPES.SAVED_EPISODES]: [],
-    });
+    const [data, setData] = useState(EMPTY_DATA);
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -57,6 +59,8 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
         lastFetchKeyRef.current = fetchKey;
 
         let isCancelled = false;
+
+        setData(EMPTY_DATA);
 
         async function fetchAllData() {
             const steps = [];
@@ -311,7 +315,16 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
 
                     const result = await step.run();
                     if (isCancelled) return;
-                    setData((prev) => ({ ...prev, [step.type]: result }));
+                    setData((prev) => ({
+                        ...prev,
+                        [step.type]: Array.isArray(result)
+                            ? result
+                            : Array.isArray(result?.items)
+                                ? result.items
+                                : Array.isArray(result?.data)
+                                    ? result.data
+                                    : [],
+                    }));
                 }
 
                 if (!isCancelled) {

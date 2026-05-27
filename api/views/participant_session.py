@@ -136,6 +136,24 @@ class FinalizeParticipantData(APIView):
             participant = Participant.objects.get(retrieval_session_key=retrieval_session_key)
         except Participant.DoesNotExist:
             return Response({'error': 'Participant not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if request.data.get('delete'):
+            participant_id = participant.participant
+            settings = participant.settings
+
+            ParticipantEmail.objects.filter(
+                retrieval_session_key=retrieval_session_key
+            ).delete()
+            participant.delete()
+
+            return Response(
+                {
+                    'message': 'Participant data deleted successfully',
+                    'participant': participant_id,
+                    'surveyID': settings.umfrageID,
+                },
+                status=status.HTTP_200_OK,
+            )
         
         participant.status = 'completed'
         participant.completed_at = timezone.now()

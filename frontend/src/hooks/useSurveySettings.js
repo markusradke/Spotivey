@@ -147,7 +147,10 @@ function normalizeSettings(rawSettings) {
         option: screenoutOptions.option || 'page',
         screenout_url: screenoutOptions.screenout_url || '',
         conditional_screenout_url_parameter: screenoutOptions.conditional_screenout_url_parameter || '',
+        screenout_min_data: screenoutOptions.screenout_min_data ?? 0,
     };
+
+    normalized["screenout_min_data"] = screenoutOptions.screenout_min_data ?? 0;
 
     return normalized;
 }

@@ -207,3 +207,84 @@ export function partitionConfirmedRejected(items, checks) {
 
     return { confirmed, rejected };
 }
+
+export function buildParamsString(paramsArray) {
+    const params = new URLSearchParams();
+    if (Array.isArray(paramsArray)) {
+        paramsArray.forEach(([key, value]) => {
+            params.append(key, value);
+        });
+    }
+    return params.toString();
+}
+
+export function navigateToScreenout(screenoutSettings, paramsString, navigate) {
+    const screenoutOption = screenoutSettings?.option || 'page';
+
+    switch (screenoutOption) {
+        case 'end_url': {
+            const url = screenoutSettings.screenout_url;
+            window.location.href = paramsString
+                ? `${url}?${paramsString}`
+                : url;
+            break;
+        }
+        case 'conditional_end_url': {
+            const paramName = screenoutSettings.conditional_screenout_url_parameter;
+            const paramExists = paramsString
+                .split('&')
+                .some((param) => param.startsWith(paramName + '='));
+
+            if (paramExists) {
+                const url = screenoutSettings.screenout_url;
+                window.location.href = paramsString
+                    ? `${url}?${paramsString}`
+                    : url;
+            } else {
+                navigate(`/screenout?${paramsString}`);
+            }
+            break;
+        }
+        case 'page':
+        default:
+            navigate(`/screenout?${paramsString}`);
+            break;
+    }
+}
+
+export function calculateTotalDataItems(spotifyData) {
+    if (!spotifyData) {
+        return 0;
+    }
+
+    return DATA_TYPE_ORDER.reduce((total, type) => {
+        const items = spotifyData[type];
+        return total + (Array.isArray(items) ? items.length : 0);
+    }, 0);
+}
+
+export function calculateConfirmedDataItems(spotifyData, checkArray, settings) {
+    if (!spotifyData || !settings) {
+        return 0;
+    }
+
+    return DATA_TYPE_ORDER.reduce((total, type, index) => {
+        const typeConfig = settings[type];
+        if (!typeConfig?.check) {
+            return total;
+        }
+
+        const items = spotifyData[type] ?? [];
+        if (items.length === 0) {
+            return total;
+        }
+
+        if (!typeConfig?.confirmCheck) {
+            return total + items.length;
+        }
+
+        const checks = checkArray?.[index] ?? [];
+        const { confirmed } = partitionConfirmedRejected(items, checks);
+        return total + confirmed.length;
+    }, 0);
+}

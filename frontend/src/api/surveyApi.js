@@ -246,3 +246,11 @@ export async function updateUserProfile(payload) {
   );
   return { ok: response.ok, status: response.status, data: await safeJson(response) };
 }
+
+export async function deleteParticipantData() {
+  const response = await fetch(
+    "/api/finalize-participant-data",
+    buildPostOptions({ delete: true }, true)
+  );
+  return { ok: response.ok, status: response.status, data: await safeJson(response) };
+}

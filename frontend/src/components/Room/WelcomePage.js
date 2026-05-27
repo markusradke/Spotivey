@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Button from '@mui/material/Button';
 import { Box, Container, Paper, Typography } from "@mui/material";
 import { acceptPrivacyPolicy } from "../../api/surveyApi";
+import { buildParamsString, navigateToScreenout } from "./roomHelpers";
 
 export default function WelcomePage(props) {
     const navigate = useNavigate();
@@ -66,48 +67,6 @@ export default function WelcomePage(props) {
         )
     }
 
-    function buildParamsString(paramsArray) {
-        const params = new URLSearchParams();
-        if (Array.isArray(paramsArray)) {
-            paramsArray.forEach(([key, value]) => {
-                params.append(key, value);
-            });
-        }
-        return params.toString();
-    }
-
-    function navigateToScreenout(paramsString) {
-        const screenoutOption = props.settings?.screenout_options.option || 'page';
-
-        switch (screenoutOption) {
-            case 'end_url': {
-                const url = props.settings.screenout_options.screenout_url;
-                window.location.href = paramsString
-                    ? `${url}?${paramsString}`
-                    : url;
-                break;
-            }
-            case 'conditional_end_url': {
-                const paramName = props.settings.screenout_options.conditional_screenout_url_parameter;
-                const paramExists = Array.isArray(props.paramsObjectSession) &&
-                    props.paramsObjectSession.some(([key]) => key === paramName);
-
-                if (paramExists) {
-                    const url = props.settings.screenout_options.screenout_url;
-                    window.location.href = paramsString
-                        ? `${url}?${paramsString}`
-                        : url;
-                } else {
-                    navigate('/screenout?' + paramsString);
-                }
-                break;
-            }
-            case 'page':
-            default:
-                navigate('/screenout?' + paramsString);
-                break;
-        }
-    }
 
     function handleDeclineParticipation() {
         props.onAcceptStart?.();
@@ -116,12 +75,12 @@ export default function WelcomePage(props) {
         acceptPrivacyPolicy({ accepted: false })
             .then(() => {
                 props.setWelcomePageOK(false);
-                navigateToScreenout(paramsString);
+                navigateToScreenout(props.settings?.screenout_options, paramsString, navigate);
             })
             .catch((error) => {
                 console.error("Error declining privacy policy:", error);
                 props.onAcceptError?.();
-                navigateToScreenout(paramsString);
+                navigateToScreenout(props.settings?.screenout_options, paramsString, navigate);
             });
     }
 

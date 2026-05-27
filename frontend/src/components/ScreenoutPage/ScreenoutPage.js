@@ -4,19 +4,10 @@ import { Box, Container, Paper, Typography, Button } from "@mui/material";
 
 export default function ScreenoutPage() {
     const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
 
     const lang = searchParams.get("lang");
     const surveyID = searchParams.get("surveyID");
     const participant = searchParams.get("participant");
-
-    useEffect(() => {
-        console.log("URL Parameters in ScreenoutPage:", {
-            lang,
-            surveyID,
-            participant,
-        });
-    }, [lang, surveyID, participant]);
 
     const retryURL = useMemo(() => {
         const params = new URLSearchParams(searchParams.toString());
@@ -51,7 +42,7 @@ export default function ScreenoutPage() {
                     </Typography>
 
                     <Box sx={{ mt: 2 }}>
-                        <Button variant="contained" color="primary" onClick={() => navigate(retryURL)}>
+                        <Button variant="contained" color="primary" onClick={() => window.location.assign(retryURL)}>
                             {lang === 'de' ? 'Erneut versuchen' : 'Try Again'}
                         </Button>
                     </Box>
