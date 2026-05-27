@@ -4,7 +4,7 @@ export function confirmCheck(
     checkedYes, setCheckedYes, passParams
 ) {
     const handleChange = () => {
-        setCheckedYes(checkedYes);
+        setCheckedYes(!checkedYes);
     };
 
     const confirmStyle = passParams ? { margin: "2rem auto" } : null
