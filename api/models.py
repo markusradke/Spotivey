@@ -105,6 +105,16 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie die 
     email_text_en = models.TextField(default="", blank=True)
     email_text_de = models.TextField(default="", blank=True)
 
+
+    SCREENOUT_CHOICES = [
+        ("page", "Screenout end page with retry link"),
+        ("end_url", "Redirect to custom URL at screenout (e.g., to a screenout survey)"),
+        ("conditional_end_url", "Redirect to custom URL at screenout based on presence of a URL parameter"),
+        ]
+    screenout_option = models.CharField(max_length=20, choices = SCREENOUT_CHOICES, default="plain")
+    screenout_url = models.URLField(max_length=200, default='', blank=True)
+    screenout_conditional_url_parameter = models.CharField(max_length=100, default='', blank=True)
+
     def __str__(self):
         return self.nameUmfrage + " (survey ID: " + self.umfrageID + ")"
     

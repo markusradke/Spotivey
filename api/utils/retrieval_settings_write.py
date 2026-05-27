@@ -65,6 +65,9 @@ EXPLICIT_SETTING_FIELDS: tuple[str, ...] = (
     "collect_emails",
     "email_text_en",
     "email_text_de",
+    "screenout_option",
+    "screenout_url",
+    "screenout_conditional_url_parameter",
 )
 
 

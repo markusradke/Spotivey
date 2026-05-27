@@ -97,5 +97,10 @@ def build_retrieval_settings_payload(setting: RetrievalSetting) -> dict[str, Any
             'email_text_en': setting.email_text_en,
             'email_text_de': setting.email_text_de,
         },
+        'screenout_options': {
+            'option': setting.screenout_option,
+            'screenout_url': setting.screenout_url,
+            'screenout_conditional_url_parameter': setting.screenout_conditional_url_parameter,
+        },
         'textAllg': [],
     }
