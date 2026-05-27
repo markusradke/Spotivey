@@ -52,6 +52,7 @@ export default function SettingsDialog(props) {
         const limitArray = props.props[2];
         const confirmArray = props.props[5];
         const endSettings = props.props[8];
+        const screenoutSettings = props.props[9];
 
         const body = {
             data: null,
@@ -139,7 +140,12 @@ export default function SettingsDialog(props) {
             conditional_end_url_option: endSettings.conditionalEndURLOption,
             collect_emails: endSettings.collectEmails,
             email_text_en: endSettings.emailTextEn,
-            email_text_de: endSettings.emailTextDe
+            email_text_de: endSettings.emailTextDe,
+
+            screenout_option: screenoutSettings.screenoutOption,
+            screenout_url: screenoutSettings.screenoutURL,
+            conditional_screenout_url_parameter: screenoutSettings.conditionalScreenoutURLParameter,
+            screenout_min_data: screenoutSettings.screenoutMinData
 
         };
         try {
@@ -240,6 +246,14 @@ export default function SettingsDialog(props) {
                         </h3>
                         <h3 className="settings-dialog-text" >
                             {props.props[3][1]}
+                        </h3>
+                        <h3 className="settings-dialog-text-title" >
+                            Screenout Option:
+                        </h3>
+                        <h3 className="settings-dialog-text" >
+                            {props.props[9].screenoutOption == 'page' ? 'Screenout page' : ''}
+                            {props.props[9].screenoutOption == 'end_url' ? 'Screenout end URL' : ''}
+                            {props.props[9].screenoutOption == 'conditional_end_url' ? 'Screenout conditional end URL' : ''}
                         </h3>
                         <h3 className="settings-dialog-text-title" >
                             End Option:

@@ -113,7 +113,8 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie die 
         ]
     screenout_option = models.CharField(max_length=20, choices = SCREENOUT_CHOICES, default="plain")
     screenout_url = models.URLField(max_length=200, default='', blank=True)
-    screenout_conditional_url_parameter = models.CharField(max_length=100, default='', blank=True)
+    conditional_screenout_url_parameter = models.CharField(max_length=100, default='', blank=True)
+    screenout_min_data = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.nameUmfrage + " (survey ID: " + self.umfrageID + ")"

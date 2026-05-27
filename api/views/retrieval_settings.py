@@ -206,6 +206,7 @@ class getSettingsFromIDView(APIView):
                     'dataFieldsCheck': dataFieldsCheck,
                     'passLang':passLang,
                     'end_options': payload['end_options'],
+                    'screenout_options': payload['screenout_options'],
                 }]
 
                 return Response({'data': rows}, status=status.HTTP_200_OK)

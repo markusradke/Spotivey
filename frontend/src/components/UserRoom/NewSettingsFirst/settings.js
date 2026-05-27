@@ -149,6 +149,17 @@ export default function SettingsPage(props) {
     emailTextDe: emailTextDe
   })
 
+  const [screenoutOption, setScreenoutOption] = useState('page')
+  const [screenoutURL, setScreenoutURL] = useState('')
+  const [conditionalScreenoutURLParameter, setConditionalScreenoutURLParameter] = useState('')
+  const [screenoutMinData, setScreenoutMinData] = useState(0)
+  const [screenoutSettings, setScreenoutSettings] = useState({
+    screenoutOption: screenoutOption,
+    screenoutURL: screenoutURL,
+    conditionalScreenoutURLParameter: conditionalScreenoutURLParameter,
+    screenoutMinData: screenoutMinData
+  })
+
 
   useEffect(() => {
     setConfirmArray([confirmSavedTracksYes, false, confirmTopItemsTracksShortTermYes, confirmTopItemsTracksMediumTermYes, confirmTopItemsTracksLongTermYes,
@@ -185,6 +196,15 @@ export default function SettingsPage(props) {
     topArtistsShortTermFollowUp, topArtistsMediumTermFollowUp, topArtistsLongTermFollowUp, followedArtistsFollowUp,
     currentPlaylistsFollowUp, recentlyTracksFollowUp, savedShowsFollowUp, savedEpisodesFollowUp, collectEmails, emailTextEn, emailTextDe
   ])
+
+  useEffect(() => {
+    setScreenoutSettings({
+      screenoutOption: screenoutOption,
+      screenoutURL: screenoutURL,
+      conditionalScreenoutURLParameter: conditionalScreenoutURLParameter,
+      screenoutMinData: screenoutMinData
+    })
+  }, [screenoutOption, screenoutURL, conditionalScreenoutURLParameter, screenoutMinData])
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -243,6 +263,7 @@ export default function SettingsPage(props) {
           const savedShows = raw.saved_shows
           const savedEpisodes = raw.saved_episodes
           const endOptions = raw.end_options
+          const screenoutOptions = raw.screenout_options
 
           setUmfrageName(data.data[0].nameUmfrage)
           setUmfrageID(data.data[0].umfrageID)
@@ -314,6 +335,11 @@ export default function SettingsPage(props) {
           setCollectEmails(endOptions.collect_emails)
           setEmailTextEn(endOptions.email_text_en)
           setEmailTextDe(endOptions.email_text_de)
+
+          setScreenoutOption(screenoutOptions.option)
+          setScreenoutURL(screenoutOptions.screenout_url)
+          setConditionalScreenoutURLParameter(screenoutOptions.conditional_screenout_url_parameter)
+          setScreenoutMinData(screenoutOptions.screenout_min_data)
         });
     }
   }, [update])
@@ -426,7 +452,8 @@ export default function SettingsPage(props) {
                     confirmArray,
                     update,
                   location.state?.surveyID,
-                    endSettings]
+                    endSettings,
+                    screenoutSettings,]
                 }
               />
               : null
@@ -583,7 +610,11 @@ export default function SettingsPage(props) {
                       {mainSettingsCard(
                         umfrageName, setUmfrageName,
                         umfrageID, setUmfrageID,
-                        surveyIDError, surveyIDChecking
+                        surveyIDError, surveyIDChecking,
+                        screenoutOption, setScreenoutOption,
+                        screenoutURL, setScreenoutURL,
+                        conditionalScreenoutURLParameter, setConditionalScreenoutURLParameter,
+                        screenoutMinData, setScreenoutMinData
                       )}
                     </SwiperSlide>
                     <SwiperSlide>

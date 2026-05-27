@@ -100,7 +100,8 @@ def build_retrieval_settings_payload(setting: RetrievalSetting) -> dict[str, Any
         'screenout_options': {
             'option': setting.screenout_option,
             'screenout_url': setting.screenout_url,
-            'screenout_conditional_url_parameter': setting.screenout_conditional_url_parameter,
+            'conditional_screenout_url_parameter': setting.conditional_screenout_url_parameter,
+            'screenout_min_data': setting.screenout_min_data,
         },
         'textAllg': [],
     }
