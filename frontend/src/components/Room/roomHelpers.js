@@ -93,7 +93,7 @@ export function buildWelcomeSettings(rawSettings) {
     }
 
     if (followedArtists?.check) {
-        de.push([true, "Den Interpreten den Sie folgen"]);
+        de.push([true, "Den Interpreten, die sie abboniert haben"]);
         en.push([true, "Your Followed Artists"]);
     }
 
@@ -105,13 +105,13 @@ export function buildWelcomeSettings(rawSettings) {
 
         const enText = currentPlaylists.public
             ? "Your Playlists"
-            : "Your public Playlists";
+            : "Your Public Playlists";
         en.push([true, enText]);
     }
 
     if (recentlyPlayed?.check) {
         de.push([true, "Ihrer kürzlich gehörten Musik"]);
-        en.push([true, "Your last heard music"]);
+        en.push([true, "Your recently listened music"]);
     }
 
     if (savedShows?.check) {

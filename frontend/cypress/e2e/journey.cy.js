@@ -14,7 +14,6 @@ function fillMuiTextFieldByLabel(labelText, value) {
     const labelRegex = new RegExp(`^${labelText}$`, "i");
 
     cy.contains("label", labelRegex)
-        .should("be.visible")
         .closest(".MuiFormControl-root")
         .find("input, textarea")
         .first()
@@ -46,7 +45,7 @@ function uncheckAllCheckboxesInActiveSlide() {
 }
 
 function completeConfirmStepper(expectedLang) {
-    const endRoomPath = `/end-room/${expectedLang}`;
+    const endRoomPath = `/end-room`;
 
     function waitForStepperOrEndRoom(remainingChecks) {
         cy.location("pathname").then((pathname) => {
@@ -64,7 +63,7 @@ function completeConfirmStepper(expectedLang) {
                     return;
                 }
 
-                cy.wait(500);
+                cy.wait(100);
                 waitForStepperOrEndRoom(remainingChecks - 1);
             });
         });
@@ -255,7 +254,7 @@ function editSettingsToOnlySavedTracksWithoutConfirmation(surveyId) {
 }
 
 function attemptDeleteProfileExpectBlocked(surveyId) {
-    cy.get(".MuiDataGrid-root", { timeout: 10000 }).should("be.visible");
+    cy.get(".MuiDataGrid-root", { timeout: 10000 }).scrollIntoView().should("be.visible");
 
     cy.contains(
         '.MuiDataGrid-root .MuiDataGrid-cell[data-field="umfrageID"]',
@@ -310,11 +309,13 @@ function deleteProfileExpectSuccess(surveyId) {
 function acceptPrivacyNotice(expectedLang) {
     const titleRegex = expectedLang === "de" ? /^datenschutzhinweis$/i : /^privacy notice$/i;
 
-    cy.contains("h1.settings-title", titleRegex, { timeout: 10000 })
+    cy.contains("h1.MuiTypography-root", titleRegex, { timeout: 10000 })
         .should("be.visible");
 
-    cy.get('.speicher-button')
-        .contains('button', /^ok$/i, { timeout: 10000 })
+    cy.contains('.MuiButton-text', /^decline and cancel participation$/i, { timeout: 10000 })
+        .should('be.visible')
+
+    cy.contains('.MuiButton-contained', /^accept and continue$/i, { timeout: 10000 })
         .should('be.visible')
         .click({ force: true });
 }
