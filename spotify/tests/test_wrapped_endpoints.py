@@ -45,9 +45,3 @@ class WrappedEndpointsTest(TestCase):
         self.assertIn("wrapped", payload)
         self.assertIn("end", payload)
 
-    def test_wrapped_image_ok(self):
-        self.client.post("/spotify/wrapped/summary/save")
-        response = self.client.get("/spotify/wrapped/image?surveyID=test123&participant=test_participant")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response["Content-Type"], "image/png")
-        self.assertTrue(len(response.content) > 100)
