@@ -7,12 +7,12 @@ import {
     getExplicitScoreVariant,
     getMainstreamScoreVariant,
     hasMetricValue,
-} from "./wrappedHelpers";
+} from "./participantSummaryHelpers";
 
-export function useWrappedData(summary, lang, isMobileLayout) {
+export function useSummaryData(summary, lang, isMobileLayout) {
     const surveyMeans = summary?.survey_means || {};
     const surveyMeanUsage = surveyMeans.usage || {};
-    const surveyMeanWrapped = surveyMeans.wrapped || {};
+    const surveyMeanSummary = surveyMeans.summary || {};
     const surveyMeanReleaseYearBins = surveyMeans.release_year_bins || {};
     const dataBasis = summary?.data_basis || {};
     const respondentCount = surveyMeans.respondent_count || 0;
@@ -44,7 +44,7 @@ export function useWrappedData(summary, lang, isMobileLayout) {
         },
         {
             key: "saved_tracks",
-            metric: lang === "de" ? "Gespeicherte Tracks" : "Saved tracks",
+            metric: lang === "de" ? "Gespeicherte Lieblingssongs" : "liked songs",
             value: summary?.usage?.total_saved_tracks ?? NaN,
             mean: surveyMeanUsage.total_saved_tracks ?? NaN,
         },
@@ -67,47 +67,47 @@ export function useWrappedData(summary, lang, isMobileLayout) {
         [usageData],
     );
 
-    const playlistDetail = summary?.wrapped?.wrapped_playlists_public_pct
+    const playlistDetail = summary?.summary?.summary_playlists_public_pct
         ? (lang === "de"
             ? [
-                `${formatPercent(summary.wrapped.wrapped_playlists_public_pct)} öffentlich`,
-                `${formatPercent(summary.wrapped.wrapped_playlists_self_owned_pct)} selbst erstellt`,
-                `${formatCount(summary.wrapped.wrapped_playlists_avg_tracks, lang)} Titel im Durchschnitt`,
+                `${formatPercent(summary.summary.summary_playlists_public_pct)} öffentlich`,
+                `${formatPercent(summary.summary.summary_playlists_self_owned_pct)} selbst erstellt`,
+                `${formatCount(summary.summary.summary_playlists_avg_tracks, lang)} Titel im Durchschnitt`,
             ]
             : [
-                `${formatPercent(summary.wrapped.wrapped_playlists_public_pct)} public`,
-                `${formatPercent(summary.wrapped.wrapped_playlists_self_owned_pct)} created yourself`,
-                `${formatCount(summary.wrapped.wrapped_playlists_avg_tracks, lang)} tracks on average`,
+                `${formatPercent(summary.summary.summary_playlists_public_pct)} public`,
+                `${formatPercent(summary.summary.summary_playlists_self_owned_pct)} created yourself`,
+                `${formatCount(summary.summary.summary_playlists_avg_tracks, lang)} tracks on average`,
             ])
         : [];
 
     const mainstreamData = useMemo(() => ([
         {
-            metric: lang === "de" ? "Gespeicherte Tracks" : "Saved tracks",
-            value: summary?.wrapped?.wrapped_saved_track_popularity_median ?? NaN,
-            mean: surveyMeanWrapped.wrapped_saved_track_popularity_median ?? NaN,
+            metric: lang === "de" ? "Lieblingssongs" : "liked songs",
+            value: summary?.summary?.summary_saved_track_popularity_median ?? NaN,
+            mean: surveyMeanSummary.summary_saved_track_popularity_median ?? NaN,
         },
         {
             metric: lang === "de" ? "Gefolgte Artists" : "Followed artists",
-            value: summary?.wrapped?.wrapped_followed_artist_popularity_median ?? NaN,
-            mean: surveyMeanWrapped.wrapped_followed_artist_popularity_median ?? NaN,
+            value: summary?.summary?.summary_followed_artist_popularity_median ?? NaN,
+            mean: surveyMeanSummary.summary_followed_artist_popularity_median ?? NaN,
         },
         {
-            metric: "Recent tracks",
-            value: summary?.wrapped?.wrapped_recent_track_popularity_median ?? NaN,
-            mean: surveyMeanWrapped.wrapped_recent_track_popularity_median ?? NaN,
+            metric: lang === "de" ? "Kürzlich gehörte Songs" : "Recent songs",
+            value: summary?.summary?.summary_recent_track_popularity_median ?? NaN,
+            mean: surveyMeanSummary.summary_recent_track_popularity_median ?? NaN,
         },
         {
-            metric: "Top tracks",
-            value: summary?.wrapped?.wrapped_top_tracks_popularity_median ?? NaN,
-            mean: surveyMeanWrapped.wrapped_top_tracks_popularity_median ?? NaN,
+            metric: lang === "de" ? "Top-Songs" : "Top songs",
+            value: summary?.summary?.summary_top_tracks_popularity_median ?? NaN,
+            mean: surveyMeanSummary.summary_top_tracks_popularity_median ?? NaN,
         },
         {
-            metric: "Top artists",
-            value: summary?.wrapped?.wrapped_mainstream_artist_popularity_median ?? NaN,
-            mean: surveyMeanWrapped.wrapped_mainstream_artist_popularity_median ?? NaN,
+            metric: lang === "de" ? "Top-Künstler" : "Top artists",
+            value: summary?.summary?.summary_mainstream_artist_popularity_median ?? NaN,
+            mean: surveyMeanSummary.summary_mainstream_artist_popularity_median ?? NaN,
         },
-    ]), [lang, summary, surveyMeanWrapped]);
+    ]), [lang, summary, surveyMeanSummary]);
 
     const mainstreamChartData = useMemo(
         () => mainstreamData.filter((item) => hasMetricValue(item.value) || hasMetricValue(item.mean)),
@@ -117,23 +117,23 @@ export function useWrappedData(summary, lang, isMobileLayout) {
     const explicitData = useMemo(() => ([
         {
             key: "saved_tracks",
-            metric: lang === "de" ? "Gespeicherte Tracks" : "Saved tracks",
-            value: summary?.wrapped?.wrapped_saved_track_explicit_pct ?? NaN,
-            mean: surveyMeanWrapped.wrapped_saved_track_explicit_pct ?? NaN,
+            metric: lang === "de" ? "Lieblingssongs" : "Saved tracks",
+            value: summary?.summary?.summary_saved_track_explicit_pct ?? NaN,
+            mean: surveyMeanSummary.summary_saved_track_explicit_pct ?? NaN,
         },
         {
             key: "recent_tracks",
-            metric: "Recent tracks",
-            value: summary?.wrapped?.wrapped_recent_track_explicit_pct ?? NaN,
-            mean: surveyMeanWrapped.wrapped_recent_track_explicit_pct ?? NaN,
+            metric: lang === "de" ? "Kürzlich gehörte Songs" : "Recent songs",
+            value: summary?.summary?.summary_recent_track_explicit_pct ?? NaN,
+            mean: surveyMeanSummary.summary_recent_track_explicit_pct ?? NaN,
         },
         {
             key: "top_tracks",
-            metric: "Top tracks",
-            value: summary?.wrapped?.wrapped_top_tracks_explicit_pct ?? NaN,
-            mean: surveyMeanWrapped.wrapped_top_tracks_explicit_pct ?? NaN,
+            metric: lang === "de" ? "Top-Songs" : "Top songs",
+            value: summary?.summary?.summary_top_tracks_explicit_pct ?? NaN,
+            mean: surveyMeanSummary.summary_top_tracks_explicit_pct ?? NaN,
         },
-    ]), [lang, summary, surveyMeanWrapped]);
+    ]), [lang, summary, surveyMeanSummary]);
 
     const explicitChartData = useMemo(
         () => explicitData.filter((item) => hasMetricValue(item.value) || hasMetricValue(item.mean)),
@@ -158,7 +158,7 @@ export function useWrappedData(summary, lang, isMobileLayout) {
     );
 
     const genreWordData = useMemo(() => {
-        const counts = summary?.wrapped?.wrapped_genre_counts;
+        const counts = summary?.summary?.summary_genre_counts;
         if (!counts || typeof counts !== "object") {
             return [];
         }
@@ -180,12 +180,12 @@ export function useWrappedData(summary, lang, isMobileLayout) {
     const showReleaseYearSection = releaseYearChartData.length > 0;
     const showGenreSection = genreWordData.length > 0;
 
-    const score = summary?.wrapped?.wrapped_mainstream_score ?? NaN;
-    const scoreMean = surveyMeanWrapped.wrapped_mainstream_score ?? NaN;
-    const explicitScore = summary?.wrapped?.wrapped_explicit_pct ?? NaN;
-    const explicitScoreMean = surveyMeanWrapped.wrapped_explicit_pct ?? NaN;
-    const releaseYearScore = summary?.wrapped?.wrapped_release_year_median ?? NaN;
-    const releaseYearScoreMean = surveyMeanWrapped.wrapped_release_year_median ?? NaN;
+    const score = summary?.summary?.summary_mainstream_score ?? NaN;
+    const scoreMean = surveyMeanSummary.summary_mainstream_score ?? NaN;
+    const explicitScore = summary?.summary?.summary_explicit_pct ?? NaN;
+    const explicitScoreMean = surveyMeanSummary.summary_explicit_pct ?? NaN;
+    const releaseYearScore = summary?.summary?.summary_release_year_median ?? NaN;
+    const releaseYearScoreMean = surveyMeanSummary.summary_release_year_median ?? NaN;
     const mainstreamVariant = getMainstreamScoreVariant(score, lang);
     const explicitVariant = getExplicitScoreVariant(explicitScore, lang);
 
@@ -195,56 +195,56 @@ export function useWrappedData(summary, lang, isMobileLayout) {
 
     const mainstreamBasisText = lang === "de"
         ? buildBasisText([
-            [dataBasis.saved_track_points, "Saved Tracks"],
-            [dataBasis.recent_track_points, "Recent Tracks"],
-            [dataBasis.top_track_points, "Top Tracks"],
-            [dataBasis.top_artist_points, "Top Artists"],
-            [dataBasis.followed_artist_points, "Gefolgte Artists"],
+            [dataBasis.saved_track_points, "Gespeicherte Lieblingssongs"],
+            [dataBasis.recent_track_points, "Kürzlich gehörte Songs"],
+            [dataBasis.top_track_points, "Top-Songs"],
+            [dataBasis.top_artist_points, "Top-Künstler"],
+            [dataBasis.followed_artist_points, "Gefolgte Künstler"],
         ], "Datenbasis")
         : buildBasisText([
-            [dataBasis.saved_track_points, "saved tracks"],
-            [dataBasis.recent_track_points, "recent tracks"],
-            [dataBasis.top_track_points, "top tracks"],
+            [dataBasis.saved_track_points, "liked songs"],
+            [dataBasis.recent_track_points, "recent songs"],
+            [dataBasis.top_track_points, "top songs"],
             [dataBasis.top_artist_points, "top artists"],
             [dataBasis.followed_artist_points, "followed artists"],
         ], "Data basis");
 
     const explicitBasisText = lang === "de"
         ? buildBasisText([
-            [dataBasis.saved_track_points, "Saved Tracks"],
-            [dataBasis.recent_track_points, "Recent Tracks"],
-            [dataBasis.top_track_points, "Top Tracks"],
+            [dataBasis.saved_track_points, "Gespeicherte Lieblingssongs"],
+            [dataBasis.recent_track_points, "Kürzlich gehörte Songs"],
+            [dataBasis.top_track_points, "Top-Songs"],
         ], "Datenbasis")
         : buildBasisText([
-            [dataBasis.saved_track_points, "saved tracks"],
-            [dataBasis.recent_track_points, "recent tracks"],
-            [dataBasis.top_track_points, "top tracks"],
+            [dataBasis.saved_track_points, "liked songs"],
+            [dataBasis.recent_track_points, "recent songs"],
+            [dataBasis.top_track_points, "top songs"],
         ], "Data basis");
 
     const releaseYearBasisText = lang === "de"
         ? buildBasisText([
-            [dataBasis.saved_track_points, "bestätigten Saved Tracks"],
-            [dataBasis.top_track_points, "Top Tracks"],
-            [dataBasis.recent_track_points, "Recent Tracks"],
+            [dataBasis.saved_track_points, "Gespeicherten Lieblingssongs"],
+            [dataBasis.top_track_points, "Top-Songs"],
+            [dataBasis.recent_track_points, "Kürzlich gehörten Songs"],
         ], `Datenbasis: ${dataBasis.release_year_points || 0} Release-Dates aus`)
         : buildBasisText([
-            [dataBasis.saved_track_points, "confirmed saved tracks"],
-            [dataBasis.top_track_points, "top tracks"],
-            [dataBasis.recent_track_points, "recent tracks"],
+            [dataBasis.saved_track_points, "liked songs"],
+            [dataBasis.top_track_points, "top songs"],
+            [dataBasis.recent_track_points, "recent songs"],
         ], `Data basis: ${dataBasis.release_year_points || 0} release dates from`);
 
     const genreBasisText = lang === "de"
         ? buildBasisText([
-            [dataBasis.saved_track_points, "gespeicherten Tracks"],
-            [dataBasis.recent_track_points, "zuletzt gehörten Tracks"],
-            [dataBasis.top_track_points, "top Tracks"],
-            [dataBasis.top_artist_points, "top Artists"],
-            [dataBasis.followed_artist_points, "gefolgten Artists"],
+            [dataBasis.saved_track_points, "Gespeicherten Lieblingssongs"],
+            [dataBasis.recent_track_points, "Kürzlich gehörten Songs"],
+            [dataBasis.top_track_points, "Top-Songs"],
+            [dataBasis.top_artist_points, "Top-Künstlern"],
+            [dataBasis.followed_artist_points, "Gefolgten Künstlern"],
         ], `Datenbasis: ${dataBasis.genre_points || 0} Artist-Genre-Nennungen aus`)
         : buildBasisText([
-            [dataBasis.saved_track_points, "saved tracks"],
-            [dataBasis.recent_track_points, "recent tracks"],
-            [dataBasis.top_track_points, "top tracks"],
+            [dataBasis.saved_track_points, "liked songs"],
+            [dataBasis.recent_track_points, "recent songs"],
+            [dataBasis.top_track_points, "top songs"],
             [dataBasis.top_artist_points, "top artists"],
             [dataBasis.followed_artist_points, "followed artists"],
         ], `Data basis: ${dataBasis.genre_points || 0} artist genre mentions from`);

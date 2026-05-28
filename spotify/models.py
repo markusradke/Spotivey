@@ -36,52 +36,52 @@ class Participant(models.Model):
     country = models.CharField(max_length=20, default='')
     followers = models.IntegerField(null=True, default=None)
     product = models.CharField(max_length=50, default='')
-    wrapped_confirmed_track_count = models.IntegerField(
+    summary_confirmed_track_count = models.IntegerField(
         null=True, blank=True, default=None
     )
-    wrapped_confirmed_artist_count = models.IntegerField(
+    summary_confirmed_artist_count = models.IntegerField(
         null=True, blank=True, default=None
     )
-    wrapped_confirmed_playlist_count = models.IntegerField(
+    summary_confirmed_playlist_count = models.IntegerField(
         null=True, blank=True, default=None
     )
-    wrapped_confirmed_playlist_track_count = models.IntegerField(
+    summary_confirmed_playlist_track_count = models.IntegerField(
         null=True, blank=True, default=None
     )
 
-    wrapped_playlists_public_pct = models.FloatField(null=True, blank=True, default=None)
-    wrapped_playlists_self_owned_pct = models.FloatField(null=True, blank=True, default=None)
-    wrapped_playlists_avg_tracks = models.FloatField(null=True, blank=True, default=None)
+    summary_playlists_public_pct = models.FloatField(null=True, blank=True, default=None)
+    summary_playlists_self_owned_pct = models.FloatField(null=True, blank=True, default=None)
+    summary_playlists_avg_tracks = models.FloatField(null=True, blank=True, default=None)
 
-    wrapped_mainstream_track_popularity_median = models.FloatField(
+    summary_mainstream_track_popularity_median = models.FloatField(
         null=True, blank=True, default=None
     )
-    wrapped_recent_track_popularity_median = models.FloatField(
+    summary_recent_track_popularity_median = models.FloatField(
         null=True, blank=True, default=None
     )
-    wrapped_top_tracks_popularity_median = models.FloatField(
+    summary_top_tracks_popularity_median = models.FloatField(
         null=True, blank=True, default=None
     )
-    wrapped_saved_track_popularity_median = models.FloatField(
+    summary_saved_track_popularity_median = models.FloatField(
         null=True, blank=True, default=None
     )
-    wrapped_followed_artist_popularity_median = models.FloatField(
+    summary_followed_artist_popularity_median = models.FloatField(
         null=True, blank=True, default=None
     )
-    wrapped_mainstream_artist_popularity_median = models.FloatField(
+    summary_mainstream_artist_popularity_median = models.FloatField(
         null=True, blank=True, default=None
     )
-    wrapped_mainstream_score = models.FloatField(null=True, blank=True, default=None)
+    summary_mainstream_score = models.FloatField(null=True, blank=True, default=None)
 
-    wrapped_saved_track_explicit_pct = models.FloatField(null=True, blank=True, default=None)
-    wrapped_recent_track_explicit_pct = models.FloatField(null=True, blank=True, default=None)
-    wrapped_top_tracks_explicit_pct = models.FloatField(null=True, blank=True, default=None)
-    wrapped_explicit_pct = models.FloatField(null=True, blank=True, default=None)
-    wrapped_release_year_median = models.FloatField(null=True, blank=True, default=None)
-    wrapped_release_year_bins = models.JSONField(null=True, blank=True, default=None)
+    summary_saved_track_explicit_pct = models.FloatField(null=True, blank=True, default=None)
+    summary_recent_track_explicit_pct = models.FloatField(null=True, blank=True, default=None)
+    summary_top_tracks_explicit_pct = models.FloatField(null=True, blank=True, default=None)
+    summary_explicit_pct = models.FloatField(null=True, blank=True, default=None)
+    summary_release_year_median = models.FloatField(null=True, blank=True, default=None)
+    summary_release_year_bins = models.JSONField(null=True, blank=True, default=None)
 
-    wrapped_genre_counts = models.JSONField(null=True, blank=True, default=None)
-    wrapped_top_genres = models.JSONField(null=True, blank=True, default=None)
+    summary_genre_counts = models.JSONField(null=True, blank=True, default=None)
+    summary_top_genres = models.JSONField(null=True, blank=True, default=None)
 
 
     def __str__(self):

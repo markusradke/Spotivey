@@ -87,13 +87,13 @@ Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie die 
 
     END_CHOICES = [
         ("plain", "Simple end of survey page"),
-        ("wrapped", "Statistical summary of participant responses"),
+        ("summary", "Statistical summary of participant responses"),
         ("end_url", "Redirect to custom URL at end of donation (e.g., to a follow-up survey)"), 
         ("conditional_end_url", "Redirect to custom URL at end of donation based on presence of a URL parameter"),
     ]
     CONDITIONAL_CHOICES = [
         ("plain", "Simple end of survey page"),
-        ("wrapped", "Statistical summary of participant responses"),
+        ("summary", "Statistical summary of participant responses"),
     ]
     
     end_option = models.CharField(max_length=20, choices = END_CHOICES, default="plain")

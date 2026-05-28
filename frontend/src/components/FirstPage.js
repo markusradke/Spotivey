@@ -40,7 +40,7 @@ const UserResultPage = lazy(
 const UserProfilePage = lazy(
   () => import("./UserRoom/UserProfile/UserProfile")
 );
-const WrappedPage = lazy(() => import("./Wrapped/WrappedPage"));
+const ParticipantSummaryPage = lazy(() => import("./ParticipantSummary/ParticipantSummaryPage"));
 const ScreenoutPage = lazy(() => import("./ScreenoutPage/ScreenoutPage"));
 
 const LoginPage = lazy(() => import("./Login/SignIn"));
@@ -108,7 +108,7 @@ function AppRoutes() {
     }
     else if (!createRoom && surveyID && participant) {
       const currentPath = window.location.pathname;
-      if (currentPath && (currentPath.includes("/end-room") || currentPath.includes("/user-wrapped"))) {
+      if (currentPath && (currentPath.includes("/end-room") || currentPath.includes("/participant-summary"))) {
         return;
       }
       const paramsObject = paramsToObject(url.searchParams)
@@ -197,7 +197,7 @@ function AppRoutes() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
           <Route path='/end-room' element={<EndPage />} />
-          <Route path="/user-wrapped" element={<WrappedPage />} />
+          <Route path="/participant-summary" element={<ParticipantSummaryPage />} />
           <Route path={'/privacy'} element={<PrivacyComponent />} />
           <Route path={'/version'} element={<Version />} />
           <Route path="/error" element={<ErrorPage />} />

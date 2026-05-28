@@ -3,17 +3,17 @@ import { useSearchParams } from "react-router-dom";
 import { Box, Container, Paper, Stack, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import EnterEmail from "../Room/enterEmail";
-import { WrappedShareActions } from "./WrappedShared";
+import { SummaryShareActions } from "./ParticipantSummaryShared";
 import {
     GenreSection,
     MainstreamSection,
     ReleaseYearSection,
     ExplicitSection,
     UsageSection,
-} from "./WrappedSections";
-import { useWrappedData } from "./wrappedData";
+} from "./ParticipantSummarySections";
+import { useSummaryData } from "./participantSummaryData";
 
-export default function WrappedPage() {
+export default function ParticipantSummaryPage() {
     const [searchParams] = useSearchParams();
     const surveyID = searchParams.get("surveyID") || "";
     const participant = searchParams.get("participant") || "";
@@ -22,7 +22,7 @@ export default function WrappedPage() {
     const [summary, setSummary] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const wrappedQuery = useMemo(() => {
+    const summaryQuery = useMemo(() => {
         const params = new URLSearchParams();
         if (surveyID) params.set("surveyID", surveyID);
         if (participant) params.set("participant", participant);
@@ -36,14 +36,14 @@ export default function WrappedPage() {
         async function loadSummary() {
             try {
                 setIsLoading(true);
-                const resp = await fetch(`/spotify/wrapped/summary?${wrappedQuery}`, {
+                const resp = await fetch(`/spotify/participant/summary?${summaryQuery}`, {
                     method: "GET",
                     credentials: "include",
                     headers: { Accept: "application/json" },
                 });
 
                 if (!resp.ok) {
-                    throw new Error("Failed to load wrapped summary");
+                    throw new Error("Failed to load participant summary");
                 }
 
                 const data = await resp.json();
@@ -67,14 +67,14 @@ export default function WrappedPage() {
         return () => {
             isMounted = false;
         };
-    }, [wrappedQuery]);
+    }, [summaryQuery]);
 
-    const wrappedData = useWrappedData(summary, lang, isMobileLayout);
+    const summaryData = useSummaryData(summary, lang, isMobileLayout);
     const shareTargetUrl = window.location.href;
-    const heading = "Wrapped";
+    const heading = "Profiler";
     const bodyText = lang === "de"
-        ? "Ihre Musik im Vergleich zu anderen Teilnehmenden"
-        : "Your music compared to other participants";
+        ? "Ihre Musikprofil im Vergleich zu anderen Teilnehmenden"
+        : "Your music profile compared to other participants";
 
     return (
         <div style={{ backgroundColor: "var(--main-bg-color)" }}>
@@ -103,70 +103,70 @@ export default function WrappedPage() {
                     <Box sx={{ mt: 3 }}>
                         {isLoading ? (
                             <Typography variant="body2" sx={{ color: "var(--color-black)" }}>
-                                {lang === "de" ? "Lade Auswertung..." : "Loading wrapped..."}
+                                {lang === "de" ? "Lade Auswertung..." : "Loading Summary..."}
                             </Typography>
                         ) : null}
 
                         {!isLoading && summary ? (
                             <Stack spacing={1.5}>
-                                <WrappedShareActions
+                                <SummaryShareActions
                                     lang={lang}
-                                    shareSurveyUrl={wrappedData.shareSurveyUrl}
+                                    shareSurveyUrl={summaryData.shareSurveyUrl}
                                     shareTargetUrl={shareTargetUrl}
                                 />
 
-                                {wrappedData.showUsageSection ? (
+                                {summaryData.showUsageSection ? (
                                     <UsageSection
-                                        colors={wrappedData.colors}
+                                        colors={summaryData.colors}
                                         lang={lang}
-                                        basisText={wrappedData.userStatsBasisText}
-                                        usageChartData={wrappedData.usageChartData}
-                                        playlistDetail={wrappedData.playlistDetail}
+                                        basisText={summaryData.userStatsBasisText}
+                                        usageChartData={summaryData.usageChartData}
+                                        playlistDetail={summaryData.playlistDetail}
                                     />
                                 ) : null}
 
-                                {wrappedData.showMainstreamSection ? (
+                                {summaryData.showMainstreamSection ? (
                                     <MainstreamSection
-                                        colors={wrappedData.colors}
+                                        colors={summaryData.colors}
                                         lang={lang}
-                                        basisText={wrappedData.mainstreamBasisText}
-                                        chartData={wrappedData.mainstreamChartData}
-                                        score={wrappedData.score}
-                                        scoreMean={wrappedData.scoreMean}
-                                        variant={wrappedData.mainstreamVariant}
+                                        basisText={summaryData.mainstreamBasisText}
+                                        chartData={summaryData.mainstreamChartData}
+                                        score={summaryData.score}
+                                        scoreMean={summaryData.scoreMean}
+                                        variant={summaryData.mainstreamVariant}
                                     />
                                 ) : null}
 
-                                {wrappedData.showExplicitSection ? (
+                                {summaryData.showExplicitSection ? (
                                     <ExplicitSection
-                                        colors={wrappedData.colors}
+                                        colors={summaryData.colors}
                                         lang={lang}
-                                        basisText={wrappedData.explicitBasisText}
-                                        chartData={wrappedData.explicitChartData}
-                                        score={wrappedData.explicitScore}
-                                        scoreMean={wrappedData.explicitScoreMean}
-                                        variant={wrappedData.explicitVariant}
+                                        basisText={summaryData.explicitBasisText}
+                                        chartData={summaryData.explicitChartData}
+                                        score={summaryData.explicitScore}
+                                        scoreMean={summaryData.explicitScoreMean}
+                                        variant={summaryData.explicitVariant}
                                     />
                                 ) : null}
 
-                                {wrappedData.showReleaseYearSection ? (
+                                {summaryData.showReleaseYearSection ? (
                                     <ReleaseYearSection
-                                        colors={wrappedData.colors}
+                                        colors={summaryData.colors}
                                         lang={lang}
-                                        basisText={wrappedData.releaseYearBasisText}
-                                        chartData={wrappedData.releaseYearChartData}
-                                        score={wrappedData.releaseYearScore}
-                                        scoreMean={wrappedData.releaseYearScoreMean}
+                                        basisText={summaryData.releaseYearBasisText}
+                                        chartData={summaryData.releaseYearChartData}
+                                        score={summaryData.releaseYearScore}
+                                        scoreMean={summaryData.releaseYearScoreMean}
                                     />
                                 ) : null}
 
-                                {wrappedData.showGenreSection ? (
+                                {summaryData.showGenreSection ? (
                                     <GenreSection
-                                        colors={wrappedData.colors}
+                                        colors={summaryData.colors}
                                         lang={lang}
-                                        basisText={wrappedData.genreBasisText}
-                                        genreWordData={wrappedData.genreWordData}
-                                        genreCloudSize={wrappedData.genreCloudSize}
+                                        basisText={summaryData.genreBasisText}
+                                        genreWordData={summaryData.genreWordData}
+                                        genreCloudSize={summaryData.genreCloudSize}
                                         isMobileLayout={isMobileLayout}
                                     />
                                 ) : null}

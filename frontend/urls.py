@@ -21,7 +21,7 @@ urlpatterns = [
     path('sign-up', index),
     path('user/results-audio-features', index),
     path('end-room', index),
-    path('user-wrapped', index),
+    path('participant-summary', index),
     path('privacy', index),
     path('version', index),
     path('error', index),

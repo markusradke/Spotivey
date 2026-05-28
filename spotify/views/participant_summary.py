@@ -1,4 +1,4 @@
-"""Wrapped summary endpoints."""
+"""Participant summary endpoints."""
 
 from __future__ import annotations
 
@@ -12,34 +12,34 @@ from rest_framework.views import APIView
 
 from spotify.models import Participant
 from spotify.utils.retrieval_helpers import get_participant_from_session
-from spotify.utils.wrapped_stats import (
-    compute_wrapped_stats,
+from spotify.utils.summary_stats import (
+    compute_participant_summary_stats,
     get_release_year_bin_labels,
-    store_wrapped_stats,
+    store_participant_summary_stats,
 )
 
-WRAPPED_FIELDS = [
-    "wrapped_confirmed_playlist_count",
-    "wrapped_confirmed_track_count",
-    "wrapped_confirmed_artist_count",
-    "wrapped_playlists_public_pct",
-    "wrapped_playlists_self_owned_pct",
-    "wrapped_playlists_avg_tracks",
-    "wrapped_mainstream_track_popularity_median",
-    "wrapped_saved_track_popularity_median",
-    "wrapped_followed_artist_popularity_median",
-    "wrapped_recent_track_popularity_median",
-    "wrapped_top_tracks_popularity_median",
-    "wrapped_mainstream_artist_popularity_median",
-    "wrapped_mainstream_score",
-    "wrapped_saved_track_explicit_pct",
-    "wrapped_recent_track_explicit_pct",
-    "wrapped_top_tracks_explicit_pct",
-    "wrapped_explicit_pct",
-    "wrapped_release_year_median",
-    "wrapped_release_year_bins",
-    "wrapped_genre_counts",
-    "wrapped_top_genres",
+SUMMARY_FIELDS = [
+    "summary_confirmed_playlist_count",
+    "summary_confirmed_track_count",
+    "summary_confirmed_artist_count",
+    "summary_playlists_public_pct",
+    "summary_playlists_self_owned_pct",
+    "summary_playlists_avg_tracks",
+    "summary_mainstream_track_popularity_median",
+    "summary_saved_track_popularity_median",
+    "summary_followed_artist_popularity_median",
+    "summary_recent_track_popularity_median",
+    "summary_top_tracks_popularity_median",
+    "summary_mainstream_artist_popularity_median",
+    "summary_mainstream_score",
+    "summary_saved_track_explicit_pct",
+    "summary_recent_track_explicit_pct",
+    "summary_top_tracks_explicit_pct",
+    "summary_explicit_pct",
+    "summary_release_year_median",
+    "summary_release_year_bins",
+    "summary_genre_counts",
+    "summary_top_genres",
 ]
 
 
@@ -61,10 +61,10 @@ def _safe_float(value: Any) -> float | None:
         return None
 
 
-def _build_wrapped_summary(participant, *, persist: bool = False) -> dict[str, Any]:
-    stats = store_wrapped_stats(participant, save=True) if persist else _get_wrapped_stats(participant)
+def _build_participant_summary(participant, *, persist: bool = False) -> dict[str, Any]:
+    stats = store_participant_summary_stats(participant, save=True) if persist else _get_summary_stats(participant)
     settings = participant.settings
-    release_year_bins = stats.get("wrapped_release_year_bins") or {}
+    release_year_bins = stats.get("summary_release_year_bins") or {}
     release_year_points = _count_release_year_points(participant)
     survey_means = _build_survey_means(settings)
     data_basis = _build_data_basis(participant, stats, release_year_points)
@@ -78,7 +78,7 @@ def _build_wrapped_summary(participant, *, persist: bool = False) -> dict[str, A
             "total_followed_artists": _safe_int(participant.total_followed_artists),
             "total_current_playlists": _safe_int(participant.total_current_playlists),
         },
-        "wrapped": stats,
+        "summary": stats,
         "release_year_bins": release_year_bins,
         "survey_means": survey_means,
         "data_basis": data_basis,
@@ -90,10 +90,10 @@ def _build_wrapped_summary(participant, *, persist: bool = False) -> dict[str, A
     }
 
 
-def _get_wrapped_stats(participant) -> dict[str, Any]:
-    stats = {field: getattr(participant, field) for field in WRAPPED_FIELDS}
+def _get_summary_stats(participant) -> dict[str, Any]:
+    stats = {field: getattr(participant, field) for field in SUMMARY_FIELDS}
     if any(value is None for value in stats.values()):
-        return compute_wrapped_stats(participant)
+        return compute_participant_summary_stats(participant)
     return stats
 
 
@@ -108,29 +108,29 @@ def _build_survey_means(settings) -> dict[str, Any]:
         "total_current_playlists",
     ]
 
-    wrapped_fields = [
-        "wrapped_confirmed_playlist_count",
-        "wrapped_confirmed_track_count",
-        "wrapped_confirmed_artist_count",
-        "wrapped_playlists_public_pct",
-        "wrapped_playlists_self_owned_pct",
-        "wrapped_playlists_avg_tracks",
-        "wrapped_mainstream_track_popularity_median",
-        "wrapped_saved_track_popularity_median",
-        "wrapped_followed_artist_popularity_median",
-        "wrapped_recent_track_popularity_median",
-        "wrapped_top_tracks_popularity_median",
-        "wrapped_mainstream_artist_popularity_median",
-        "wrapped_mainstream_score",
-        "wrapped_saved_track_explicit_pct",
-        "wrapped_recent_track_explicit_pct",
-        "wrapped_top_tracks_explicit_pct",
-        "wrapped_explicit_pct",
-        "wrapped_release_year_median",
+    SUMMARY_FIELDS = [
+        "summary_confirmed_playlist_count",
+        "summary_confirmed_track_count",
+        "summary_confirmed_artist_count",
+        "summary_playlists_public_pct",
+        "summary_playlists_self_owned_pct",
+        "summary_playlists_avg_tracks",
+        "summary_mainstream_track_popularity_median",
+        "summary_saved_track_popularity_median",
+        "summary_followed_artist_popularity_median",
+        "summary_recent_track_popularity_median",
+        "summary_top_tracks_popularity_median",
+        "summary_mainstream_artist_popularity_median",
+        "summary_mainstream_score",
+        "summary_saved_track_explicit_pct",
+        "summary_recent_track_explicit_pct",
+        "summary_top_tracks_explicit_pct",
+        "summary_explicit_pct",
+        "summary_release_year_median",
     ]
 
     agg = qs.aggregate(
-        **{f"mean_{name}": Avg(name) for name in usage_fields + wrapped_fields}
+        **{f"mean_{name}": Avg(name) for name in usage_fields + SUMMARY_FIELDS}
     )
 
     return {
@@ -139,9 +139,9 @@ def _build_survey_means(settings) -> dict[str, Any]:
             name: _safe_float(agg.get(f"mean_{name}"))
             for name in usage_fields
         },
-        "wrapped": {
+        "summary": {
             name: _safe_float(agg.get(f"mean_{name}"))
-            for name in wrapped_fields
+            for name in SUMMARY_FIELDS
         },
         "release_year_bins": _build_release_year_bin_means(qs),
     }
@@ -180,10 +180,10 @@ def _build_data_basis(participant, stats: dict[str, Any], release_year_points: i
     artist_points = top_artist_points + followed_artist_points
 
     return {
-        "confirmed_tracks": _safe_int(stats.get("wrapped_confirmed_track_count")) or 0,
-        "confirmed_artists": _safe_int(stats.get("wrapped_confirmed_artist_count")) or 0,
-        "confirmed_playlists": _safe_int(stats.get("wrapped_confirmed_playlist_count")) or 0,
-        "confirmed_playlist_tracks": _safe_int(stats.get("wrapped_confirmed_playlist_track_count"))
+        "confirmed_tracks": _safe_int(stats.get("summary_confirmed_track_count")) or 0,
+        "confirmed_artists": _safe_int(stats.get("summary_confirmed_artist_count")) or 0,
+        "confirmed_playlists": _safe_int(stats.get("summary_confirmed_playlist_count")) or 0,
+        "confirmed_playlist_tracks": _safe_int(stats.get("summary_confirmed_playlist_track_count"))
         or 0,
         "saved_track_points": saved_track_points,
         "recent_track_points": recent_track_points,
@@ -193,8 +193,8 @@ def _build_data_basis(participant, stats: dict[str, Any], release_year_points: i
         "followed_artist_points": followed_artist_points,
         "artist_points": artist_points,
         "release_year_points": release_year_points,
-        "genre_points": sum(stats.get("wrapped_genre_counts", {}).values())
-        if isinstance(stats.get("wrapped_genre_counts"), dict)
+        "genre_points": sum(stats.get("summary_genre_counts", {}).values())
+        if isinstance(stats.get("summary_genre_counts"), dict)
         else 0,
     }
 
@@ -274,7 +274,7 @@ def _build_release_year_bin_means(qs) -> dict[str, float | None]:
     totals = {label: 0.0 for label in bin_labels}
     counts = {label: 0 for label in bin_labels}
 
-    for bins in qs.values_list("wrapped_release_year_bins", flat=True):
+    for bins in qs.values_list("summary_release_year_bins", flat=True):
         if not isinstance(bins, dict):
             continue
         for label in bin_labels:
@@ -304,23 +304,23 @@ def _format_float(value: Any) -> str:
     return f"{parsed:.1f}"
 
 
-class WrappedSummary(APIView):
-    """Return wrapped summary JSON for the current session participant."""
+class ParticipantSummary(APIView):
+    """Return participant summary JSON for the current session participant."""
 
     def get(self, request):
         participant, error = _get_participant_from_query(request)
         if error:
             return error
 
-        return Response(_build_wrapped_summary(participant), status=status.HTTP_200_OK)
+        return Response(_build_participant_summary(participant), status=status.HTTP_200_OK)
 
 
-class WrappedSummarySave(APIView):
-    """Persist wrapped stats for the current session participant."""
+class ParticipantSummarySave(APIView):
+    """Persist participant summary stats for the current session participant."""
 
     def post(self, request):
         participant, error = get_participant_from_session(request)
         if error:
             return error
 
-        return Response(_build_wrapped_summary(participant, persist=True), status=status.HTTP_200_OK)
+        return Response(_build_participant_summary(participant, persist=True), status=status.HTTP_200_OK)

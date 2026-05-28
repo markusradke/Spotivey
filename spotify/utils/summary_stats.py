@@ -1,4 +1,4 @@
-"""Compute and store participant-level 'Wrapped' summary statistics."""
+"""Compute and store participant-level summary statistics."""
 
 from __future__ import annotations
 
@@ -29,8 +29,8 @@ TOP_N_GENRES = 20
 FIRST_DECADE_BIN_YEAR = 1960
 
 
-def compute_wrapped_stats(participant: Participant) -> dict[str, Any]:
-    """Compute wrapped summary stats using confirmed, already-stored data.
+def compute_participant_summary_stats(participant: Participant) -> dict[str, Any]:
+    """Compute summary stats using confirmed, already-stored data.
 
     The function only considers rows with ``confirmed=True`` and treats missing
     fields (e.g., unknown popularity) as unavailable.
@@ -39,7 +39,7 @@ def compute_wrapped_stats(participant: Participant) -> dict[str, Any]:
         participant: Participant DB instance.
 
     Returns:
-        Mapping of computed wrapped fields (keys match Participant fields).
+        Mapping of computed summary fields (keys match Participant fields).
     """
 
     playlists = CurrentPlaylist.objects.filter(participant=participant)
@@ -100,43 +100,43 @@ def compute_wrapped_stats(participant: Participant) -> dict[str, Any]:
     confirmed_artists = _count_confirmed_artists(participant)
 
     return {
-        "wrapped_confirmed_track_count": confirmed_tracks,
-        "wrapped_confirmed_artist_count": confirmed_artists,
-        "wrapped_confirmed_playlist_count": confirmed_playlists,
-        "wrapped_confirmed_playlist_track_count": confirmed_playlist_tracks,
-        "wrapped_playlists_public_pct": public_pct,
-        "wrapped_playlists_self_owned_pct": self_owned_pct,
-        "wrapped_playlists_avg_tracks": float(avg_tracks) if avg_tracks is not None else None,
-        "wrapped_mainstream_track_popularity_median": track_median,
-        "wrapped_saved_track_popularity_median": saved_track_median,
-        "wrapped_followed_artist_popularity_median": followed_artist_median,
-        "wrapped_recent_track_popularity_median": recent_track_median,
-        "wrapped_top_tracks_popularity_median": top_track_median,
-        "wrapped_mainstream_artist_popularity_median": top_artist_median,
-        "wrapped_mainstream_score": mainstream_score,
-        "wrapped_saved_track_explicit_pct": saved_track_explicit_pct,
-        "wrapped_recent_track_explicit_pct": recent_track_explicit_pct,
-        "wrapped_top_tracks_explicit_pct": top_tracks_explicit_pct,
-        "wrapped_explicit_pct": explicit_pct,
-        "wrapped_release_year_median": release_year_median,
-        "wrapped_release_year_bins": release_year_bins,
-        "wrapped_genre_counts": dict(genre_counts),
-        "wrapped_top_genres": top_genres,
+        "summary_confirmed_track_count": confirmed_tracks,
+        "summary_confirmed_artist_count": confirmed_artists,
+        "summary_confirmed_playlist_count": confirmed_playlists,
+        "summary_confirmed_playlist_track_count": confirmed_playlist_tracks,
+        "summary_playlists_public_pct": public_pct,
+        "summary_playlists_self_owned_pct": self_owned_pct,
+        "summary_playlists_avg_tracks": float(avg_tracks) if avg_tracks is not None else None,
+        "summary_mainstream_track_popularity_median": track_median,
+        "summary_saved_track_popularity_median": saved_track_median,
+        "summary_followed_artist_popularity_median": followed_artist_median,
+        "summary_recent_track_popularity_median": recent_track_median,
+        "summary_top_tracks_popularity_median": top_track_median,
+        "summary_mainstream_artist_popularity_median": top_artist_median,
+        "summary_mainstream_score": mainstream_score,
+        "summary_saved_track_explicit_pct": saved_track_explicit_pct,
+        "summary_recent_track_explicit_pct": recent_track_explicit_pct,
+        "summary_top_tracks_explicit_pct": top_tracks_explicit_pct,
+        "summary_explicit_pct": explicit_pct,
+        "summary_release_year_median": release_year_median,
+        "summary_release_year_bins": release_year_bins,
+        "summary_genre_counts": dict(genre_counts),
+        "summary_top_genres": top_genres,
     }
 
 
-def store_wrapped_stats(participant: Participant, *, save: bool = True) -> dict[str, Any]:
-    """Compute wrapped stats and persist them on the participant.
+def store_participant_summary_stats(participant: Participant, *, save: bool = True) -> dict[str, Any]:
+    """Compute summary stats and persist them on the participant.
 
     Args:
         participant: Participant DB instance.
         save: When True, writes fields to the DB.
 
     Returns:
-        The computed wrapped stats mapping.
+        The computed summary stats mapping.
     """
 
-    stats = compute_wrapped_stats(participant)
+    stats = compute_participant_summary_stats(participant)
     for key, value in stats.items():
         setattr(participant, key, value)
 

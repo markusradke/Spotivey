@@ -358,13 +358,13 @@ export default function UserTutorialPage(props) {
                   Plain end page: After the data donation process, participants are shown a plain end page with a thank you message.
                 </li>
                 <li className='tutorial-list-item'>
-                  Wrapped-style end page: After the data donation process, participants are shown a dynamic summary of the data they have donated.
+                  Summary end page: After the data donation process, participants are shown a dynamic summary of the data they have donated.
                 </li>
                 <li className='tutorial-list-item'>
                   End-URL: After the data donation process, participants are redirected to a URL that can be freely defined by the researcher. All URL-parameters that were passed to Spotivey (including the participant ID and the survey language) are passed through to this URL, so that they can be used for further processing (e.g. in a follow-up questionnaire).
                 </li>
                 <li className='tutorial-list-item'>
-                  Conditional Redirect: Depending on wether a specific URL-parameter was passed to Spotivey or not (e.g., an id from a panel provider), participants are either redirected to a freely definable URL or shown a plain end page or wrapped-style end page. The name of the conditional parameter can be chosen freely.
+                  Conditional Redirect: Depending on wether a specific URL-parameter was passed to Spotivey or not (e.g., an id from a panel provider), participants are either redirected to a freely definable URL or shown a plain end page or summary-style end page. The name of the conditional parameter can be chosen freely.
                 </li>
               </ul>
               In addition, researchers can set wether participants should have the option to submit an email adress, e.g. for a lottery. Researhers can also set a custom text that is displayed when asking for the email address.

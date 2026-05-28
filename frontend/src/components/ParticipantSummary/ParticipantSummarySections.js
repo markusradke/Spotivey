@@ -7,14 +7,14 @@ import {
     LegendKey,
     ScoreCard,
     UsageChartCard,
-} from "./WrappedShared";
+} from "./ParticipantSummaryShared";
 import {
     formatPercent,
     formatYear,
     getGenreWordFill,
     getGenreWordFontSize,
     getGenreWordRotation,
-} from "./wrappedHelpers";
+} from "./participantSummaryHelpers";
 
 export function UsageSection({ colors, lang, basisText, usageChartData, playlistDetail }) {
     return (
@@ -27,7 +27,7 @@ export function UsageSection({ colors, lang, basisText, usageChartData, playlist
         >
             <Box sx={{ mb: 2, display: "flex", flexWrap: "wrap", gap: 2 }}>
                 <LegendKey color={colors.primary} label={lang === "de" ? "Sie" : "You"} />
-                <LegendKey color={colors.mean} label={lang === "de" ? "Mittel" : "Mean"} />
+                <LegendKey color={colors.mean} label={lang === "de" ? "Andere Teilnehmende" : "Average Participant"} />
             </Box>
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2 }}>
                 {usageChartData.map((item) => (
@@ -37,8 +37,8 @@ export function UsageSection({ colors, lang, basisText, usageChartData, playlist
             {playlistDetail.length > 0 ? (
                 <Typography variant="body2" sx={{ mt: 1.5, color: colors.text }}>
                     {lang === "de"
-                        ? `Gespendete Playlists: ${playlistDetail.join(" · ")}.`
-                        : `Retrieved Playlists: ${playlistDetail.join(" · ")}.`}
+                        ? `Analysierte Playlists: ${playlistDetail.join(" · ")}.`
+                        : `Analyzed Playlists: ${playlistDetail.join(" · ")}.`}
                 </Typography>
             ) : null}
         </ComparisonSection>
@@ -51,12 +51,12 @@ export function MainstreamSection({ colors, lang, basisText, chartData, score, s
             noticeText={basisText}
             title={lang === "de" ? "Mainstreaminess" : "Mainstreaminess"}
             description={lang === "de"
-                ? "Populärität gehörter Musik im Vergleich zu anderen Teilnehmenden."
+                ? "Popularität gehörter Musik im Vergleich zu anderen Teilnehmenden."
                 : "Popularity of music listened to, compared to other participants."}
         >
             <Box sx={{ mb: 2, display: "flex", flexWrap: "wrap", gap: 2 }}>
                 <LegendKey color={colors.primary} label={lang === "de" ? "Sie" : "You"} />
-                <LegendKey color={colors.mean} label={lang === "de" ? "Mittel" : "Mean"} />
+                <LegendKey color={colors.mean} label={lang === "de" ? "Andere Teilnehmende" : "Average Participant"} />
             </Box>
             <BarChart
                 dataset={chartData}
@@ -64,7 +64,7 @@ export function MainstreamSection({ colors, lang, basisText, chartData, score, s
                 height={260}
                 series={[
                     { dataKey: "value", label: lang === "de" ? "Sie" : "You", color: colors.primary },
-                    { dataKey: "mean", label: lang === "de" ? "Mittel" : "Mean", color: colors.mean },
+                    { dataKey: "mean", label: lang === "de" ? "Andere Teilnehmende" : "Average Participant", color: colors.mean },
                 ]}
                 yAxis={[{ scaleType: "band", dataKey: "metric" }]}
                 xAxis={[{ min: 0, max: 100 }]}
@@ -88,14 +88,14 @@ export function ExplicitSection({ colors, lang, basisText, chartData, score, sco
     return (
         <ComparisonSection
             noticeText={basisText}
-            title={lang === "de" ? "Explicitness" : "Explicitness"}
+            title={lang === "de" ? "Anrüchigkeit" : "Explicitness"}
             description={lang === "de"
-                ? "Anteil von Tracks mit explizitem Inhalt im Vergleich zu anderen Teilnehmenden."
-                : "Share of explicit tracks compared with other participants."}
+                ? "Anteil von Songs mit anrüchigem Inhalt im Vergleich zu anderen Teilnehmenden."
+                : "Share of explicit songs compared with other participants."}
         >
             <Box sx={{ mb: 2, display: "flex", flexWrap: "wrap", gap: 2 }}>
                 <LegendKey color={colors.primary} label={lang === "de" ? "Sie" : "You"} />
-                <LegendKey color={colors.mean} label={lang === "de" ? "Mittel" : "Mean"} />
+                <LegendKey color={colors.mean} label={lang === "de" ? "Andere Teilnehmende" : "Average Participant"} />
             </Box>
             <BarChart
                 dataset={chartData}
@@ -103,7 +103,7 @@ export function ExplicitSection({ colors, lang, basisText, chartData, score, sco
                 height={260}
                 series={[
                     { dataKey: "value", label: lang === "de" ? "Sie" : "You", color: colors.primary },
-                    { dataKey: "mean", label: lang === "de" ? "Mittel" : "Mean", color: colors.mean },
+                    { dataKey: "mean", label: lang === "de" ? "Andere Teilnehmende" : "Average Participant", color: colors.mean },
                 ]}
                 yAxis={[{ scaleType: "band", dataKey: "metric" }]}
                 xAxis={[{ min: 0, max: 100 }]}
@@ -112,7 +112,7 @@ export function ExplicitSection({ colors, lang, basisText, chartData, score, sco
             />
             <ScoreCard
                 color={colors.primary}
-                label={lang === "de" ? "Explicitness Score" : "Explicitness score"}
+                label={lang === "de" ? "Anrüchigkeit-Score" : "Explicitness score"}
                 value={score}
                 meanValue={scoreMean}
                 lang={lang}
@@ -127,21 +127,21 @@ export function ReleaseYearSection({ colors, lang, basisText, chartData, score, 
     return (
         <ComparisonSection
             noticeText={basisText}
-            title={lang === "de" ? "Release year bins" : "Release year bins"}
+            title={lang === "de" ? "Aktualität Ihres Musikgeschmacks" : "Recency of your music taste"}
             description={lang === "de"
                 ? "Veröffentlichungsjahr Ihrer Musik im Vergleich zu anderen Teilnehmenden."
                 : "Release year of your music compared with other participants."}
         >
             <Box sx={{ mb: 2, display: "flex", flexWrap: "wrap", gap: 2 }}>
                 <LegendKey color={colors.primary} label={lang === "de" ? "Sie" : "You"} />
-                <LegendKey color={colors.mean} label={lang === "de" ? "Mittel" : "Mean"} />
+                <LegendKey color={colors.mean} label={lang === "de" ? "Andere Teilnehmende" : "Average Participant"} />
             </Box>
             <BarChart
                 dataset={chartData}
                 height={320}
                 series={[
                     { dataKey: "value", label: lang === "de" ? "Sie" : "You", color: colors.primary },
-                    { dataKey: "mean", label: lang === "de" ? "Mittel" : "Mean", color: colors.mean },
+                    { dataKey: "mean", label: lang === "de" ? "Andere Teilnehmende" : "Average Participant", color: colors.mean },
                 ]}
                 xAxis={[{ scaleType: "band", dataKey: "bin" }]}
                 yAxis={[{ min: 0, max: 100 }]}
@@ -164,7 +164,7 @@ export function GenreSection({ colors, lang, basisText, genreWordData, genreClou
     return (
         <ComparisonSection
             noticeText={basisText}
-            title={lang === "de" ? "Ihre Spotify Genres" : "Your Spotify Genres"}
+            title={lang === "de" ? "Ihre Lieblings-Spotify-Genres" : "Your Favorite Spotify Genres"}
             description={lang === "de"
                 ? "Ihre häufigsten Genres (Top 100), Größe entspricht Häufigkeit."
                 : "Your most frequent genres (Top 100), size corresponds to frequency."}

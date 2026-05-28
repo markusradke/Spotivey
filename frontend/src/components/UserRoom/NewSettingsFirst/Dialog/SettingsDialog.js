@@ -260,7 +260,7 @@ export default function SettingsDialog(props) {
                         </h3>
                         <h3 className="settings-dialog-text" >
                             {props.props[8].endOption === 'plain' ? 'Plain end page' : ''}
-                            {props.props[8].endOption === 'wrapped' ? 'Spotivey wrapped' : ''}
+                            {props.props[8].endOption === 'summary' ? 'Summary end page' : ''}
                             {props.props[8].endOption === 'end_url' ? `Redirect custom URL` : ''}
                             {props.props[8].endOption === 'conditional_end_url' ? `Conditional redirect custom URL` : ''} <br></br>
                             {props.props[8].endOption === 'end_url' || props.props[8].endOption === 'conditional_end_url' ? `${props.props[8].endURL}` : ''} <br></br>

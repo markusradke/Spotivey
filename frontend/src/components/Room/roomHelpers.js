@@ -160,18 +160,18 @@ export function getEndConfig(rawSettings, paramsObjectSession, language) {
         };
     }
 
-    if (rawSettings.end_options.option === 'wrapped') {
+    if (rawSettings.end_options.option === 'summary') {
         return {
-            endUrl: '/user-wrapped' + (language ? `?lang=${language}` + (rawSettings.umfrageID ? `&surveyID=${rawSettings.umfrageID}` : '') + (participant ? `&participant=${participant}` : '') : ''),
+            endUrl: '/participant-summary' + (language ? `?lang=${language}` + (rawSettings.umfrageID ? `&surveyID=${rawSettings.umfrageID}` : '') + (participant ? `&participant=${participant}` : '') : ''),
         };
     }
 
     if (rawSettings.end_options.option === 'conditional_end_url') {
         const mandatory_url_param = rawSettings.end_options.conditional_end_url_parameter;
         if (!paramsObjectSession?.some(([key]) => key === mandatory_url_param)) {
-            if (rawSettings.end_options.conditional_end_url_option === 'wrapped') {
+            if (rawSettings.end_options.conditional_end_url_option === 'summary') {
                 return {
-                    endUrl: '/user-wrapped' + (language ? `?lang=${language}` + (rawSettings.umfrageID ? `&surveyID=${rawSettings.umfrageID}` : '') + (participant ? `&participant=${participant}` : '') : '')
+                    endUrl: '/participant-summary' + (language ? `?lang=${language}` + (rawSettings.umfrageID ? `&surveyID=${rawSettings.umfrageID}` : '') + (participant ? `&participant=${participant}` : '') : '')
                 };
             }
             else {

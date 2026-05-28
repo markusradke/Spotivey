@@ -116,12 +116,12 @@ export function getMainstreamScoreVariant(score, lang) {
             ? {
                 title: "Pionier",
                 description: "Sie entdecken Musik vor dem Algorithmus. Ihre Musik ist ein kuratierter Mix aus Underground-Juwelen, Indie-Lieblingen und Artists, die nur wenige kennen.",
-                image_path: "static/images/wrapped/trailblazer.svg",
+                image_path: "static/images/participantsummary/trailblazer.svg",
             }
             : {
                 title: "Trailblazer",
                 description: "You're the friend who discovers music before the algorithm does. Your music is a curated mix of underground gems, indie darlings, and artists that most people have never heard of.",
-                image_path: "static/images/wrapped/trailblazer.svg",
+                image_path: "static/images/participantsummary/trailblazer.svg",
             };
     }
 
@@ -130,12 +130,12 @@ export function getMainstreamScoreVariant(score, lang) {
             ? {
                 title: "Ausgewogene Entdecker",
                 description: "Sie haben das Beste aus beiden Welten: Chartstürmer gemischt mit Underground-Juwelen. Ihre Musik ist interessant und abwechslungsreich, aber zugänglich genug, dass Freunde Songs wiedererkennen würden.",
-                image_path: "static/images/wrapped/balanced_explorer.svg",
+                image_path: "static/images/participantsummary/balanced_explorer.svg",
             }
             : {
                 title: "Balanced Explorer",
                 description: "You've got the best of both worlds: chart-toppers mixed with hidden treasures. Your taste is eclectic enough to keep things interesting, but accessible enough that your friends would actually recognize songs.",
-                image_path: "static/images/wrapped/balanced_explorer.svg",
+                image_path: "static/images/participantsummary/balanced_explorer.svg",
             };
     }
 
@@ -143,12 +143,12 @@ export function getMainstreamScoreVariant(score, lang) {
         ? {
             title: "Chart Champion",
             description: "Sie lieben, was die Massen lieben, und um ehrlich zu sein: Es gibt ja auch einen Grund, warum Hits nun mal Hits sind. Ihre Musik reflektiert aktuelle Trends, und Sie können jeden aktuellen Banger mitsingen.",
-            image_path: "static/images/wrapped/chart_champion.svg",
+            image_path: "static/images/participantsummary/chart_champion.svg",
         }
         : {
             title: "Chart Champion",
             description: "You're vibing with what the masses are vibing with, and honestly, that's because the hits are hits for a reason. Your music is a reflection of what's trending, and you're always ready to sing along to the latest banger.",
-            image_path: "static/images/wrapped/chart_champion.svg",
+            image_path: "static/images/participantsummary/chart_champion.svg",
         };
 }
 
@@ -162,12 +162,12 @@ export function getExplicitScoreVariant(score, lang) {
             ? {
                 title: "Sauber",
                 description: "Ihre Musik kann man ohne Weiteres im Radio spielen oder mit Kindern singen. Ein Glück - Sie können Ihre Musik immer und überall hören, ohne auf Probleme zu stoßen!",
-                image_path: "static/images/wrapped/clean_slate.svg",
+                image_path: "static/images/participantsummary/clean_slate.svg",
             }
             : {
                 title: "Clean Slate",
                 description: "Your music is radio-friendly and parent-approved. Lucky you, you can listen to your favorite music in any situation without any problems!",
-                image_path: "static/images/wrapped/clean_slate.svg",
+                image_path: "static/images/participantsummary/clean_slate.svg",
             };
     }
 
@@ -176,12 +176,12 @@ export function getExplicitScoreVariant(score, lang) {
             ? {
                 title: "Gelegentliches Fluchen",
                 description: "Sie haben kein Problem mit ein wenig Würze in Ihren Lyrics. Manchmal sind explizite Inhalte schon okay. Sie sind pragmatisch: Der Vibe ist wichtiger als die Sprache, und ein guter Song bleibt ein guter Song, egal ob ein wenig geflucht wird.",
-                image_path: "static/images/wrapped/casual_curser.svg",
+                image_path: "static/images/participantsummary/casual_curser.svg",
             }
             : {
                 title: "Casual Curser",
                 description: "You're comfortable with a little spice in your lyrics - sometimes, explicit content is just fine. You're pragmatic: the vibe matters more than the language, and a great song is a great song regardless of a few choice words.",
-                image_path: "static/images/wrapped/casual_curser.svg",
+                image_path: "static/images/participantsummary/casual_curser.svg",
             };
     }
 
@@ -189,12 +189,12 @@ export function getExplicitScoreVariant(score, lang) {
         ? {
             title: "Unzensiert-Enthusiast",
             description: "Explizite Inhalte stören Sie kein bisschen - es ist einfach Teil des künstlerischen Ausdrucks. Ihre Lieblingstracks scheuen sich nicht vor rauer Sprache, und Sie lieben die ungefilterte Authentizität, die explizite Musik oft mit sich bringt.",
-            image_path: "static/images/wrapped/uncensored_enthusiast.svg",
+            image_path: "static/images/participantsummary/uncensored_enthusiast.svg",
         }
         : {
             title: "Uncensored Enthusiast",
             description: "Explicit content doesn't bother you one bit - it's just part of the artistic expression. Your favorite tracks don't shy away from raw language, and you appreciate the unfiltered authenticity that explicit music often brings.",
-            image_path: "static/images/wrapped/uncensored_enthusiast.svg",
+            image_path: "static/images/participantsummary/uncensored_enthusiast.svg",
         };
 }
 

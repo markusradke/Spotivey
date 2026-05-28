@@ -141,9 +141,9 @@ export async function fetchSavedEpisodes(participant, surveyId, roomCode, limit,
   return response.json();
 }
 
-export async function saveWrappedSummary() {
+export async function saveParticipantSummary() {
   const response = await fetch(
-    "/spotify/wrapped/summary/save",
+    "/spotify/participant/summary/save",
     buildPostOptions({})
   );
   return response.json();

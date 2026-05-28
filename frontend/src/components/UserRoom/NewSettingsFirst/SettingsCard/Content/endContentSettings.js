@@ -232,7 +232,7 @@ export function EndContentSettings({
                     width="50%"
                 >
                     <MenuItem value="plain">Plain Thank You Message</MenuItem>
-                    <MenuItem value="wrapped">Sharable Spotivey Wrapped</MenuItem>
+                    <MenuItem value="summary">Sharable Summary Page</MenuItem>
                     <MenuItem value="end_url">Redirect to URL</MenuItem>
                     <MenuItem value="conditional_end_url">Conditional Redirect to URL</MenuItem>
                 </Select>
@@ -334,7 +334,7 @@ export function EndContentSettings({
                                 style={{ marginTop: '0.75rem' }}
                             >
                                 <MenuItem value="plain">Plain Thank You Message</MenuItem>
-                                <MenuItem value="wrapped">Sharable Spotivey Wrapped</MenuItem>
+                                <MenuItem value="summary">Sharable Summary Page</MenuItem>
                             </Select>
                         </div>
                     )}

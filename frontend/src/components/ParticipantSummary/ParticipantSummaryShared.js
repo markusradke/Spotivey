@@ -2,9 +2,9 @@ import React from "react";
 import { Box, Button, Card, CardContent, Stack, Typography } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { formatCount, getUsageAxisMax } from "./wrappedHelpers";
+import { formatCount, getUsageAxisMax } from "./participantSummaryHelpers";
 
-export function WrappedShareActions({
+export function SummaryShareActions({
     lang,
     shareSurveyUrl,
     shareTargetUrl,
@@ -20,8 +20,8 @@ export function WrappedShareActions({
                     startIcon={<ContentCopyIcon />}
                 >
                     {lang === "de"
-                        ? "Teilen Sie den Link zur Befragung, um Ihre Ergenisse mit anderen zu vergleichen"
-                        : "Share the survey link to compare your results with others"}
+                        ? "Lassen Sie es andere auch versuchen!"
+                        : "Let others try it too!"}
                 </Button>
             ) : null}
 
@@ -29,12 +29,12 @@ export function WrappedShareActions({
                 variant="outlined"
                 size="medium"
                 onClick={() => navigator.clipboard.writeText(shareTargetUrl)}
-                aria-label={lang === "de" ? "Link zum Wrapped kopieren" : "Copy link to wrapped"}
+                aria-label={lang === "de" ? "Link zum Summary kopieren" : "Copy link to summary"}
                 startIcon={<ContentCopyIcon />}
             >
                 {lang === "de"
-                    ? "Teilen Sie den Link zu Ihrem persönlichen Wrapped oder kommen Sie später wieder, um Ihre Ergebnisse zu sehen (mit mehr Teilnehmenden zum Vergleich)!"
-                    : "Share the link to your personal wrapped or come back later to see your results (with more participants to compare to)!"}
+                    ? "Link zu Ihren Ergebnissen (zum Teilen und Wiederansehen)"
+                    : "Link to your results (for sharing and revisiting)"}
             </Button>
         </Stack >
     );

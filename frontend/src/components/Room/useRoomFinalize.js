@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ParticipantContext } from "../../context/ParticipantContext";
 import { DATA_TYPE_ORDER } from "../../constants/dataTypes";
 import { finalizeParticipantData, saveCheckData, deleteParticipantData } from "../../api/surveyApi";
-import { saveWrappedSummary } from "../../api/spotifyApi";
+import { saveParticipantSummary } from "../../api/spotifyApi";
 
 import { getCompleteEndURL } from "./followupSurvey";
 import { partitionConfirmedRejected, buildParamsString, navigateToScreenout, calculateTotalDataItems, calculateConfirmedDataItems } from "./roomHelpers";
@@ -85,7 +85,7 @@ export function useRoomFinalize({
             }
 
             await finalizeParticipantData();
-            await saveWrappedSummary();
+            await saveParticipantSummary();
             await navigateToEndpageOrEndURL();
         } catch (error) {
             console.error("Error in confirmation process:", error);
@@ -124,7 +124,7 @@ export function useRoomFinalize({
                 }
 
                 await finalizeParticipantData();
-                await saveWrappedSummary();
+                await saveParticipantSummary();
                 await navigateToEndpageOrEndURL();
             } catch (error) {
                 console.error("Finalize failed (no confirmation):", error);
