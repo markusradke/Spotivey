@@ -13,7 +13,7 @@ class BulkOperationsTest(TestCase):
             umfrageID='test123'
         )
         self.participant = Participant.objects.create(
-            participant='test_participant',
+            participant=1,
             settings=self.settings,
             retrieval_session_key='test_session_key'
         )

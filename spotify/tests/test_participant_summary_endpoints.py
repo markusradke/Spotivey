@@ -14,7 +14,7 @@ class summaryEndpointsTest(TestCase):
             share_survey_url="https://example.com/survey",
         )
         self.participant = Participant.objects.create(
-            participant="test_participant",
+            participant=1,
             settings=self.settings,
             retrieval_session_key="test_session_key",
         )
@@ -36,10 +36,10 @@ class summaryEndpointsTest(TestCase):
 
     def test_summary_summary_ok(self):
         self.client.post("/spotify/participant/summary/save")
-        response = self.client.get("/spotify/participant/summary?surveyID=test123&participant=test_participant")
+        response = self.client.get("/spotify/participant/summary?surveyID=test123&participant=1")
         self.assertEqual(response.status_code, 200)
         payload = response.json()
-        self.assertEqual(payload["participant"], "test_participant")
+        self.assertEqual(payload["participant"], 1)
         self.assertEqual(payload["surveyID"], "test123")
         self.assertIn("usage", payload)
         self.assertIn("summary", payload)

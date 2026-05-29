@@ -34,10 +34,13 @@ export function getCompleteEndURL({
     const additionalURLParams = paramsObjectSession?.filter(
         ([key]) => key !== "participant" && key !== "surveyID"
     ) || [];
+    if (paramsObjectSession?.find(([key]) => key === "surveyID")) {
+        additionalURLParams.push(["entrySurveyID", paramsObjectSession?.find(([key]) => key === "surveyID")?.[1] || ""]);
+    }
     const additionalURLParamsString = additionalURLParams.length
         ? "&" + additionalURLParams.map((item) => item.join("=")).join("&")
         : "";
 
-    // always adds partID and language for LimeSurvey integration
+    // always adds partID, language, and old survey ID for LimeSurvey integration
     return [followup.endUrl, "?partID=", participant, additionalURLParamsString].join("");
 }

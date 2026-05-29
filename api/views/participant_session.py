@@ -44,14 +44,15 @@ class InitParticipantSession(APIView):
             self.request.session.create()
 
         surveyID = request.data.get('surveyID')
-        participant_id = request.data.get('participant')
+        participant_id = int(request.data.get('participant'))
 
         settings = RetrievalSetting.objects.filter(umfrageID=surveyID).first()
         if not settings: 
             return Response({'Error': 'Survey not found'}, status=status.HTTP_404_NOT_FOUND)
 
         retrieval_session_key = str(uuid.uuid4())
-
+        print(f"Creating new participant session for participant {participant_id} with retrieval session key {retrieval_session_key}")
+        
         existing_participants = Participant.objects.filter(
             participant=participant_id,
             settings=settings,

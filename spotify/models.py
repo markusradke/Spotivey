@@ -15,7 +15,7 @@ class SpotifyToken(models.Model):
         return self.user
 
 class Participant(models.Model):
-    participant = models.CharField(max_length=50, default='')
+    participant = models.IntegerField(default=None)
     settings = models.ForeignKey(RetrievalSetting, on_delete=models.PROTECT)
     retrieval_session_key = models.CharField(max_length=50, unique=True, default='')
     started_at = models.DateTimeField(auto_now_add=True)
@@ -86,7 +86,7 @@ class Participant(models.Model):
 
     def __str__(self):
         return (
-            self.participant
+            str(self.participant)
             + " (retrieval settings: "
             + self.settings.nameUmfrage
             + ")"
