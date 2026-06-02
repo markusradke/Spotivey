@@ -195,11 +195,11 @@ export function useSummaryData(summary, lang, isMobileLayout) {
 
     const mainstreamBasisText = lang === "de"
         ? buildBasisText([
-            [dataBasis.saved_track_points, "Gespeicherte Lieblingssongs"],
-            [dataBasis.recent_track_points, "Kürzlich gehörte Songs"],
+            [dataBasis.saved_track_points, "gespeicherte Lieblingssongs"],
+            [dataBasis.recent_track_points, "kürzlich gehörte Songs"],
             [dataBasis.top_track_points, "Top-Songs"],
             [dataBasis.top_artist_points, "Top-Künstler"],
-            [dataBasis.followed_artist_points, "Gefolgte Künstler"],
+            [dataBasis.followed_artist_points, "gefolgte Künstler"],
         ], "Datenbasis")
         : buildBasisText([
             [dataBasis.saved_track_points, "liked songs"],
@@ -211,8 +211,8 @@ export function useSummaryData(summary, lang, isMobileLayout) {
 
     const explicitBasisText = lang === "de"
         ? buildBasisText([
-            [dataBasis.saved_track_points, "Gespeicherte Lieblingssongs"],
-            [dataBasis.recent_track_points, "Kürzlich gehörte Songs"],
+            [dataBasis.saved_track_points, "gespeicherte Lieblingssongs"],
+            [dataBasis.recent_track_points, "kürzlich gehörte Songs"],
             [dataBasis.top_track_points, "Top-Songs"],
         ], "Datenbasis")
         : buildBasisText([
@@ -223,9 +223,9 @@ export function useSummaryData(summary, lang, isMobileLayout) {
 
     const releaseYearBasisText = lang === "de"
         ? buildBasisText([
-            [dataBasis.saved_track_points, "Gespeicherten Lieblingssongs"],
+            [dataBasis.saved_track_points, "gespeicherten Lieblingssongs"],
             [dataBasis.top_track_points, "Top-Songs"],
-            [dataBasis.recent_track_points, "Kürzlich gehörten Songs"],
+            [dataBasis.recent_track_points, "kürzlich gehörten Songs"],
         ], `Datenbasis: ${dataBasis.release_year_points || 0} Release-Dates aus`)
         : buildBasisText([
             [dataBasis.saved_track_points, "liked songs"],
@@ -235,11 +235,11 @@ export function useSummaryData(summary, lang, isMobileLayout) {
 
     const genreBasisText = lang === "de"
         ? buildBasisText([
-            [dataBasis.saved_track_points, "Gespeicherten Lieblingssongs"],
-            [dataBasis.recent_track_points, "Kürzlich gehörten Songs"],
+            [dataBasis.saved_track_points, "gespeicherten Lieblingssongs"],
+            [dataBasis.recent_track_points, "kürzlich gehörten Songs"],
             [dataBasis.top_track_points, "Top-Songs"],
             [dataBasis.top_artist_points, "Top-Künstlern"],
-            [dataBasis.followed_artist_points, "Gefolgten Künstlern"],
+            [dataBasis.followed_artist_points, "gefolgten Künstlern"],
         ], `Datenbasis: ${dataBasis.genre_points || 0} Artist-Genre-Nennungen aus`)
         : buildBasisText([
             [dataBasis.saved_track_points, "liked songs"],

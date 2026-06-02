@@ -124,6 +124,15 @@ export function ExplicitSection({ colors, lang, basisText, chartData, score, sco
 }
 
 export function ReleaseYearSection({ colors, lang, basisText, chartData, score, scoreMean }) {
+    const xAxisLabels = lang === "de"
+        ? ["vor 1950", "1950er", "1960er", "1970er", "1980er", "1990er", "2000er", "2010er", "2020er"]
+        : ["before 1950s", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"];
+
+    const chartDataLocalized = chartData.map((d, i) => ({
+        ...d,
+        binLabel: xAxisLabels[i] ?? d.bin,
+    }));
+
     return (
         <ComparisonSection
             noticeText={basisText}
@@ -137,20 +146,20 @@ export function ReleaseYearSection({ colors, lang, basisText, chartData, score, 
                 <LegendKey color={colors.mean} label={lang === "de" ? "Andere Teilnehmende" : "Average Participant"} />
             </Box>
             <BarChart
-                dataset={chartData}
+                dataset={chartDataLocalized}
                 height={320}
                 series={[
                     { dataKey: "value", label: lang === "de" ? "Sie" : "You", color: colors.primary },
                     { dataKey: "mean", label: lang === "de" ? "Andere Teilnehmende" : "Average Participant", color: colors.mean },
                 ]}
-                xAxis={[{ scaleType: "band", dataKey: "bin" }]}
+                xAxis={[{ scaleType: "band", dataKey: "binLabel" }]}
                 yAxis={[{ min: 0, max: 100 }]}
                 margin={{ left: 50, right: 30, top: 20, bottom: 70 }}
                 slotProps={{ legend: { hidden: true } }}
             />
             <ScoreCard
                 color={colors.primary}
-                label={lang === "de" ? "Median release year" : "Median release year"}
+                label={lang === "de" ? "Mittleres Erscheinungsjahr" : "Median release year"}
                 value={score}
                 meanValue={scoreMean}
                 lang={lang}

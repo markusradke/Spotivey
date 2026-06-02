@@ -73,7 +73,7 @@ export default function ParticipantSummaryPage() {
     const shareTargetUrl = window.location.href;
     const heading = "Profiler";
     const bodyText = lang === "de"
-        ? "Ihre Musikprofil im Vergleich zu anderen Teilnehmenden"
+        ? "Ihr Musikprofil im Vergleich zu anderen Teilnehmenden"
         : "Your music profile compared to other participants";
 
     return (
@@ -170,6 +170,11 @@ export default function ParticipantSummaryPage() {
                                         isMobileLayout={isMobileLayout}
                                     />
                                 ) : null}
+                                <SummaryShareActions
+                                    lang={lang}
+                                    shareSurveyUrl={summaryData.shareSurveyUrl}
+                                    shareTargetUrl={shareTargetUrl}
+                                />
                             </Stack>
                         ) : null}
                     </Box>
