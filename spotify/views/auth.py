@@ -71,7 +71,13 @@ class AuthURL(APIView):
 def spotify_callback(request, format=None):
     """Redirect from Spotify to Spotivey Participant Page."""
     code = request.GET.get("code")
-    error = request.GET.get("error")
+    oauth_error = request.GET.get("error")
+
+    # User denied or Spotify returned an OAuth error
+    if oauth_error or not code:
+        print(f"Spotify callback error before token exchange: {oauth_error}")
+        return redirect("/error")
+    
 
     response = post(
         "https://accounts.spotify.com/api/token",
