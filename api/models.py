@@ -7,10 +7,8 @@ class Researcher(models.Model):
 
 
 class RetrievalSetting(models.Model):
-    defaultConfirmTextEng = """Please confirm the results.
-If some results are unfamiliar or uncomfortable to you, please feel free to deselect the results."""
-    defaultConfirmTextDe = """Bitte bestätigen Sie die Ergebnisse.
-Wenn einige Ergebnisse für Sie ungewohnt oder unangenehm sind, können Sie die Ergebnisse gerne abwählen."""
+    defaultConfirmTextEng = """Wenn Sie mit der Spende einverstanden sind, klicken Sie einfach auf "Bestätige alle Ergebnisse". Falls Sie einige Inhalte aus Ihrem Spotify-Konto nicht spenden möchten, können Sie diese auch einzeln abwählen und dann OK klicken."""
+    defaultConfirmTextDe = """If you agree to the donation, simply click "Confirm all results." If there are some items in your Spotify account that you don't want to donate, you can deselect them individually and then click OK."""
 
     user = models.ManyToManyField(User, default='')
     nameUmfrage = models.TextField(default='')
