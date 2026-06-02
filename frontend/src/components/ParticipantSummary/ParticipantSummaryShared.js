@@ -31,10 +31,11 @@ export function SummaryShareActions({
                 onClick={() => navigator.clipboard.writeText(shareTargetUrl)}
                 aria-label={lang === "de" ? "Link zum Summary kopieren" : "Copy link to summary"}
                 startIcon={<ContentCopyIcon />}
+                sx={{ whiteSpace: "pre-line" }}
             >
                 {lang === "de"
-                    ? "Link zu Ihren Ergebnissen (zum Teilen und Wiederansehen)"
-                    : "Link to your results (for sharing and revisiting)"}
+                    ? "Link zu Ihren Ergebnissen\n(zum Teilen und Wiederansehen)"
+                    : "Link to your results\n(for sharing and revisiting)"}
             </Button>
         </Stack >
     );
