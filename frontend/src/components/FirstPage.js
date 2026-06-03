@@ -117,6 +117,8 @@ function AppRoutes() {
         participant,
         lang,
         paramsObject,
+        start_url: window.location.href,
+        referrer_url: document.referrer,
       })
         .then((response) => {
           if (!response.ok) {
