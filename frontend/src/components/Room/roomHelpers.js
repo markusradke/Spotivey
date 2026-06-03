@@ -62,34 +62,15 @@ export function buildWelcomeSettings(rawSettings) {
         ]);
     }
 
-    if (topTracksShortTerm?.check) {
-        de.push([true, "Ihrer Kurzfristigen Top Tracks"]);
-        en.push([true, "Your Short-Term Top Tracks"]);
+    if (topTracksShortTerm?.check || topTracksMediumTerm?.check || topTracksLongTerm?.check) {
+        de.push([true, "Ihrer Top Tracks"]);
+        en.push([true, "Your Top Tracks"]);
     }
 
-    if (topTracksMediumTerm?.check) {
-        de.push([true, "Ihrer Mittelfristigen Top Tracks"]);
-        en.push([true, "Your Medium-Term Top Tracks"]);
-    }
 
-    if (topTracksLongTerm?.check) {
-        de.push([true, "Ihrer Langfristigen Top Tracks"]);
-        en.push([true, "Your Long-Term Top Tracks"]);
-    }
-
-    if (topArtistsShortTerm?.check) {
-        de.push([true, "Ihrer Kurzfristigen Top Künstler"]);
-        en.push([true, "Your Short-Term Top Artists"]);
-    }
-
-    if (topArtistsMediumTerm?.check) {
-        de.push([true, "Ihrer Mittelfristigen Top Künstler"]);
-        en.push([true, "Your Medium-Term Top Artists"]);
-    }
-
-    if (topArtistsLongTerm?.check) {
-        de.push([true, "Ihrer Langfristigen Top Künstler"]);
-        en.push([true, "Your Long-Term Top Artists"]);
+    if (topArtistsShortTerm?.check || topArtistsMediumTerm?.check || topArtistsLongTerm?.check) {
+        de.push([true, "Ihrer Top Künstler"]);
+        en.push([true, "Your Top Artists"]);
     }
 
     if (followedArtists?.check) {
