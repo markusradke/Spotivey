@@ -2321,3 +2321,22 @@ hr.solid{
   grid-template-columns: 50% 45%;
 }
 
+.blink {
+    animation: blink-animation 2s infinite;
+  }
+  
+  @keyframes blink-animation {
+    0% {
+      opacity: 1;
+    }
+    40% {
+      opacity: 0;
+    }
+    80% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+

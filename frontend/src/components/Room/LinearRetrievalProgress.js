@@ -1,6 +1,8 @@
 import React from "react";
 import { LinearProgress } from "@mui/material";
 import { CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
+import { Typography } from "@mui/material";
 
 function getLoadingText({ language, currentType, isAuthChecking }) {
     if (isAuthChecking || !currentType) {
@@ -56,6 +58,21 @@ export default function LinearRetrievalProgress({ language, progress, isAuthChec
         <div className="loading-container">
             <div className="loading-item">
                 <div className="loading-inner" style={{ width: "85vw", maxWidth: 560, gap: 16 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <Box
+                            component="img"
+                            src="../../../static/images/SpotiveyLogo2_Schrift.svg"
+                            alt="Spotivey"
+                            sx={{ height: 40, mr: 2 }}
+                        />
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <Typography variant="h5" component="h4" sx={{ color: 'var(--color-tu-berlin)' }} className="blink">
+                            {language === "de" ?
+                                "Bitte laden Sie die Seite nicht neu, schließen Sie das Fenster nicht und drücken Sie nicht den Zurück-Button ihres Browsers!" :
+                                "Please do not refresh the page, close the window, and do not press the back button of your browser!"}
+                        </Typography>
+                    </Box>
                     <CircularProgress style={{ margin: "auto" }} />
                     <LinearProgress variant="determinate" value={percent} sx={{ width: "100%", height: 10, borderRadius: 999 }} />
                     <div style={{ paddingTop: "24px", textAlign: "center" }}>
@@ -66,9 +83,6 @@ export default function LinearRetrievalProgress({ language, progress, isAuthChec
                         >
                             {text}
                             <br />
-                            {language !== "de"
-                                ? "Please do not refresh the page."
-                                : "Bitte laden Sie die Seite nicht neu."}
                         </div>
                     </div>
                 </div>
