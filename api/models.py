@@ -113,7 +113,7 @@ class RetrievalSetting(models.Model):
     screenout_url = models.URLField(max_length=200, default='', blank=True)
     conditional_screenout_url_parameter = models.CharField(max_length=100, default='', blank=True)
     screenout_min_data = models.PositiveIntegerField(default=0)
-    screenout_check_identical = models.BooleanField(default=False)
+    screenout_check_identical = models.BooleanField(default=True)
 
     def __str__(self):
         return self.nameUmfrage + " (survey ID: " + self.umfrageID + ")"
