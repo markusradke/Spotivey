@@ -148,6 +148,7 @@ function normalizeSettings(rawSettings) {
         screenout_url: screenoutOptions.screenout_url || '',
         conditional_screenout_url_parameter: screenoutOptions.conditional_screenout_url_parameter || '',
         screenout_min_data: screenoutOptions.screenout_min_data ?? 0,
+        screenout_check_identical: screenoutOptions.screenout_check_identical ?? false,
     };
 
     normalized["screenout_min_data"] = screenoutOptions.screenout_min_data ?? 0;
