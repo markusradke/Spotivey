@@ -84,6 +84,11 @@ export default function LinearRetrievalProgress({ language, progress, isAuthChec
                             {text}
                             <br />
                         </div>
+                        <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+                            {language === "de" ?
+                                "Je nach Anzahl der Tracks und Künstler in Ihrem Spotify Profil kann dies wenige Minuten dauern." :
+                                "Depending on the number of tracks and artists in your Spotify profile, this may take a few minutes."}
+                        </Typography>
                     </div>
                 </div>
             </div>

@@ -25,6 +25,8 @@ export default function EndPage() {
                             alt="Spotivey"
                             sx={{ height: 40, mr: 2 }}
                         />
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                         <Typography variant="h5" component="h1" sx={{ color: 'var(--color-tu-berlin)' }}>
                             {heading}
                         </Typography>

@@ -24,7 +24,11 @@ export default function WelcomePage(props) {
                     ))}
                 </ol>
                 <br />
-                Personenbezogene Profildaten wie Name, Profilbild, Emailadresse und Geburtsdatum werden in keinem Fall
+                <br />
+                Der Download kann dann bis zu wenigen Minuten dauern.
+                <br />
+                <br />
+                WICHTIG: Personenbezogene Profildaten wie Name, Profilbild, Emailadresse und Geburtsdatum werden in keinem Fall
                 von uns abgerufen, gespeichert, oder analysiert, auch wenn wir aus technischen Gründen
                 kurz auf Ihr Spotify-Profil zugreifen müssen, welches diese personenbezogenen Daten enthält.
                 <br />
@@ -54,7 +58,11 @@ export default function WelcomePage(props) {
                     ))}
                 </ol>
                 <br />
-                Personal profile data such as name, profile picture, email address and date of birth are never retrieved,
+                <br />
+                The download may then take up to a few minutes.
+                <br />
+                <br />
+                IMPORTANT: Personal profile data such as name, profile picture, email address and date of birth are never retrieved,
                 stored or analyzed by us, even if we need to briefly access your Spotify profile for technical reasons,
                 which contains this personal data.
                 <br />
@@ -99,6 +107,13 @@ export default function WelcomePage(props) {
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                         <Typography variant="h5" component="h1" sx={{ color: 'var(--color-tu-berlin)' }}>
                             {props.language == 'de' ? 'Datenschutz' : 'Privacy Notice'}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ mt: 2 }}>
+                        <Typography variant="body1" className={'endPage-Stepper-body'} sx={{ color: 'var(--color-tu-berlin)' }}>
+                            {props.language === "de" ?
+                                "Bitte laden Sie die Seite nicht neu, schließen Sie das Fenster nicht und drücken Sie nicht den Zurück-Button ihres Browsers!" :
+                                "Please do not refresh the page, close the window, and do not press the back button of your browser!"}
                         </Typography>
                     </Box>
 
