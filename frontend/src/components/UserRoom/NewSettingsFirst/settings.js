@@ -153,11 +153,13 @@ export default function SettingsPage(props) {
   const [screenoutURL, setScreenoutURL] = useState('')
   const [conditionalScreenoutURLParameter, setConditionalScreenoutURLParameter] = useState('')
   const [screenoutMinData, setScreenoutMinData] = useState(0)
+  const [screenoutCheckIdentical, setScreenoutCheckIdentical] = useState(false)
   const [screenoutSettings, setScreenoutSettings] = useState({
     screenoutOption: screenoutOption,
     screenoutURL: screenoutURL,
     conditionalScreenoutURLParameter: conditionalScreenoutURLParameter,
-    screenoutMinData: screenoutMinData
+    screenoutMinData: screenoutMinData,
+    screenoutCheckIdentical: screenoutCheckIdentical
   })
 
 
@@ -202,9 +204,10 @@ export default function SettingsPage(props) {
       screenoutOption: screenoutOption,
       screenoutURL: screenoutURL,
       conditionalScreenoutURLParameter: conditionalScreenoutURLParameter,
-      screenoutMinData: screenoutMinData
+      screenoutMinData: screenoutMinData,
+      screenoutCheckIdentical: screenoutCheckIdentical
     })
-  }, [screenoutOption, screenoutURL, conditionalScreenoutURLParameter, screenoutMinData])
+  }, [screenoutOption, screenoutURL, conditionalScreenoutURLParameter, screenoutMinData, screenoutCheckIdentical])
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -340,6 +343,7 @@ export default function SettingsPage(props) {
           setScreenoutURL(screenoutOptions.screenout_url)
           setConditionalScreenoutURLParameter(screenoutOptions.conditional_screenout_url_parameter)
           setScreenoutMinData(screenoutOptions.screenout_min_data)
+          setScreenoutCheckIdentical(screenoutOptions.screenout_check_identical)
         });
     }
   }, [update])
@@ -614,7 +618,8 @@ export default function SettingsPage(props) {
                         screenoutOption, setScreenoutOption,
                         screenoutURL, setScreenoutURL,
                         conditionalScreenoutURLParameter, setConditionalScreenoutURLParameter,
-                        screenoutMinData, setScreenoutMinData
+                        screenoutMinData, setScreenoutMinData,
+                        screenoutCheckIdentical, setScreenoutCheckIdentical,
                       )}
                     </SwiperSlide>
                     <SwiperSlide>

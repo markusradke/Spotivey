@@ -8,7 +8,8 @@ export function mainSettingsCard(
     screenoutOption, setScreenoutOption,
     screenoutURL, setScreenoutURL,
     conditionalScreenoutURLParameter, setConditionalScreenoutURLParameter,
-    screenoutMinData, setScreenoutMinData
+    screenoutMinData, setScreenoutMinData,
+    screenOutCheckIdentical, setScreenoutCheckIdentical
 ) {
     return (
         <React.Fragment>
@@ -36,7 +37,8 @@ export function mainSettingsCard(
                         screenoutOption, setScreenoutOption,
                         screenoutURL, setScreenoutURL,
                         conditionalScreenoutURLParameter, setConditionalScreenoutURLParameter,
-                        screenoutMinData, setScreenoutMinData
+                        screenoutMinData, setScreenoutMinData,
+                        screenOutCheckIdentical, setScreenoutCheckIdentical
                     )}
                 </div>
             </div>

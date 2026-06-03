@@ -1,6 +1,6 @@
 import * as React from "react";
 import TextFieldMain from "./Components/TextFieldMain";
-import { Typography, Select, MenuItem, TextField } from "@mui/material";
+import { Typography, Select, MenuItem, TextField, Checkbox } from "@mui/material";
 import { BoundedNumberField } from "./Components/BoundedNumberField";
 
 
@@ -11,7 +11,8 @@ export function mainContentSettings(
   screenoutOption, setScreenoutOption,
   screenoutURL, setScreenoutURL,
   conditionalScreenoutURLParameter, setConditionalScreenoutURLParameter,
-  screenoutMinData, setScreenoutMinData
+  screenoutMinData, setScreenoutMinData,
+  screenOutCheckIdentical, setScreenoutCheckIdentical
 ) {
 
   const trimmed_end_url = String(screenoutURL ?? "").trim();
@@ -91,6 +92,20 @@ export function mainContentSettings(
             min={0}
             max={1000}
             step={1}
+          />
+        </div>
+      </div>
+      <div>
+        <h3 className="follow-up-settings-title" style={{ marginTop: '0.75rem' }}>
+          Screen Out Participants with Identical Spotify Data
+        </h3>
+        <Typography variant="body1" style={{ marginTop: '0.75rem' }}>
+          If enabled, participants with 100% identical Spotify data (e.g., same tracks and playlists) will be screened out to ensure data diversity. Recent Tracks are excluded from this check.
+        </Typography>
+        <div style={{ marginTop: '0.75rem' }}>
+          <Checkbox
+            checked={screenOutCheckIdentical}
+            onChange={(e) => setScreenoutCheckIdentical(e.target.checked)}
           />
         </div>
       </div>

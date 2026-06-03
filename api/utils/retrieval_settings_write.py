@@ -68,7 +68,8 @@ EXPLICIT_SETTING_FIELDS: tuple[str, ...] = (
     "screenout_option",
     "screenout_url",
     "conditional_screenout_url_parameter",
-    "screenout_min_data"
+    "screenout_min_data", 
+    "screenout_check_identical",
 )
 
 

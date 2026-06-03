@@ -102,6 +102,7 @@ def build_retrieval_settings_payload(setting: RetrievalSetting) -> dict[str, Any
             'screenout_url': setting.screenout_url,
             'conditional_screenout_url_parameter': setting.conditional_screenout_url_parameter,
             'screenout_min_data': setting.screenout_min_data,
+            'screenout_check_identical': setting.screenout_check_identical,
         },
         'textAllg': [],
     }

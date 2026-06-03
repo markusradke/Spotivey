@@ -145,7 +145,8 @@ export default function SettingsDialog(props) {
             screenout_option: screenoutSettings.screenoutOption,
             screenout_url: screenoutSettings.screenoutURL,
             conditional_screenout_url_parameter: screenoutSettings.conditionalScreenoutURLParameter,
-            screenout_min_data: screenoutSettings.screenoutMinData
+            screenout_min_data: screenoutSettings.screenoutMinData,
+            screenout_check_identical: screenoutSettings.screenoutCheckIdentical
 
         };
         try {
