@@ -17,6 +17,8 @@ class SpotifyToken(models.Model):
 class Participant(models.Model):
     participant = models.IntegerField(default=None)
     settings = models.ForeignKey(RetrievalSetting, on_delete=models.PROTECT)
+    start_url = models.CharField(max_length=400, default='')
+    referrer_url = models.CharField(max_length=400, default='')
     retrieval_session_key = models.CharField(max_length=50, unique=True, default='')
     started_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)

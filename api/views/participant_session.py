@@ -65,7 +65,9 @@ class InitParticipantSession(APIView):
             participant=participant_id, 
             settings=settings,
             retrieval_session_key=retrieval_session_key,
-            status='in_progress'
+            status='in_progress',
+            start_url=request.data.get('start_url', ''),
+            referrer_url=request.data.get('referrer_url', ''),
         )
         
         room_code = str(uuid.uuid4())[:8].upper()
