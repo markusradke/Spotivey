@@ -96,6 +96,21 @@ export default function ConfirmStepper({
                         }}
                     >
                         <Stack spacing={2.5}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                <Box
+                                    component="img"
+                                    src="../../../static/images/SpotiveyLogo2_Schrift.svg"
+                                    alt="Spotivey"
+                                    sx={{ height: 40, mr: 2 }}
+                                />
+                            </Box>
+                            <Box sx={{ mt: 2 }}>
+                                <Typography variant="body1" className={'endPage-Stepper-body'} sx={{ color: 'var(--color-tu-berlin)' }}>
+                                    {language === "de" ?
+                                        "Bitte laden Sie die Seite nicht neu, schließen Sie das Fenster nicht und drücken Sie nicht den Zurück-Button ihres Browsers!" :
+                                        "Please do not refresh the page, close the window, and do not press the back button of your browser!"}
+                                </Typography>
+                            </Box>
                             <Box sx={{ textAlign: "center" }}>
                                 <Typography
                                     variant={isMobile ? "h6" : "h5"}
