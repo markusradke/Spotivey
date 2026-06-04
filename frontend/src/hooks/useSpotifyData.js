@@ -246,6 +246,8 @@ export function useSpotifyData(settings, isAuthenticated, welcomePageOK) {
                             settings[DATA_TYPES.CURRENT_PLAYLISTS].limit,
                             settings[DATA_TYPES.CURRENT_PLAYLISTS].public,
                             settings[DATA_TYPES.CURRENT_PLAYLISTS].privatetracks,
+                            settings[DATA_TYPES.CURRENT_PLAYLISTS].privatetracks_maxplaylists,
+                            settings[DATA_TYPES.CURRENT_PLAYLISTS].privatetracks_maxtracks,
                             settings[DATA_TYPES.CURRENT_PLAYLISTS].confirmCheck
                         ),
                 });

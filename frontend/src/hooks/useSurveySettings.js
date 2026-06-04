@@ -122,6 +122,8 @@ function normalizeSettings(rawSettings) {
         limit: currentPlaylists.limit || 20,
         public: currentPlaylists.public ?? true,
         privatetracks: currentPlaylists.privatetracks ?? false,
+        privatetracks_maxplaylists: currentPlaylists.privatetracks_maxplaylists ?? 10,
+        privatetracks_maxtracks: currentPlaylists.privatetracks_maxtracks ?? 50,
         confirmCheck: currentPlaylists.confirmCheck || false,
     };
 

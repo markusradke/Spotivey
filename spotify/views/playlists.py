@@ -98,6 +98,9 @@ class GetPlaylistsSpotify(APIView):
         limit = request.GET.get('limit', 50)
         public_check = request.GET.get('public')
         get_private_check = request.GET.get('privatetracks')
+        private_max_playlists = request.GET.get('privatetracks_maxplaylists')
+        private_max_tracks = request.GET.get('privatetracks_maxtracks')
+        
 
         public_filter = None
         if public_check is not None:
@@ -129,15 +132,18 @@ class GetPlaylistsSpotify(APIView):
                 # get all playlists for parcitipant from database and filter for privat ones
                 participant_playlists = CurrentPlaylist.objects.filter(participant=participant)
                 private_playlists = participant_playlists.filter(is_public=False)
-                fetch_private_playlists(participant, private_playlists, request.session.session_key)
+                fetch_private_playlists(participant, private_playlists, request.session.session_key, private_max_playlists, private_max_tracks)
 
         return Response(response_data, status=status.HTTP_200_OK)
     
-def fetch_private_playlists(participant, playlists, session_key):
+def fetch_private_playlists(participant, playlists, session_key, max_playlists, max_tracks):
     """Fetch private playlist tracks by their Spotify IDs."""
+    retrieved_playlists = 0
+    max_playlists = int(max_playlists) if max_playlists is not None else float('inf')
+    max_tracks = int(max_tracks) if max_tracks is not None else float('inf')
     for playlist in playlists:
         playlist_id = playlist.spotify_id
-        n_tracks = playlist.n_tracks
+        n_tracks = min(playlist.n_tracks, max_tracks)
         n_calls = (n_tracks // 50) + 1
         limit = 50
         offset = 0
@@ -161,3 +167,7 @@ def fetch_private_playlists(participant, playlists, session_key):
         if 'error' in response:
             print(f"Error fetching playlist {playlist_id}: {response['error']}")
             continue
+        retrieved_playlists += 1
+        if retrieved_playlists >= max_playlists:
+            print(f"Reached maximum number of private playlists to retrieve: {max_playlists}")
+            break

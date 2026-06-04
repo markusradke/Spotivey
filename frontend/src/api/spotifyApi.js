@@ -114,8 +114,8 @@ export async function fetchFollowedArtists(participant, surveyId, roomCode, limi
   return response.json();
 }
 
-export async function fetchCurrentPlaylists(participant, surveyId, roomCode, limit, isPublic, getPrivateTracks, confirm) {
-  const url = `/spotify/current-playlists?limit=${limit}&public=${isPublic}&privatetracks=${getPrivateTracks}`;
+export async function fetchCurrentPlaylists(participant, surveyId, roomCode, limit, isPublic, getPrivateTracks, PrivateMaxPlaylist, PrivateMaxTracks, confirm) {
+  const url = `/spotify/current-playlists?limit=${limit}&public=${isPublic}&privatetracks=${getPrivateTracks}&privatetracks_maxplaylists=${PrivateMaxPlaylist}&privatetracks_maxtracks=${PrivateMaxTracks}`;
   const response = await fetch(
     url,
     buildPostOptions({ participant, surveyID: surveyId, roomCode, confirm })
