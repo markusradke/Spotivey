@@ -139,7 +139,8 @@ class GetSavedTracksSpotify(APIView):
             SavedTrack,
             participant,
             extra_fields_fn=lambda item: {
-                'added_at': item.get('added_at', None)
+                'added_at': item.get('added_at', None),
+                'position': item.get('position', None)
             }
         )
 
@@ -163,7 +164,7 @@ class GetRecentlyPlayedTracksSpotify(APIView):
         items = response.get("items")
 
         def _recent_extra(item):
-            extra = {'played_at': item.get('played_at', None)}
+            extra = {'played_at': item.get('played_at', None), 'position': item.get('position', None)}
             ctx = item.get('context')
             if ctx is not None:
                 extra['context_type'] = ctx.get('type', '')

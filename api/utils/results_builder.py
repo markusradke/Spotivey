@@ -12,7 +12,7 @@ def _build_track_row_from_structured_fields(track, idx):
     """Build row dict from track with structured fields (SavedTrack)."""
     return {
         'id': idx,
-        'no': idx,
+        'no': track.position,
         'participant': track.participant.participant,
         'cover': track.image_url,
         'trackName': track.track_name,
@@ -26,7 +26,7 @@ def _build_artist_row(artist, idx):
     """Build row dict from artist with structured fields."""
     return {
         'id': idx,
-        'no': idx,
+        'no': artist.position,
         'participant': artist.participant.participant,
         'cover': artist.image_url,
         'artistName': artist.artist_name,
@@ -174,7 +174,7 @@ def _build_playlist_results(survey_settings):
         participants.add(playlist.participant.participant)
         rows.append({
             'id': idx,
-            'no': idx,
+            'no': playlist.position,
             'participant': playlist.participant.participant,
             'spotify_id': playlist.spotify_id,
             'playlist_name': playlist.playlist_name,
@@ -216,7 +216,7 @@ def _build_show_results(survey_settings):
         participants.add(show.participant.participant)
         rows.append({
             'id': idx,
-            'no': idx,
+            'no': show.position,
             'spotify_id': show.spotify_id,
             'participant': show.participant.participant,
             'show_name': show.show_name,
@@ -256,7 +256,7 @@ def _build_episode_results(survey_settings):
         participants.add(episode.participant.participant)
         rows.append({
             'id': idx,
-            'no': idx,
+            'no': episode.position,
             'spotify_id': episode.spotify_id,
             'participant': episode.participant.participant,
             'name': episode.name,

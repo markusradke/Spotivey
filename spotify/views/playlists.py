@@ -147,7 +147,7 @@ def fetch_private_playlists(participant, playlists, session_key):
             response = execute_spotify_api_request(session_key, endpoint)
             for i, track_item in enumerate(response.get('items', [])):
                 parsed = _extract_private_playlist_track_fields(track_item, playlist)
-                parsed['position'] = n_calls * offset + i
+                parsed['position'] = n_calls * offset + i + 1
                 result.append(parsed)
             offset += limit
         

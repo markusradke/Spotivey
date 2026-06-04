@@ -22,7 +22,6 @@ def _extract_show_fields(show_item):
     
     return {
         'spotify_id': show_item.get('id', ''),
-        'position': show_item.get('position', None),
         'show_name': show_item.get('name', ''),
         'show_languages': languages,
         'show_description': show_item.get('description', ''),
@@ -44,7 +43,6 @@ def _extract_episode_fields(episode_item):
 
     return {
         'spotify_id': episode_item.get('id', ''),
-        'position': episode_item.get('position', None),
         'name': episode_item.get('name', ''),
         'description': episode_item.get('description', ''),
         'duration_ms': episode_item.get('duration_ms', 0),
@@ -83,6 +81,7 @@ class GetSavedShowsSpotify(APIView):
         shows_to_create = []
         for item in items:
             fields = _extract_show_fields(item['show'])
+            fields['position'] = item.get('position', None)
             fields['added_at'] = item.get('added_at', '')
             fields['participant'] = participant
             fields['confirmed'] = False
@@ -114,6 +113,7 @@ class GetSavedEpisodesSpotify(APIView):
         for item in items:
             fields = _extract_episode_fields(item['episode'])
             fields['added_at'] = item.get('added_at', '')
+            fields['position'] = item.get('position', None)
             fields['participant'] = participant
             fields['confirmed'] = False
             episodes_to_create.append(SavedEpisode(**fields))
