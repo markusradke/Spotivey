@@ -73,6 +73,8 @@ export default function SettingsPage(props) {
   const [currentPlaylistsChecked, setCurrentPlaylistsChecked] = useState(false)
   const [checkPublic, setCheckPublic] = useState(true)
   const [checkPrivateTracks, setCheckPrivateTracks] = useState(false)
+  const [privatetracksMaxPlaylists, setPrivatetracksMaxPlaylists] = useState(10)
+  const [privatetracksMaxTracks, setPrivatetracksMaxTracks] = useState(50)
   const [recentlyTracksLimit, setRecentlyTracksLimit] = useState(20)
   const [recentlyTracksChecked, setRecentlyTracksChecked] = useState(false)
   const [mySwiper, setMySwiper] = useState({})
@@ -95,7 +97,7 @@ export default function SettingsPage(props) {
   const [settingsLimitArray, setSettingsLimitArray] = useState(
     [[savedTracksLimit, tracksMarket], [], [topItemsTracksShortTermLimit], [topItemsTracksMediumTermLimit], [topItemsTracksLongTermLimit],
     [topItemsArtistsShortTermLimit], [topItemsArtistsMediumTermLimit], [topItemsArtistsLongTermLimit], [followedArtistsLimit],
-    [currentPlaylistsLimit, checkPublic, checkPrivateTracks], [recentlyTracksLimit], [savedShowsLimit], [savedEpisodesLimit]]
+    [currentPlaylistsLimit, checkPublic, checkPrivateTracks, privatetracksMaxPlaylists, privatetracksMaxTracks], [recentlyTracksLimit], [savedShowsLimit], [savedEpisodesLimit]]
   )
   const [settingsTextArray, setSettingsTextArray] = useState(['', '', ''])
 
@@ -316,6 +318,8 @@ export default function SettingsPage(props) {
 
           setCheckPublic(currentPlaylists.public ? currentPlaylists.public : false)
           setCheckPrivateTracks(currentPlaylists.privatetracks ? currentPlaylists.privatetracks : false);
+          setPrivatetracksMaxPlaylists(currentPlaylists.privatetracks_maxplaylists ? currentPlaylists.privatetracks_maxplaylists : 10)
+          setPrivatetracksMaxTracks(currentPlaylists.privatetracks_maxtracks ? currentPlaylists.privatetracks_maxtracks : 50)
 
           setSavedTracksFollowUp(savedTracks.followUp)
           setTopTracksShortTermFollowUp(topTracksShortTerm.followUp)
@@ -351,10 +355,10 @@ export default function SettingsPage(props) {
   useEffect(() => {
     setSettingsLimitArray([[savedTracksLimit, tracksMarket], [], [topItemsTracksShortTermLimit], [topItemsTracksMediumTermLimit], [topItemsTracksLongTermLimit],
     [topItemsArtistsShortTermLimit], [topItemsArtistsMediumTermLimit], [topItemsArtistsLongTermLimit],
-    [followedArtistsLimit], [currentPlaylistsLimit, checkPublic, checkPrivateTracks], [recentlyTracksLimit], [savedShowsLimit], [savedEpisodesLimit]]);
+    [followedArtistsLimit], [currentPlaylistsLimit, checkPublic, checkPrivateTracks, privatetracksMaxPlaylists, privatetracksMaxTracks], [recentlyTracksLimit], [savedShowsLimit], [savedEpisodesLimit]]);
   }, [savedTracksLimit, tracksMarket, topItemsTracksShortTermLimit, topItemsTracksMediumTermLimit, topItemsTracksLongTermLimit,
     topItemsArtistsShortTermLimit, topItemsArtistsMediumTermLimit, topItemsArtistsLongTermLimit,
-    followedArtistsLimit, currentPlaylistsLimit, checkPublic, checkPrivateTracks, recentlyTracksLimit, savedShowsLimit, savedEpisodesLimit])
+    followedArtistsLimit, currentPlaylistsLimit, checkPublic, checkPrivateTracks, privatetracksMaxPlaylists, privatetracksMaxTracks, recentlyTracksLimit, savedShowsLimit, savedEpisodesLimit])
 
 
 
@@ -668,6 +672,8 @@ export default function SettingsPage(props) {
                         currentPlaylistsLimit, setCurrentPlaylistsLimit,
                         confirmCurrentPlaylistsYes, setConfirmCurrentPlaylistsYes,
                         checkPublic, setCheckPublic, checkPrivateTracks, setCheckPrivateTracks,
+                        privatetracksMaxPlaylists, setPrivatetracksMaxPlaylists,
+                        privatetracksMaxTracks, setPrivatetracksMaxTracks,
                         stateTextCP, setStateTextCP
                       )}
                     </SwiperSlide>

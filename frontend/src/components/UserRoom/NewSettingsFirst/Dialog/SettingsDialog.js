@@ -116,6 +116,8 @@ export default function SettingsDialog(props) {
             current_playlists_limit: limitArray[9][0],
             current_playlists_public: limitArray[9][1],
             current_playlists_privatetracks: limitArray[9][2],
+            privatetracks_maxplaylists: limitArray[9][3],
+            privatetracks_maxtracks: limitArray[9][4],
             current_playlists_followup: endSettings.currentPlaylistsFollowUp,
 
             recent_tracks_enabled: checkArray[10],

@@ -63,6 +63,8 @@ class RetrievalSetting(models.Model):
     current_playlists_limit = models.PositiveIntegerField(default=20)
     current_playlists_public = models.BooleanField(default=True)
     current_playlists_privatetracks = models.BooleanField(default=False)
+    privatetracks_maxplaylists = models.PositiveIntegerField(default=10)
+    privatetracks_maxtracks = models.PositiveIntegerField(default=50)
     current_playlists_followup = models.PositiveIntegerField(default=0)
 
     recent_tracks_enabled = models.BooleanField(default=False)

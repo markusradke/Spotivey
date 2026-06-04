@@ -5,7 +5,9 @@ export function playlistSettingsCard(
     currentPlaylistsChecked, setCurrentPlaylistsChecked,
     currentPlaylistsLimit, setCurrentPlaylistsLimit,
     confirmCurrentPlaylistsYes, setConfirmCurrentPlaylistsYes,
-    checkPublic, setCheckPublic, checkPrivateTracks, setCheckPrivateTracks
+    checkPublic, setCheckPublic, checkPrivateTracks, setCheckPrivateTracks,
+    privatetracksMaxPlaylists, setPrivatetracksMaxPlaylists,
+    privatetracksMaxTracks, setPrivatetracksMaxTracks,
 ) {
     return (
         <React.Fragment>
@@ -29,7 +31,9 @@ export function playlistSettingsCard(
                         currentPlaylistsChecked, setCurrentPlaylistsChecked,
                         currentPlaylistsLimit, setCurrentPlaylistsLimit,
                         confirmCurrentPlaylistsYes, setConfirmCurrentPlaylistsYes,
-                        checkPublic, setCheckPublic, checkPrivateTracks, setCheckPrivateTracks
+                        checkPublic, setCheckPublic, checkPrivateTracks, setCheckPrivateTracks,
+                        privatetracksMaxPlaylists, setPrivatetracksMaxPlaylists,
+                        privatetracksMaxTracks, setPrivatetracksMaxTracks
                     )}
                 </div>
             </div>

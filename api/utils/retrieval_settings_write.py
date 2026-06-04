@@ -44,6 +44,8 @@ EXPLICIT_SETTING_FIELDS: tuple[str, ...] = (
     "current_playlists_limit",
     "current_playlists_public",
     "current_playlists_privatetracks",
+    "privatetracks_maxplaylists",
+    "privatetracks_maxtracks",
     "current_playlists_followup",
     "recent_tracks_enabled",
     "recent_tracks_confirm",

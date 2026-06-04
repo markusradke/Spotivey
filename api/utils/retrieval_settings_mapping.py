@@ -66,6 +66,8 @@ def build_retrieval_settings_payload(setting: RetrievalSetting) -> dict[str, Any
             'limit': setting.current_playlists_limit,
             'confirmCheck': setting.current_playlists_confirm,
             'privatetracks': setting.current_playlists_privatetracks,
+            'privatetracks_maxplaylists': setting.privatetracks_maxplaylists,
+            'privatetracks_maxtracks': setting.privatetracks_maxtracks,
             'public': setting.current_playlists_public,
             'followUp': setting.current_playlists_followup,
         },
