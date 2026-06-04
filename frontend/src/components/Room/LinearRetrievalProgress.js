@@ -69,7 +69,7 @@ export default function LinearRetrievalProgress({ language, progress, isAuthChec
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                         <Typography variant="h5" component="h4" sx={{ color: 'var(--color-tu-berlin)' }} className="blink">
                             {language === "de" ?
-                                "Bitte laden Sie die Seite nicht neu, schließen Sie das Fenster nicht und drücken Sie nicht den Zurück-Button ihres Browsers!" :
+                                "Bitte laden Sie die Seite nicht neu, schließen Sie das Fenster nicht und drücken Sie nicht den Zurück-Button Ihres Browsers!" :
                                 "Please do not refresh the page, do not close the window, and do not press the back button of your browser!"}
                         </Typography>
                     </Box>

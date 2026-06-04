@@ -108,6 +108,7 @@ class BaseTrack(models.Model):
     
     # Track identification
     spotify_id = models.CharField(max_length=50, db_index=True)
+    position = models.IntegerField(null=True, default=None)  
     isrc = models.CharField(max_length=20, default='')
     track_uri = models.CharField(max_length=100, default='')
     
@@ -225,6 +226,7 @@ class PrivatePlaylistTrack(BaseTrack):
 class CurrentPlaylist(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, null= True, blank=True)
     spotify_id = models.CharField(max_length=100, default='')
+    position = models.IntegerField(null=True, default=None)
     playlist_name = models.CharField(max_length=200, default='')
     image_url = models.URLField(max_length=500, default='')
     is_collaborative = models.BooleanField(null=True, default=None)
@@ -252,6 +254,7 @@ class BaseArtist(models.Model):
     """Abstract base model for all artist types."""
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
     confirmed = models.BooleanField(default=False)
+    position = models.IntegerField(null=True, default=None)
     
     # Artist identification
     spotify_id = models.CharField(max_length=50, db_index=True)
@@ -316,7 +319,7 @@ class BaseShow(models.Model):
     """Abstract base model for all show types."""
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
     confirmed = models.BooleanField(default=False)
-    
+
     show_name = models.CharField(max_length=500, default='')
     show_languages = models.CharField(max_length=50, default='')
     show_description = models.TextField(default='')
@@ -346,6 +349,7 @@ class BaseShow(models.Model):
 class SavedEpisode(BaseShow):
     """Participant's saved episode."""
     spotify_id = models.CharField(max_length=50, db_index=True)
+    position = models.IntegerField(null=True, default=None)
     added_at = models.DateTimeField(null=True, default=None)
     name = models.CharField(max_length=500, default='')
     description = models.TextField(default='')
@@ -377,6 +381,7 @@ class SavedEpisode(BaseShow):
 class SavedShow(BaseShow):
     """Participant's saved show."""
     spotify_id = models.CharField(max_length=50, db_index=True)
+    position = models.IntegerField(null=True, default=None)
     added_at = models.DateTimeField(null=True, default=None)
 
     def __str__(self):

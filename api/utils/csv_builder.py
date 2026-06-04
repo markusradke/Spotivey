@@ -44,6 +44,7 @@ def _build_base_track_csv_row(track, track_type):
         
         # Track identification
         'spotify_id': track.spotify_id or '',
+        'position': track.position or '',
         'isrc': track.isrc or '',
         'track_uri': track.track_uri or '',
         
@@ -197,6 +198,7 @@ def _build_base_artist_csv_row(artist, artist_type):
         
         # Artist identification
         'spotify_id': artist.spotify_id or '',
+        'position': artist.position or '',
         
         # Artist metadata
         'artist_name': artist.artist_name or '',
@@ -287,6 +289,7 @@ def build_playlists_csv(survey_settings):
             
             # Playlist fields
             'spotify_id': playlist.spotify_id,
+            'position': playlist.position,
             'playlist_name': playlist.playlist_name,
             'image_url': playlist.image_url,
             'is_collaborative': playlist.is_collaborative,
@@ -322,6 +325,7 @@ def build_shows_csv(survey_settings):
             'confirmed': show.confirmed,
             # Show fields
             'spotify_id': show.spotify_id,
+            'position': show.position,
             'added_at': show.added_at.isoformat() if show.added_at else '',
             'show_name': show.show_name,
             'show_languages': show.show_languages,
@@ -357,6 +361,7 @@ def build_episodes_csv(survey_settings):
             'confirmed': episode.confirmed,
             # Episode fields
             'spotify_id': episode.spotify_id,
+            'position': episode.position,
             'added_at': episode.added_at.isoformat() if episode.added_at else '',
             'name': episode.name,
             'description': episode.description,

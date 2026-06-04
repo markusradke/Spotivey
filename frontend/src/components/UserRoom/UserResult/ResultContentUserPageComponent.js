@@ -241,7 +241,7 @@ export default function ResultContent(props) {
                         return (
                             <tr id={idTableRow}>
                                 <td>{item.participant}</td>
-                                <td>{item.no}</td>
+                                <td>{item.position}</td>
                                 {type !== 'Profile' ?
                                     <React.Fragment>
                                         <td>

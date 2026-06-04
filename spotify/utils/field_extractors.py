@@ -22,6 +22,7 @@ def extract_base_track_fields(track_item, albums_cache, artists_cache):
     return {
         # Identification
         'spotify_id': track_item['id'],
+        'position': track_item.get('position', None),
         'isrc': track_item.get('external_ids', {}).get('isrc', ''),
         'track_uri': track_item.get('uri', ''),
         
@@ -88,6 +89,7 @@ def extract_artist_fields(artist_item):
     
     return {
         'spotify_id': artist_item['id'],
+        'position': artist_item.get('position', None),
         'artist_name': artist_item.get('name', '').replace('"', "'"),
         'artist_type': artist_item.get('type', ''),
         'popularity': artist_item.get('popularity'),
