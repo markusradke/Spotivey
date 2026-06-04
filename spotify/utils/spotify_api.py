@@ -159,6 +159,8 @@ def retrieve_spotify_data(session_key: str, endpoint: str, limit: int, datatype:
         else:
             items = response.get('items', [])
             total = response.get('total', 0)  # read from last response, is the same for all pages; returns 0 if not present
+        for i, item in enumerate(items):
+            item['position'] = n_retrieved + i
         all_responses.extend(items)
         n_retrieved += batch_limit
 

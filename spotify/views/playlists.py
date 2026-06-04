@@ -18,6 +18,7 @@ def _extract_playlist_fields(playlist_item, current_user_id):
     
     return {
         'spotify_id': playlist_item.get('id', ''),
+        'position': playlist_item.get('position', None),
         'playlist_name': playlist_item.get('name', ''),
         'image_url': images[0].get('url', '') if images else '',
         'is_collaborative': playlist_item.get('collaborative', False),
@@ -33,6 +34,7 @@ def _extract_private_playlist_track_fields(track_item, playlist):
     if track.get('track', False):
         return {
             'playlist': playlist,
+            'position': track_item.get('position', None),
             'added_at': track_item.get('added_at', None),
             'spotify_id': track.get('id', ''),
             'isrc': track.get('external_ids', {}).get('isrc', ''),
@@ -53,6 +55,7 @@ def _extract_private_playlist_track_fields(track_item, playlist):
     else : # For Episodes stored in Playlists
         return {
             'playlist': playlist,
+            'position': track_item.get('position', None),
             'added_at': track_item.get('added_at', None),
             'spotify_id': track.get('id', ''),
             'track_name': 'UKNOWN EPISODE (PRIVATE PLAYLIST)', 
@@ -142,8 +145,9 @@ def fetch_private_playlists(participant, playlists, session_key):
         for _call in range(n_calls):
             endpoint = f"playlists/{playlist_id}/items?offset={offset}&limit={limit}"
             response = execute_spotify_api_request(session_key, endpoint)
-            for track_item in response.get('items', []):
+            for i, track_item in enumerate(response.get('items', [])):
                 parsed = _extract_private_playlist_track_fields(track_item, playlist)
+                parsed['position'] = n_calls * offset + i
                 result.append(parsed)
             offset += limit
         
