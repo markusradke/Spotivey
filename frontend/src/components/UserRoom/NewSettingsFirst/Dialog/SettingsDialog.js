@@ -183,34 +183,23 @@ export default function SettingsDialog(props) {
 
         return (
             <React.Fragment>
-                {props.props[1].map(function (item, i) {
-                    if (item) {
+                {props.props[1].map(function (retrieved_type, i) {
+                    if (retrieved_type) {
                         return (
                             <h3 className="settings-dialog-text">
-                                {textSpotify[i]} <br></br> {props.props[2][i].map(function (item2, j) {
-                                    if (j === 0 && item2.length !== 0) {
+                                {textSpotify[i]} <br></br> {props.props[2][i].map(function (single_type_setting, j) {
+                                    if (j === 0 && single_type_setting.length !== 0) {
                                         if (props.props[2][i].length === 1) {
-                                            return ('(limit: ' + item2 + ')')
+                                            return ('(limit: ' + single_type_setting + ')')
                                         }
-                                        else { return ('(limit: ' + item2) }
+                                        else { return ('(limit: ' + single_type_setting) }
                                     } else {
-                                        if (item2) {
-                                            if (item2 === '' || item2.name === 'medium_term' || item2.name === 'short_term' ||
-                                                item2.name === 'long_term') {
-                                                if (item2 === 'medium_term') {
-                                                    return ('; time_range: ' + item2 + ')')
-                                                } else if (item2 === '') {
-                                                    return (')')
-                                                } else {
-                                                    return ('; time_range: ' + item2.name + ')')
-                                                }
-                                            } else {
-                                                if (item2.Code === '') {
-                                                    return (')')
-                                                }
-                                                else {
-                                                    return ('; market: ' + item2.Code + ')')
-                                                }
+                                        if (single_type_setting) {
+                                            if (single_type_setting.Code === '' || single_type_setting.Code === null || single_type_setting.Code === undefined) {
+                                                return ('')
+                                            }
+                                            else {
+                                                return ('; market: ' + single_type_setting.Code + ')')
                                             }
                                         } else {
                                             return (')')
