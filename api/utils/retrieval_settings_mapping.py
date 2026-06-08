@@ -89,6 +89,7 @@ def build_retrieval_settings_payload(setting: RetrievalSetting) -> dict[str, Any
             'confirmCheck': setting.saved_episodes_confirm,
             'followUp': setting.saved_episodes_followup,
         },
+        'collect_track_artistgenres': setting.collect_track_artistgenres,
         'end_options': {
             'option': setting.end_option,
             'end_url': setting.end_url,

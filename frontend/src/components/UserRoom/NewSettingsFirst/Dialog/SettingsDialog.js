@@ -53,6 +53,7 @@ export default function SettingsDialog(props) {
         const confirmArray = props.props[5];
         const endSettings = props.props[8];
         const screenoutSettings = props.props[9];
+        const collectTrackArtistGenres = props.props[10];
 
         const body = {
             data: null,
@@ -134,6 +135,8 @@ export default function SettingsDialog(props) {
             saved_episodes_confirm: confirmArray[12],
             saved_episodes_limit: limitArray[12][0],
             saved_episodes_followup: endSettings.savedEpisodesFollowUp,
+
+            collect_track_artistgenres: collectTrackArtistGenres,
 
             end_option: endSettings.endOption,
             end_url: endSettings.endURL,

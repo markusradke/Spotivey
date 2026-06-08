@@ -108,6 +108,7 @@ class getSettingsListView(APIView):
                         'recently_played': payload['recently_played'],
                         'saved_shows': payload['saved_shows'],
                         'saved_episodes': payload['saved_episodes'],
+                        'collect_track_artistgenres': payload['collect_track_artistgenres'],
                         'end_options': payload['end_options'],
                         'screenout_options': payload['screenout_options'],
                     })
@@ -207,6 +208,7 @@ class getSettingsFromIDView(APIView):
                     'questionTypeCheck': questionTypeCheck,
                     'dataFieldsCheck': dataFieldsCheck,
                     'passLang':passLang,
+                    'collect_track_artistgenres': payload['collect_track_artistgenres'],
                     'end_options': payload['end_options'],
                     'screenout_options': payload['screenout_options'],
                 }]

@@ -9,7 +9,8 @@ export function mainSettingsCard(
     screenoutURL, setScreenoutURL,
     conditionalScreenoutURLParameter, setConditionalScreenoutURLParameter,
     screenoutMinData, setScreenoutMinData,
-    screenOutCheckIdentical, setScreenoutCheckIdentical
+    screenOutCheckIdentical, setScreenoutCheckIdentical,
+    collectTrackArtistGenres, setCollectTrackArtistGenres
 ) {
     return (
         <React.Fragment>
@@ -38,7 +39,8 @@ export function mainSettingsCard(
                         screenoutURL, setScreenoutURL,
                         conditionalScreenoutURLParameter, setConditionalScreenoutURLParameter,
                         screenoutMinData, setScreenoutMinData,
-                        screenOutCheckIdentical, setScreenoutCheckIdentical
+                        screenOutCheckIdentical, setScreenoutCheckIdentical,
+                        collectTrackArtistGenres, setCollectTrackArtistGenres
                     )}
                 </div>
             </div>

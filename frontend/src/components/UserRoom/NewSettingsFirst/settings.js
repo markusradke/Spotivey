@@ -128,6 +128,7 @@ export default function SettingsPage(props) {
   const [collectEmails, setCollectEmails] = useState(false)
   const [emailTextEn, setEmailTextEn] = useState("If you would like to participate in the lottery, please provide your email address below. Your email address will only be used for the purpose of the lottery, will not be shared with any third parties, and will be deleted immediately after the lottery is completed.")
   const [emailTextDe, setEmailTextDe] = useState("Wenn Sie an der Verlosung teilnehmen möchten, geben Sie bitte Ihre E-Mail-Adresse unten ein. Ihre E-Mail-Adresse wird nur für die Verlosung verwendet, nicht an Dritte weitergegeben und sofort nach Abschluss der Verlosung gelöscht.")
+  const [collectTrackArtistGenres, setCollectTrackArtistGenres] = useState(false)
   const [endSettings, setEndSettings] = useState({
     endURL: endURL,
     shareSurveyUrl: shareSurveyUrl,
@@ -267,6 +268,7 @@ export default function SettingsPage(props) {
           const recentlyPlayed = raw.recently_played
           const savedShows = raw.saved_shows
           const savedEpisodes = raw.saved_episodes
+          const collectTrackArtistGenres = raw.collect_track_artistgenres
           const endOptions = raw.end_options
           const screenoutOptions = raw.screenout_options
 
@@ -333,6 +335,8 @@ export default function SettingsPage(props) {
           setRecentlyTracksFollowUp(recentlyPlayed.followUp)
           setSavedShowsFollowUp(savedShows.followUp)
           setSavedEpisodesFollowUp(savedEpisodes.followUp)
+
+          setCollectTrackArtistGenres(collectTrackArtistGenres)
 
           setEndOption(endOptions.option)
           setEndURL(endOptions.end_url)
@@ -461,7 +465,8 @@ export default function SettingsPage(props) {
                     update,
                   location.state?.surveyID,
                     endSettings,
-                    screenoutSettings,]
+                    screenoutSettings,
+                    collectTrackArtistGenres]
                 }
               />
               : null
@@ -624,6 +629,7 @@ export default function SettingsPage(props) {
                         conditionalScreenoutURLParameter, setConditionalScreenoutURLParameter,
                         screenoutMinData, setScreenoutMinData,
                         screenoutCheckIdentical, setScreenoutCheckIdentical,
+                        collectTrackArtistGenres, setCollectTrackArtistGenres
                       )}
                     </SwiperSlide>
                     <SwiperSlide>
