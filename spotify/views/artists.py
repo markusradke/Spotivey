@@ -11,7 +11,7 @@ from spotify.utils.retrieval_helpers import get_participant_from_session, sample
 from spotify.utils.spotify_api import execute_spotify_api_request, retrieve_spotify_data
 
 
-def _build_and_create_artists(items, model_class, participant, max_sample=50):
+def _build_and_create_artists(items, model_class, participant):
     """
     Build artist model instances and bulk create them.
     
@@ -19,15 +19,13 @@ def _build_and_create_artists(items, model_class, participant, max_sample=50):
         items: List of artist items from Spotify API
         model_class: TopArtist or FollowedArtist
         participant: Participant instance
-        max_sample: Maximum number of artists to sample
     
     Returns:
         List of artist dictionaries for response
     """
-    sampled_items = sample_items(items, max_sample)
     
     artists_to_create = []
-    for artist_item in sampled_items:
+    for artist_item in items:
         fields = extract_artist_fields(artist_item)
         fields['participant'] = participant
         fields['confirmed'] = False
@@ -68,7 +66,6 @@ class GetTopArtists(APIView):
             items, 
             self.model_class, 
             participant,
-            max_sample=50
         )
 
         return Response(response_data, status=status.HTTP_200_OK)
@@ -132,7 +129,6 @@ class GetFollowedArtistsSpotify(APIView):
             items, 
             FollowedArtist, 
             participant,
-            max_sample=50
         )
 
         return Response(response_data, status=status.HTTP_200_OK)
