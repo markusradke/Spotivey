@@ -12,29 +12,26 @@ from spotify.utils.spotify_api import execute_spotify_api_request, retrieve_spot
 from spotify.utils.field_extractors import extract_base_track_fields
 
 
-def _collect_caches(session_key, items, track_extractor):
-    album_ids = set()
+def _collect_artist_cache(session_key, items, track_extractor):
     artist_ids = set()
     for item in items:
         t = track_extractor(item)
-        album_ids.add(t['album']['id'])
         for artist in t['artists']:
             artist_ids.add(artist['id'])
-    albums_cache = batch_fetch_albums(session_key, album_ids)
     artists_cache = batch_fetch_artists(session_key, artist_ids)
-    return albums_cache, artists_cache
+    return artists_cache
 
 
 def _build_and_create_tracks(session_key, items, track_extractor, model_class,
                                                          participant, extra_fields_fn=None):
-    albums_cache, artists_cache = _collect_caches(
+    artists_cache = _collect_artist_cache(
         session_key, items, track_extractor
     )
 
     tracks_to_create = []
     for item in items:
         track_obj = track_extractor(item)
-        fields = extract_base_track_fields(track_obj, albums_cache, artists_cache)
+        fields = extract_base_track_fields(track_obj, artists_cache)
         if extra_fields_fn is not None:
             fields.update(extra_fields_fn(item))
         fields['participant'] = participant

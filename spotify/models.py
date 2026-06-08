@@ -121,7 +121,6 @@ class BaseTrack(models.Model):
     # Album information
     album_id = models.CharField(max_length=50, default='')
     album_name = models.CharField(max_length=200, default='')
-    album_label = models.CharField(max_length=200, default='')
     album_type = models.CharField(max_length=50, default='')
     release_date = models.CharField(max_length=20, default='')
     image_url = models.URLField(max_length=500, default='')
@@ -151,7 +150,6 @@ class BaseTrack(models.Model):
             'spotify_artist_string': self.artist_names,
             'spotify_artist_id': json.loads(self.artist_ids),
             'track_uri': self.track_uri,
-            'albumLabel': self.album_label,
             'albumName': self.album_name,
             'album_id': self.album_id,
             'releaseDate': self.release_date,

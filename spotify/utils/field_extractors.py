@@ -3,7 +3,7 @@ import json
 from typing import List, Dict, Any
 
 
-def extract_base_track_fields(track_item, albums_cache, artists_cache):
+def extract_base_track_fields(track_item, artists_cache):
     """
     Extract common track fields from Spotify API response.
     
@@ -16,7 +16,7 @@ def extract_base_track_fields(track_item, albums_cache, artists_cache):
         Dictionary with all BaseTrack model fields
     """
     
-    album_data = albums_cache.get(track_item['album']['id'])
+    album_data = track_item.get('album', {})
     artist_names, artist_ids, artist_genres = extract_artist_info(track_item['artists'], artists_cache)
     
     return {
@@ -35,7 +35,6 @@ def extract_base_track_fields(track_item, albums_cache, artists_cache):
         # Album fields
         'album_id': album_data['id'],
         'album_name': album_data.get('name', ''),
-        'album_label': album_data.get('label', ''),
         'album_type': album_data.get('album_type', ''),
         'release_date': album_data.get('release_date', ''),
         'image_url': get_image_url(album_data.get('images', [])),
