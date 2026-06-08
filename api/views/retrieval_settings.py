@@ -27,9 +27,9 @@ class CreateSettings(APIView):
         nameUmfrage = request.data.get('umfrageName')
         umfrageID = request.data.get('umfrageID')
 
-        user = User.objects.filter(username=username)
+        researchers = Researcher.objects.filter(user__username=username)
 
-        if not user.exists():
+        if not researchers.exists():
             return Response({'msg': 'Neu anmelden...'}, status=status.HTTP_404_NOT_FOUND)
         else:
             if RetrievalSetting.objects.filter(umfrageID=umfrageID).exists(): 
@@ -38,7 +38,9 @@ class CreateSettings(APIView):
                     'error': 'duplicate_survey_ID',
                     'surveyID': umfrageID
                 }, status=status.HTTP_400_BAD_REQUEST)  
+            current_user = researchers.first()
             settings = RetrievalSetting(
+                user=current_user,
                 nameUmfrage=nameUmfrage,
                 umfrageID=umfrageID,
             )
@@ -49,7 +51,6 @@ class CreateSettings(APIView):
                 setattr(settings, field_name, value)
 
             settings.save()
-            settings.user.add(user.values()[0].get('id'))
 
             return Response({'msg': 'Settings created'}, status=status.HTTP_201_CREATED)
         
@@ -75,11 +76,11 @@ class getSettingsListView(APIView):
         username = request.GET.get(self.lookup_url_kwarg)
 
         if username is not None:
-            user = User.objects.filter(username=username)
-            if len(user) > 0:
+            researchers = Researcher.objects.filter(user__username=username)
+            if researchers.exists():
                 rows = []
-                id = list(User.objects.filter(username=username).values())[0].get('id')
-                settings = RetrievalSetting.objects.filter(user=id)
+                current_user = researchers.first()
+                settings = RetrievalSetting.objects.filter(user=current_user)
 
                 settingslist = np.array(settings.values_list('id', 'nameUmfrage', 'umfrageID'))
                 confirmTextList = np.array(settings.values_list('confirmTextDe', 'confirmTextEng'))
@@ -259,9 +260,9 @@ class UpdateSettings(APIView):
         umfrageID = request.data.get('umfrageID')
         updateID = request.data.get('updateID')
 
-        user = User.objects.filter(username=username)
+        researchers = Researcher.objects.filter(user__username=username)
 
-        if not user.exists():
+        if not researchers.exists():
             return Response({'msg': 'Neu anmelden...'}, status=status.HTTP_404_NOT_FOUND)
         else:
             setting = RetrievalSetting.objects.filter(umfrageID=updateID).first()

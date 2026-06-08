@@ -156,6 +156,12 @@ export async function deleteEmailsForSurvey(surveyId) {
   return { ok: response.ok, status: response.status, data: await safeJson(response) };
 }
 
+export async function saveSettingsToCsvFile(surveyId) {
+  return getJson(
+    "/api/save-settings-to-csv-file?surveyID=" + encodeURIComponent(surveyId)
+  );
+}
+
 export async function acceptPrivacyPolicy(payload) {
   const response = await fetch(
     "/api/accept-privacy-policy",
