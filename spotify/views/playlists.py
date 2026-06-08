@@ -45,7 +45,6 @@ def _extract_private_playlist_track_fields(track_item, playlist):
             'popularity': track.get('popularity', None),
             'album_id': track.get('album', {}).get('id', ''),
             'album_name': track.get('album', {}).get('name', ''),
-            'album_label': 'NOT RETRIEVED (PRIVATE PLAYLIST)', # Spotify API does not return label for tracks in playlists, would require additional API call per track
             'album_type': track.get('album', {}).get('album_type', ''),
             'release_date': track.get('album', {}).get('release_date', ''),
             'image_url': track.get('album', {}).get('images', [{}])[0].get('url', '') if track.get('album', {}).get('images') else '',

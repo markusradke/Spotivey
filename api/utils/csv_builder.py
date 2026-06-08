@@ -57,7 +57,6 @@ def _build_base_track_csv_row(track, track_type):
         # Album information
         'album_id': track.album_id or '',
         'album_name': track.album_name or '',
-        'album_label': track.album_label or '',
         'album_type': track.album_type or '',
         'release_date': track.release_date or '',
         'image_url': track.image_url or '',
