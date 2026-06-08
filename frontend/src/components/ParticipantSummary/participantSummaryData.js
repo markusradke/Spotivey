@@ -235,19 +235,13 @@ export function useSummaryData(summary, lang, isMobileLayout) {
 
     const genreBasisText = lang === "de"
         ? buildBasisText([
-            [dataBasis.saved_track_points, "gespeicherten Lieblingssongs"],
-            [dataBasis.recent_track_points, "kürzlich gehörten Songs"],
-            [dataBasis.top_track_points, "Top-Songs"],
             [dataBasis.top_artist_points, "Top-Künstlern"],
             [dataBasis.followed_artist_points, "gefolgten Künstlern"],
-        ], `Datenbasis: ${dataBasis.genre_points || 0} Artist-Genre-Nennungen aus`)
+        ], `Datenbasis: ${dataBasis.genre_points || 0} Genre-Nennungen für`)
         : buildBasisText([
-            [dataBasis.saved_track_points, "liked songs"],
-            [dataBasis.recent_track_points, "recent songs"],
-            [dataBasis.top_track_points, "top songs"],
             [dataBasis.top_artist_points, "top artists"],
             [dataBasis.followed_artist_points, "followed artists"],
-        ], `Data basis: ${dataBasis.genre_points || 0} artist genre mentions from`);
+        ], `Data basis: ${dataBasis.genre_points || 0} Genre labels from`);
 
     return {
         colors,

@@ -164,7 +164,7 @@ def retrieve_spotify_data(session_key: str, endpoint: str, limit: int, datatype:
 
         if len(items) == 0:
             break
-        time.sleep(0.1) # to avoid hitting rate limits
+        time.sleep(0.15) # to avoid hitting rate limits
     return {'items': all_responses, 'total': total}
 
 
@@ -200,5 +200,5 @@ def retrieve_spotify_followed_artists(session_key: str, limit: int):
 
         if len(items) == 0:
             break
-        time.sleep(0.1) # to avoid hitting rate limits
+        time.sleep(0.15) # to avoid hitting rate limits
     return {'items': all_responses, 'total': total}
