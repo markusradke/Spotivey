@@ -9,6 +9,7 @@ export const PAGE_TITLES_BY_INDEX = [
     "Top Artists (Long Term)",
     "Followed Artists",
     "Current Playlists",
+    "Participant Profile",
     "Saved Shows",
     "Saved Episodes",
 ];
