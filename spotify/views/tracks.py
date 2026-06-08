@@ -24,9 +24,13 @@ def _collect_artist_cache(session_key, items, track_extractor):
 
 def _build_and_create_tracks(session_key, items, track_extractor, model_class,
                                                          participant, extra_fields_fn=None):
-    artists_cache = _collect_artist_cache(
-        session_key, items, track_extractor
-    )
+    current_settings = participant.settings
+    if current_settings.collect_track_artistgenres:
+        artists_cache = _collect_artist_cache(
+            session_key, items, track_extractor
+        )
+    else:
+        artists_cache = {}
 
     tracks_to_create = []
     for item in items:
