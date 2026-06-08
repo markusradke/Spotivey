@@ -149,6 +149,13 @@ def retrieve_spotify_data(session_key: str, endpoint: str, limit: int, datatype:
         else:
             batch_endpoint = f"{endpoint}?limit={batch_limit}&offset={n_retrieved}"
         response = execute_spotify_api_request(session_key, batch_endpoint)
+        # check for 429 rate limit error
+        if 'error' in response and isinstance(response['error'], dict) and response['error'].get('status') == 429:
+            retry_after = response['error'].get('headers', {}).get('Retry-After', 1)  # default to 1 second if not provided
+            print(f"Rate limit hit. Retrying after {retry_after} seconds.")
+            time.sleep(int(retry_after))
+            continue  # retry the same batch after sleeping
+
         if 'error' in response or ('items' not in response and 'artists' not in response):
             print(f"Error occurred while retrieving Spotify data for endpoint: {endpoint}") 
             return {'error': response}
@@ -185,6 +192,13 @@ def retrieve_spotify_followed_artists(session_key: str, limit: int):
         batch_limit = min(batch_size_limit, limit - n_retrieved)
         batch_endpoint = f"{endpoint}&limit={batch_limit}&after={after}"
         response = execute_spotify_api_request(session_key, batch_endpoint)
+        # check for 429 rate limit error
+        if 'error' in response and isinstance(response['error'], dict) and response['error'].get('status') == 429:
+            retry_after = response['error'].get('headers', {}).get('Retry-After', 1)  # default to 1 second if not provided
+            print(f"Rate limit hit. Retrying after {retry_after} seconds.")
+            time.sleep(int(retry_after))
+            continue  # retry the same batch after sleeping
+
         if 'error' in response or ('items' not in response and 'artists' not in response):
             print(f"Error occurred while retrieving Spotify data for endpoint: {endpoint}") 
             return {'error': response}
