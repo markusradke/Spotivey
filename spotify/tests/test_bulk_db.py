@@ -1,14 +1,23 @@
 from django.test import TestCase
+from django.contrib.auth.models import User
+
 from spotify.utils.bulk_db import bulk_create_with_retry
 from spotify.models import Participant, SavedTrack
-from api.models import RetrievalSetting
+from api.models import RetrievalSetting, Researcher
 
 class BulkOperationsTest(TestCase):
     """Test bulk database operations."""
     
     def setUp(self):
         """Create test data."""
+        self.user = User.objects.create_user(
+            username="researcher1",
+            email="researcher1@example.com",
+            password="pw12345678"
+        )
+        self.researcher = Researcher.objects.create(user=self.user, institution="Test Institute")
         self.settings = RetrievalSetting.objects.create(
+            user=self.researcher,
             nameUmfrage='Test Survey',
             umfrageID='test123'
         )

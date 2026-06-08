@@ -8,18 +8,20 @@ from django.utils import timezone
 
 from rest_framework.test import APIClient
 
-from api.models import RetrievalSetting
+from api.models import RetrievalSetting, Researcher
 from spotify.models import SpotifyToken, Participant
 
 
 class SpotiveyBackendJourneyTests(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.researcher = User.objects.create_user(
+        self.user = User.objects.create_user(
             username="researcher1",
             email="researcher1@example.com",
             password="pw12345678",
         )
+        self.researcher = Researcher.objects.create(user=self.user, institution="Test Institute")
+        
 
         self.survey_id = "123456"
         self.participant_id = "1"
@@ -43,7 +45,7 @@ class SpotiveyBackendJourneyTests(TestCase):
     def _create_settings_all_types(self):
         payload = {
             "data": {},
-            "username": self.researcher.username,
+            "username": self.user.username,
             "umfrageName": "Test Survey",
             "umfrageID": self.survey_id,
             "umfrageEndUrl": "https://example.com/end",
@@ -95,7 +97,7 @@ class SpotiveyBackendJourneyTests(TestCase):
         settings = RetrievalSetting.objects.get(umfrageID=self.survey_id)
         payload = {
             "data": {},
-            "username": self.researcher.username,
+            "username": self.user.username,
             "umfrageName": settings.nameUmfrage,
             "umfrageID": self.survey_id,
             "updateID": settings.umfrageID,
