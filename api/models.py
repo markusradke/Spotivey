@@ -7,8 +7,8 @@ class Researcher(models.Model):
 
 
 class RetrievalSetting(models.Model):
-    defaultConfirmTextEng = """Wenn Sie mit der Spende einverstanden sind, klicken Sie einfach auf "Bestätige alle Ergebnisse". Falls Sie einige Inhalte aus Ihrem Spotify-Konto nicht spenden möchten, können Sie diese auch einzeln abwählen und dann OK klicken."""
-    defaultConfirmTextDe = """If you agree to the donation, simply click "Confirm all results." If there are some items in your Spotify account that you don't want to donate, you can deselect them individually and then click OK."""
+    defaultConfirmTextDe = """Wenn Sie mit der Spende einverstanden sind, klicken Sie einfach auf "Bestätige alle Ergebnisse". Falls Sie einige Inhalte aus Ihrem Spotify-Konto nicht spenden möchten, können Sie diese auch einzeln abwählen und dann OK klicken."""
+    defaultConfirmTextEng = """If you agree to the donation, simply click "Confirm all results." If there are some items in your Spotify account that you don't want to donate, you can deselect them individually and then click OK."""
 
     user = models.ForeignKey(Researcher, on_delete=models.CASCADE)
     nameUmfrage = models.TextField(default='')
