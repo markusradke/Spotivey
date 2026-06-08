@@ -28,7 +28,7 @@ from .followup_settings import (
 from .results import getResultListView, GetParticipantCountForSurvey, DeleteOnlyResultsWithID, SaveCheckData, DeleteEmailsForSurvey
 
 # CSV export
-from .csv_export import saveRepertoireToCsvFileView, saveParticipantsToCsvFileView, saveEmailsToCsvFileView
+from .csv_export import saveRepertoireToCsvFileView, saveParticipantsToCsvFileView, saveEmailsToCsvFileView, saveSettingsToCsvFileView
 
 __all__ = [
     # Auth
@@ -71,4 +71,5 @@ __all__ = [
     'saveRepertoireToCsvFileView',
     'saveParticipantsToCsvFileView',
     'saveEmailsToCsvFileView',
+    'saveSettingsToCsvFileView',
 ]

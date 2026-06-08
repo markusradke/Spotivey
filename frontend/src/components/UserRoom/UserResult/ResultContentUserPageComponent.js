@@ -17,7 +17,8 @@ import {
     saveRepertoireToCsvFile,
     saveParticipantsToCsvFile,
     saveEmailsToCsvFile,
-    deleteEmailsForSurvey
+    deleteEmailsForSurvey,
+    saveSettingsToCsvFile
 } from "../../../api/surveyApi";
 
 export default function ResultContent(props) {
@@ -27,6 +28,7 @@ export default function ResultContent(props) {
     const [repertoireFileData, setRepertoireFileData] = useState(null);
     const [participantsFileData, setParticipantsFileData] = useState(null);
     const [emailsFileData, setEmailsFileData] = useState(null);
+    const [settingsFileData, setSettingsFileData] = useState(null);
     const [listEntriesShow, setListEntriesShow] = useState([false, false, false, false, false, false, false]);
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -73,6 +75,13 @@ export default function ResultContent(props) {
             .then(({ ok, data }) => {
                 if (ok && data && !data.error && data.length !== 0) {
                     setEmailsFileData(data);
+                }
+            });
+
+        saveSettingsToCsvFile(props.surveyID)
+            .then(({ ok, data }) => {
+                if (ok && data && !data.error && data.length !== 0) {
+                    setSettingsFileData(data);
                 }
             });
 
@@ -399,7 +408,23 @@ export default function ResultContent(props) {
                             >
                                 Delete Emails
                             </Button> : null}
-
+                        {settingsFileData ?
+                            <CSVLink
+                                className={'csv-link-export-file'}
+                                data={settingsFileData}
+                                filename={"Spotivey_Settings_" + props.surveyID + ".csv"}
+                                target="_blank"
+                                separator={";"}
+                            >
+                                <div className={'button-csv-inner-container'}>
+                                    <div className={'button-csv-title'}>
+                                        Settings CSV
+                                    </div>
+                                    <div className={'button-csv-icon'}>
+                                        <FileDownloadIcon />
+                                    </div>
+                                </div>
+                            </CSVLink> : null}
                         <Button style={{ color: '#414141' }}
                             onClick={() => { setOpenDeleteDialog(true) }}
                             variant={'text'}

@@ -18,6 +18,7 @@ from .views import (
     saveRepertoireToCsvFileView,
     saveParticipantsToCsvFileView,
     saveEmailsToCsvFileView,
+    saveSettingsToCsvFileView,
 )
 
 urlpatterns = [
@@ -49,7 +50,6 @@ urlpatterns = [
     path('save-check-data', SaveCheckData.as_view()),
     path('delete-settings', DeleteSettings.as_view()),
     path('update-confirm-text', UpdateConfirmText.as_view()),
-
     
     
     # Follow-up survey settings
@@ -69,4 +69,5 @@ urlpatterns = [
     path('save-repertoire-to-csv-file', saveRepertoireToCsvFileView.as_view()),
     path('save-participants-to-csv-file', saveParticipantsToCsvFileView.as_view()),
     path('save-emails-to-csv-file', saveEmailsToCsvFileView.as_view()),
+    path('save-settings-to-csv-file', saveSettingsToCsvFileView.as_view()),
 ]
