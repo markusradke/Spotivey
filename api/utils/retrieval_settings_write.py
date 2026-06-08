@@ -59,6 +59,7 @@ EXPLICIT_SETTING_FIELDS: tuple[str, ...] = (
     "saved_episodes_confirm",
     "saved_episodes_limit",
     "saved_episodes_followup",
+    "collect_track_artistgenres",
     "end_option",
     "end_url",
     "share_survey_url",

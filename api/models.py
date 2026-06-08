@@ -85,6 +85,8 @@ class RetrievalSetting(models.Model):
     confirmTextEng = models.TextField(default=defaultConfirmTextEng)
     confirmTextDe = models.TextField(default=defaultConfirmTextDe)
 
+    collect_track_artistgenres = models.BooleanField(default=False)
+
     END_CHOICES = [
         ("plain", "Simple end of survey page"),
         ("summary", "Statistical summary of participant responses"),

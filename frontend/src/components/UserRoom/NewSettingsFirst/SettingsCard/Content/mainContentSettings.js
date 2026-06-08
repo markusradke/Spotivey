@@ -12,7 +12,8 @@ export function mainContentSettings(
   screenoutURL, setScreenoutURL,
   conditionalScreenoutURLParameter, setConditionalScreenoutURLParameter,
   screenoutMinData, setScreenoutMinData,
-  screenOutCheckIdentical, setScreenoutCheckIdentical
+  screenOutCheckIdentical, setScreenoutCheckIdentical,
+  collectTrackArtistGenres, setCollectTrackArtistGenres
 ) {
 
   const trimmed_end_url = String(screenoutURL ?? "").trim();
@@ -58,12 +59,12 @@ export function mainContentSettings(
         className="follow-up-settings-container"
         style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
       >
-        <h2
+        <h1
           className="follow-up-settings-title"
-          style={{ marginTop: '1.5rem' }}
+          style={{ marginTop: '2.5rem' }}
         >
-          Screenout Option
-        </h2>
+          Screenout Options
+        </h1>
         <Typography className='figcaption-text' style={{ marginTop: '0.75rem' }}>
           You can also specify screenout settings, i.e., what happens if a participant does not meet the requirements to take part in the survey (because they do not give consent to share their Spotify data or have donated to few data points).
         </Typography>
@@ -153,6 +154,17 @@ export function mainContentSettings(
           )}
         </div>
       ) : null}
+      <div style={{ marginTop: '2.5 rem' }}>
+        <h1>Retrieval of Track Artist Genres</h1>
+        <Typography variant="body1" style={{ marginTop: '0.75rem' }}>
+          If enabled, Spotivey will also retrieve the genres of the artists of retrieved tracks types (saved tracks, top tracks, recently played tracks). Please note that this will increase the amount of API calls required to complete the donation and should thus be used with caution.
+        </Typography>
+        <Checkbox
+          checked={collectTrackArtistGenres}
+          onChange={(e) => setCollectTrackArtistGenres(e.target.checked)}
+        />
+        <span style={{ marginLeft: '0.5rem' }}>Enable</span>
+      </div>
     </React.Fragment>
   );
 }
