@@ -8,7 +8,7 @@ from spotify.models import Participant, TopArtistShortTerm, TopArtistMediumTerm,
 from spotify.utils.bulk_db import bulk_create_with_retry
 from spotify.utils.field_extractors import extract_artist_fields
 from spotify.utils.retrieval_helpers import get_participant_from_session, sample_items
-from spotify.utils.spotify_api import execute_spotify_api_request, retrieve_spotify_data
+from spotify.utils.spotify_api import execute_spotify_api_request, retrieve_spotify_data, retrieve_spotify_followed_artists
 
 
 def _build_and_create_artists(items, model_class, participant):
@@ -113,9 +113,7 @@ class GetFollowedArtistsSpotify(APIView):
             return error_response
 
         limit = request.GET.get('limit', 50)
-        endpoint = f"me/following?type=artist"
-
-        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, datatype='followed_artists')
+        response = retrieve_spotify_followed_artists(request.session.session_key, limit)
 
         if 'error' in response.keys():
             return Response(response, status=status.HTTP_204_NO_CONTENT)

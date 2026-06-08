@@ -153,12 +153,46 @@ def retrieve_spotify_data(session_key: str, endpoint: str, limit: int, datatype:
             print(f"Error occurred while retrieving Spotify data for endpoint: {endpoint}") 
             return {'error': response}
 
-        if datatype == 'followed_artists': 
-            items = response.get('artists', {}).get('items', [])
-            total = response.get('artists', {}).get('total', 0)  # read from last response, is the same for all pages
-        else:
-            items = response.get('items', [])
-            total = response.get('total', 0)  # read from last response, is the same for all pages; returns 0 if not present
+        items = response.get('items', [])
+        total = response.get('total', None)  # to save calls 
+        if total is not None:
+            limit = min(limit, total)  # adjust limit to total if total is smaller than requested limit
+        for i, item in enumerate(items):
+            item['position'] = n_retrieved + i + 1
+        all_responses.extend(items)
+        n_retrieved += batch_limit
+
+        if len(items) == 0:
+            break
+        time.sleep(0.1) # to avoid hitting rate limits
+    return {'items': all_responses, 'total': total}
+
+
+def retrieve_spotify_followed_artists(session_key: str, limit: int):
+    """
+    Specialized helper function to retrieve followed artists with pagination support. Returns artificial response with 'items' and 'total' keys.
+    """
+    endpoint = f"me/following?type=artist"
+    print(f"Retrieving Spotify data for endpoint: {endpoint} with limit: {limit} and datatype: followed_artists")
+    
+    batch_size_limit = 50  # Spotify API max limit per request
+    limit = int(limit)
+    n_retrieved = 0
+    all_responses = []
+    after = ''
+    
+    while n_retrieved < limit:
+        batch_limit = min(batch_size_limit, limit - n_retrieved)
+        batch_endpoint = f"{endpoint}&limit={batch_limit}&after={after}"
+        response = execute_spotify_api_request(session_key, batch_endpoint)
+        if 'error' in response or ('items' not in response and 'artists' not in response):
+            print(f"Error occurred while retrieving Spotify data for endpoint: {endpoint}") 
+            return {'error': response}
+
+        items = response.get('artists', {}).get('items', [])
+        total = response.get('artists', {}).get('total', 0)  # read from last response, is the same for all pages
+        limit = min(limit, total)  # adjust limit to total if total is smaller than requested limit
+        after = response.get('artists', {}).get('cursors', {}).get('after', '')
         for i, item in enumerate(items):
             item['position'] = n_retrieved + i + 1
         all_responses.extend(items)
