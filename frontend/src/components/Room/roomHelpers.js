@@ -54,7 +54,7 @@ export function buildWelcomeSettings(rawSettings) {
     if (profile?.check) {
         de.push([
             true,
-            "Ihrem Spotify Abonnement, Ihrem Herkunfsland und die Anzahl Ihrer Follower",
+            "Ihrem Spotify Abonnement-Typ, Ihrem Herkunfsland und die Anzahl Ihrer Follower",
         ]);
         en.push([
             true,
@@ -74,7 +74,7 @@ export function buildWelcomeSettings(rawSettings) {
     }
 
     if (followedArtists?.check) {
-        de.push([true, "Den Interpreten, die sie abboniert haben"]);
+        de.push([true, "Den Interpreten, die sie abonniert haben"]);
         en.push([true, "Your Followed Artists"]);
     }
 
