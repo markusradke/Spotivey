@@ -64,18 +64,18 @@ export function buildWelcomeSettings(rawSettings) {
 
     if (topTracksShortTerm?.check || topTracksMediumTerm?.check || topTracksLongTerm?.check) {
         de.push([true, "Ihrer Top Tracks"]);
-        en.push([true, "Your Top Tracks"]);
+        en.push([true, "Your top tracks"]);
     }
 
 
     if (topArtistsShortTerm?.check || topArtistsMediumTerm?.check || topArtistsLongTerm?.check) {
         de.push([true, "Ihrer Top Künstler"]);
-        en.push([true, "Your Top Artists"]);
+        en.push([true, "Your top artists"]);
     }
 
     if (followedArtists?.check) {
         de.push([true, "Den Interpreten, die sie abonniert haben"]);
-        en.push([true, "Your Followed Artists"]);
+        en.push([true, "Your followed artists"]);
     }
 
     if (currentPlaylists?.check) {
@@ -85,8 +85,8 @@ export function buildWelcomeSettings(rawSettings) {
         de.push([true, deText]);
 
         const enText = currentPlaylists.public
-            ? "Your Playlists"
-            : "Your Public Playlists";
+            ? "Your playlists"
+            : "Your public playlists";
         en.push([true, enText]);
     }
 

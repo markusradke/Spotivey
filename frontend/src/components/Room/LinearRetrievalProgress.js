@@ -67,7 +67,14 @@ export default function LinearRetrievalProgress({ language, progress, isAuthChec
                         />
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <Typography variant="h5" component="h4" sx={{ color: 'var(--color-tu-berlin)' }} className="blink">
+                        <Typography variant="h6" component="h6" sx={{ color: 'var(--color-tu-berlin)' }}>
+                            {language === "de" ?
+                                "Wir rufen nun Ihre Spotify-Daten ab. Bitte warten Sie einen Moment..." :
+                                "We are now retrieving your Spotify data. Please wait a moment..."}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <Typography variant="h6" component="h6" sx={{ color: 'var(--color-tu-berlin)' }} className="blink">
                             {language === "de" ?
                                 "Bitte laden Sie die Seite nicht neu, schließen Sie das Fenster nicht und drücken Sie nicht den Zurück-Button Ihres Browsers!" :
                                 "Please do not refresh the page, do not close the window, and do not press the back button of your browser!"}
