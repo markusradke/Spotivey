@@ -20,8 +20,8 @@ export function SummaryShareActions({
                     startIcon={<ContentCopyIcon />}
                 >
                     {lang === "de"
-                        ? "Lassen Sie es andere auch versuchen!"
-                        : "Let others try it too!"}
+                        ? "Lassen Sie es andere auch versuchen! (Link kopieren)"
+                        : "Let others try it too! (Copy link)"}
                 </Button>
             ) : null}
 
@@ -34,8 +34,8 @@ export function SummaryShareActions({
                 sx={{ whiteSpace: "pre-line" }}
             >
                 {lang === "de"
-                    ? "Link zu Ihren Ergebnissen\n(zum Teilen und Wiederansehen)"
-                    : "Link to your results\n(for sharing and revisiting)"}
+                    ? "Link zu Ihren Ergebnissen kopieren\n(zum Teilen und Wiederansehen)"
+                    : "Copy link to your results\n(for sharing and revisiting)"}
             </Button>
         </Stack >
     );

@@ -290,8 +290,13 @@ class UpdateConfirmText(APIView):
         username = request.data.get('username')
         confirmTextArray = request.data.get('confirmTextArray')
 
+        researchers = Researcher.objects.filter(user__username=username)
+
+        if not researchers.exists():
+            return Response({'msg': 'Neu anmelden...'}, status=status.HTTP_404_NOT_FOUND)
+
         if surveyID is not None:
-            settingsFilter = RetrievalSetting.objects.filter(umfrageID=surveyID, user__username=username)
+            settingsFilter = RetrievalSetting.objects.filter(umfrageID=surveyID)
 
             if settingsFilter.exists():
                 settings = settingsFilter
