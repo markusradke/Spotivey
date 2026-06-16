@@ -190,6 +190,7 @@ export function useRoomFinalize({
     spotifyData,
     checkArray,
     settings,
+    setIsFinalizing,
 }) {
     const navigate = useNavigate();
     const { participant, surveyID, language } = useContext(ParticipantContext);
@@ -222,11 +223,21 @@ export function useRoomFinalize({
             dataAll,
             checkArray,
         });
-        navigate(url ?? `/end-room?lang=${language}&surveyID=${surveyID}`); // including fallback
+        const targetUrl = url ?? `/end-room?lang=${language}&surveyID=${surveyID}`;
+        const isInternalTarget =
+            targetUrl.startsWith("/") ||
+            targetUrl.startsWith(window.location.origin);
+
+        if (isInternalTarget) {
+            navigate(targetUrl);
+            return;
+        }
+        window.location.replace(targetUrl);
     }, [followup, participant, paramsObjectSession, spotifyData, checkArray, navigate, language, surveyID]);
 
     const handleSaveAndFinalize = useCallback(async () => {
         setIsSaving(true);
+        setIsFinalizing(true);
         try {
             const dataAll = DATA_TYPE_ORDER.map((type) => spotifyData?.[type] ?? []);
 
@@ -276,9 +287,9 @@ export function useRoomFinalize({
             await navigateToEndpageOrEndURL();
         } catch (error) {
             console.error("Error in confirmation process:", error);
-            navigate("/error");
-        } finally {
+            setIsFinalizing(false);
             setIsSaving(false);
+            navigate("/error");
         }
     }, [
         spotifyData,
@@ -300,6 +311,7 @@ export function useRoomFinalize({
         if (didAutoFinalizeRef.current) return;
 
         didAutoFinalizeRef.current = true;
+        setIsFinalizing(true);
 
         async function finalize() {
             try {
@@ -332,6 +344,7 @@ export function useRoomFinalize({
                 await navigateToEndpageOrEndURL();
             } catch (error) {
                 console.error("Finalize failed (no confirmation):", error);
+                setIsFinalizing(false);
                 navigate("/error");
             }
         }
