@@ -110,6 +110,14 @@ export async function saveCheckData(index, participant, surveyId, checkData, noD
   return response;
 }
 
+export async function saveCheckParticipantContentHash(participant, surveyId) {
+  const response = await fetch(
+    "/api/save-check-participant-content-hash",
+    buildPostOptions({ participant, surveyID: surveyId }, true)
+  );
+  return response;
+}
+
 export async function finalizeParticipantData() {
   const response = await fetch(
     "/api/finalize-participant-data",

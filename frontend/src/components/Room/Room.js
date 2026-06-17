@@ -22,6 +22,7 @@ import {
     buildWelcomeSettings,
     mapConfirmTextToIndices,
 } from "./roomHelpers";
+import { Typography } from "@mui/material";
 
 export default function Room(props) {
     const navigate = useNavigate();
@@ -54,6 +55,7 @@ export default function Room(props) {
         selectedOption: null,
         passLang: false,
     });
+    const [isFinalizing, setIsFinalizing] = useState(false);
 
     const welcomeSettings = useMemo(
         () => buildWelcomeSettings(rawSettings),
@@ -73,10 +75,10 @@ export default function Room(props) {
     }, [props.welcomePageOK, isAuthChecking, isSpotifyLoading]);
 
     useEffect(() => {
-        if (props.welcomePageOK && participant) {
+        if (props.welcomePageOK && participant && !isFinalizing) {
             authenticateSpotify();
         }
-    }, [props.welcomePageOK, participant, authenticateSpotify]);
+    }, [props.welcomePageOK, participant, authenticateSpotify, isFinalizing]);
 
     useEffect(() => {
         if (!rawSettings) return;
@@ -102,6 +104,7 @@ export default function Room(props) {
         spotifyData,
         checkArray,
         settings,
+        setIsFinalizing,
     });
 
     function handleToggleAllCurrentStep(step, checked) {
@@ -134,7 +137,7 @@ export default function Room(props) {
         return null;
     }
 
-    const isLoading = isShowingPrivacy || isSettingsLoading || isAuthChecking || isSpotifyLoading;
+    const isLoading = (isShowingPrivacy || isSettingsLoading || isAuthChecking || isSpotifyLoading) && !isSaving && !isFinalizing;
 
     return (
         <React.Fragment>

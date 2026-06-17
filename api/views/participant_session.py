@@ -1,6 +1,7 @@
 """Participant session management views."""
 
 import uuid
+import hashlib 
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -271,3 +272,50 @@ class CheckParticipantEmailDisplay(APIView):
             {'showEmailField': True},
             status=status.HTTP_200_OK,
         )
+    
+class SaveCheckParticipantContentHash(APIView):
+    """Calculate a SHA256 hash of all participant spotify_id fields except for recent tracks to check for participation with identical Spotify accounts across multiple sessions. If there is another participant in this survey with the same hash, return 403 to trigger a screenout in the frontend. Else, save the hash in the participant instance."""
+    def post(self, request, format=None):
+        participant_id = request.data.get('participant')
+        survey_id = request.data.get('surveyID')
+
+        if not participant_id or not survey_id:
+            return Response({'error': 'Participant and survey ID are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        settings = RetrievalSetting.objects.filter(umfrageID=survey_id).first()
+        if not settings:
+            return Response({'error': 'Survey not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        participant = Participant.objects.filter(
+            participant=participant_id,
+            settings=settings,
+        ).order_by('-started_at').first()
+
+        if not participant:
+            return Response({'error': 'Participant not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        spotify_ids = []
+        spotify_ids += list(SavedTrack.objects.filter(participant=participant).values_list('spotify_id', flat=True))
+        spotify_ids += list(TopTrackShortTerm.objects.filter(participant=participant).values_list('spotify_id', flat=True))
+        spotify_ids += list(TopTrackMediumTerm.objects.filter(participant=participant).values_list('spotify_id', flat=True))
+        spotify_ids += list(TopTrackLongTerm.objects.filter(participant=participant).values_list('spotify_id', flat=True))
+        spotify_ids += list(TopArtistShortTerm.objects.filter(participant=participant).values_list('spotify_id', flat=True))
+        spotify_ids += list(TopArtistMediumTerm.objects.filter(participant=participant).values_list('spotify_id', flat=True))
+        spotify_ids += list(TopArtistLongTerm.objects.filter(participant=participant).values_list('spotify_id', flat=True))
+        spotify_ids += list(FollowedArtist.objects.filter(participant=participant).values_list('spotify_id', flat=True))
+        spotify_ids += list(CurrentPlaylist.objects.filter(participant=participant).values_list('spotify_id', flat=True))
+        spotify_ids += list(SavedShow.objects.filter(participant=participant).values_list('spotify_id', flat=True))
+        spotify_ids += list(SavedEpisode.objects.filter(participant=participant).values_list('spotify_id', flat=True))
+        
+
+        content_string = ''.join(sorted(spotify_ids))
+        
+        content_hash = hashlib.sha256(content_string.encode('utf-8')).hexdigest()
+
+        if Participant.objects.filter(settings=settings, content_hash=content_hash).exclude(participant=participant.participant).exists():
+            return Response({'error': 'Duplicate participant content detected'}, status=status.HTTP_403_FORBIDDEN)
+
+        participant.content_hash = content_hash
+        participant.save(update_fields=['content_hash'])
+
+        return Response({'message': 'Participant content hash saved'}, status=status.HTTP_200_OK)

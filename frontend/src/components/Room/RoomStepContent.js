@@ -2,12 +2,12 @@ import React from "react";
 
 import { DATA_TYPE_ORDER, DATA_TYPES } from "../../constants/dataTypes";
 
-import CircularLoading from "./CircularLoading";
 import TrackResultList from "./resultList";
 import ArtistResultList from "./resultListArtists";
 import PlaylistResultList from "./resultListPlaylists";
 import ShowResultList from "./resultListShows";
 import EpisodeResultList from "./resultListEpisodes";
+import { Typography } from "@mui/material";
 
 export default function RoomStepContent({
     step,
@@ -36,7 +36,11 @@ export default function RoomStepContent({
                                 categoryIndex={index}
                             />
                         ) : (
-                            <CircularLoading language={language} />
+                            <Typography variant="body1" align="center">
+                                {language === "de"
+                                    ? "Keine Tracks gefunden."
+                                    : "No tracks found."}
+                            </Typography>
                         )
                     ) : null}
 
@@ -49,7 +53,11 @@ export default function RoomStepContent({
                                 categoryIndex={index}
                             />
                         ) : (
-                            <CircularLoading language={language} />
+                            <Typography variant="body1" align="center">
+                                {language === "de"
+                                    ? "Keine Artists gefunden."
+                                    : "No artists found."}
+                            </Typography>
                         )
                     ) : null}
 
@@ -62,7 +70,11 @@ export default function RoomStepContent({
                                 categoryIndex={index}
                             />
                         ) : (
-                            <CircularLoading language={language} />
+                            <Typography variant="body1" align="center">
+                                {language === "de"
+                                    ? "Keine Playlists gefunden."
+                                    : "No playlists found."}
+                            </Typography>
                         )
                     ) : null}
 
@@ -75,7 +87,11 @@ export default function RoomStepContent({
                                 categoryIndex={index}
                             />
                         ) : (
-                            <CircularLoading language={language} />
+                            <Typography variant="body1" align="center">
+                                {language === "de"
+                                    ? "Keine gespeicherten Shows gefunden."
+                                    : "No saved shows found."}
+                            </Typography>
                         )
                     ) : null}
 
@@ -88,7 +104,11 @@ export default function RoomStepContent({
                                 categoryIndex={index}
                             />
                         ) : (
-                            <CircularLoading language={language} />
+                            <Typography variant="body1" align="center">
+                                {language === "de"
+                                    ? "Keine gespeicherten Episoden gefunden."
+                                    : "No saved episodes found."}
+                            </Typography>
                         )
                     ) : null}
                 </div>
