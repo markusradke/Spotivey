@@ -15,22 +15,6 @@ export function getCompleteEndURL({
         return followup.endUrl
     }
 
-    // TODO: Get all the data for follow up survey
-    // const paramsURL = followup.selectedOption
-    //     ? getGetParams(
-    //         followup.questionTypeCheck,
-    //         followup.selectedOption,
-    //         followup.dataFieldsCheck,
-    //         ID_NAME,
-    //         ID_TRACKS,
-    //         ID_ARTISTS,
-    //         ID_PLAYLISTS,
-    //         dataAll,
-    //         followup.endUrl,
-    //         checkArray
-    //     )
-    //     : "";
-
     const additionalURLParams = paramsObjectSession?.filter(
         ([key]) => key !== "participant" && key !== "surveyID"
     ) || [];
@@ -42,5 +26,10 @@ export function getCompleteEndURL({
         : "";
 
     // always adds partID, language, and old survey ID for LimeSurvey integration
-    return [followup.endUrl, "?partID=", participant, additionalURLParamsString].join("");
+    if (followup.endUrl.includes("?")) {
+        return [followup.endUrl, "&partID=", participant, additionalURLParamsString].join("");
+    }
+    else {
+        return [followup.endUrl, "?partID=", participant, additionalURLParamsString].join("");
+    }
 }

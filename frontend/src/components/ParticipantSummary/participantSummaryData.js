@@ -26,10 +26,12 @@ export function useSummaryData(summary, lang, isMobileLayout) {
             const url = new URL(base);
             url.search = "";
             if (lang) url.searchParams.set("lang", lang);
+            url.searchParams.set("newtest", "Y");
             return url.toString();
         } catch {
             const params = new URLSearchParams();
             if (lang) params.set("lang", lang);
+            params.set("newtest", "Y");
             const queryString = params.toString();
             return queryString ? `${base}?${queryString}` : base;
         }
