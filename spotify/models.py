@@ -84,6 +84,7 @@ class Participant(models.Model):
 
     summary_genre_counts = models.JSONField(null=True, blank=True, default=None)
     summary_top_genres = models.JSONField(null=True, blank=True, default=None)
+    content_hash = models.CharField(max_length=500, default='', blank=True)
 
 
     def __str__(self):

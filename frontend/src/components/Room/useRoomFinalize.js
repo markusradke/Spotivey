@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { ParticipantContext } from "../../context/ParticipantContext";
 import { DATA_TYPE_ORDER } from "../../constants/dataTypes";
-import { finalizeParticipantData, saveCheckData, deleteParticipantData, fetchResultList } from "../../api/surveyApi";
+import { finalizeParticipantData, saveCheckData, deleteParticipantData, fetchResultList, saveCheckParticipantContentHash } from "../../api/surveyApi";
 import { saveParticipantSummary } from "../../api/spotifyApi";
 
 import { getCompleteEndURL } from "./followupSurvey";
@@ -60,15 +60,7 @@ function buildParticipantSignature(spotifyData, checkArray, settings) {
         }
 
         if (type === "participantProfile") {
-            const profileSignature = comparableItems
-                .map((item) => JSON.stringify(canonicalizeValue(item)))
-                .sort()
-                .join("|");
-
-            if (profileSignature) {
-                signatureMap.set(type, profileSignature);
-            }
-            return signatureMap;
+            return null;
         }
 
         const idSignature = comparableItems
@@ -91,15 +83,7 @@ function getStoredSignatureForRows(type, rows) {
     }
 
     if (type === "participantProfile") {
-        const profileSignature = rows
-            .map((row) => {
-                const { id, no, participant, ...profileData } = row;
-                return JSON.stringify(canonicalizeValue(profileData));
-            })
-            .sort()
-            .join("|");
-
-        return profileSignature || null;
+        return null;
     }
 
     const idSignature = rows
@@ -109,76 +93,6 @@ function getStoredSignatureForRows(type, rows) {
         .join("|");
 
     return idSignature || null;
-}
-
-async function participantHasIdenticalSpotifyData({
-    surveyID,
-    participant,
-    spotifyData,
-    checkArray,
-    settings,
-}) {
-    if (!settings?.screenout_options?.screenout_check_identical) {
-        return false;
-    }
-
-    const currentSignature = buildParticipantSignature(spotifyData, checkArray, settings);
-    if (currentSignature.size === 0) {
-        return false;
-    }
-
-    const response = await fetchResultList(surveyID);
-    if (!response.ok || !response.data?.dataTypes) {
-        throw new Error("Failed to load survey results for duplicate check");
-    }
-
-    const currentParticipant = String(participant ?? "");
-    const participantSignatures = new Map();
-
-    response.data.dataTypes.forEach((dataType) => {
-        const type = dataType?.id;
-        if (!currentSignature.has(type)) {
-            return;
-        }
-
-        const rows = Array.isArray(dataType?.data) ? dataType.data : [];
-        const rowsByParticipant = new Map();
-
-        rows.forEach((row) => {
-            const participantId = String(row?.participant ?? "");
-            if (!participantId) {
-                return;
-            }
-
-            if (!rowsByParticipant.has(participantId)) {
-                rowsByParticipant.set(participantId, []);
-            }
-            rowsByParticipant.get(participantId).push(row);
-        });
-
-        rowsByParticipant.forEach((participantRows, participantId) => {
-            const signature = getStoredSignatureForRows(type, participantRows);
-            if (!signature) {
-                return;
-            }
-
-            if (!participantSignatures.has(participantId)) {
-                participantSignatures.set(participantId, new Map());
-            }
-
-            participantSignatures.get(participantId).set(type, signature);
-        });
-    });
-
-    return Array.from(participantSignatures.entries()).some(([participantId, signatures]) => {
-        if (participantId === currentParticipant) {
-            return false;
-        }
-
-        return Array.from(currentSignature.entries()).every(
-            ([type, signature]) => signatures.get(type) === signature
-        );
-    });
 }
 
 export function useRoomFinalize({
@@ -267,15 +181,8 @@ export function useRoomFinalize({
                 return;
             }
 
-            if (
-                await participantHasIdenticalSpotifyData({
-                    surveyID,
-                    participant,
-                    spotifyData,
-                    checkArray,
-                    settings,
-                })
-            ) {
+            const contentHashResponse = await saveCheckParticipantContentHash(participant, surveyID);
+            if (!contentHashResponse.ok) {
                 await deleteParticipantData();
                 const paramsString = buildParamsString(paramsObjectSession);
                 navigateToScreenout(settings?.screenout_options, paramsString, navigate);
@@ -324,15 +231,8 @@ export function useRoomFinalize({
                     return;
                 }
 
-                if (
-                    await participantHasIdenticalSpotifyData({
-                        surveyID,
-                        participant,
-                        spotifyData,
-                        checkArray,
-                        settings,
-                    })
-                ) {
+                const contentHashResponse = await saveCheckParticipantContentHash(participant, surveyID);
+                if (!contentHashResponse.ok) {
                     await deleteParticipantData();
                     const paramsString = buildParamsString(paramsObjectSession);
                     navigateToScreenout(settings?.screenout_options, paramsString, navigate);
