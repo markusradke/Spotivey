@@ -128,6 +128,10 @@ export function useRoomFinalize({
         return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
     }, [settings]);
 
+    const isCheckIdenticalDataEnabled = useMemo(() => {
+        return settings?.screenout_options?.screenout_check_identical ?? false;
+    }, [settings]);
+
     const navigateToEndpageOrEndURL = useCallback(async () => {
         const dataAll = DATA_TYPE_ORDER.map((type) => spotifyData?.[type] ?? []);
         const url = getCompleteEndURL({
@@ -181,12 +185,14 @@ export function useRoomFinalize({
                 return;
             }
 
-            const contentHashResponse = await saveCheckParticipantContentHash(participant, surveyID);
-            if (!contentHashResponse.ok) {
-                await deleteParticipantData();
-                const paramsString = buildParamsString(paramsObjectSession);
-                navigateToScreenout(settings?.screenout_options, paramsString, navigate);
-                return;
+            if (isCheckIdenticalDataEnabled) {
+                const contentHashResponse = await saveCheckParticipantContentHash(participant, surveyID);
+                if (!contentHashResponse.ok) {
+                    await deleteParticipantData();
+                    const paramsString = buildParamsString(paramsObjectSession);
+                    navigateToScreenout(settings?.screenout_options, paramsString, navigate);
+                    return;
+                }
             }
 
             await finalizeParticipantData();
@@ -231,12 +237,14 @@ export function useRoomFinalize({
                     return;
                 }
 
-                const contentHashResponse = await saveCheckParticipantContentHash(participant, surveyID);
-                if (!contentHashResponse.ok) {
-                    await deleteParticipantData();
-                    const paramsString = buildParamsString(paramsObjectSession);
-                    navigateToScreenout(settings?.screenout_options, paramsString, navigate);
-                    return;
+                if (isCheckIdenticalDataEnabled) {
+                    const contentHashResponse = await saveCheckParticipantContentHash(participant, surveyID);
+                    if (!contentHashResponse.ok) {
+                        await deleteParticipantData();
+                        const paramsString = buildParamsString(paramsObjectSession);
+                        navigateToScreenout(settings?.screenout_options, paramsString, navigate);
+                        return;
+                    }
                 }
 
                 await finalizeParticipantData();
