@@ -69,7 +69,7 @@ class GetSavedShowsSpotify(APIView):
         limit = request.GET.get('limit', 50)
         endpoint = f"me/shows"
 
-        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, datatype='shows')
+        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, participant, datatype='shows')
         if 'error' in response.keys():
             return Response(response, status=status.HTTP_204_NO_CONTENT)
 
@@ -100,7 +100,7 @@ class GetSavedEpisodesSpotify(APIView):
         limit = request.GET.get('limit', 50)
         endpoint = f"me/episodes"
 
-        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, datatype='episodes')
+        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, participant, datatype='episodes')
         if 'error' in response.keys():
             return Response(response, status=status.HTTP_204_NO_CONTENT)
 

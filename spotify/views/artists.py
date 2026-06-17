@@ -47,7 +47,7 @@ class GetTopArtists(APIView):
         time_range = request.GET.get('timeRange', '')
         endpoint = f"me/top/artists?time_range={time_range}"
 
-        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, datatype='top_artists')
+        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, participant,datatype='top_artists')
         
         if 'error' in response.keys():
             return Response(response, status=status.HTTP_204_NO_CONTENT)
@@ -113,7 +113,7 @@ class GetFollowedArtistsSpotify(APIView):
             return error_response
 
         limit = request.GET.get('limit', 50)
-        response = retrieve_spotify_followed_artists(request.session.session_key, limit)
+        response = retrieve_spotify_followed_artists(request.session.session_key, limit, participant)
 
         if 'error' in response.keys():
             return Response(response, status=status.HTTP_204_NO_CONTENT)

@@ -1,3 +1,5 @@
+import logging
+
 from spotify.models import SpotifyToken
 from django.utils import timezone
 import time
@@ -10,6 +12,7 @@ from requests import post, put, get, Session
 from requests.adapters import HTTPAdapter, Retry
 
 BASE_URL = "https://api.spotify.com/v1/"
+SPOTIFY_API_LOGGER = logging.getLogger('spotify.utils.spotify_api')
     
 def get_user_tokens(session_id):
     user_tokens = SpotifyToken.objects.filter(user=session_id)
@@ -65,7 +68,7 @@ def refresh_spotify_token(session_id):
         session_id, access_token, token_type, expires_in, refresh_token)
 
 
-def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
+def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False, type='', participant = None):
     if os.environ.get("SPOTIVEY_TEST_MODE") == "1":
         print("SPOTIVEY_TEST_MODE is enabled. Returning fixture data for endpoint:", endpoint)
         from spotify.utils.spotify_fixtures import get_fixture_for_endpoint
@@ -95,10 +98,27 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
 
     response = s.get(BASE_URL + endpoint, headers=headers)
     print(f"Spotify API request to {BASE_URL + endpoint} returned status code {response.status_code}")
-
+    
+    
+    now = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+    if participant:
+        survey_participant_id = f"{participant.settings.umfrageID}-{participant.participant}"
+    else:
+        survey_participant_id = ""
     try:
-        return response.json()
+        json_response = response.json()
+
+        if 'error' in json_response and isinstance(json_response['error'], dict) and json_response['error'].get('status') == 429:
+            retry_after = json_response['error'].get('headers', {}).get('Retry-After', 1)  # default to 1 second if not provided
+            SPOTIFY_API_LOGGER.warning(f"RATE LIMIT HIT ({now}): {type} - {endpoint}. Retry after {retry_after} seconds. SessionID: {session_id} {survey_participant_id}")
+
+        if response.status_code >= 400:
+            SPOTIFY_API_LOGGER.error(f"ERROR ({now}): {type} - {endpoint}, Status code: {response.status_code}, SessionID: {session_id} {survey_participant_id}, Response text: {response.text}")
+
+        SPOTIFY_API_LOGGER.info(f"SUCCESS ({now}): {type} - {endpoint}. SessionID: {session_id} {survey_participant_id}")
+        return json_response
     except:
+        SPOTIFY_API_LOGGER.error(f"ERROR ({now}): {type} - {endpoint}, could not parse JSON response. Status code: {response.status_code}, SessionID: {session_id} {survey_participant_id}, Response text: {response.text}")
         return {'Error': 'Issue with request'}
 
 
@@ -118,7 +138,7 @@ def probe_authentication_scopes(session_id: str) -> bool:
     ]
 
     for endpoint in probe_endpoints:
-        response: dict = execute_spotify_api_request(session_id, endpoint)
+        response: dict = execute_spotify_api_request(session_id, endpoint, type='auth_probe')
 
         error = response.get("error")
         if isinstance(error, dict):
@@ -132,7 +152,7 @@ def probe_authentication_scopes(session_id: str) -> bool:
     return True
 
 
-def retrieve_spotify_data(session_key: str, endpoint: str, limit: int, datatype: str  = ''):
+def retrieve_spotify_data(session_key: str, endpoint: str, limit: int, participant, datatype: str  = ''):
     """
     Helper function to retrieve Spotify data with pagination support. Returns artificial response with 'items' and 'total' keys.
     """
@@ -148,11 +168,11 @@ def retrieve_spotify_data(session_key: str, endpoint: str, limit: int, datatype:
             batch_endpoint = f"{endpoint}&limit={batch_limit}&offset={n_retrieved}"
         else:
             batch_endpoint = f"{endpoint}?limit={batch_limit}&offset={n_retrieved}"
-        response = execute_spotify_api_request(session_key, batch_endpoint)
+        response = execute_spotify_api_request(session_key, batch_endpoint, type='data_retrieval', participant=participant)
+
         # check for 429 rate limit error
         if 'error' in response and isinstance(response['error'], dict) and response['error'].get('status') == 429:
             retry_after = response['error'].get('headers', {}).get('Retry-After', 1)  # default to 1 second if not provided
-            print(f"Rate limit hit. Retrying after {retry_after} seconds.")
             time.sleep(int(retry_after))
             continue  # retry the same batch after sleeping
 
@@ -160,6 +180,7 @@ def retrieve_spotify_data(session_key: str, endpoint: str, limit: int, datatype:
             print(f"Error occurred while retrieving Spotify data for endpoint: {endpoint}") 
             return {'error': response}
 
+        
         items = response.get('items', [])
         total = response.get('total', None)  # to save calls 
         if total is not None:
@@ -175,7 +196,7 @@ def retrieve_spotify_data(session_key: str, endpoint: str, limit: int, datatype:
     return {'items': all_responses, 'total': total}
 
 
-def retrieve_spotify_followed_artists(session_key: str, limit: int):
+def retrieve_spotify_followed_artists(session_key: str, limit: int, participant):
     """
     Specialized helper function to retrieve followed artists with pagination support. Returns artificial response with 'items' and 'total' keys.
     """
@@ -191,7 +212,7 @@ def retrieve_spotify_followed_artists(session_key: str, limit: int):
     while n_retrieved < limit:
         batch_limit = min(batch_size_limit, limit - n_retrieved)
         batch_endpoint = f"{endpoint}&limit={batch_limit}&after={after}"
-        response = execute_spotify_api_request(session_key, batch_endpoint)
+        response = execute_spotify_api_request(session_key, batch_endpoint, type='data_retrieval', participant=participant)
         # check for 429 rate limit error
         if 'error' in response and isinstance(response['error'], dict) and response['error'].get('status') == 429:
             retry_after = response['error'].get('headers', {}).get('Retry-After', 1)  # default to 1 second if not provided
