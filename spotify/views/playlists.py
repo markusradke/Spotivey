@@ -63,7 +63,7 @@ def _extract_private_playlist_track_fields(track_item, playlist):
 def _build_and_create_playlists(session_key, playlists, participant, 
                                   public_filter=None):
     """Build and bulk create playlist objects."""
-    user_response = execute_spotify_api_request(session_key, 'me')
+    user_response = execute_spotify_api_request(session_key, 'me', type='user_id_private_tracks')
     current_user_id = user_response.get('id', '')
     
     filtered_playlists = []
@@ -108,7 +108,7 @@ class GetPlaylistsSpotify(APIView):
         print(f"Public filter for playlists: {public_filter}")
         
         endpoint = f"me/playlists"
-        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, datatype='playlists')
+        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, participant, datatype='playlists')
         if 'error' in response.keys():
             return Response(response, status=status.HTTP_204_NO_CONTENT)
 

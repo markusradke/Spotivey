@@ -56,7 +56,7 @@ class GetTopTracks(APIView):
         time_range = request.GET.get('timeRange', '')
         endpoint = f"me/top/tracks?time_range={time_range}"
 
-        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, datatype='top_tracks')
+        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, participant, datatype='top_tracks')
         if 'error' in response.keys():
             return Response(response, status=status.HTTP_204_NO_CONTENT)
 
@@ -124,7 +124,7 @@ class GetSavedTracksSpotify(APIView):
 
         endpoint = "me/tracks"
         limit = request.GET.get('limit')
-        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, datatype='saved_tracks')
+        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, participant, datatype='saved_tracks')
         if 'error' in response.keys():
             return Response(response, status=status.HTTP_204_NO_CONTENT)
         
@@ -158,7 +158,7 @@ class GetRecentlyPlayedTracksSpotify(APIView):
 
         limit = request.GET.get('limit')
         endpoint = "me/player/recently-played"
-        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, datatype='recently_played')
+        response = retrieve_spotify_data(request.session.session_key, endpoint, limit, participant, datatype='recently_played')
         if 'error' in response.keys():
             return Response(response, status=status.HTTP_204_NO_CONTENT)
         

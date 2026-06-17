@@ -18,7 +18,7 @@ class GetUsersProfileSpotify(APIView):
             return fail_response
         
         endpoint = "me"
-        response = execute_spotify_api_request(request.session.session_key, endpoint)
+        response = execute_spotify_api_request(request.session.session_key, endpoint, participant=participant, type='profile')
         if "error" in response:
             return Response({}, status=status.HTTP_204_NO_CONTENT)
 
