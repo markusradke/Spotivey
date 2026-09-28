@@ -82,13 +82,13 @@ export function usersContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent maximum={1000} />
+                            <LimitComponent maximum={300} />
                             <BoundedNumberField
                                 label="Limit"
                                 value={topItemsTracksShortTermLimit}
                                 onChange={setTopItemsTracksShortTermLimit}
                                 min={1}
-                                max={1000}
+                                max={300}
                                 step={1}
                             />
                         </div>
@@ -111,13 +111,13 @@ export function usersContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent maximum={1000} />
+                            <LimitComponent maximum={300} />
                             <BoundedNumberField
                                 label="Limit"
                                 value={topItemsTracksMediumTermLimit}
                                 onChange={setTopItemsTracksMediumTermLimit}
                                 min={1}
-                                max={1000}
+                                max={300}
                                 step={1}
                             />
                         </div>
@@ -140,13 +140,13 @@ export function usersContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent maximum={1000} />
+                            <LimitComponent maximum={300} />
                             <BoundedNumberField
                                 label="Limit"
                                 value={topItemsTracksLongTermLimit}
                                 onChange={setTopItemsTracksLongTermLimit}
                                 min={1}
-                                max={1000}
+                                max={300}
                                 step={1}
                             />
                         </div>
@@ -178,13 +178,13 @@ export function usersContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent maximum={1000} />
+                            <LimitComponent maximum={300} />
                             <BoundedNumberField
                                 label="Limit"
                                 value={topItemsArtistsShortTermLimit}
                                 onChange={setTopItemsArtistsShortTermLimit}
                                 min={1}
-                                max={1000}
+                                max={300}
                                 step={1}
                             />
                         </div>
@@ -207,13 +207,13 @@ export function usersContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent maximum={1000} />
+                            <LimitComponent maximum={300} />
                             <BoundedNumberField
                                 label="Limit"
                                 value={topItemsArtistsMediumTermLimit}
                                 onChange={setTopItemsArtistsMediumTermLimit}
                                 min={1}
-                                max={1000}
+                                max={300}
                                 step={1}
                             />
                         </div>
@@ -236,13 +236,13 @@ export function usersContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent maximum={1000} />
+                            <LimitComponent maximum={300} />
                             <BoundedNumberField
                                 label="Limit"
                                 value={topItemsArtistsLongTermLimit}
                                 onChange={setTopItemsArtistsLongTermLimit}
                                 min={1}
-                                max={1000}
+                                max={300}
                                 step={1}
                             />
                         </div>
@@ -272,13 +272,13 @@ export function usersContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent maximum={1000} />
+                            <LimitComponent maximum={300} />
                             <BoundedNumberField
                                 label="Limit"
                                 value={followedArtistsLimit}
                                 onChange={setFollowedArtistsLimit}
                                 min={1}
-                                max={1000}
+                                max={300}
                                 step={1}
                             />
                         </div>

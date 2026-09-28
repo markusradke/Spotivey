@@ -40,7 +40,7 @@ export function showsContentSettings(
                                 value={savedShowsLimit}
                                 onChange={setSavedShowsLimit}
                                 min={1}
-                                max={1000}
+                                max={300}
                                 step={1}
                             />
                         </div>
@@ -70,7 +70,7 @@ export function showsContentSettings(
                                 value={savedEpisodesLimit}
                                 onChange={setSavedEpisodesLimit}
                                 min={1}
-                                max={1000}
+                                max={300}
                                 step={1}
                             />
                         </div>
