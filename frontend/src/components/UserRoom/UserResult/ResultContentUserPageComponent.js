@@ -101,7 +101,7 @@ export default function ResultContent(props) {
         handleDataFetch();
         fetchParticipantCount(props.surveyID).then(({ ok, data }) => {
             if (ok && data) {
-                setShowDeleteResults(data.participantCount > 50);
+                setShowDeleteResults(data.participantCount < 50);
             }
         });
     }, [])
