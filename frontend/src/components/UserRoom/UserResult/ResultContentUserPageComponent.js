@@ -18,7 +18,8 @@ import {
     saveParticipantsToCsvFile,
     saveEmailsToCsvFile,
     deleteEmailsForSurvey,
-    saveSettingsToCsvFile
+    saveSettingsToCsvFile,
+    fetchParticipantCount
 } from "../../../api/surveyApi";
 
 export default function ResultContent(props) {
@@ -34,6 +35,7 @@ export default function ResultContent(props) {
     const [currentPage, setCurrentPage] = useState(1);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [openDeleteEmailsDialog, setOpenDeleteEmailsDialog] = useState(false);
+    const [showDeleteResults, setShowDeleteResults] = useState(false);
     const dataLimit = 100
     const [pages, setPages] = useState(0)
 
@@ -97,6 +99,11 @@ export default function ResultContent(props) {
         }
         getParticipantSession();
         handleDataFetch();
+        fetchParticipantCount(props.surveyID).then(({ ok, data }) => {
+            if (ok && data) {
+                setShowDeleteResults(data.participantCount > 50);
+            }
+        });
     }, [])
 
     function renderBackButton() {
@@ -425,13 +432,14 @@ export default function ResultContent(props) {
                                     </div>
                                 </div>
                             </CSVLink> : null}
-                        <Button style={{ color: '#414141' }}
-                            onClick={() => { setOpenDeleteDialog(true) }}
-                            variant={'text'}
-                            startIcon={<DeleteOutlinedIcon />}
-                        >
-                            Delete All Results
-                        </Button>
+                        {showDeleteResults ?
+                            <Button style={{ color: '#414141' }}
+                                onClick={() => { setOpenDeleteDialog(true) }}
+                                variant={'text'}
+                                startIcon={<DeleteOutlinedIcon />}
+                            >
+                                Delete All Results
+                            </Button> : null}
                     </div> : null
                 }
             </div>

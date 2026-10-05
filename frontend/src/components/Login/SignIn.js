@@ -104,9 +104,9 @@ export default function LoginPage() {
                 >
                   Sign In
                 </Button>
-                <div className={'password-forgot-container'}>
-                  <Link to="/sign-up" variant="body2">
-                    {"Don't have an account? Sign Up"}
+                <div className={'password-forgot-container'} style={{ marginTop: '8px' }}>
+                  <Link to="mailto:steffen.lepa@tu-berlin.de" variant="body2">
+                    {"Don't have an account? Request access."}
                   </Link>
                 </div>
                 <div className={'password-forgot-container'} style={{ marginTop: '8px' }}>
