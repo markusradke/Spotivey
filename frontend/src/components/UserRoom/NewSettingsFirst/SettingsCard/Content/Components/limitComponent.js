@@ -2,7 +2,7 @@ import * as React from "react";
 import { Tooltip } from "@mui/material";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-export default function LimitComponent(maximum = 50) {
+export default function LimitComponent({ maximum = 50 }) {
     function tooltipRender() {
         return (
             <div className='tooltip-render-container'>
@@ -16,7 +16,7 @@ export default function LimitComponent(maximum = 50) {
     return (
         <React.Fragment>
             <div className='textField-info-container'>
-                <h2 class='figcaption-text'>
+                <h2 className='figcaption-text'>
                     limit
                 </h2>
                 <Tooltip
