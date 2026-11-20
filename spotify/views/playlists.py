@@ -78,6 +78,12 @@ def _build_and_create_playlists(session_key, playlists, participant,
     playlists_to_create = []
     for playlist_item in filtered_playlists:
         fields = _extract_playlist_fields(playlist_item, current_user_id)
+        if (
+            fields['is_public']
+            and fields['is_self_owned']
+            and not participant.settings.store_public_self_owned_playlists
+        ):
+            continue
         fields['participant'] = participant
         fields['confirmed'] = False
         playlists_to_create.append(CurrentPlaylist(**fields))

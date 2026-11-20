@@ -44,7 +44,7 @@ export function playlistContentSettings(
                                 value={currentPlaylistsLimit}
                                 onChange={setCurrentPlaylistsLimit}
                                 min={1}
-                                max={200}
+                                max={300}
                                 step={1}
                             />
                             {confirmCheck(confirmCurrentPlaylistsYes, setConfirmCurrentPlaylistsYes)}
@@ -62,7 +62,7 @@ export function playlistContentSettings(
                                         value={privatetracksMaxPlaylists}
                                         onChange={setPrivatetracksMaxPlaylists}
                                         min={1}
-                                        max={200}
+                                        max={30}
                                         step={1}
                                     />
                                     <Typography id="max-tracks-per-playlist-label" variant="body2">
@@ -77,7 +77,7 @@ export function playlistContentSettings(
                                         step={50}
                                         marks
                                         min={50}
-                                        max={500}
+                                        max={100}
                                     />
                                 </Stack>
                             </div>

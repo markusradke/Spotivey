@@ -41,13 +41,13 @@ export function tracksContentSettings(
                     </div>
                     <div class='spotify-items'>
                         <div class='settings-slider-container'>
-                            <LimitComponent maximum={1000} />
+                            <LimitComponent maximum={300} />
                             <BoundedNumberField
                                 label="Limit"
                                 value={savedTracksLimit}
                                 onChange={setSavedTracksLimit}
                                 min={1}
-                                max={1000}
+                                max={300}
                                 step={1}
                             />
                         </div>
